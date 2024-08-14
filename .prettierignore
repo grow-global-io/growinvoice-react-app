@@ -7,4 +7,4 @@ src/assets/**/*
 *.cjs
 *.json
 .lintstagedrc
-./node_modules/react-razorpay/src/*.ts
+node_modules/react-razorpay/src/*.ts
