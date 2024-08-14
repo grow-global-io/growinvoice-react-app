@@ -1,0 +1,15 @@
+[
+    {   
+      "packValue":"$10.00"  ,
+      "packValueper":"month",
+      "duration":"Monthly",
+      "lists":["100 Customers","200 Products","Unlimited invoices per month","Unlimited estimates per month","Custom reports","Advertisement on mails"]
+    },
+    
+    {   
+      "packValue":"$50.00"  ,
+      "packValueper":"year",
+      "duration":"Yearly",
+      "lists":["40 Customers","50 Products","500000 invoices per month","500000 estimates per month","Custom reports","Advertisement on mails"]
+    }
+]

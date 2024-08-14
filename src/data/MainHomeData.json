@@ -1,0 +1,27 @@
+[
+    {
+        "heading":"Create invoices in seconds",
+        "text":"With Grow-invoice, automatically create your next invoice, remind your client for payment, accrue an overdue late fee and send you read-receipts.",
+        "buttonText":"Get Started",
+        "float":"flex-start"
+    },
+    {
+        "heading":"Secure payments",
+        "text":"We allows businesses to offer their clients a range of payment options, including credit/debit cards, PayPal, and bank transfers, which can help to speed up & secure the payment process and improve cash flow",
+        "buttonText":"Try Now",
+        "float":"flex-end"
+
+    },
+    {
+        "heading":"Customizable invoice templates",
+        "text":"As a invoice website we  typically provide a variety of templates that businesses can choose from to create professional-looking invoices that reflect their brand identity",
+        "buttonText":"Get Started",
+        "float":"flex-start"
+    },
+    {
+        "heading":"Reporting and analytics",
+        "text":"Grow-invoice typically provides reporting and analytics features that allow businesses to track their invoicing history, monitor cash flow, and analyze customer payment behavior",
+        "buttonText":"Get Started",
+        "float":"flex-end"
+    }
+]
