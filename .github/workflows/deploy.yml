@@ -1,43 +1,43 @@
 on:
-    push:
-      branches:
-        - main
-  name: 🚀 Deploy website on push
-   
-  jobs:
-    create-env-file:
-      name: 🛠️ Create .env File
-      runs-on: ubuntu-latest
-      steps:
-        - name: 📄 Create .env File
-          run: |
-            echo "VITE_BASE_URL=http://192.248.152.35" > .env
-        - name: 📦 Upload .env File
-          uses: actions/upload-artifact@v3
-          with:
-            name: env-file
-            path: .env
-    web-deploy:
-      name: 🎉 Deploy
-      runs-on: ubuntu-latest
-      steps:
-        - name: 🚚 Get latest code
-          uses: actions/checkout@v3
-  
-        - uses: actions/checkout@v4
-        - uses: actions/setup-node@v4
-          with:
-            node-version: "18"
-  
-        - name: 🔨 Build Project
-          run: |
-            npm install
-            npm run build
-  
-        - name: 📂 Sync files
-          uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-          with:
-            server: "ftp.growinvoice.com"
-            username: "u644247801.reactgrowinvoice"
-            password: ${{ secrets.GIT_CPANEL_REACT_PWD }}
-            local-dir: ./dist/
+  push:
+    branches:
+      - main
+name: 🚀 Deploy website on push
+
+jobs:
+  create-env-file:
+    name: 🛠️ Create .env File
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📄 Create .env File
+        run: |
+          echo "VITE_BASE_URL=http://192.248.152.35" > .env
+      - name: 📦 Upload .env File
+        uses: actions/upload-artifact@v3
+        with:
+          name: env-file
+          path: .env
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v3
+
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: 🔨 Build Project
+        run: |
+          npm install
+          npm run build
+
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: "ftp.growinvoice.com"
+          username: "u644247801.reactgrowinvoice"
+          password: ${{ secrets.GIT_CPANEL_REACT_PWD }}
+          local-dir: ./build/
