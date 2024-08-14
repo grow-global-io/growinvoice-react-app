@@ -20,7 +20,7 @@ const ReportViewCard = ({
 
 	const rows = useMemo(() => {
 		if (dashboard.data && type === "Table") {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			// eslint-disable-next-line 
 			const keysData: any = dashboard.data as unknown as OpenaiControllerDashboardDataGet200;
 			if (keysData.length === 0) return [];
 			const rowsData = keysData?.map((item: OpenaiControllerDashboardDataGet200, index: number) => {
@@ -35,7 +35,7 @@ const ReportViewCard = ({
 
 	const columns = useMemo(() => {
 		if (dashboard.data && type === "Table") {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			// eslint-disable-next-line 
 			const keysData: any = dashboard.data as OpenaiControllerDashboardDataGet200;
 			if (keysData.length === 0) return [];
 			const keys = Object.keys(keysData[0]);

@@ -8,7 +8,7 @@
 
 export type InvoicePaidStatus = (typeof InvoicePaidStatus)[keyof typeof InvoicePaidStatus];
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+// eslint-disable-next-line 
 export const InvoicePaidStatus = {
 	Paid: "Paid",
 	Unpaid: "Unpaid",

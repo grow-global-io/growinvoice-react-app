@@ -8,7 +8,7 @@
 
 export type UpdateProductDtoType = (typeof UpdateProductDtoType)[keyof typeof UpdateProductDtoType];
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+// eslint-disable-next-line 
 export const UpdateProductDtoType = {
 	Service: "Service",
 	Good: "Good",

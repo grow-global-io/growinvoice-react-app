@@ -8,7 +8,7 @@
 
 export type PaymentsPaymentType = (typeof PaymentsPaymentType)[keyof typeof PaymentsPaymentType];
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+// eslint-disable-next-line 
 export const PaymentsPaymentType = {
 	UPI: "UPI",
 	EuropeanBank: "EuropeanBank",

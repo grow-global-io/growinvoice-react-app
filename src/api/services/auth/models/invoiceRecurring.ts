@@ -11,7 +11,7 @@
  */
 export type InvoiceRecurring = (typeof InvoiceRecurring)[keyof typeof InvoiceRecurring] | null;
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+// eslint-disable-next-line 
 export const InvoiceRecurring = {
 	Daily: "Daily",
 	Weekly: "Weekly",

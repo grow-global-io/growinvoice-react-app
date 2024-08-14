@@ -9,7 +9,7 @@
 export type GetCustomerWithAddressDtoOption =
 	(typeof GetCustomerWithAddressDtoOption)[keyof typeof GetCustomerWithAddressDtoOption];
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+// eslint-disable-next-line 
 export const GetCustomerWithAddressDtoOption = {
 	Freelancer: "Freelancer",
 	BusinessWithGST: "BusinessWithGST",
