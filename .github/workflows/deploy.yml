@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: 📄 Create .env File
         run: |
-          echo "VITE_BASE_URL=http://192.248.152.35" > .env
+          echo "VITE_BASE_URL=https://192.248.152.35" > .env
       - name: 📦 Upload .env File
         uses: actions/upload-artifact@v3
         with:
@@ -28,6 +28,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "18"
+      
+      - name: Run install
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install # will run `yarn install` command
+      - name: Build production bundle
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: build # will run `yarn build:prod` command
 
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
