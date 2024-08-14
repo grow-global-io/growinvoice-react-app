@@ -50,7 +50,7 @@ export const DateFormField: React.FC<
 				)}
 				<DatePicker
 					onChange={(value) => {
-						if (value && moment.isMoment(value) && value.isValid()) {
+						if (value && moment.isMoment(value) && value?.isValid()) {
 							form.setFieldValue(field.name, moment(value).format("YYYY-MM-DD"), true);
 							onValueChange?.(moment(value).format("YYYY-MM-DD"));
 							setInputValue(moment(value).format("MM/DD/YYYY"));

@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.0003abaa.css",
-    "main.js": "/static/js/main.68f9dda3.js",
+    "main.js": "/static/js/main.c87286a1.js",
     "static/js/213.03096e7b.chunk.js": "/static/js/213.03096e7b.chunk.js",
     "static/js/553.90b07ca3.chunk.js": "/static/js/553.90b07ca3.chunk.js",
     "static/media/hero-section-bg.svg": "/static/media/hero-section-bg.29641d57e7828990531a.svg",
@@ -54,12 +54,12 @@
     "static/media/montserrat-vietnamese-300-normal.woff2": "/static/media/montserrat-vietnamese-300-normal.e24f3d852ead920f8a9a.woff2",
     "index.html": "/index.html",
     "main.0003abaa.css.map": "/static/css/main.0003abaa.css.map",
-    "main.68f9dda3.js.map": "/static/js/main.68f9dda3.js.map",
+    "main.c87286a1.js.map": "/static/js/main.c87286a1.js.map",
     "213.03096e7b.chunk.js.map": "/static/js/213.03096e7b.chunk.js.map",
     "553.90b07ca3.chunk.js.map": "/static/js/553.90b07ca3.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.0003abaa.css",
-    "static/js/main.68f9dda3.js"
+    "static/js/main.c87286a1.js"
   ]
 }
