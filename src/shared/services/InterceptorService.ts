@@ -3,6 +3,7 @@ import { AlertService } from "./AlertService";
 import { LoaderService } from "./LoaderService";
 // import { RsaService } from "./RsaService";
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 export class InterceptorService {
 	public constructor(private _axiosInstance: AxiosInstance) {}
 
@@ -17,6 +18,7 @@ export class InterceptorService {
 					config.headers["Authorization"] = `Bearer ${authToken}`;
 				}
 
+				
 				return config;
 			},
 			(error) => {

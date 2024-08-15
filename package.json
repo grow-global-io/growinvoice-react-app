@@ -29,6 +29,7 @@
     "dayjs": "^1.11.11",
     "formik": "^2.4.6",
     "html2canvas": "^1.4.1",
+    "https-browserify": "^1.0.0",
     "jspdf": "^2.5.1",
     "localforage": "^1.10.0",
     "lottie-web": "^5.12.2",
