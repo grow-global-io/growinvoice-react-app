@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: 📄 Create .env File
         run: |
-          echo "VITE_BASE_URL=http://192.248.152.35" > .env
+          echo "VITE_BASE_URL=http://18.61.212.196" > .env
       - name: 📦 Upload .env File
         uses: actions/upload-artifact@v3
         with:
