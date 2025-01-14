@@ -12,7 +12,7 @@ const commonHooks = {
 	afterAllFilesWrite: "yarn run format",
 };
 
-const BASE_URL = "http://api.growinvoice.com";
+const BASE_URL = "http://api-dev.growinvoice.com";
 
 const AUTH_API = `${BASE_URL}`;
 const instanceTemplate = `import Axios, { AxiosError, AxiosRequestConfig } from 'axios';

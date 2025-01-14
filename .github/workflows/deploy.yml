@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: 📄 Create .env File
         run: |
-          echo "VITE_BASE_URL=http://api.growinvoice.com" > .env
+          echo "VITE_BASE_URL=http://api-dev.growinvoice.com" > .env
       - name: 📦 Upload .env File
         uses: actions/upload-artifact@v3
         with:
