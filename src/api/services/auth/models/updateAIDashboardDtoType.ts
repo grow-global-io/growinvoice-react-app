@@ -9,7 +9,7 @@
 export type UpdateAIDashboardDtoType =
 	(typeof UpdateAIDashboardDtoType)[keyof typeof UpdateAIDashboardDtoType];
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+// eslint-disable-next-line 
 export const UpdateAIDashboardDtoType = {
 	Table: "Table",
 	Chart: "Chart",

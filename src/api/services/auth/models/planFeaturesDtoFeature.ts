@@ -9,7 +9,7 @@
 export type PlanFeaturesDtoFeature =
 	(typeof PlanFeaturesDtoFeature)[keyof typeof PlanFeaturesDtoFeature];
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+// eslint-disable-next-line 
 export const PlanFeaturesDtoFeature = {
 	Invoice: "Invoice",
 	Quotation: "Quotation",

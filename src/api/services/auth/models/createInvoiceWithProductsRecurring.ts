@@ -13,7 +13,7 @@ export type CreateInvoiceWithProductsRecurring =
 	| (typeof CreateInvoiceWithProductsRecurring)[keyof typeof CreateInvoiceWithProductsRecurring]
 	| null;
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+// eslint-disable-next-line 
 export const CreateInvoiceWithProductsRecurring = {
 	Daily: "Daily",
 	Weekly: "Weekly",
