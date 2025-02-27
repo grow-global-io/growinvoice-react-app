@@ -85,7 +85,7 @@ const ProductForm = () => {
 	};
 
 	const initialValues: CreateProductDto = {
-		type: editValues?.type ?? "Good",
+		type: editValues?.type ?? "Goods",
 		name: editValues?.name ?? "",
 		unit_id: editValues?.unit_id ?? "",
 		hsnCode_id: editValues?.hsnCode_id ?? "",
