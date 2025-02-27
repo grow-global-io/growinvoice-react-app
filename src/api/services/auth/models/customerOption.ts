@@ -8,7 +8,7 @@
 
 export type CustomerOption = (typeof CustomerOption)[keyof typeof CustomerOption];
 
-// eslint-disable-next-line 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CustomerOption = {
 	Freelancer: "Freelancer",
 	BusinessWithGST: "BusinessWithGST",

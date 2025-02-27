@@ -11,11 +11,7 @@ import type {
 	UseMutationOptions,
 	UseMutationResult,
 } from "@tanstack/react-query";
-import type {
-	UploadControllerUploadFileBody,
-	UploadControllerUploadPdfBody,
-	UploadResponseDto,
-} from "./models";
+import type { UploadControllerUploadFileBody, UploadResponseDto } from "./models";
 import { authInstance } from "../../instances/authInstance";
 import type { ErrorType } from "../../instances/authInstance";
 
@@ -92,78 +88,6 @@ export const useUploadControllerUploadFile = <
 	TContext
 > => {
 	const mutationOptions = getUploadControllerUploadFileMutationOptions(options);
-
-	return useMutation(mutationOptions);
-};
-export const uploadControllerUploadPdf = (
-	uploadControllerUploadPdfBody: UploadControllerUploadPdfBody,
-) => {
-	const formData = new FormData();
-	if (uploadControllerUploadPdfBody.file !== undefined) {
-		formData.append("file", uploadControllerUploadPdfBody.file);
-	}
-
-	return authInstance<UploadResponseDto>({
-		url: `/api/upload/uploadPdf`,
-		method: "POST",
-		headers: { "Content-Type": "multipart/form-data" },
-		data: formData,
-	});
-};
-
-export const getUploadControllerUploadPdfMutationOptions = <
-	TError = ErrorType<unknown>,
-	TContext = unknown,
->(options?: {
-	mutation?: UseMutationOptions<
-		Awaited<ReturnType<typeof uploadControllerUploadPdf>>,
-		TError,
-		{ data: UploadControllerUploadPdfBody },
-		TContext
-	>;
-}): UseMutationOptions<
-	Awaited<ReturnType<typeof uploadControllerUploadPdf>>,
-	TError,
-	{ data: UploadControllerUploadPdfBody },
-	TContext
-> => {
-	const { mutation: mutationOptions } = options ?? {};
-
-	const mutationFn: MutationFunction<
-		Awaited<ReturnType<typeof uploadControllerUploadPdf>>,
-		{ data: UploadControllerUploadPdfBody }
-	> = (props) => {
-		const { data } = props ?? {};
-
-		return uploadControllerUploadPdf(data);
-	};
-
-	return { mutationFn, ...mutationOptions };
-};
-
-export type UploadControllerUploadPdfMutationResult = NonNullable<
-	Awaited<ReturnType<typeof uploadControllerUploadPdf>>
->;
-export type UploadControllerUploadPdfMutationBody = UploadControllerUploadPdfBody;
-export type UploadControllerUploadPdfMutationError = ErrorType<unknown>;
-
-export const useUploadControllerUploadPdf = <
-	TError = ErrorType<unknown>,
-	TContext = unknown,
->(options?: {
-	mutation?: UseMutationOptions<
-		Awaited<ReturnType<typeof uploadControllerUploadPdf>>,
-		TError,
-		{ data: UploadControllerUploadPdfBody },
-		TContext
-	>;
-}): UseMutationResult<
-	Awaited<ReturnType<typeof uploadControllerUploadPdf>>,
-	TError,
-	{ data: UploadControllerUploadPdfBody },
-	TContext
-> => {
-	const mutationOptions = getUploadControllerUploadPdfMutationOptions(options);
 
 	return useMutation(mutationOptions);
 };

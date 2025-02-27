@@ -8,16 +8,19 @@ import { authControllerStatus } from "@api/services/auth";
 interface AuthStore {
 	isLoggedIn: boolean;
 	user: UserWithCompanyDto | null;
+	isRefecthing: boolean;
 	setLoggedIn: (isLoggedIn: boolean) => void;
 	setUser: (user: UserWithCompanyDto | null) => void;
 	setToken: (token: string) => void;
 	logout: () => void;
 	validateToken: () => Promise<UserWithCompanyDto | null>;
+	refecthUser: () => void;
 }
 
 export const useAuthStore = create<AuthStore>((set, getStore) => ({
 	isLoggedIn: false,
 	user: null,
+	isRefecthing: false,
 	setLoggedIn: (isLoggedIn) => set({ isLoggedIn }),
 	setUser: (user) => {
 		localStorage.setItem("userid", user?.id ?? "");
@@ -50,6 +53,11 @@ export const useAuthStore = create<AuthStore>((set, getStore) => ({
 		}
 		getStore().logout();
 		return null;
+	},
+	refecthUser: async () => {
+		set({ isRefecthing: true });
+		const user = await authControllerStatus();
+		set({ user, isRefecthing: false });
 	},
 }));
 

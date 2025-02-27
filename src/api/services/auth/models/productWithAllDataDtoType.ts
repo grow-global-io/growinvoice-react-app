@@ -9,8 +9,8 @@
 export type ProductWithAllDataDtoType =
 	(typeof ProductWithAllDataDtoType)[keyof typeof ProductWithAllDataDtoType];
 
-// eslint-disable-next-line 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProductWithAllDataDtoType = {
 	Service: "Service",
-	Good: "Good",
+	Goods: "Goods",
 } as const;

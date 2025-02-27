@@ -1,6 +1,6 @@
 import ReactApexChart from "react-apexcharts";
 
-// eslint-disable-next-line 
+// eslint-disable-next-line
 const BarChart = ({ graphData }: { graphData: any }) => {
 	return (
 		<div id="chart">

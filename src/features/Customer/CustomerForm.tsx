@@ -50,7 +50,7 @@ const CustomerForm = () => {
 
 	const { setOpenCustomerForm, editValues } = useCreateCustomerStore.getState();
 	const initialValues: CreateCustomerWithAddressDto = {
-		currencies_id: editValues?.currencies_id ?? "",
+		currencies_id: editValues?.currencies_id ?? user?.currency_id ?? "",
 		name: editValues?.name ?? "",
 		option: editValues?.option ?? CreateCustomerWithAddressDtoOption.Freelancer,
 		user_id: user?.id ?? "",

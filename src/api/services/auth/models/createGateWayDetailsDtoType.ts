@@ -9,7 +9,7 @@
 export type CreateGateWayDetailsDtoType =
 	(typeof CreateGateWayDetailsDtoType)[keyof typeof CreateGateWayDetailsDtoType];
 
-// eslint-disable-next-line 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const CreateGateWayDetailsDtoType = {
 	Stripe: "Stripe",
 	Razorpay: "Razorpay",

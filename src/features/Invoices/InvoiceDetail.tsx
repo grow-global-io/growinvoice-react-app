@@ -34,6 +34,7 @@ import { useConfirmDialogStore } from "@store/confirmDialog";
 import { useInvoiceHook } from "./invoiceHooks/useInvoiceHook";
 import { useCreatePaymentStore } from "@store/createPaymentStore";
 import { useGatewaydetailsControllerFindEnabledAll } from "@api/services/gatewaydetails";
+import PrintOutlined from "@mui/icons-material/PrintOutlined";
 
 const styles = {
 	width: { xs: "100%", sm: "auto" },
@@ -182,6 +183,15 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			},
 		},
 		{
+			name: "Print",
+			icon: PrintOutlined, // Import this from MUI
+			func: () => {
+				if (iframeRef.current) {
+					iframeRef.current.contentWindow?.print();
+				}
+			},
+		},
+		{
 			name: "Send Mail",
 			icon: EmailOutlined,
 			func: async () => {
@@ -224,7 +234,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 	];
 
 	const buttonListForSmallSrn = [
-		...buttonList,
+		...buttonList?.filter((item) => item.name !== "Print"),
 		{
 			name: "Share",
 			icon: ShareOutlined,

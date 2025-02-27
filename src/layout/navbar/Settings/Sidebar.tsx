@@ -124,7 +124,7 @@ const Sidebar = ({ children }: { children: React.ReactNode }) => {
 				>
 					<Box>
 						<Typography variant="h3" textTransform={"capitalize"} mb={3}>
-							Setting
+							Settings
 						</Typography>
 					</Box>
 

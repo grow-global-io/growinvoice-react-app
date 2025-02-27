@@ -85,11 +85,11 @@ const DashboardOpenAi = () => {
 	};
 	const formikRef = useRef<FormikProps<typeof initialValues>>(null);
 	const [rows, setRows] = useState<OpenaiControllerCreate200Item[]>([]);
-	// eslint-disable-next-line 
+	// eslint-disable-next-line
 	const [columns, setColumns] = useState<any[]>([]);
 	const [isError, setIsError] = useState(false);
 
-	// eslint-disable-next-line 
+	// eslint-disable-next-line
 	const handleChange = (event: SelectChangeEvent<any[]>) => {
 		const {
 			target: { value },

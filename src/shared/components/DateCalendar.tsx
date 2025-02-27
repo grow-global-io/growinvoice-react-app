@@ -10,12 +10,12 @@ export function DateCalander({
 	textFieldRequired = true,
 }: {
 	dayRange: DayRange;
-	// eslint-disable-next-line 
+	// eslint-disable-next-line
 	setDayRange: React.SetStateAction<any>;
 	setDisplayToday?: (value: React.SetStateAction<boolean>) => void;
 	textFieldRequired?: boolean;
 }) {
-	// eslint-disable-next-line 
+	// eslint-disable-next-line
 	const renderCustomInput = ({ ref }: { ref: React.Ref<any> }) => (
 		<TextField
 			autoComplete="off"

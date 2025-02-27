@@ -70,7 +70,7 @@ const CompanyUpdateForm = () => {
 					<Field name="address" label="Address" component={TextFormField} multiline rows={3} />
 				</Grid>
 				<Grid item xs={12} sm={6}>
-					<Field name="vat" label="VAT" component={TextFormField} />
+					<Field name="vat" label="VAT/GSTIN" component={TextFormField} />
 				</Grid>
 				<Grid item xs={12} sm={6}>
 					<Field name="logo" label="Logo" component={FileUploadFormField} />

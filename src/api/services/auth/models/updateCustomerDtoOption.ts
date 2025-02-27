@@ -9,7 +9,7 @@
 export type UpdateCustomerDtoOption =
 	(typeof UpdateCustomerDtoOption)[keyof typeof UpdateCustomerDtoOption];
 
-// eslint-disable-next-line 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const UpdateCustomerDtoOption = {
 	Freelancer: "Freelancer",
 	BusinessWithGST: "BusinessWithGST",

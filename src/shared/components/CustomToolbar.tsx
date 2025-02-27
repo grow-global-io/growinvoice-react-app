@@ -10,7 +10,7 @@ import React from "react";
 export function CustomToolbar({
 	rows,
 }: {
-	// eslint-disable-next-line 
+	// eslint-disable-next-line
 	rows: any;
 }) {
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);

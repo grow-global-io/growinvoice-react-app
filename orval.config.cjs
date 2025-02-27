@@ -14,7 +14,7 @@ module.exports = {
       }
     },
     "input": {
-      "target": "http://funtofun.site/api-docs.json"
+      "target": "https://api-dev.growinvoice.com/api-docs.json"
     },
     "hooks": {
       "afterAllFilesWrite": "yarn run format"

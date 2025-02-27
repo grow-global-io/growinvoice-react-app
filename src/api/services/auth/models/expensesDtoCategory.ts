@@ -8,7 +8,7 @@
 
 export type ExpensesDtoCategory = (typeof ExpensesDtoCategory)[keyof typeof ExpensesDtoCategory];
 
-// eslint-disable-next-line 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ExpensesDtoCategory = {
 	Travel: "Travel",
 	Food: "Food",

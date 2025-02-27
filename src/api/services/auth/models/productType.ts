@@ -8,8 +8,8 @@
 
 export type ProductType = (typeof ProductType)[keyof typeof ProductType];
 
-// eslint-disable-next-line 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ProductType = {
 	Service: "Service",
-	Good: "Good",
+	Goods: "Goods",
 } as const;

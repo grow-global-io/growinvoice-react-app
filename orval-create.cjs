@@ -12,7 +12,7 @@ const commonHooks = {
 	afterAllFilesWrite: "yarn run format",
 };
 
-const BASE_URL = "http://api-dev.growinvoice.com";
+const BASE_URL = "https://api-dev.growinvoice.com";
 
 const AUTH_API = `${BASE_URL}`;
 const instanceTemplate = `import Axios, { AxiosError, AxiosRequestConfig } from 'axios';
@@ -46,7 +46,7 @@ const services = [
 ];
 
 // Create .env
-fs.writeFileSync("./.env", `VITE_BASE_URL=${BASE_URL}`);
+fs.writeFileSync("./.env", `REACT_APP_BASE_URL=${BASE_URL}`);
 
 // Create Instances folder
 fs.mkdirSync("./src/api/instances", { recursive: true });

@@ -18,7 +18,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 const MyProfile = () => {
 	const queryClient = useQueryClient();
-	const { user } = useAuthStore();
+	const { user, refecthUser, isRefecthing } = useAuthStore();
 	const currencyList = useCurrencyControllerFindAll();
 	const userUpdate = useUserControllerUpdateUser();
 	const initialValues = {
@@ -51,10 +51,11 @@ const MyProfile = () => {
 		queryClient?.refetchQueries({
 			queryKey: getCurrencyControllerFindAllQueryKey(),
 		});
+		refecthUser();
 		actions.resetForm();
 	};
 
-	if (!user) {
+	if (!user || isRefecthing) {
 		return <Loader />;
 	}
 
