@@ -96,7 +96,7 @@ const Company = () => {
 									<Grid item xs={12} sm={6}>
 										<Field
 											name="vat"
-											label="Vat Number"
+											label="VAT/GSTIN"
 											component={TextFormField}
 											placeholder={"Vat Number"}
 										/>
