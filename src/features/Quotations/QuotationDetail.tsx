@@ -31,6 +31,7 @@ import { useConfirmDialogStore } from "@store/confirmDialog";
 import { useQuotationHook } from "./QuotationHooks/useQuotationHook";
 import { Constants } from "@shared/constants";
 import QuotationTemplateCard from "./QuotationTemplateCard";
+import PrintOutlined from "@mui/icons-material/PrintOutlined";
 
 const styles = {
 	width: { xs: "100%", sm: "auto" },
@@ -185,6 +186,15 @@ const QuotationDetail = ({
 			},
 		},
 		{
+			name: "Print",
+			icon: PrintOutlined, // Import this from MUI
+			func: () => {
+				if (iframeRef.current) {
+					iframeRef.current.contentWindow?.print();
+				}
+			},
+		},
+		{
 			name: "Send Mail",
 			icon: EmailOutlined,
 			func: async () => {
@@ -217,7 +227,7 @@ const QuotationDetail = ({
 	];
 
 	const buttonListForSmallSrn = [
-		...buttonList,
+		...buttonList?.filter((item) => item.name !== "Print"),
 		{
 			name: "Share",
 			icon: ShareOutlined,
