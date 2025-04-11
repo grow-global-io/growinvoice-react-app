@@ -33,9 +33,9 @@ jobs:
 
       - name: 📦 Install dependencies
         run: |
-          yarn add -W caniuse-lite
           yarn install --frozen-lockfile --non-interactive --prefer-offline
           yarn cache clean --all
+          npx update-browserslist-db@latest
           yarn run build --if-present
 
       - name: 📂 Sync files
@@ -45,3 +45,12 @@ jobs:
           username: "u644247801.reactgrowinvoice"
           password: ${{ secrets.GIT_CPANEL_REACT_PWD }}
           local-dir: ./build/
+
+      - name: cleanup
+        run: |
+          rm -rf .env
+          rm -rf node_modules
+          rm -rf build
+          rm -rf yarn-error.log
+          rm -rf yarn.lock
+          rm -rf package-lock.json
