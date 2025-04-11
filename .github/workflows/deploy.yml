@@ -13,7 +13,7 @@ jobs:
         run: |
           echo "REACT_APP_BASE_URL=https://api-dev.growinvoice.com" > .env
       - name: 📦 Upload .env File
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: env-file
           path: .env
@@ -33,6 +33,7 @@ jobs:
 
       - name: 📦 Install dependencies
         run: |
+          yarn add -W caniuse-lite
           yarn install --frozen-lockfile --non-interactive --prefer-offline
           yarn cache clean --all
           yarn run build --if-present
