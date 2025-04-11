@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: 📄 Create .env File
         run: |
-          echo "VITE_BASE_URL=http://api-dev.growinvoice.com" > .env
+          echo "REACT_APP_BASE_URL=https://api-dev.growinvoice.com" > .env
       - name: 📦 Upload .env File
         uses: actions/upload-artifact@v3
         with:
@@ -28,6 +28,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "18"
+          cache: "yarn"
+          cache-dependency-path: yarn.lock
+
+      - name: 📦 Install dependencies
+        run: |
+          yarn install --frozen-lockfile --non-interactive --prefer-offline
+          yarn cache clean --all
+          yarn run build --if-present
 
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
