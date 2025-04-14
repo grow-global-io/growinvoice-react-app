@@ -26,13 +26,15 @@ jobs:
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
 
-      - name: 📥 Download .env File
-        uses: actions/download-artifact@v4
+      # create .env file
+      - name: 📄 Create .env File
+        run: |
+          echo "REACT_APP_BASE_URL=https://api-dev.growinvoice.com" > .env
+      - name: 📦 Upload .env File
+        uses: actions/upload-artifact@v4
         with:
           name: env-file
-
-      - name: 🔁 Move .env to root
-        run: mv .env .env
+          path: .env
 
       - uses: actions/setup-node@v4
         with:
