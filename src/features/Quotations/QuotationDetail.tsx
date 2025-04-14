@@ -227,7 +227,7 @@ const QuotationDetail = ({
 	];
 
 	const buttonListForSmallSrn = [
-		...buttonList?.filter((item) => item.name !== "Print"),
+		...((buttonList ?? []).filter((item) => item.name !== "Print")),
 		{
 			name: "Share",
 			icon: ShareOutlined,

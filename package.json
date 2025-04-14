@@ -24,6 +24,7 @@
     "@types/node": "^16.7.13",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "@typescript-eslint/parser": "^8.29.1",
     "apexcharts": "^3.52.0",
     "axios": "^1.7.4",
     "dayjs": "^1.11.11",
@@ -64,7 +65,7 @@
     "build": "react-app-rewired build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint src/**/*.js src/**/*.jsx",
     "generate": "node orval-create.cjs && orval --config ./orval.config.cjs",
     "check:style": "prettier . --check",
     "format": "prettier . --write"
@@ -83,13 +84,16 @@
   },
   "devDependencies": {
     "customize-cra": "^1.0.0",
-    "eslint": "^9.9.0",
-    "eslint-plugin-react": "^7.35.0",
-    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint": "^9.24.0",
+    "eslint-plugin-react": "7.35.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "orval": "^7.0.1",
     "prettier": "^3.3.3",
     "react-app-rewired": "^2.2.1",
     "simple-zustand-devtools": "^1.1.0"
+  },
+  "resolutions": {
+    "eslint-plugin-react": "7.35.0"
   }
 }

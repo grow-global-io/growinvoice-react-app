@@ -22,6 +22,7 @@ import type {
 	CreatePaymentsDto,
 	Payments,
 	PaymentsControllerCreate200,
+	PaymentsControllerGrowlimitlessPaymentParams,
 	PaymentsControllerRazorpayPaymentParams,
 	PaymentsControllerStripePaymentForPlansParams,
 	PaymentsControllerStripePaymentParams,
@@ -929,6 +930,68 @@ export const usePaymentsControllerStripePayment = <
 	TContext
 > => {
 	const mutationOptions = getPaymentsControllerStripePaymentMutationOptions(options);
+
+	return useMutation(mutationOptions);
+};
+export const paymentsControllerGrowlimitlessPayment = (
+	params: PaymentsControllerGrowlimitlessPaymentParams,
+) => {
+	return authInstance<void>({ url: `/api/payments/growlimitlessPayment`, method: "POST", params });
+};
+
+export const getPaymentsControllerGrowlimitlessPaymentMutationOptions = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof paymentsControllerGrowlimitlessPayment>>,
+		TError,
+		{ params: PaymentsControllerGrowlimitlessPaymentParams },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof paymentsControllerGrowlimitlessPayment>>,
+	TError,
+	{ params: PaymentsControllerGrowlimitlessPaymentParams },
+	TContext
+> => {
+	const { mutation: mutationOptions } = options ?? {};
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof paymentsControllerGrowlimitlessPayment>>,
+		{ params: PaymentsControllerGrowlimitlessPaymentParams }
+	> = (props) => {
+		const { params } = props ?? {};
+
+		return paymentsControllerGrowlimitlessPayment(params);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type PaymentsControllerGrowlimitlessPaymentMutationResult = NonNullable<
+	Awaited<ReturnType<typeof paymentsControllerGrowlimitlessPayment>>
+>;
+
+export type PaymentsControllerGrowlimitlessPaymentMutationError = ErrorType<unknown>;
+
+export const usePaymentsControllerGrowlimitlessPayment = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof paymentsControllerGrowlimitlessPayment>>,
+		TError,
+		{ params: PaymentsControllerGrowlimitlessPaymentParams },
+		TContext
+	>;
+}): UseMutationResult<
+	Awaited<ReturnType<typeof paymentsControllerGrowlimitlessPayment>>,
+	TError,
+	{ params: PaymentsControllerGrowlimitlessPaymentParams },
+	TContext
+> => {
+	const mutationOptions = getPaymentsControllerGrowlimitlessPaymentMutationOptions(options);
 
 	return useMutation(mutationOptions);
 };

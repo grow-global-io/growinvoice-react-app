@@ -12,7 +12,7 @@ export const DateFormField: React.FC<
 		label?: string;
 		minDate?: Date;
 		maxDate?: Date;
-		onValueChange?: (value: string) => void;
+		onValueChange?: (_value: string) => void;
 		disabled?: boolean;
 		isRequired?: boolean;
 	}

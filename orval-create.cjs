@@ -1,4 +1,6 @@
 const fs = require("fs");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const commonOutputOptions = {
 	mode: "tags",
@@ -12,7 +14,8 @@ const commonHooks = {
 	afterAllFilesWrite: "yarn run format",
 };
 
-const BASE_URL = "https://api-dev.growinvoice.com";
+const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:8080";
+console.log(process.env.REACT_APP_BASE_URL)
 
 const AUTH_API = `${BASE_URL}`;
 const instanceTemplate = `import Axios, { AxiosError, AxiosRequestConfig } from 'axios';

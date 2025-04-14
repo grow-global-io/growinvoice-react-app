@@ -3,6 +3,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { AlertService } from "@shared/services/AlertService";
+import { environment } from "@enviroment";
 
 const ApiCredentials = () => {
 	const token = localStorage?.getItem("authToken");
@@ -31,7 +32,7 @@ const ApiCredentials = () => {
 					To learn more, check the documentation:
 					<Typography
 						component="a"
-						href="https://growinvoice-94ee0dd2031b.herokuapp.com/docs"
+						href={environment.baseUrl+"/docs"}
 						color="custom.primary"
 						sx={{ ml: 1, wordBreak: "break-all" }}
 						target="_blank"
