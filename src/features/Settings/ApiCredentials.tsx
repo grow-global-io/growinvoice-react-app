@@ -32,7 +32,7 @@ const ApiCredentials = () => {
 					To learn more, check the documentation:
 					<Typography
 						component="a"
-						href={environment.baseUrl+"/docs"}
+						href={environment.baseUrl + "/docs"}
 						color="custom.primary"
 						sx={{ ml: 1, wordBreak: "break-all" }}
 						target="_blank"

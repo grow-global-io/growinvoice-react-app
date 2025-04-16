@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 import TextField, { TextFieldProps } from "@mui/material/TextField";
-import PhoneInput from "react-phone-number-input";
+import PhoneInput, { Country } from "react-phone-number-input";
 import { FieldProps, getIn } from "formik";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -17,8 +17,9 @@ export const PhoneInputFormField: React.FC<
 	FieldProps & {
 		label?: string;
 		required?: boolean;
+		defaultCountry?: Country;
 	}
-> = ({ field, form, label, ...props }) => {
+> = ({ field, form, label, defaultCountry,...props }) => {
 	const errorText = getIn(form.touched, field.name) && getIn(form.errors, field.name);
 
 	return (
@@ -33,7 +34,7 @@ export const PhoneInputFormField: React.FC<
 			<PhoneInput
 				limitMaxLength
 				addInternationalOption={false}
-				defaultCountry="IN"
+				defaultCountry={defaultCountry ?? "IN"}
 				inputComponent={CustomPhoneInput}
 				fullWidth
 				id={field.name}

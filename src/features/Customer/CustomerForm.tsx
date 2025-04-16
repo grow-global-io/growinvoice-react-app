@@ -39,6 +39,7 @@ import { RegexExp } from "@shared/regex";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { useQueryClient } from "@tanstack/react-query";
 import Loader from "@shared/components/Loader";
+import { useAuthControllerStatus } from "@api/services/auth";
 
 const CustomerForm = () => {
 	const queryClient = useQueryClient();
@@ -47,6 +48,7 @@ const CustomerForm = () => {
 	const currencyList = useCurrencyControllerFindAll();
 	const { user } = useAuthStore();
 	const updateCustomer = useCustomerControllerUpdate();
+	const { data: userData, isLoading, isRefetching } = useAuthControllerStatus();
 
 	const { setOpenCustomerForm, editValues } = useCreateCustomerStore.getState();
 	const initialValues: CreateCustomerWithAddressDto = {
@@ -138,7 +140,8 @@ const CustomerForm = () => {
 		actions.setSubmitting(false);
 	};
 
-	if (countryFindAll.isLoading || currencyList.isLoading) return <Loader />;
+	if (countryFindAll.isLoading || currencyList.isLoading || isLoading || isRefetching)
+		return <Loader />;
 
 	return (
 		<Box sx={{ width: { lg: "700px" } }} role="presentation">
@@ -216,7 +219,7 @@ const CustomerForm = () => {
 											/>
 										</Grid>
 										<Grid item xs={12} sm={6}>
-											<Field name="phone" label="Phone" component={PhoneInputFormField} />
+											<Field name="phone" label="Phone" component={PhoneInputFormField} defaultCountry={userData?.company?.[0]?.country?.code ?? undefined} />
 										</Grid>
 										<Grid item xs={12} sm={6}>
 											<Field name="website" label="Website" component={TextFormField} />

@@ -5,12 +5,12 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
-import type { CompanyDto } from "./companyDto";
+import type { Company } from "./company";
 import type { UserWithCompanyDtoCurrency } from "./userWithCompanyDtoCurrency";
 import type { UserPlansDto } from "./userPlansDto";
 
 export interface UserWithCompanyDto {
-	company?: CompanyDto[];
+	company?: Company[];
 	createdAt: string;
 	/** @nullable */
 	currency?: UserWithCompanyDtoCurrency;

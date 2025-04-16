@@ -15,6 +15,7 @@ import {
 import AvatarFormField from "@shared/components/FormFields/AvatarFormField";
 import Loader from "@shared/components/Loader";
 import { useQueryClient } from "@tanstack/react-query";
+import { getAuthControllerStatusQueryKey } from "@api/services/auth";
 
 const Company = () => {
 	const queryClient = useQueryClient();
@@ -58,6 +59,9 @@ const Company = () => {
 		queryClient?.refetchQueries({
 			queryKey: getCompanyControllerFindOneQueryKey(user?.company?.[0]?.id ?? ""),
 		});
+		queryClient.refetchQueries({
+			queryKey:getAuthControllerStatusQueryKey()
+		})
 		actions.resetForm();
 	};
 

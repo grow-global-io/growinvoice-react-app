@@ -936,7 +936,11 @@ export const usePaymentsControllerStripePayment = <
 export const paymentsControllerGrowlimitlessPayment = (
 	params: PaymentsControllerGrowlimitlessPaymentParams,
 ) => {
-	return authInstance<void>({ url: `/api/payments/growlimitlessPayment`, method: "POST", params });
+	return authInstance<string>({
+		url: `/api/payments/growlimitlessPayment`,
+		method: "POST",
+		params,
+	});
 };
 
 export const getPaymentsControllerGrowlimitlessPaymentMutationOptions = <

@@ -35,7 +35,7 @@ const Sidebar = ({ children }: { children: React.ReactNode }) => {
 			path: "/setting/quotation",
 		},
 		{
-			menuName: "Products",
+			menuName: "Product Unit",
 			path: "/setting/productunit",
 		},
 		{

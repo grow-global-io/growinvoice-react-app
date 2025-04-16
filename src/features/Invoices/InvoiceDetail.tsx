@@ -234,7 +234,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 	];
 
 	const buttonListForSmallSrn = [
-		...((buttonList ?? []).filter((item) => item.name !== "Print")),
+		...(buttonList ?? []).filter((item) => item.name !== "Print"),
 		{
 			name: "Share",
 			icon: ShareOutlined,

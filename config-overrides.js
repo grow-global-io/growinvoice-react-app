@@ -5,7 +5,7 @@ const {
 	addBundleVisualizer,
 	addWebpackAlias,
 	adjustWorkbox,
-	useEslintRc
+	useEslintRc,
 } = require("customize-cra");
 const path = require("path");
 
