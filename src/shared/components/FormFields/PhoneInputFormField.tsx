@@ -19,7 +19,7 @@ export const PhoneInputFormField: React.FC<
 		required?: boolean;
 		defaultCountry?: Country;
 	}
-> = ({ field, form, label, defaultCountry,...props }) => {
+> = ({ field, form, label, defaultCountry, ...props }) => {
 	const errorText = getIn(form.touched, field.name) && getIn(form.errors, field.name);
 
 	return (

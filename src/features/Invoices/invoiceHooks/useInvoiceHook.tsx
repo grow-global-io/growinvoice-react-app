@@ -17,6 +17,7 @@ import {
 import {
 	paymentsControllerRazorpayPayment,
 	paymentsControllerSuccessRazorpay,
+	usePaymentsControllerGrowlimitlessPayment,
 	usePaymentsControllerStripePayment,
 } from "@api/services/payments";
 import { formatDateToIso } from "@shared/formatter";
@@ -37,9 +38,16 @@ export const useInvoiceHook = () => {
 	const markedPaid = useInvoiceControllerMarkedAsPaid();
 	const markedMailedSent = useInvoiceControllerMarkedAsMailed();
 	const createstripPaymentUrl = usePaymentsControllerStripePayment();
+	const createGllPaymentUrl = usePaymentsControllerGrowlimitlessPayment();
 	const handleRedirectStripePayment = async (invoiceId: string, user_id: string) => {
 		const params = { invoice_id: invoiceId, user_id };
 		const response = await createstripPaymentUrl.mutateAsync({ params });
+		window.location.href = response;
+	};
+
+	const handleRedirectGllPayment = async (invoiceId: string, user_id: string) => {
+		const params = { invoice_id: invoiceId, user_id };
+		const response = await createGllPaymentUrl.mutateAsync({ params });
 		window.location.href = response;
 	};
 
@@ -233,5 +241,6 @@ export const useInvoiceHook = () => {
 		handlePaid,
 		handleMailedSent,
 		handleRazorPayPayment,
+		handleRedirectGllPayment,
 	};
 };

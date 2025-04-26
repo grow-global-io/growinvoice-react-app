@@ -6,8 +6,4 @@
  * OpenAPI spec version: 1.0
  */
 
-export type PaymentsControllerSuccessParams = {
-	session_id: string;
-	invoice_id: string;
-	user_id: string;
-};
+export type PaymentsControllerGrowlimitlessPayment201 = string

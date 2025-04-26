@@ -69,6 +69,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 		handleEdit,
 		handleRedirectStripePayment,
 		handleRazorPayPayment,
+		handleRedirectGllPayment
 	} = useInvoiceHook();
 	const { setOpenPaymentFormWithInvoiceId } = useCreatePaymentStore.getState();
 
@@ -91,6 +92,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 	});
 	const StripeObject = enabledpayment?.data?.find((item) => item?.type === "Stripe");
 	const razorpayObject = enabledpayment?.data?.find((item) => item?.type === "Razorpay");
+	const gllObject = enabledpayment?.data?.find((item) => item?.type === "Growlimitless");
 
 	useEffect(() => {
 		if (iframeRef.current && !getHtmlText.isLoading && getHtmlText.isSuccess) {
@@ -366,6 +368,16 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 								variant="outlined"
 							>
 								Payment With Stripe
+							</Button>
+						)}
+						{gllObject && getInvoiceData?.data?.status !== "Paid" && (
+							<Button
+								onClick={() => {
+									handleRedirectGllPayment(invoiceId, getInvoiceData?.data?.user_id ?? "");
+								}}
+								variant="outlined"
+							>
+								Payment With Growlimitless
 							</Button>
 						)}
 						{razorpayObject && getInvoiceData?.data?.status !== "Paid" && (

@@ -22,11 +22,12 @@ import type {
 	CreatePaymentsDto,
 	Payments,
 	PaymentsControllerCreate200,
+	PaymentsControllerGrowlimitlessPayment201,
 	PaymentsControllerGrowlimitlessPaymentParams,
+	PaymentsControllerGrowlimitlessSuccessParams,
 	PaymentsControllerRazorpayPaymentParams,
 	PaymentsControllerStripePaymentForPlansParams,
 	PaymentsControllerStripePaymentParams,
-	PaymentsControllerSuccessParams,
 	PaymentsControllerSuccessPlansParams,
 	PaymentsControllerSuccessRazorpayParams,
 	PaymentsControllerUpdate200,
@@ -41,60 +42,71 @@ type AwaitedInput<T> = PromiseLike<T> | T;
 
 type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
-export const paymentsControllerSuccess = (
-	params: PaymentsControllerSuccessParams,
+export const paymentsControllerGrowlimitlessSuccess = (
+	params: PaymentsControllerGrowlimitlessSuccessParams,
 	signal?: AbortSignal,
 ) => {
 	return authInstance<void>({ url: `/api/payments/success`, method: "GET", params, signal });
 };
 
-export const getPaymentsControllerSuccessQueryKey = (params: PaymentsControllerSuccessParams) => {
+export const getPaymentsControllerGrowlimitlessSuccessQueryKey = (
+	params: PaymentsControllerGrowlimitlessSuccessParams,
+) => {
 	return [`/api/payments/success`, ...(params ? [params] : [])] as const;
 };
 
-export const getPaymentsControllerSuccessQueryOptions = <
-	TData = Awaited<ReturnType<typeof paymentsControllerSuccess>>,
+export const getPaymentsControllerGrowlimitlessSuccessQueryOptions = <
+	TData = Awaited<ReturnType<typeof paymentsControllerGrowlimitlessSuccess>>,
 	TError = ErrorType<unknown>,
 >(
-	params: PaymentsControllerSuccessParams,
+	params: PaymentsControllerGrowlimitlessSuccessParams,
 	options?: {
 		query?: Partial<
-			UseQueryOptions<Awaited<ReturnType<typeof paymentsControllerSuccess>>, TError, TData>
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerGrowlimitlessSuccess>>,
+				TError,
+				TData
+			>
 		>;
 	},
 ) => {
 	const { query: queryOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getPaymentsControllerSuccessQueryKey(params);
+	const queryKey =
+		queryOptions?.queryKey ?? getPaymentsControllerGrowlimitlessSuccessQueryKey(params);
 
-	const queryFn: QueryFunction<Awaited<ReturnType<typeof paymentsControllerSuccess>>> = ({
-		signal,
-	}) => paymentsControllerSuccess(params, signal);
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof paymentsControllerGrowlimitlessSuccess>>
+	> = ({ signal }) => paymentsControllerGrowlimitlessSuccess(params, signal);
 
 	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-		Awaited<ReturnType<typeof paymentsControllerSuccess>>,
+		Awaited<ReturnType<typeof paymentsControllerGrowlimitlessSuccess>>,
 		TError,
 		TData
 	> & { queryKey: QueryKey };
 };
 
-export type PaymentsControllerSuccessQueryResult = NonNullable<
-	Awaited<ReturnType<typeof paymentsControllerSuccess>>
+export type PaymentsControllerGrowlimitlessSuccessQueryResult = NonNullable<
+	Awaited<ReturnType<typeof paymentsControllerGrowlimitlessSuccess>>
 >;
-export type PaymentsControllerSuccessQueryError = ErrorType<unknown>;
+export type PaymentsControllerGrowlimitlessSuccessQueryError = ErrorType<unknown>;
 
-export function usePaymentsControllerSuccess<
-	TData = Awaited<ReturnType<typeof paymentsControllerSuccess>>,
+export function usePaymentsControllerGrowlimitlessSuccess<
+	TData = Awaited<ReturnType<typeof paymentsControllerGrowlimitlessSuccess>>,
 	TError = ErrorType<unknown>,
 >(
-	params: PaymentsControllerSuccessParams,
+	params: PaymentsControllerGrowlimitlessSuccessParams,
 	options: {
 		query: Partial<
-			UseQueryOptions<Awaited<ReturnType<typeof paymentsControllerSuccess>>, TError, TData>
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerGrowlimitlessSuccess>>,
+				TError,
+				TData
+			>
 		> &
 			Pick<
 				DefinedInitialDataOptions<
-					Awaited<ReturnType<typeof paymentsControllerSuccess>>,
+					Awaited<ReturnType<typeof paymentsControllerGrowlimitlessSuccess>>,
 					TError,
 					TData
 				>,
@@ -102,18 +114,22 @@ export function usePaymentsControllerSuccess<
 			>;
 	},
 ): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function usePaymentsControllerSuccess<
-	TData = Awaited<ReturnType<typeof paymentsControllerSuccess>>,
+export function usePaymentsControllerGrowlimitlessSuccess<
+	TData = Awaited<ReturnType<typeof paymentsControllerGrowlimitlessSuccess>>,
 	TError = ErrorType<unknown>,
 >(
-	params: PaymentsControllerSuccessParams,
+	params: PaymentsControllerGrowlimitlessSuccessParams,
 	options?: {
 		query?: Partial<
-			UseQueryOptions<Awaited<ReturnType<typeof paymentsControllerSuccess>>, TError, TData>
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerGrowlimitlessSuccess>>,
+				TError,
+				TData
+			>
 		> &
 			Pick<
 				UndefinedInitialDataOptions<
-					Awaited<ReturnType<typeof paymentsControllerSuccess>>,
+					Awaited<ReturnType<typeof paymentsControllerGrowlimitlessSuccess>>,
 					TError,
 					TData
 				>,
@@ -121,30 +137,38 @@ export function usePaymentsControllerSuccess<
 			>;
 	},
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey };
-export function usePaymentsControllerSuccess<
-	TData = Awaited<ReturnType<typeof paymentsControllerSuccess>>,
+export function usePaymentsControllerGrowlimitlessSuccess<
+	TData = Awaited<ReturnType<typeof paymentsControllerGrowlimitlessSuccess>>,
 	TError = ErrorType<unknown>,
 >(
-	params: PaymentsControllerSuccessParams,
+	params: PaymentsControllerGrowlimitlessSuccessParams,
 	options?: {
 		query?: Partial<
-			UseQueryOptions<Awaited<ReturnType<typeof paymentsControllerSuccess>>, TError, TData>
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerGrowlimitlessSuccess>>,
+				TError,
+				TData
+			>
 		>;
 	},
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
-export function usePaymentsControllerSuccess<
-	TData = Awaited<ReturnType<typeof paymentsControllerSuccess>>,
+export function usePaymentsControllerGrowlimitlessSuccess<
+	TData = Awaited<ReturnType<typeof paymentsControllerGrowlimitlessSuccess>>,
 	TError = ErrorType<unknown>,
 >(
-	params: PaymentsControllerSuccessParams,
+	params: PaymentsControllerGrowlimitlessSuccessParams,
 	options?: {
 		query?: Partial<
-			UseQueryOptions<Awaited<ReturnType<typeof paymentsControllerSuccess>>, TError, TData>
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerGrowlimitlessSuccess>>,
+				TError,
+				TData
+			>
 		>;
 	},
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-	const queryOptions = getPaymentsControllerSuccessQueryOptions(params, options);
+	const queryOptions = getPaymentsControllerGrowlimitlessSuccessQueryOptions(params, options);
 
 	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
@@ -936,7 +960,7 @@ export const usePaymentsControllerStripePayment = <
 export const paymentsControllerGrowlimitlessPayment = (
 	params: PaymentsControllerGrowlimitlessPaymentParams,
 ) => {
-	return authInstance<string>({
+	return authInstance<PaymentsControllerGrowlimitlessPayment201>({
 		url: `/api/payments/growlimitlessPayment`,
 		method: "POST",
 		params,

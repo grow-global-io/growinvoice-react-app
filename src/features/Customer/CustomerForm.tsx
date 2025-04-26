@@ -219,7 +219,12 @@ const CustomerForm = () => {
 											/>
 										</Grid>
 										<Grid item xs={12} sm={6}>
-											<Field name="phone" label="Phone" component={PhoneInputFormField} defaultCountry={userData?.company?.[0]?.country?.code ?? undefined} />
+											<Field
+												name="phone"
+												label="Phone"
+												component={PhoneInputFormField}
+												defaultCountry={userData?.company?.[0]?.country?.code ?? undefined}
+											/>
 										</Grid>
 										<Grid item xs={12} sm={6}>
 											<Field name="website" label="Website" component={TextFormField} />

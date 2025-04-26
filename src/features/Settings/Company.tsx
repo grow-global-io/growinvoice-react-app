@@ -60,8 +60,8 @@ const Company = () => {
 			queryKey: getCompanyControllerFindOneQueryKey(user?.company?.[0]?.id ?? ""),
 		});
 		queryClient.refetchQueries({
-			queryKey:getAuthControllerStatusQueryKey()
-		})
+			queryKey: getAuthControllerStatusQueryKey(),
+		});
 		actions.resetForm();
 	};
 
