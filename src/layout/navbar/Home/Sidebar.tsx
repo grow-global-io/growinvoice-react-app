@@ -35,8 +35,11 @@ import NotificationMain from "@features/Notification/NotificationMain";
 import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined";
 import { FaFileInvoice } from "react-icons/fa6";
 import SignalCellularAltOutlinedIcon from "@mui/icons-material/SignalCellularAltOutlined";
+import { useQueryClient } from "@tanstack/react-query";
+
 const drawerWidth = 240;
 function Sidebar({ children }: { children: React.ReactNode }) {
+	const queryClient = useQueryClient();
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
 	const { logout } = useAuthStore();
@@ -59,6 +62,7 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 		{
 			name: "Logout",
 			func: () => {
+				queryClient.clear();
 				logout();
 			},
 		},

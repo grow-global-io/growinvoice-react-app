@@ -17,6 +17,7 @@ interface AuthStore {
 	refecthUser: () => void;
 }
 
+
 export const useAuthStore = create<AuthStore>((set, getStore) => ({
 	isLoggedIn: false,
 	user: null,
@@ -29,7 +30,6 @@ export const useAuthStore = create<AuthStore>((set, getStore) => ({
 	logout: () => {
 		localStorage.clear();
 		sessionStorage.clear();
-		window.location.reload();
 		set({ isLoggedIn: false, user: null });
 	},
 	setToken: (token) => {

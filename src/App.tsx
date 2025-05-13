@@ -33,9 +33,10 @@ import { GateWayDialog } from "@features/GatewayDetails/GateWayDetailsIndex";
 import "react-toastify/dist/ReactToastify.css";
 import useSocket from "@shared/hooks/useNotificationSocket";
 import PlansPage from "@pages/PlansPage";
-import React from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 function AppContainer() {
+	const queryClient = useQueryClient();
 	const { isLoggedIn, logout, validateToken, user } = useAuthStore();
 	const [isLoading, setIsLoading] = useState(true);
 	const location = useLocation(); // Get the current path
@@ -47,6 +48,7 @@ function AppContainer() {
 				setIsLoading(false);
 			})
 			.catch(() => {
+				queryClient.clear();
 				logout();
 				setIsLoading(false);
 			});
