@@ -48,7 +48,7 @@ export const useInvoiceHook = () => {
 	const handleRedirectGllPayment = async (invoiceId: string, user_id: string) => {
 		const params = { invoice_id: invoiceId, user_id };
 		const response = await createGllPaymentUrl.mutateAsync({ params });
-		window.location.href = response;
+		window.location.href = response as unknown as string;
 	};
 
 	const handleRazorPayPayment = useCallback(

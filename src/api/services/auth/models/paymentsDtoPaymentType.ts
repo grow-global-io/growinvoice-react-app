@@ -21,4 +21,5 @@ export const PaymentsDtoPaymentType = {
 	Mollie: "Mollie",
 	Cash: "Cash",
 	Cheque: "Cheque",
+	GrowLimitLess: "GrowLimitLess",
 } as const;

@@ -70,7 +70,7 @@ const SubtotalFooter = ({
 						/>
 					</Grid>
 					<Grid item xs={12} sm={6}>
-						<Typography variant="h5">Taxes</Typography>
+						<Typography variant="h5">Taxes (Extra)</Typography>
 					</Grid>
 					<Grid item xs={12} sm={6} textAlign={"right"}>
 						<Field

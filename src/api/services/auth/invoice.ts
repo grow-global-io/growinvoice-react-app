@@ -737,7 +737,7 @@ export function useInvoiceControllerInvoiceCount<
 }
 
 export const invoiceControllerFindDueInvoices = (signal?: AbortSignal) => {
-	return authInstance<Invoice[]>({ url: `/api/invoice/due`, method: "GET", signal });
+	return authInstance<InvoiceWithAllDataDto[]>({ url: `/api/invoice/due`, method: "GET", signal });
 };
 
 export const getInvoiceControllerFindDueInvoicesQueryKey = () => {

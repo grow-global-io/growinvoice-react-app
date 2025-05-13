@@ -284,3 +284,14 @@ export function snakeToReadableText(snakeStr: string): string {
 		.map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize the first letter of each word
 		.join(" "); // Join the words with spaces
 }
+
+// IndianBank to Indian Bank
+// EuropeanBank to European Bank
+export function convertToReadableText(snakeStr: string): string {
+	return snakeStr
+		.replace(/([a-z])([A-Z])/g, "$1 $2") // Add space before capital letters
+		.replace(/([A-Z])([A-Z][a-z])/g, "$1 $2") // Add space between consecutive capital letters and lowercase letters
+		.replace(/([a-z])([A-Z])/g, "$1 $2") // Add space between lowercase and uppercase letters
+		.replace(/([A-Z])([A-Z])/g, "$1 $2") // Add space between consecutive capital letters
+		.trim(); // Remove leading/trailing spaces
+}

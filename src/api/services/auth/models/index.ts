@@ -176,6 +176,7 @@ export * from "./paymentsControllerGrowlimitlessSuccessParams";
 export * from "./paymentsControllerRazorpayPaymentParams";
 export * from "./paymentsControllerStripePaymentForPlansParams";
 export * from "./paymentsControllerStripePaymentParams";
+export * from "./paymentsControllerSuccessParams";
 export * from "./paymentsControllerSuccessPlansParams";
 export * from "./paymentsControllerSuccessRazorpayParams";
 export * from "./paymentsControllerUpdate200";

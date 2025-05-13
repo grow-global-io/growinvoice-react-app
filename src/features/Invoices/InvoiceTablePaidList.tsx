@@ -4,19 +4,17 @@ import { Chip, Typography } from "@mui/material";
 import { Constants } from "@shared/constants";
 import { useInvoiceControllerFindPaidInvoices } from "@api/services/invoice";
 import Loader from "@shared/components/Loader";
-import { Invoice } from "@api/services/models";
 import { currencyFormatter, parseDateStringToFormat } from "@shared/formatter";
-import { useAuthStore } from "@store/auth";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import { useInvoiceHook } from "./invoiceHooks/useInvoiceHook";
+import { InvoiceWithAllDataDto } from "@api/services/models";
 
 const InvoiceTablePaidList = () => {
-	const { user } = useAuthStore();
 	const invoiceData = useInvoiceControllerFindPaidInvoices();
 	const { handleView } = useInvoiceHook();
 
-	const columns: GridColDef<Invoice>[] = [
+	const columns: GridColDef<InvoiceWithAllDataDto>[] = [
 		{
 			field: "invoice_number",
 			headerName: "Invoice Number",
@@ -87,13 +85,17 @@ const InvoiceTablePaidList = () => {
 		},
 		{
 			field: "paid_amount",
-
 			headerName: "Total Paid Amount",
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
 				return (
-					<Typography>{currencyFormatter(params.value, user?.currency?.short_code)}</Typography>
+					<Typography>
+						{currencyFormatter(
+							params.value,
+							params.row.product?.[0]?.product?.currency?.short_code,
+						)}
+					</Typography>
 				);
 			},
 		},
@@ -104,7 +106,12 @@ const InvoiceTablePaidList = () => {
 			minWidth: 150,
 			renderCell: (params) => {
 				return (
-					<Typography>{currencyFormatter(params?.value, user?.currency?.short_code)}</Typography>
+					<Typography>
+						{currencyFormatter(
+							params?.value,
+							params.row.product?.[0]?.product?.currency?.short_code,
+						)}
+					</Typography>
 				);
 			},
 		},

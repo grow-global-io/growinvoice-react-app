@@ -2,7 +2,6 @@ import { CreatePaymentDetailsDto, CreatePaymentDetailsDtoPaymentType } from "@ap
 import { Box, Button, Grid } from "@mui/material";
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
-import { stringToListDto } from "@shared/models/ListDto";
 import { useAuthStore } from "@store/auth";
 import * as yup from "yup";
 import { Field, Form, Formik, FormikHelpers } from "formik";
@@ -19,6 +18,7 @@ import {
 	getInvoiceControllerFindPaidInvoicesQueryKey,
 } from "@api/services/invoice";
 import Loader from "@shared/components/Loader";
+import { convertToReadableText } from "@shared/formatter";
 
 const validationSchema: yup.Schema<CreatePaymentDetailsDto> = yup.object().shape({
 	paymentType: yup
@@ -153,6 +153,8 @@ const PaymentDetailsForm = ({
 		actions.setSubmitting(false);
 	};
 
+	
+
 	if (paymentId && editPayment.isLoading) {
 		return <Loader />;
 	}
@@ -172,9 +174,10 @@ const PaymentDetailsForm = ({
 									name="paymentType"
 									component={AutocompleteField}
 									label="Payment Type"
-									options={Object.keys(CreatePaymentDetailsDtoPaymentType)
-										.map(stringToListDto)
-										.filter((item) => item.value !== "Cash")}
+									options={Object.keys(CreatePaymentDetailsDtoPaymentType).map((key) => ({
+										label: key === "UPI" ? "UPI ID" : convertToReadableText(key),
+										value: key,
+									}))}
 								/>
 							</Grid>
 							{values.paymentType === "IndianBank" && (

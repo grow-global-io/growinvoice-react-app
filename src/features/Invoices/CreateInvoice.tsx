@@ -24,7 +24,7 @@ import AddIcon from "@mui/icons-material/Add";
 import PaymentDetailsDrawer from "../PaymentsDetails/PaymentDetailsDrawer";
 import { useDialog } from "@shared/hooks/useDialog";
 import { usePaymentdetailsControllerFindAll } from "@api/services/paymentdetails";
-import { CreateInvoiceWithProductsRecurring } from "@api/services/models";
+import { CreateInvoiceWithProductsRecurring, OmitCreateInvoiceProductsDto } from "@api/services/models";
 import { useEffect, useRef, useState } from "react";
 import { GridRowsProp } from "@mui/x-data-grid";
 import {
@@ -49,14 +49,21 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import AppDialogHeader from "@shared/components/Dialog/AppDialogHeader";
 import { useInvoicetemplateControllerFindAll } from "@api/services/invoicetemplate";
-import { formatDateToIso } from "@shared/formatter";
+import { convertToReadableText, formatDateToIso } from "@shared/formatter";
 import SubtotalFooter from "@shared/components/SubtotalFooter";
 import { useInvoicesettingsControllerFindFirst } from "@api/services/invoicesettings";
+
+export type OmitCreateInvoiceProductsExtended = OmitCreateInvoiceProductsDto & {
+	id: string;
+	isNew?: boolean;
+	isEditPosible?: boolean;
+	isEditble?: boolean;
+}
 
 const CreateInvoice = ({ id }: { id?: string }) => {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
-	const [rows, setRows] = useState<GridRowsProp>([]);
+	const [rows, setRows] = useState<GridRowsProp<OmitCreateInvoiceProductsExtended>>([]);
 	const [productErrorText, setProductErrorText] = useState<string | undefined>(undefined);
 	const { open, handleClickOpen, handleClose } = useDialog();
 	const {
@@ -408,7 +415,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 											component={AutocompleteField}
 											options={paymentData?.data?.map((payment) => ({
 												value: payment.id,
-												label: payment.paymentType,
+												label: payment.paymentType === "UPI" ? payment.paymentType : convertToReadableText(payment.paymentType),
 											}))}
 											loading={paymentData.isLoading}
 											isRequired={true}

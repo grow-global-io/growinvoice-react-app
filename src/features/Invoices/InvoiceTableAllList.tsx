@@ -4,7 +4,7 @@ import { Chip, Tooltip, Typography } from "@mui/material";
 import { Constants } from "@shared/constants";
 import { useInvoiceControllerFindAll } from "@api/services/invoice";
 import Loader from "@shared/components/Loader";
-import { Invoice } from "@api/services/models";
+import { InvoiceWithAllDataDto } from "@api/services/models";
 import { currencyFormatter, parseDateStringToFormat } from "@shared/formatter";
 import { useAuthStore } from "@store/auth";
 import EditIcon from "@mui/icons-material/Edit";
@@ -18,10 +18,11 @@ const InvoiceTableAllList = () => {
 	const { user } = useAuthStore();
 	const invoiceData = useInvoiceControllerFindAll();
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
+	console.log(invoiceData?.data);
 
 	const { handleDelete, handleEdit, handleView } = useInvoiceHook();
 
-	const columns: GridColDef<Invoice>[] = [
+	const columns: GridColDef<InvoiceWithAllDataDto>[] = [
 		{
 			field: "invoice_number",
 			headerName: "Invoice Number",
@@ -82,7 +83,12 @@ const InvoiceTableAllList = () => {
 			minWidth: 150,
 			renderCell: (params) => {
 				return (
-					<Typography>{currencyFormatter(params.value, user?.currency?.short_code)}</Typography>
+					<Typography>
+						{currencyFormatter(
+							params.value,
+							params.row.product?.[0]?.product?.currency?.short_code,
+						)}
+					</Typography>
 				);
 			},
 		},
@@ -93,7 +99,12 @@ const InvoiceTableAllList = () => {
 			minWidth: 150,
 			renderCell: (params) => {
 				return (
-					<Typography>{currencyFormatter(params?.value, user?.currency?.short_code)}</Typography>
+					<Typography>
+						{currencyFormatter(
+							params?.value,
+							params.row.product?.[0]?.product?.currency?.short_code,
+						)}
+					</Typography>
 				);
 			},
 		},

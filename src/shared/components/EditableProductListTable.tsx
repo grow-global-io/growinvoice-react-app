@@ -26,10 +26,10 @@ import { useProductControllerFindAll } from "@api/services/product";
 import { currencyFormatter } from "@shared/formatter";
 import CreateProduct from "@features/Products/CreateProduct";
 import { FormikProps } from "formik";
-import { OmitCreateInvoiceProductsDto } from "@api/services/models";
 import { useTaxcodeControllerFindAll } from "@api/services/tax-code";
 import { useHsncodeControllerFindAll } from "@api/services/hsncode";
 import { CustomIconButton } from "./CustomIconButton";
+import { OmitCreateInvoiceProductsExtended } from "@features/Invoices/CreateInvoice";
 
 export default function FullFeaturedCrudGrid({
 	rows,
@@ -38,8 +38,8 @@ export default function FullFeaturedCrudGrid({
 	setErrorText,
 	formik,
 }: {
-	rows: GridRowsProp;
-	setRows: React.Dispatch<React.SetStateAction<GridRowsProp>>;
+	rows: GridRowsProp<OmitCreateInvoiceProductsExtended>;
+	setRows: React.Dispatch<React.SetStateAction<GridRowsProp<OmitCreateInvoiceProductsExtended>>>;
 	errorText: string | undefined;
 	setErrorText: React.Dispatch<React.SetStateAction<string | undefined>>;
 	// eslint-disable-next-line
@@ -60,7 +60,7 @@ export default function FullFeaturedCrudGrid({
 					total: row.total,
 					tax_id: row.tax_id,
 					hsnCode_id: row.hsnCode_id,
-				} as OmitCreateInvoiceProductsDto;
+				};
 			}),
 		);
 		const tax = taxCodes?.data?.find((tax) => tax.id === formik?.values.tax_id);
@@ -127,7 +127,7 @@ export default function FullFeaturedCrudGrid({
 		setErrorText("");
 	};
 
-	const processRowUpdate = (newRow: GridRowModel) => {
+	const processRowUpdate = (newRow: GridRowModel<OmitCreateInvoiceProductsExtended>) => {
 		if (!newRow.product_id) {
 			setErrorText("Product must be selected before saving.");
 			return newRow;
@@ -145,15 +145,15 @@ export default function FullFeaturedCrudGrid({
 	const handleAddRow = () => {
 		setErrorText(undefined);
 		const randomInRange = Math.floor(Math.random() * (10000 - 1 + 1)) + 1;
-		const id = rows.length + 2 + randomInRange;
+		const id:string = rows.length + 2 + randomInRange + "";
 		setRows((oldRows) => [
 			...oldRows,
 			{
 				id,
 				product_id: "",
-				quantity: "",
-				price: "",
-				total: "",
+				quantity: 0,
+				price: 0,
+				total: 0,
 				hsnCode_id: "",
 				tax_id: "",
 				isNew: true,
@@ -184,13 +184,13 @@ export default function FullFeaturedCrudGrid({
 					const total = selectedProduct?.price
 						? selectedProduct?.price + (selectedProduct?.price * taxPercentage) / 100
 						: 0;
-					const updatedRows = rows.map((row) => {
+					const updatedRows:OmitCreateInvoiceProductsExtended[] = rows.map((row) => {
 						if (row.id === params.id) {
 							return {
 								...row,
 								product_id: value,
 								quantity: 1,
-								price: selectedProduct?.price,
+								price: selectedProduct?.price ?? 0,
 								total: total,
 								tax_id: selectedProduct?.tax_id,
 								hsnCode_id: selectedProduct?.hsnCode_id,
@@ -263,9 +263,7 @@ export default function FullFeaturedCrudGrid({
 					} else {
 						setErrorText("");
 					}
-					const price = productList?.data?.find(
-						(product) => product.id === params.row.product_id,
-					)?.price;
+					const price = params.row.price;
 					const taxPercentage =
 						taxCodes?.data?.find((item) => item.id === params.row.tax_id)?.percentage ?? 0;
 					params.api.setEditCellValue({
@@ -304,9 +302,45 @@ export default function FullFeaturedCrudGrid({
 			headerName: "Price",
 			flex: 0.8,
 			editable: true,
-			renderEditCell: (params) => (
-				<GridTextField params={params} label="price" type="number" disabled={true} />
-			),
+			preProcessEditCellProps: (params) => {
+				const hasError = params.props.value < 1;
+				return { ...params.props, error: hasError };
+			},
+			renderEditCell: (params) => {
+					const onChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
+					const value = parseInt(event.target.value, 10);
+					if (value < 1) {
+						setErrorText("Price should not be less than 0");
+					} else {
+						setErrorText("");
+					}
+					const quantity = params.row.quantity;
+					const taxPercentage =
+						taxCodes?.data?.find((item) => item.id === params.row.tax_id)?.percentage ?? 0;
+					params.api.setEditCellValue({
+						id: params.id,
+						field: "total",
+						value: quantity ? quantity * value + (quantity * value * taxPercentage) / 100 : 0,
+					});
+					const updatedRows = rows.map((row) => {
+						if (row.id === params.id) {
+							return {
+								...row,
+								price: value,
+								total: quantity ? quantity * value + (quantity * value * taxPercentage) / 100 : 0,
+							};
+						}
+						return row;
+					});
+					setRows(updatedRows);
+				};
+				return (
+					<GridTextField params={params} label="price" type="number"
+						onChangeValue={onChangeValue}
+						disabled={params.row.product_id === ""}
+					/>
+				)
+			},
 			renderCell: (params) => {
 				return (
 					<Typography>

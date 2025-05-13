@@ -15,8 +15,6 @@ const commonHooks = {
 };
 
 const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:8080";
-console.log(process.env.REACT_APP_BASE_URL)
-
 const AUTH_API = `${BASE_URL}`;
 const instanceTemplate = `import Axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { http } from "../../shared/axios";

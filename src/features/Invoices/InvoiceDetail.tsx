@@ -35,6 +35,8 @@ import { useInvoiceHook } from "./invoiceHooks/useInvoiceHook";
 import { useCreatePaymentStore } from "@store/createPaymentStore";
 import { useGatewaydetailsControllerFindEnabledAll } from "@api/services/gatewaydetails";
 import PrintOutlined from "@mui/icons-material/PrintOutlined";
+import { useDialog } from "@shared/hooks/useDialog";
+import ShareInvoice from "./ShareInvoice";
 
 const styles = {
 	width: { xs: "100%", sm: "auto" },
@@ -54,6 +56,7 @@ const styles = {
 
 const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: boolean }) => {
 	const navigate = useNavigate();
+	const [shareInvoiceId, setShareInvoiceId] = useState<string | null>(null);
 	const [moreAnchorEl, setMoreAnchorEl] = useState<null | HTMLElement>(null);
 	const [menuIconAnchorEl, setMenuIconAnchorEl] = useState<null | HTMLElement>(null);
 	const iframeRef = useRef<HTMLIFrameElement | null>(null);
@@ -62,14 +65,13 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 	const isMobile = useMediaQuery("(max-width:800px)");
 	const {
 		handleDelete,
-		handleShare,
 		handlePaid,
 		handleMailedSent,
 		handleSendMail,
 		handleEdit,
 		handleRedirectStripePayment,
 		handleRazorPayPayment,
-		handleRedirectGllPayment
+		handleRedirectGllPayment,
 	} = useInvoiceHook();
 	const { setOpenPaymentFormWithInvoiceId } = useCreatePaymentStore.getState();
 
@@ -137,11 +139,15 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 		});
 	};
 
+	const { handleClickOpen, handleClose, open } = useDialog();
+
 	const menuLists = [
 		{
 			name: "Share",
 			func: () => {
-				handleShare(invoiceId);
+				// handleShare(invoiceId);
+				setShareInvoiceId(invoiceId);
+				handleClickOpen();
 				handleCloseAll();
 			},
 		},
@@ -489,6 +495,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 					}}
 				/>
 			)}
+			<ShareInvoice open={open} handleClose={handleClose} invoiceId={shareInvoiceId ?? ""} />
 		</Box>
 	);
 };
