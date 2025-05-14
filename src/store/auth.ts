@@ -17,7 +17,6 @@ interface AuthStore {
 	refecthUser: () => void;
 }
 
-
 export const useAuthStore = create<AuthStore>((set, getStore) => ({
 	isLoggedIn: false,
 	user: null,

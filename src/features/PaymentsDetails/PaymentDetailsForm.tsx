@@ -153,8 +153,6 @@ const PaymentDetailsForm = ({
 		actions.setSubmitting(false);
 	};
 
-	
-
 	if (paymentId && editPayment.isLoading) {
 		return <Loader />;
 	}
@@ -180,7 +178,7 @@ const PaymentDetailsForm = ({
 									}))}
 								/>
 							</Grid>
-							{values.paymentType === "IndianBank" && (
+							{values.paymentType === "IndianBanks" && (
 								<>
 									<Grid item xs={12}>
 										<Field name="account_no" label="Account Number" component={TextFormField} />

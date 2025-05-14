@@ -24,7 +24,10 @@ import AddIcon from "@mui/icons-material/Add";
 import PaymentDetailsDrawer from "../PaymentsDetails/PaymentDetailsDrawer";
 import { useDialog } from "@shared/hooks/useDialog";
 import { usePaymentdetailsControllerFindAll } from "@api/services/paymentdetails";
-import { CreateInvoiceWithProductsRecurring, OmitCreateInvoiceProductsDto } from "@api/services/models";
+import {
+	CreateInvoiceWithProductsRecurring,
+	OmitCreateInvoiceProductsDto,
+} from "@api/services/models";
 import { useEffect, useRef, useState } from "react";
 import { GridRowsProp } from "@mui/x-data-grid";
 import {
@@ -58,7 +61,7 @@ export type OmitCreateInvoiceProductsExtended = OmitCreateInvoiceProductsDto & {
 	isNew?: boolean;
 	isEditPosible?: boolean;
 	isEditble?: boolean;
-}
+};
 
 const CreateInvoice = ({ id }: { id?: string }) => {
 	const navigate = useNavigate();
@@ -415,7 +418,10 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 											component={AutocompleteField}
 											options={paymentData?.data?.map((payment) => ({
 												value: payment.id,
-												label: payment.paymentType === "UPI" ? payment.paymentType : convertToReadableText(payment.paymentType),
+												label:
+													payment.paymentType === "UPI"
+														? payment.paymentType
+														: convertToReadableText(payment.paymentType),
 											}))}
 											loading={paymentData.isLoading}
 											isRequired={true}
@@ -446,7 +452,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 															>
 																{payment.paymentType}
 															</Typography>
-															{payment.paymentType === "IndianBank" && (
+															{payment.paymentType === "IndianBanks" && (
 																<>
 																	<Typography variant="subtitle1">
 																		Account Number: <b>{payment.account_no}</b>

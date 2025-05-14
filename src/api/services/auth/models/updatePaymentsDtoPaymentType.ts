@@ -13,7 +13,6 @@ export type UpdatePaymentsDtoPaymentType =
 export const UpdatePaymentsDtoPaymentType = {
 	UPI: "UPI",
 	EuropeanBank: "EuropeanBank",
-	IndianBank: "IndianBank",
 	SwiftCode: "SwiftCode",
 	Paypal: "Paypal",
 	Stripe: "Stripe",
@@ -22,4 +21,5 @@ export const UpdatePaymentsDtoPaymentType = {
 	Cash: "Cash",
 	Cheque: "Cheque",
 	GrowLimitLess: "GrowLimitLess",
+	IndianBanks: "IndianBanks",
 } as const;

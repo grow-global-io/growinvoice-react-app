@@ -145,7 +145,7 @@ export default function FullFeaturedCrudGrid({
 	const handleAddRow = () => {
 		setErrorText(undefined);
 		const randomInRange = Math.floor(Math.random() * (10000 - 1 + 1)) + 1;
-		const id:string = rows.length + 2 + randomInRange + "";
+		const id: string = rows.length + 2 + randomInRange + "";
 		setRows((oldRows) => [
 			...oldRows,
 			{
@@ -184,7 +184,7 @@ export default function FullFeaturedCrudGrid({
 					const total = selectedProduct?.price
 						? selectedProduct?.price + (selectedProduct?.price * taxPercentage) / 100
 						: 0;
-					const updatedRows:OmitCreateInvoiceProductsExtended[] = rows.map((row) => {
+					const updatedRows: OmitCreateInvoiceProductsExtended[] = rows.map((row) => {
 						if (row.id === params.id) {
 							return {
 								...row,
@@ -307,7 +307,7 @@ export default function FullFeaturedCrudGrid({
 				return { ...params.props, error: hasError };
 			},
 			renderEditCell: (params) => {
-					const onChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
+				const onChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
 					const value = parseInt(event.target.value, 10);
 					if (value < 1) {
 						setErrorText("Price should not be less than 0");
@@ -335,11 +335,14 @@ export default function FullFeaturedCrudGrid({
 					setRows(updatedRows);
 				};
 				return (
-					<GridTextField params={params} label="price" type="number"
+					<GridTextField
+						params={params}
+						label="price"
+						type="number"
 						onChangeValue={onChangeValue}
 						disabled={params.row.product_id === ""}
 					/>
-				)
+				);
 			},
 			renderCell: (params) => {
 				return (
