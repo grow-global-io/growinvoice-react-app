@@ -24,10 +24,13 @@ import type {
 	PaymentsControllerCreate200,
 	PaymentsControllerGrowlimitlessPayment201,
 	PaymentsControllerGrowlimitlessPaymentParams,
+	PaymentsControllerGrowlimitlessPyamentsForPlans201,
+	PaymentsControllerGrowlimitlessPyamentsForPlansParams,
 	PaymentsControllerGrowlimitlessSuccessParams,
 	PaymentsControllerRazorpayPaymentParams,
 	PaymentsControllerStripePaymentForPlansParams,
 	PaymentsControllerStripePaymentParams,
+	PaymentsControllerSuccessGrowlimitlessPlansParams,
 	PaymentsControllerSuccessParams,
 	PaymentsControllerSuccessPlansParams,
 	PaymentsControllerSuccessRazorpayParams,
@@ -401,6 +404,146 @@ export function usePaymentsControllerSuccessPlans<
 	},
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 	const queryOptions = getPaymentsControllerSuccessPlansQueryOptions(params, options);
+
+	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const paymentsControllerSuccessGrowlimitlessPlans = (
+	params: PaymentsControllerSuccessGrowlimitlessPlansParams,
+	signal?: AbortSignal,
+) => {
+	return authInstance<void>({
+		url: `/api/payments/successGrowlimitlessPlans`,
+		method: "GET",
+		params,
+		signal,
+	});
+};
+
+export const getPaymentsControllerSuccessGrowlimitlessPlansQueryKey = (
+	params: PaymentsControllerSuccessGrowlimitlessPlansParams,
+) => {
+	return [`/api/payments/successGrowlimitlessPlans`, ...(params ? [params] : [])] as const;
+};
+
+export const getPaymentsControllerSuccessGrowlimitlessPlansQueryOptions = <
+	TData = Awaited<ReturnType<typeof paymentsControllerSuccessGrowlimitlessPlans>>,
+	TError = ErrorType<unknown>,
+>(
+	params: PaymentsControllerSuccessGrowlimitlessPlansParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerSuccessGrowlimitlessPlans>>,
+				TError,
+				TData
+			>
+		>;
+	},
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey =
+		queryOptions?.queryKey ?? getPaymentsControllerSuccessGrowlimitlessPlansQueryKey(params);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof paymentsControllerSuccessGrowlimitlessPlans>>
+	> = ({ signal }) => paymentsControllerSuccessGrowlimitlessPlans(params, signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof paymentsControllerSuccessGrowlimitlessPlans>>,
+		TError,
+		TData
+	> & { queryKey: QueryKey };
+};
+
+export type PaymentsControllerSuccessGrowlimitlessPlansQueryResult = NonNullable<
+	Awaited<ReturnType<typeof paymentsControllerSuccessGrowlimitlessPlans>>
+>;
+export type PaymentsControllerSuccessGrowlimitlessPlansQueryError = ErrorType<unknown>;
+
+export function usePaymentsControllerSuccessGrowlimitlessPlans<
+	TData = Awaited<ReturnType<typeof paymentsControllerSuccessGrowlimitlessPlans>>,
+	TError = ErrorType<unknown>,
+>(
+	params: PaymentsControllerSuccessGrowlimitlessPlansParams,
+	options: {
+		query: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerSuccessGrowlimitlessPlans>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof paymentsControllerSuccessGrowlimitlessPlans>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function usePaymentsControllerSuccessGrowlimitlessPlans<
+	TData = Awaited<ReturnType<typeof paymentsControllerSuccessGrowlimitlessPlans>>,
+	TError = ErrorType<unknown>,
+>(
+	params: PaymentsControllerSuccessGrowlimitlessPlansParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerSuccessGrowlimitlessPlans>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof paymentsControllerSuccessGrowlimitlessPlans>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function usePaymentsControllerSuccessGrowlimitlessPlans<
+	TData = Awaited<ReturnType<typeof paymentsControllerSuccessGrowlimitlessPlans>>,
+	TError = ErrorType<unknown>,
+>(
+	params: PaymentsControllerSuccessGrowlimitlessPlansParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerSuccessGrowlimitlessPlans>>,
+				TError,
+				TData
+			>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+export function usePaymentsControllerSuccessGrowlimitlessPlans<
+	TData = Awaited<ReturnType<typeof paymentsControllerSuccessGrowlimitlessPlans>>,
+	TError = ErrorType<unknown>,
+>(
+	params: PaymentsControllerSuccessGrowlimitlessPlansParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerSuccessGrowlimitlessPlans>>,
+				TError,
+				TData
+			>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+	const queryOptions = getPaymentsControllerSuccessGrowlimitlessPlansQueryOptions(params, options);
 
 	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
@@ -1204,6 +1347,73 @@ export const usePaymentsControllerStripePaymentForPlans = <
 	TContext
 > => {
 	const mutationOptions = getPaymentsControllerStripePaymentForPlansMutationOptions(options);
+
+	return useMutation(mutationOptions);
+};
+export const paymentsControllerGrowlimitlessPyamentsForPlans = (
+	params: PaymentsControllerGrowlimitlessPyamentsForPlansParams,
+) => {
+	return authInstance<string | PaymentsControllerGrowlimitlessPyamentsForPlans201>({
+		url: `/api/payments/growlimitlessPaymentForPlans`,
+		method: "POST",
+		params,
+	});
+};
+
+export const getPaymentsControllerGrowlimitlessPyamentsForPlansMutationOptions = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof paymentsControllerGrowlimitlessPyamentsForPlans>>,
+		TError,
+		{ params: PaymentsControllerGrowlimitlessPyamentsForPlansParams },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof paymentsControllerGrowlimitlessPyamentsForPlans>>,
+	TError,
+	{ params: PaymentsControllerGrowlimitlessPyamentsForPlansParams },
+	TContext
+> => {
+	const { mutation: mutationOptions } = options ?? {};
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof paymentsControllerGrowlimitlessPyamentsForPlans>>,
+		{ params: PaymentsControllerGrowlimitlessPyamentsForPlansParams }
+	> = (props) => {
+		const { params } = props ?? {};
+
+		return paymentsControllerGrowlimitlessPyamentsForPlans(params);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type PaymentsControllerGrowlimitlessPyamentsForPlansMutationResult = NonNullable<
+	Awaited<ReturnType<typeof paymentsControllerGrowlimitlessPyamentsForPlans>>
+>;
+
+export type PaymentsControllerGrowlimitlessPyamentsForPlansMutationError = ErrorType<unknown>;
+
+export const usePaymentsControllerGrowlimitlessPyamentsForPlans = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof paymentsControllerGrowlimitlessPyamentsForPlans>>,
+		TError,
+		{ params: PaymentsControllerGrowlimitlessPyamentsForPlansParams },
+		TContext
+	>;
+}): UseMutationResult<
+	Awaited<ReturnType<typeof paymentsControllerGrowlimitlessPyamentsForPlans>>,
+	TError,
+	{ params: PaymentsControllerGrowlimitlessPyamentsForPlansParams },
+	TContext
+> => {
+	const mutationOptions =
+		getPaymentsControllerGrowlimitlessPyamentsForPlansMutationOptions(options);
 
 	return useMutation(mutationOptions);
 };

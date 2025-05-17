@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import { useAuthStore } from "@store/auth";
-import { usePaymentsControllerStripePaymentForPlans } from "@api/services/payments";
+import { usePaymentsControllerGrowlimitlessPyamentsForPlans } from "@api/services/payments";
 import { PlanWithFeaturesDto } from "@api/services/models";
 import { formatCurrency } from "@shared/formatter";
 import { useMemo } from "react";
@@ -34,11 +34,11 @@ function formatPlansPriceUnit(days: number) {
 
 const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 	const { user } = useAuthStore();
-	const createPlan = usePaymentsControllerStripePaymentForPlans();
+	const createPlan = usePaymentsControllerGrowlimitlessPyamentsForPlans();
 	const handleUpgradePlan = async () => {
 		const params = { user_id: user?.id ?? "", plan_id: item?.id ?? "" };
 		const response = await createPlan.mutateAsync({ params });
-		window.open(response);
+		window.open(response as string);
 	};
 
 	const checkIsSubscribe = useMemo(() => {
