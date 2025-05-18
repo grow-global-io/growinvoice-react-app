@@ -20,6 +20,7 @@ import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
 import { AttachMoney, ShoppingCart, People, Store, Receipt } from "@mui/icons-material";
+import { useEffect } from "react";
 
 const iconMapping: Record<string, JSX.Element> = {
 	Invoice: <Receipt />,
@@ -53,7 +54,16 @@ const Membership = () => {
 	const navigate = useNavigate();
 	const { user } = useAuthStore();
 	const findAllPlans = usePlansControllerFindAll();
-	const findQuota = useAuthControllerGetUserQuota();
+	const findQuota = useAuthControllerGetUserQuota({
+		query: {
+			enabled: !!user?.id,
+			refetchOnWindowFocus: true,
+			refetchOnMount: true,
+		},
+	});
+	useEffect(()=>{
+		findQuota.refetch();
+	},[])
 	if (findAllPlans?.isLoading || findAllPlans?.isFetching) {
 		return <Loader />;
 	}
