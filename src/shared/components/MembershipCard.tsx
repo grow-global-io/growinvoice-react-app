@@ -38,10 +38,13 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 	const createPlan = usePaymentsControllerGrowlimitlessPyamentsForPlans();
 	const handleUpgradePlan = async () => {
 		const params = { user_id: user?.id ?? "", plan_id: item?.id ?? "" };
-		if(item.price === 0) {
+		if (item.price === 0) {
 			// want to open in same tab
-			window.open(`${environment.baseUrl}/api/payments/successGrowlimitlessPlans?plan_id=${item.id}&user_id=${user?.id}`, "_self");
-			return
+			window.open(
+				`${environment.baseUrl}/api/payments/successGrowlimitlessPlans?plan_id=${item.id}&user_id=${user?.id}`,
+				"_self",
+			);
+			return;
 		}
 		const response = await createPlan.mutateAsync({ params });
 		window.open(response as string, "_self");
@@ -63,7 +66,7 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 			<Grid container sx={style}>
 				<Grid item xs={12} textAlign={"center"}>
 					<Typography variant="h4" p={3}>
-						{item?.name}
+						{item?.name} {checkIsSubscribe ? "(Current Plan)" : ""}
 					</Typography>
 				</Grid>
 				<Grid item xs={12} display={"flex"} justifyContent={"center"} alignItems={"center"}>
@@ -93,9 +96,8 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 						variant="outlined"
 						fullWidth
 						onClick={handleUpgradePlan}
-						disabled={checkIsSubscribe}
 					>
-						{checkIsSubscribe ? "Subscribed Already" : "Upgrade"}
+						Upgrade
 					</Button>
 				</Grid>
 			</Grid>

@@ -12,6 +12,7 @@ export interface CreatePaymentsDto {
 	invoice_id: string;
 	/** @nullable */
 	notes?: string | null;
+	otherId?: string;
 	payment_type?: CreatePaymentsDtoPaymentType;
 	paymentDate?: string;
 	paymentDetails_id: string;

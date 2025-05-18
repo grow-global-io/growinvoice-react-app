@@ -7,7 +7,7 @@
  */
 
 export type PaymentsControllerSuccessGrowlimitlessPlansParams = {
-	session_id: string;
 	plan_id: string;
 	user_id: string;
+	session_id: string;
 };

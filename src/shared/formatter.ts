@@ -295,3 +295,23 @@ export function convertToReadableText(snakeStr: string): string {
 		.replace(/([A-Z])([A-Z])/g, "$1 $2") // Add space between consecutive capital letters
 		.trim(); // Remove leading/trailing spaces
 }
+
+export function numberToOrdinal(number: number): string {
+	if (typeof number !== "number" || isNaN(number)) {
+		return "Invalid input";
+	}
+
+	const suffixes = ["th", "st", "nd", "rd"];
+	const specialTens = [11, 12, 13];
+
+	const lastDigit = number % 10;
+	const lastTwoDigits = number % 100;
+
+	let suffix = suffixes[0]; // Default to 'th'
+
+	if (lastDigit >= 1 && lastDigit <= 3 && !specialTens.includes(lastTwoDigits)) {
+		suffix = suffixes[lastDigit];
+	}
+
+	return number + suffix;
+}

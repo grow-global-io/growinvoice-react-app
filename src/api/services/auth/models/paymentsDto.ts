@@ -15,6 +15,7 @@ export interface PaymentsDto {
 	isExist: boolean;
 	/** @nullable */
 	notes: string | null;
+	otherId: string;
 	payment_type: PaymentsDtoPaymentType;
 	paymentDate: string;
 	paymentDetails_id: string;

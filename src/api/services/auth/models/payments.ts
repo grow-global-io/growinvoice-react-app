@@ -19,6 +19,7 @@ export interface Payments {
 	isExist: boolean;
 	/** @nullable */
 	notes: string | null;
+	otherId: string;
 	payment_type: PaymentsPaymentType;
 	paymentDate: string;
 	paymentDetails?: PaymentDetails;
