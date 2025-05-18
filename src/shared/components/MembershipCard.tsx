@@ -14,6 +14,7 @@ import { usePaymentsControllerGrowlimitlessPyamentsForPlans } from "@api/service
 import { PlanWithFeaturesDto } from "@api/services/models";
 import { formatCurrency } from "@shared/formatter";
 import { useMemo } from "react";
+import { environment } from "@enviroment";
 
 const style = {
 	color: "secondary.dark",
@@ -37,8 +38,13 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 	const createPlan = usePaymentsControllerGrowlimitlessPyamentsForPlans();
 	const handleUpgradePlan = async () => {
 		const params = { user_id: user?.id ?? "", plan_id: item?.id ?? "" };
+		if(item.price === 0) {
+			// want to open in same tab
+			window.open(`${environment.baseUrl}/api/payments/successGrowlimitlessPlans?plan_id=${item.id}&user_id=${user?.id}`, "_self");
+			return
+		}
 		const response = await createPlan.mutateAsync({ params });
-		window.open(response as string);
+		window.open(response as string, "_self");
 	};
 
 	const checkIsSubscribe = useMemo(() => {
