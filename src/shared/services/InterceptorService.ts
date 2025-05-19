@@ -1,6 +1,7 @@
 import { AxiosInstance } from "axios";
 import { AlertService } from "./AlertService";
 import { LoaderService } from "./LoaderService";
+import { toastWithButton } from "./toastWithButton";
 // import { RsaService } from "./RsaService";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -31,7 +32,7 @@ export class InterceptorService {
 		this._axiosInstance.interceptors.response.use(
 			(response) => {
 				if (["post", "put", "delete", "patch"].includes(response.config.method || "")) {
-					if (response?.data?.message) {
+					if (response?.data?.message && response?.data?.message !== "Limit exceeded. Please upgrade your plan to add more features.") {
 						AlertService.instance.successMessage(response.data.message);
 					}
 				}
@@ -41,10 +42,15 @@ export class InterceptorService {
 			(error) => {
 				console.error("[InterceptorService] error", error);
 				// check the error status code
+				LoaderService.instance.hideLoader();
 				if (![401, 404, 500].includes(error.response?.status || 0)) {
 					const message = error.response?.data?.message;
-					if (message) {
+					if (message && message !== "Limit exceeded. Please upgrade your plan to add more features.") {
 						AlertService.instance.errorMessage(message);
+					}
+					if (error.response?.data?.message === "Limit exceeded. Please upgrade your plan to add more features.") {
+						console.log("Limit exceeded. Please upgrade your plan to add more features.");
+						toastWithButton()
 					}
 				}
 
