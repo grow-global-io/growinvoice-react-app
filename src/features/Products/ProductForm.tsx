@@ -39,7 +39,7 @@ const schema: yup.Schema<CreateProductDto> = yup.object({
 		.number()
 		.typeError("Price must be a number")
 		.required("Price is required")
-		.min(1, "Price should be greater than 0"),
+		.min(0.0000000001, "Price should be greater than 0"),
 	description: yup.string().nullable(),
 	user_id: yup.string().required("User id is required"),
 });

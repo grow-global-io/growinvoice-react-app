@@ -303,13 +303,13 @@ export default function FullFeaturedCrudGrid({
 			flex: 0.8,
 			editable: true,
 			preProcessEditCellProps: (params) => {
-				const hasError = params.props.value < 1;
+				const hasError = params.props.value < 0.00001;
 				return { ...params.props, error: hasError };
 			},
 			renderEditCell: (params) => {
 				const onChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
-					const value = parseInt(event.target.value, 10);
-					if (value < 1) {
+					const value = parseFloat(event.target.value);
+					if (value < 0.00001) {
 						setErrorText("Price should not be less than 0");
 					} else {
 						setErrorText("");
