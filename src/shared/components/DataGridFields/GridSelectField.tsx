@@ -50,7 +50,7 @@ const GridSelectField = ({
 						field: params.field,
 						value: value?.value,
 					});
-					onChangeValue?.(event as any, value?.value as string	);
+					onChangeValue?.(event, value?.value as string	);
 				}}
 				renderInput={(params) => (
 					<TextField
