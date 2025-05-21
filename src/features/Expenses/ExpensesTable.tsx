@@ -33,7 +33,7 @@ const ExpensesTable = () => {
 	const columns: GridColDef[] = [
 		{
 			field: "vendor",
-			headerName: "Vendro Name",
+			headerName: "Vendor Name",
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {

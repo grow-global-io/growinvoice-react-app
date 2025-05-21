@@ -176,8 +176,8 @@ export default function FullFeaturedCrudGrid({
 			flex: 1.5,
 			editable: true,
 			renderEditCell: (params) => {
-				const handleProductChange = (event: SelectChangeEvent) => {
-					const value = event.target.value as string;
+				const handleProductChange = (event: SelectChangeEvent,valuea?:string) => {
+					const value = parseInt(event.target.value) === 0 ? valuea as string : event.target.value;
 					const selectedProduct = productList?.data?.find((product) => product.id === value);
 					const taxPercentage =
 						taxCodes?.data?.find((tax) => tax.id === selectedProduct?.tax_id)?.percentage ?? 0;
@@ -358,7 +358,7 @@ export default function FullFeaturedCrudGrid({
 		},
 		{
 			field: "tax_id",
-			headerName: "Tax",
+			headerName: "Tax/GST",
 			flex: 0.8,
 			editable: true,
 			renderEditCell: (params) => (
@@ -493,6 +493,7 @@ export default function FullFeaturedCrudGrid({
 			<DataGrid
 				sx={{
 					minHeight: 300,
+					maxHeight: "100%",
 					"& .MuiDataGrid-columnHeaderTitleContainer": {
 						fontSize: 14,
 						fontWeight: "bold",
@@ -558,6 +559,7 @@ export default function FullFeaturedCrudGrid({
 						);
 					},
 				}}
+				autoPageSize
 				slotProps={{
 					toolbar: { setRows, setRowModesModel },
 				}}

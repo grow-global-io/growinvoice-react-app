@@ -288,7 +288,7 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 										<Field
 											name="expiry_at"
 											component={DateFormField}
-											label="Expiry At"
+											label="Expiry Date"
 											minDate={moment(formik?.values.date).add(1, "days").toDate()}
 											isRequired={true}
 										/>
@@ -383,7 +383,7 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 									</Grid>
 									<Grid item xs={12} textAlign={"center"}>
 										<Button variant="contained" type="submit">
-											Save Invoice
+											Save Quotation
 										</Button>
 									</Grid>
 								</Grid>

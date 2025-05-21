@@ -19,7 +19,7 @@ import { getAuthControllerStatusQueryKey } from "@api/services/auth";
 
 const Company = () => {
 	const queryClient = useQueryClient();
-	const { user } = useAuthStore();
+	const { user,refecthUser } = useAuthStore();
 	const countryFindAll = useCurrencyControllerFindCountries();
 	const companyUpdate = useCompanyControllerUpdate();
 	const companyFindOne = useCompanyControllerFindOne(user?.company?.[0]?.id ?? "");
@@ -62,6 +62,7 @@ const Company = () => {
 		queryClient.refetchQueries({
 			queryKey: getAuthControllerStatusQueryKey(),
 		});
+		refecthUser();
 		actions.resetForm();
 	};
 

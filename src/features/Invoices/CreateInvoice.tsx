@@ -163,7 +163,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 		sub_total: yup.number().required("Subtotal is required"),
 		tax_id: yup.string(),
 		total: yup.number().required("Total is required"),
-		discountPercentage: yup.number().min(0).max(100),
+		discountPercentage: yup.number().min(0, "discount must be greater than 0").max(100),
 		recurring: yup
 			.string()
 			.oneOf(Object.values(CreateInvoiceWithProductsRecurring), "Invalid Type"),

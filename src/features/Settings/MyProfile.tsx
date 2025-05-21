@@ -15,9 +15,11 @@ import { useUserControllerUpdateUser } from "@api/services/users";
 import { useRef } from "react";
 import Loader from "@shared/components/Loader";
 import { useQueryClient } from "@tanstack/react-query";
+import { useConfirmDialogStore } from "@store/confirmDialog";
 
 const MyProfile = () => {
 	const queryClient = useQueryClient();
+	const { handleOpen, cleanUp } = useConfirmDialogStore();
 	const { user, refecthUser, isRefecthing } = useAuthStore();
 	const currencyList = useCurrencyControllerFindAll();
 	const userUpdate = useUserControllerUpdateUser();
@@ -40,10 +42,8 @@ const MyProfile = () => {
 	});
 
 	const id = user?.company?.[0]?.user_id ?? "";
-	const handleSubmit = async (
-		values: typeof initialValues,
-		actions: FormikHelpers<typeof initialValues>,
-	) => {
+
+	const dataSave = async (values: typeof initialValues) => {
 		await userUpdate.mutateAsync({
 			id: id,
 			data: values,
@@ -52,6 +52,26 @@ const MyProfile = () => {
 			queryKey: getCurrencyControllerFindAllQueryKey(),
 		});
 		refecthUser();
+	};
+
+	const handleSubmit = async (
+		values: typeof initialValues,
+		actions: FormikHelpers<typeof initialValues>,
+	) => {
+		if (values.email !== user?.email) {
+			handleOpen({
+				title: "Email Change",
+				message: "Are you sure you want to change your email?",
+				onConfirm: async () => {
+					await dataSave(values);
+				},
+				onCancel: () => {
+					cleanUp();
+				},
+				confirmButtonText: "Delete",
+			});
+		}
+		await dataSave(values);
 		actions.resetForm();
 	};
 

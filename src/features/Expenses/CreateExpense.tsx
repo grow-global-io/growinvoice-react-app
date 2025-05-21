@@ -23,6 +23,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import Loader from "@shared/components/Loader";
+import { useCreateVendorsStore } from "@store/createVendorsStore";
+import AddIcon from "@mui/icons-material/Add";
 
 const CreateExpense = ({ id }: { id?: string }) => {
 	const navigate = useNavigate();
@@ -44,7 +46,7 @@ const CreateExpense = ({ id }: { id?: string }) => {
 		user_id: user?.id ?? "",
 		expenseDate: ExpensesFindOne?.data?.expenseDate ?? moment().toString(),
 		amount: ExpensesFindOne?.data?.amount ?? 0,
-		currency_id: ExpensesFindOne?.data?.currency_id ?? "",
+		currency_id: ExpensesFindOne?.data?.currency_id ?? user?.currency_id ?? "",
 		notes: ExpensesFindOne?.data?.notes ?? "",
 	};
 
@@ -98,6 +100,8 @@ const CreateExpense = ({ id }: { id?: string }) => {
 		actions.setSubmitting(false);
 		navigate("/expenses/expenseslist");
 	};
+
+	const { setOpenVendorsForm } = useCreateVendorsStore.getState();
 	if (ExpensesFindOne?.isLoading || ExpensesFindOne?.isFetching || ExpensesFindOne.isRefetching) {
 		return <Loader />;
 	}
@@ -145,6 +149,11 @@ const CreateExpense = ({ id }: { id?: string }) => {
 											loading={vendorsData.isLoading}
 											isRequired={true}
 										/>
+										<Button variant="text" onClick={() => setOpenVendorsForm(true)}
+												startIcon={<AddIcon />}
+											>
+											Create Vendor
+										</Button>
 									</Grid>
 									<Grid item xs={12} sm={6}>
 										<Field

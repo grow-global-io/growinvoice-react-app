@@ -30,7 +30,7 @@ const SubtotalFooter = ({
 					? 0
 					: formik?.values?.discountPercentage / 100);
 
-			const taxPercentage = formik?.values?.sub_total * (Number(tax?.percentage ?? 0) / 100);
+			const taxPercentage = (formik?.values?.sub_total - discount) * (Number(tax?.percentage ?? 0) / 100);
 			formik?.setFieldValue("total", formik?.values?.sub_total - discount + taxPercentage);
 			if (formik?.values?.due_amount) {
 				formik?.setFieldValue("due_amount", formik?.values?.sub_total - discount + taxPercentage);
@@ -70,6 +70,12 @@ const SubtotalFooter = ({
 						/>
 					</Grid>
 					<Grid item xs={12} sm={6}>
+						<Typography variant="h5">Discount in %</Typography>
+					</Grid>
+					<Grid item xs={12} sm={6}>
+						<Field name="discountPercentage" component={TextFormField} type="number" />
+					</Grid>
+					<Grid item xs={12} sm={6}>
 						<Typography variant="h5">Taxes (Extra)</Typography>
 					</Grid>
 					<Grid item xs={12} sm={6} textAlign={"right"}>
@@ -93,12 +99,6 @@ const SubtotalFooter = ({
 							<CreateTaxes handleClose={() => setTaxesCreateOpen(false)} />
 						</Grid>
 					)}
-					<Grid item xs={12} sm={6}>
-						<Typography variant="h5">Discount in %</Typography>
-					</Grid>
-					<Grid item xs={12} sm={6}>
-						<Field name="discountPercentage" component={TextFormField} type="number" />
-					</Grid>
 					<Grid item xs={12}>
 						<Divider />
 					</Grid>

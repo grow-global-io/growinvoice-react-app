@@ -54,6 +54,7 @@ const ProductForm = () => {
 	const taxCodes = useTaxcodeControllerFindAll();
 	const currencyList = useCurrencyControllerFindAll();
 	const updateProduct = useProductControllerUpdate();
+	const isIndia = user?.company?.[0]?.country?.name === "India";
 
 	const handleSubmit = async (
 		values: CreateProductDto,
@@ -195,7 +196,7 @@ const ProductForm = () => {
 									)}
 								</Grid>
 
-								<Grid item xs={12}>
+								{isIndia && <Grid item xs={12}>
 									<Field
 										name="hsnCode_id"
 										label="HSN Code (India)"
@@ -220,7 +221,7 @@ const ProductForm = () => {
 										</Button>
 									)}
 									{openHsnCodeForm && <CreateHSNCode handleClose={handleHsnCodeClose} />}
-								</Grid>
+								</Grid>}
 
 								<Grid item xs={12}>
 									<Field
