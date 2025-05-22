@@ -40,6 +40,9 @@ const GridSelectField = ({
 			}}
 		>
 			<Autocomplete
+			sx={{
+				marginTop: 0.2,
+			}}
 				disabled={disabled}
 				options={optionsValues ?? []}
 				getOptionLabel={(option) => option.label}
