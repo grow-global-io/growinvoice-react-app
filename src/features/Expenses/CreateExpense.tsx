@@ -152,7 +152,7 @@ const CreateExpense = ({ id }: { id?: string }) => {
 										<Button variant="text" onClick={() => setOpenVendorsForm(true)}
 												startIcon={<AddIcon />}
 											>
-											Create Vendor
+											Add Vendor
 										</Button>
 									</Grid>
 									<Grid item xs={12} sm={6}>

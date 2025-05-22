@@ -492,8 +492,6 @@ export default function FullFeaturedCrudGrid({
 		<Box>
 			<DataGrid
 				sx={{
-					minHeight: 300,
-					maxHeight: "100%",
 					"& .MuiDataGrid-columnHeaderTitleContainer": {
 						fontSize: 14,
 						fontWeight: "bold",
@@ -560,6 +558,7 @@ export default function FullFeaturedCrudGrid({
 					},
 				}}
 				autoPageSize
+				autoHeight
 				slotProps={{
 					toolbar: { setRows, setRowModesModel },
 				}}

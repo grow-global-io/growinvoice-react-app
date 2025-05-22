@@ -45,7 +45,7 @@ const QuotationTableList = () => {
 		},
 		{
 			field: "expiry_at",
-			headerName: "Expiry AT",
+			headerName: "Expiry Date",
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
