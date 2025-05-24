@@ -240,6 +240,14 @@ const DashboardOpenAi = () => {
 				spacing={2}
 				style={{ height: "85vh", display: "flex", flexDirection: "row", alignItems: "flex-end" }}
 			>
+				{
+					rows?.length === 0 &&
+					!openAiApi?.isSuccess && (
+						<Grid item xs={12}>
+							<NoDataFound message="Prompt to get data" />
+						</Grid>
+					)
+				}
 				{rows?.length > 0 && openAiApi?.isSuccess && (
 					<>
 						<Grid item xs={12}>
