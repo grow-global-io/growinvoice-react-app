@@ -141,10 +141,10 @@ const DashboardOpenAi = () => {
 						prompt: values.prompt,
 					},
 				});
-				const keysData = a as OpenaiControllerCreate200Item;
+				const keysData = a as unknown as OpenaiControllerCreate200Item;
 				formikRef.current?.setFieldValue("prompt", keysData?.prompt);
 				formikRef.current?.setFieldValue("query", keysData?.query);
-				const keys = Object.keys(keysData?.result[0]);
+				const keys = Object.keys(keysData?.result?.[0] ?? []);
 				const rowsData = keysData?.result?.map(
 					(item: OpenaiControllerCreate200Item, index: number) => {
 						return {
@@ -192,10 +192,10 @@ const DashboardOpenAi = () => {
 						prompt: values.prompt,
 					},
 				});
-				const keysData = response as OpenaiControllerCreateGraph200Item;
+				const keysData = response as unknown as OpenaiControllerCreateGraph200Item;
 				formikRef.current?.setFieldValue("prompt", keysData?.prompt);
 				formikRef.current?.setFieldValue("query", keysData?.query);
-				setGraphData(keysData?.graphData);
+				setGraphData(keysData?.graphData as unknown as OpenaiControllerCreateGraph200Item);
 			} catch (error) {
 				console.error(error);
 				setIsError(true);

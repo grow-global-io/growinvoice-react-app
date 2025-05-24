@@ -27,7 +27,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Constants } from "@shared/constants";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+// import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PaymentIcon from "@mui/icons-material/Payment";
 import BusinessCenterOutlinedIcon from "@mui/icons-material/BusinessCenterOutlined";
 import SellOutlinedIcon from "@mui/icons-material/SellOutlined";
@@ -39,6 +39,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 const drawerWidth = 240;
 function Sidebar({ children }: { children: React.ReactNode }) {
+	const {user} = useAuthStore()
 	const queryClient = useQueryClient();
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
@@ -366,7 +367,7 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 					</IconButton>
 					<Box display={"flex"} alignItems={"center"} gap={1}>
 						<NotificationMain />
-						<Box
+						{/* <Box
 							mx={{ xs: 0, sm: 2 }}
 							sx={{ cursor: "pointer" }}
 							onClick={() => {
@@ -374,11 +375,11 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 							}}
 						>
 							<SettingsOutlinedIcon />
-						</Box>
+						</Box> */}
 						<Box sx={{ flexGrow: 0 }}>
 							<Tooltip title="Open settings">
 								<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-									<Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+									<Avatar alt="Remy Sharp" src={user?.company?.[0]?.logo ?? "/static/images/avatar/2.jpg"} />
 								</IconButton>
 							</Tooltip>
 							<Menu
