@@ -15,6 +15,7 @@ interface AuthStore {
 	logout: () => void;
 	validateToken: () => Promise<UserWithCompanyDto | null>;
 	refecthUser: () => void;
+	isGetStartedDialogOpen: () => boolean;
 }
 
 export const useAuthStore = create<AuthStore>((set, getStore) => ({
@@ -58,6 +59,18 @@ export const useAuthStore = create<AuthStore>((set, getStore) => ({
 		set({ isRefecthing: true });
 		const user = await authControllerStatus();
 		set({ user, isRefecthing: false });
+	},
+	isGetStartedDialogOpen: () => {
+		// user?.company?.length === 0 ||
+		// 					user?.company?.[0]?.country_id === "" ||
+		// 					user?.company?.[0]?.address === null ||
+		// 					user?.company?.[0]?.address === ""
+		return (
+			getStore().user?.company?.length === 0 ||
+			getStore().user?.company?.[0]?.country_id === "" ||
+			getStore().user?.company?.[0]?.address === null ||
+			getStore().user?.company?.[0]?.address === ""
+		);
 	},
 }));
 

@@ -40,13 +40,14 @@ import { isValidPhoneNumber } from "react-phone-number-input";
 import { useQueryClient } from "@tanstack/react-query";
 import Loader from "@shared/components/Loader";
 import { useAuthControllerStatus } from "@api/services/auth";
+import { AlertService } from "@shared/services/AlertService";
 
 const CustomerForm = () => {
 	const queryClient = useQueryClient();
 	const countryFindAll = useCurrencyControllerFindCountries();
 	const createCustomer = useCustomerControllerCreate();
 	const currencyList = useCurrencyControllerFindAll();
-	const { user } = useAuthStore();
+	const { user, isGetStartedDialogOpen } = useAuthStore();
 	const updateCustomer = useCustomerControllerUpdate();
 	const { data: userData, isLoading, isRefetching } = useAuthControllerStatus();
 
@@ -114,6 +115,12 @@ const CustomerForm = () => {
 		values: CreateCustomerWithAddressDto,
 		actions: FormikHelpers<CreateCustomerWithAddressDto>,
 	) => {
+		if (isGetStartedDialogOpen()) {
+			AlertService.instance.errorMessage(
+				"Please complete the Get Started process before creating a product.",
+			);
+			return;
+		}
 		actions.setSubmitting(true);
 		if (editValues !== null) {
 			await updateCustomer.mutateAsync({

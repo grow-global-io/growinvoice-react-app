@@ -176,8 +176,9 @@ export default function FullFeaturedCrudGrid({
 			flex: 1.5,
 			editable: true,
 			renderEditCell: (params) => {
-				const handleProductChange = (event: SelectChangeEvent,valuea?:string) => {
-					const value = parseInt(event.target.value) === 0 ? valuea as string : event.target.value;
+				const handleProductChange = (event: SelectChangeEvent, valuea?: string) => {
+					const value =
+						parseInt(event.target.value) === 0 ? (valuea as string) : event.target.value;
 					const selectedProduct = productList?.data?.find((product) => product.id === value);
 					const taxPercentage =
 						taxCodes?.data?.find((tax) => tax.id === selectedProduct?.tax_id)?.percentage ?? 0;

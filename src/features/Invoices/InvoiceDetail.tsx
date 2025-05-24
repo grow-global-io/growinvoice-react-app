@@ -333,7 +333,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 					</Box>
 				</Box>
 
-				{!IsPublic && getInvoiceData?.data?.paid_status === "Unpaid" && (
+				{!IsPublic && getInvoiceData?.data?.paid_status !== "Paid" && (
 					<Box display={{ xs: "block", lg: "none" }}>
 						<IconButton
 							aria-label="more"
@@ -404,7 +404,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 					</Box>
 				)}
 			</Box>
-			{!IsPublic && getInvoiceData?.data?.paid_status === "Unpaid" && (
+			{!IsPublic && getInvoiceData?.data?.paid_status !== "Paid" && (
 				<ButtonGroup
 					sx={{
 						width: "100%",

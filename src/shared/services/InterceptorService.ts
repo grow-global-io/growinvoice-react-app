@@ -32,7 +32,11 @@ export class InterceptorService {
 		this._axiosInstance.interceptors.response.use(
 			(response) => {
 				if (["post", "put", "delete", "patch"].includes(response.config.method || "")) {
-					if (response?.data?.message && response?.data?.message !== "Limit exceeded. Please upgrade your plan to add more features.") {
+					if (
+						response?.data?.message &&
+						response?.data?.message !==
+							"Limit exceeded. Please upgrade your plan to add more features."
+					) {
 						AlertService.instance.successMessage(response.data.message);
 					}
 				}
@@ -45,12 +49,18 @@ export class InterceptorService {
 				LoaderService.instance.hideLoader();
 				if (![401, 404, 500].includes(error.response?.status || 0)) {
 					const message = error.response?.data?.message;
-					if (message && message !== "Limit exceeded. Please upgrade your plan to add more features.") {
+					if (
+						message &&
+						message !== "Limit exceeded. Please upgrade your plan to add more features."
+					) {
 						AlertService.instance.errorMessage(message);
 					}
-					if (error.response?.data?.message === "Limit exceeded. Please upgrade your plan to add more features.") {
+					if (
+						error.response?.data?.message ===
+						"Limit exceeded. Please upgrade your plan to add more features."
+					) {
 						console.log("Limit exceeded. Please upgrade your plan to add more features.");
-						toastWithButton()
+						toastWithButton();
 					}
 				}
 

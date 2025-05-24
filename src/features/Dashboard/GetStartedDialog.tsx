@@ -21,6 +21,7 @@ import { useAuthStore } from "@store/auth";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { useUserControllerUpdateCurrencyCompany } from "@api/services/users";
 import { authControllerStatus } from "@api/services/auth";
+import { useGetStartedDialogStore } from "@store/useGetStartedDialog";
 
 const validationSchema: Yup.Schema<UpdateCurrencyCompanyDto> = Yup.object().shape({
 	currency_id: Yup.string().required("Currency is required"),
@@ -68,7 +69,8 @@ const CustomStepperBox = styled(Box)(() => ({
 	margin: "auto",
 }));
 
-const GetStartedDialog = ({ open, handleClose }: { open: boolean; handleClose?: () => void }) => {
+const GetStartedDialog = () => {
+	const { open, handleClose } = useGetStartedDialogStore();
 	const formikRef = useRef<FormikProps<UpdateCurrencyCompanyDto>>(null);
 	const { user, setUser } = useAuthStore();
 	const updateUserData = useUserControllerUpdateCurrencyCompany();
@@ -151,6 +153,9 @@ const GetStartedDialog = ({ open, handleClose }: { open: boolean; handleClose?: 
 							>
 								<Button variant="outlined" onClick={handleBack} disabled={activeStep === 0}>
 									Back
+								</Button>
+								<Button variant="outlined" color="warning" onClick={handleClose}>
+									Skip
 								</Button>
 
 								{activeStep !== steps.length - 2 && (

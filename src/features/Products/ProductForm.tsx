@@ -24,6 +24,7 @@ import { useHsncodeControllerFindAll } from "@api/services/hsncode";
 import { useTaxcodeControllerFindAll } from "@api/services/tax-code";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCurrencyControllerFindAll } from "@api/services/currency";
+import { AlertService } from "@shared/services/AlertService";
 
 const schema: yup.Schema<CreateProductDto> = yup.object({
 	type: yup
@@ -46,7 +47,7 @@ const schema: yup.Schema<CreateProductDto> = yup.object({
 
 const ProductForm = () => {
 	const queryClient = useQueryClient();
-	const { user } = useAuthStore();
+	const { user,isGetStartedDialogOpen } = useAuthStore();
 	const createProduct = useProductControllerCreate();
 	const { setOpenProductForm, editValues } = useCreateProductStore.getState();
 	const productUnit = useProductunitControllerFindAll();
@@ -60,6 +61,12 @@ const ProductForm = () => {
 		values: CreateProductDto,
 		action: FormikHelpers<CreateProductDto>,
 	) => {
+		if (isGetStartedDialogOpen()) {
+			AlertService.instance.errorMessage(
+				"Please complete the Get Started process before creating a product.",
+			);
+			return;
+		}
 		action.setSubmitting(true);
 		const transformedValues = {
 			...values,
@@ -196,32 +203,34 @@ const ProductForm = () => {
 									)}
 								</Grid>
 
-								{isIndia && <Grid item xs={12}>
-									<Field
-										name="hsnCode_id"
-										label="HSN Code (India)"
-										component={AutocompleteField}
-										loading={hsnCodes.isLoading || hsnCodes.isFetching}
-										options={hsnCodes?.data?.map((item) => {
-											return {
-												label: `${item?.code}`,
-												value: item?.id,
-											};
-										})}
-										onValueChange={(value: ListDto) => {
-											if (value) {
-												const hsnCode = hsnCodes?.data?.find((item) => item.id === value.value);
-												setFieldValue("tax_id", hsnCode?.tax_id);
-											}
-										}}
-									/>
-									{!openHsnCodeForm && (
-										<Button variant="text" onClick={handleHsnCodeOpen} startIcon={<AddIcon />}>
-											Add HSN
-										</Button>
-									)}
-									{openHsnCodeForm && <CreateHSNCode handleClose={handleHsnCodeClose} />}
-								</Grid>}
+								{isIndia && (
+									<Grid item xs={12}>
+										<Field
+											name="hsnCode_id"
+											label="HSN Code (India)"
+											component={AutocompleteField}
+											loading={hsnCodes.isLoading || hsnCodes.isFetching}
+											options={hsnCodes?.data?.map((item) => {
+												return {
+													label: `${item?.code}`,
+													value: item?.id,
+												};
+											})}
+											onValueChange={(value: ListDto) => {
+												if (value) {
+													const hsnCode = hsnCodes?.data?.find((item) => item.id === value.value);
+													setFieldValue("tax_id", hsnCode?.tax_id);
+												}
+											}}
+										/>
+										{!openHsnCodeForm && (
+											<Button variant="text" onClick={handleHsnCodeOpen} startIcon={<AddIcon />}>
+												Add HSN
+											</Button>
+										)}
+										{openHsnCodeForm && <CreateHSNCode handleClose={handleHsnCodeClose} />}
+									</Grid>
+								)}
 
 								<Grid item xs={12}>
 									<Field

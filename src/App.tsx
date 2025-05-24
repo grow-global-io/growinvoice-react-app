@@ -10,7 +10,7 @@ import NotFoundPage from "@pages/NotFoundPage";
 import ConfirmDialog from "@shared/components/ConfirmDialog";
 import { useEffectOnce } from "@shared/hooks/useEffectOnce";
 import Navbar from "@layout/navbar/Home/Navbar";
-import GetStartedDialog from "@features/Dashboard/GetStartedDialog";
+// import GetStartedDialog from "@features/Dashboard/GetStartedDialog";
 import { useCreateProductStore } from "@store/createProductStore";
 import { ProductDrawer } from "@features/Products/CreateProduct";
 import { useCreateCustomerStore } from "@store/createCustomerStore";
@@ -34,6 +34,7 @@ import "react-toastify/dist/ReactToastify.css";
 import useSocket from "@shared/hooks/useNotificationSocket";
 import PlansPage from "@pages/PlansPage";
 import { useQueryClient } from "@tanstack/react-query";
+import GetStartedErrorComp from "@shared/components/GetStartedErrorComp";
 
 function AppContainer() {
 	const queryClient = useQueryClient();
@@ -107,14 +108,15 @@ function AppContainer() {
 		<Navbar>
 			{includeParentofSidebar ? (
 				<ParentofSidebar>
-					<GetStartedDialog
+					{/* <GetStartedDialog
 						open={
 							user?.company?.length === 0 ||
 							user?.company?.[0]?.country_id === "" ||
 							user?.company?.[0]?.address === null ||
 							user?.company?.[0]?.address === ""
 						}
-					/>
+					/> */}
+					<GetStartedErrorComp/>
 					<Routes>
 						<Route path="*" element={<NotFoundPage />} />
 						{protectedRoutes.map(({ path, Component }) => (
@@ -126,14 +128,15 @@ function AppContainer() {
 				</ParentofSidebar>
 			) : (
 				<>
-					<GetStartedDialog
+					{/* <GetStartedDialog
 						open={
 							user?.company?.length === 0 ||
 							user?.company?.[0]?.country_id === "" ||
 							user?.company?.[0]?.address === null ||
 							user?.company?.[0]?.address === ""
 						}
-					/>
+					/> */}
+					<GetStartedErrorComp/>
 					<Routes>
 						<Route path="*" element={<NotFoundPage />} />
 						{protectedRoutes.map(({ path, Component }) => (

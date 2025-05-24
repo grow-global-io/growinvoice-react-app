@@ -19,7 +19,7 @@ import { getAuthControllerStatusQueryKey } from "@api/services/auth";
 
 const Company = () => {
 	const queryClient = useQueryClient();
-	const { user,refecthUser } = useAuthStore();
+	const { user, refecthUser } = useAuthStore();
 	const countryFindAll = useCurrencyControllerFindCountries();
 	const companyUpdate = useCompanyControllerUpdate();
 	const companyFindOne = useCompanyControllerFindOne(user?.company?.[0]?.id ?? "");

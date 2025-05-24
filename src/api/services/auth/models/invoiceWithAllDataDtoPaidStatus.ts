@@ -13,4 +13,5 @@ export type InvoiceWithAllDataDtoPaidStatus =
 export const InvoiceWithAllDataDtoPaidStatus = {
 	Paid: "Paid",
 	Unpaid: "Unpaid",
+	PartiallyPaid: "PartiallyPaid",
 } as const;

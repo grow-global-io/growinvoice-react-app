@@ -47,8 +47,19 @@ const PaymentForm = () => {
 		reference_number: "",
 	};
 
-	const schema: Yup.Schema<CreatePaymentsDto> = Yup.object().shape({
-		amount: Yup.number().required("Amount is required"),
+	const schema: Yup.Schema<CreatePaymentsDto> = Yup.object({
+		amount: Yup.number().required("Amount is required").test(
+			"amount",
+			"Amount must be less than or equal to invoice total",
+			function (value) {
+				const invoice = invoiceData?.data?.find((invoice) => invoice.id === invoiceId);
+				console.log("value", value, invoice);
+				if (invoice && value > 0) {
+					return value <= invoice.due_amount
+				}
+				return true;
+			}
+		).min(1, "Amount must be greater than 1"),
 		invoice_id: Yup.string().required("Invoice is required"),
 		paymentDetails_id: Yup.string().required("Payment Details is required"),
 		user_id: Yup.string().required("User is required"),
@@ -126,31 +137,35 @@ const PaymentForm = () => {
 											type="number"
 										/>
 									</Grid>
-									<Grid item xs={12}>
-										<Field
-											name="invoice_id"
-											label="Invoice"
-											component={AutocompleteField}
-											options={invoiceData?.data?.map((invoice) => ({
-												value: invoice.id,
-												label: invoice.invoice_number,
-											}))}
-											loading={invoiceData.isLoading || invoiceData.isFetching}
-											isRequired={true}
-											onValueChange={(value: ListDto) => {
-												const invoice = invoiceData?.data?.find((item) => item.id === value.value);
-												setFieldValue("amount", invoice?.total ?? 0);
-											}}
-											disabled={invoiceId ?? false}
-										/>
-									</Grid>
+									{!invoiceId && (
+										<Grid item xs={12}>
+											<Field
+												name="invoice_id"
+												label="Invoice"
+												component={AutocompleteField}
+												options={invoiceData?.data?.map((invoice) => ({
+													value: invoice.id,
+													label: invoice.invoice_number,
+												}))}
+												loading={invoiceData.isLoading || invoiceData.isFetching}
+												isRequired={true}
+												onValueChange={(value: ListDto) => {
+													const invoice = invoiceData?.data?.find(
+														(item) => item.id === value.value,
+													);
+													setFieldValue("amount", invoice?.total ?? 0);
+												}}
+												disabled={invoiceId ?? false}
+											/>
+										</Grid>
+									)}
 									<Grid item xs={12}>
 										<Field
 											name="amount"
 											component={TextFormField}
 											label="Amount"
 											type="number"
-											disabled={true}
+											// disabled={true}
 											isRequired={true}
 										/>
 									</Grid>

@@ -183,74 +183,74 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 		values: typeof initialValues,
 		actions: FormikHelpers<typeof initialValues>,
 	) => {
-			if (rows?.length === 0) {
-				setProductErrorText("At least one product is required");
-				return;
-			} else if (rows?.find((row) => row.product_id === "")) {
-				setProductErrorText("Fullfill all the product details");
-				return;
-			}
+		if (rows?.length === 0) {
+			setProductErrorText("At least one product is required");
+			return;
+		} else if (rows?.find((row) => row.product_id === "")) {
+			setProductErrorText("Fullfill all the product details");
+			return;
+		}
 
-			if (id) {
-				await invoiceUpdate.mutateAsync({
-					id,
-					data: {
-						...values,
-						recurring: values.recurring as CreateInvoiceWithProductsRecurring,
-						date: formatDateToIso(values.date),
-						due_date: formatDateToIso(values.due_date),
-						due_amount: values.total,
-						paid_amount: 0,
-					},
-				});
-			} else {
-				await createInvoice.mutateAsync({
-					data: {
-						...values,
-						reference_number: values?.reference_number
-							? values?.reference_number
-							: values?.invoice_number,
-						recurring: values.recurring as CreateInvoiceWithProductsRecurring,
-						date: formatDateToIso(values.date),
-						due_date: formatDateToIso(values.due_date),
-						due_amount: values.total,
-						paid_amount: 0,
-					},
-				});
-			}
-			await queryClient.refetchQueries({
-				queryKey: getInvoiceControllerFindOneQueryKey(id ?? ""),
+		if (id) {
+			await invoiceUpdate.mutateAsync({
+				id,
+				data: {
+					...values,
+					recurring: values.recurring as CreateInvoiceWithProductsRecurring,
+					date: formatDateToIso(values.date),
+					due_date: formatDateToIso(values.due_date),
+					due_amount: values.total,
+					paid_amount: 0,
+				},
 			});
-			await queryClient.refetchQueries({
-				queryKey: getInvoiceControllerFindAllQueryKey(),
+		} else {
+			await createInvoice.mutateAsync({
+				data: {
+					...values,
+					reference_number: values?.reference_number
+						? values?.reference_number
+						: values?.invoice_number,
+					recurring: values.recurring as CreateInvoiceWithProductsRecurring,
+					date: formatDateToIso(values.date),
+					due_date: formatDateToIso(values.due_date),
+					due_amount: values.total,
+					paid_amount: 0,
+				},
 			});
-			await queryClient.refetchQueries({
-				queryKey: getInvoiceControllerFindDueInvoicesQueryKey(),
-			});
-			await queryClient.refetchQueries({
-				queryKey: getInvoiceControllerFindPaidInvoicesQueryKey(),
-			});
-			await queryClient.refetchQueries({
-				queryKey: getInvoiceControllerTestQueryKey(id ?? ""),
-			});
-			await queryClient.refetchQueries({
-				queryKey: getInvoiceControllerInvoiceCountQueryKey(),
-			});
-			await queryClient.refetchQueries({
-				queryKey: getInvoiceControllerTotalDueQueryKey(),
-			});
-			await queryClient.refetchQueries({
-				queryKey: getInvoiceControllerOutstandingReceivableQueryKey(),
-			});
-			await queryClient.refetchQueries({
-				queryKey: getInvoiceControllerFindDueTodayQueryKey({ date: formatDateToIso(currentDate) }),
-			});
-			await queryClient.refetchQueries({
-				queryKey: getInvoiceControllerFindDueMonthQueryKey({ date: formatDateToIso(currentDate) }),
-			});
-			actions.resetForm();
-			setRows([]);
-			navigate("/invoice/invoicelist");
+		}
+		await queryClient.refetchQueries({
+			queryKey: getInvoiceControllerFindOneQueryKey(id ?? ""),
+		});
+		await queryClient.refetchQueries({
+			queryKey: getInvoiceControllerFindAllQueryKey(),
+		});
+		await queryClient.refetchQueries({
+			queryKey: getInvoiceControllerFindDueInvoicesQueryKey(),
+		});
+		await queryClient.refetchQueries({
+			queryKey: getInvoiceControllerFindPaidInvoicesQueryKey(),
+		});
+		await queryClient.refetchQueries({
+			queryKey: getInvoiceControllerTestQueryKey(id ?? ""),
+		});
+		await queryClient.refetchQueries({
+			queryKey: getInvoiceControllerInvoiceCountQueryKey(),
+		});
+		await queryClient.refetchQueries({
+			queryKey: getInvoiceControllerTotalDueQueryKey(),
+		});
+		await queryClient.refetchQueries({
+			queryKey: getInvoiceControllerOutstandingReceivableQueryKey(),
+		});
+		await queryClient.refetchQueries({
+			queryKey: getInvoiceControllerFindDueTodayQueryKey({ date: formatDateToIso(currentDate) }),
+		});
+		await queryClient.refetchQueries({
+			queryKey: getInvoiceControllerFindDueMonthQueryKey({ date: formatDateToIso(currentDate) }),
+		});
+		actions.resetForm();
+		setRows([]);
+		navigate("/invoice/invoicelist");
 	};
 
 	if (

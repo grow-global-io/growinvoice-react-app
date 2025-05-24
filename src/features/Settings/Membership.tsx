@@ -61,9 +61,9 @@ const Membership = () => {
 			refetchOnMount: true,
 		},
 	});
-	useEffect(()=>{
+	useEffect(() => {
 		findQuota.refetch();
-	},[])
+	}, []);
 	if (findAllPlans?.isLoading || findAllPlans?.isFetching) {
 		return <Loader />;
 	}

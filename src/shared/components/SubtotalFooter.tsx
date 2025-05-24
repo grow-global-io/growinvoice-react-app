@@ -30,7 +30,8 @@ const SubtotalFooter = ({
 					? 0
 					: formik?.values?.discountPercentage / 100);
 
-			const taxPercentage = (formik?.values?.sub_total - discount) * (Number(tax?.percentage ?? 0) / 100);
+			const taxPercentage =
+				(formik?.values?.sub_total - discount) * (Number(tax?.percentage ?? 0) / 100);
 			formik?.setFieldValue("total", formik?.values?.sub_total - discount + taxPercentage);
 			if (formik?.values?.due_amount) {
 				formik?.setFieldValue("due_amount", formik?.values?.sub_total - discount + taxPercentage);

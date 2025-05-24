@@ -16,6 +16,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import ReportViewCard from "./ReportViewCard";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { getOpenaiControllerDashboardDataGetQueryKey } from "@api/services/openai";
+// import GetStartedErrorComp from "@shared/components/GetStartedErrorComp";
 
 const Overview = () => {
 	const navigate = useNavigate();

@@ -12,4 +12,5 @@ export type InvoicePaidStatus = (typeof InvoicePaidStatus)[keyof typeof InvoiceP
 export const InvoicePaidStatus = {
 	Paid: "Paid",
 	Unpaid: "Unpaid",
+	PartiallyPaid: "PartiallyPaid",
 } as const;

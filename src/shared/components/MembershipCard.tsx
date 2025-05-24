@@ -92,11 +92,7 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 					</List>
 				</Grid>
 				<Grid item xs={12} px={5} py={2}>
-					<Button
-						variant="outlined"
-						fullWidth
-						onClick={handleUpgradePlan}
-					>
+					<Button variant="outlined" fullWidth onClick={handleUpgradePlan}>
 						Upgrade
 					</Button>
 				</Grid>

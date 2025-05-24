@@ -149,9 +149,11 @@ const CreateExpense = ({ id }: { id?: string }) => {
 											loading={vendorsData.isLoading}
 											isRequired={true}
 										/>
-										<Button variant="text" onClick={() => setOpenVendorsForm(true)}
-												startIcon={<AddIcon />}
-											>
+										<Button
+											variant="text"
+											onClick={() => setOpenVendorsForm(true)}
+											startIcon={<AddIcon />}
+										>
 											Add Vendor
 										</Button>
 									</Grid>

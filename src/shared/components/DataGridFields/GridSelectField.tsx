@@ -11,7 +11,7 @@ const GridSelectField = ({
 	params: GridRenderEditCellParams;
 	valueOptions?: ListDto[];
 	disabled?: boolean;
-	onChangeValue?: (event: SelectChangeEvent,value?: string) => void;
+	onChangeValue?: (event: SelectChangeEvent, value?: string) => void;
 }) => {
 	// const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
 	// 	if (event.defaultPrevented) {
@@ -40,9 +40,9 @@ const GridSelectField = ({
 			}}
 		>
 			<Autocomplete
-			sx={{
-				marginTop: 0.2,
-			}}
+				sx={{
+					marginTop: 0.2,
+				}}
 				disabled={disabled}
 				options={optionsValues ?? []}
 				getOptionLabel={(option) => option.label}
@@ -53,18 +53,12 @@ const GridSelectField = ({
 						field: params.field,
 						value: value?.value,
 					});
-					onChangeValue?.(event, value?.value as string	);
+					onChangeValue?.(event, value?.value as string);
 				}}
-				renderInput={(params) => (
-					<TextField
-						{...params}
-						fullWidth
-						/>
-				)}
+				renderInput={(params) => <TextField {...params} fullWidth />}
 				value={optionsValues?.find((option) => option.value === params.value) ?? null}
 				isOptionEqualToValue={(option, value) => option.value === value.value}
-				
-				/>
+			/>
 			{/* <Select
 				value={params.value}
 				onKeyDown={onKeyDown}
