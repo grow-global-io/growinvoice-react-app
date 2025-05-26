@@ -54,12 +54,12 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 				navigate("/setting/myprofile");
 			},
 		},
-		{
-			name: "Dashboard",
-			func: () => {
-				navigate("/dashboard");
-			},
-		},
+		// {
+		// 	name: "Dashboard",
+		// 	func: () => {
+		// 		navigate("/dashboard");
+		// 	},
+		// },
 		{
 			name: "Logout",
 			func: () => {
