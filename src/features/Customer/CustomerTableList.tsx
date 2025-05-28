@@ -13,24 +13,26 @@ import { useCreateCustomerStore } from "@store/createCustomerStore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useConfirmDialogStore } from "@store/confirmDialog";
 import { useQueryClient } from "@tanstack/react-query";
-import React from "react";
-import { useDialog } from "@shared/hooks/useDialog";
-import CustomerView from "./CustomerView";
+// import React from "react";
+// import { useDialog } from "@shared/hooks/useDialog";
+// import CustomerView from "./CustomerView";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import { useNavigate } from "react-router-dom";
 
 const CustomerTableList = () => {
+	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const CustomerData = useCustomerControllerFindAll();
 	const { updateCustomer } = useCreateCustomerStore.getState();
 	const removeCustomer = useCustomerControllerRemove();
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
-	const [viewCustomerId, setViewCustomerId] = React.useState<string | null>(null);
-	const { handleClickOpen, handleClose, open } = useDialog();
+	// const [viewCustomerId, setViewCustomerId] = React.useState<string | null>(null);
+	// const { handleClickOpen, handleClose, open } = useDialog();
 
-	const openCustomerView = (id: string) => {
-		setViewCustomerId(id);
-		handleClickOpen();
-	};
+	// const openCustomerView = (id: string) => {
+	// 	setViewCustomerId(id);
+	// 	handleClickOpen();
+	// };
 
 	const columns: GridColDef[] = [
 		{
@@ -40,7 +42,13 @@ const CustomerTableList = () => {
 			minWidth: 150,
 			renderCell: (params) => {
 				return (
-					<Typography variant="h6" color="secondary" textTransform={"capitalize"}>
+					<Typography variant="h6" color="secondary" textTransform={"capitalize"}
+						sx={{ cursor: "pointer" }}
+						onClick={() => {
+							// openCustomerView(params.row.id);
+							navigate(`/invoice/customer/${params.row.id}`);
+						}}
+					>
 						{params.value}
 					</Typography>
 				);
@@ -108,7 +116,8 @@ const CustomerTableList = () => {
 						<CustomIconButton
 							src={VisibilityIcon}
 							onClick={() => {
-								openCustomerView(params.row.id);
+								// openCustomerView(params.row.id);
+								navigate(`/invoice/customer/${params.row.id}`);
 							}}
 						/>
 					</Box>
@@ -161,7 +170,7 @@ const CustomerTableList = () => {
 	return (
 		<Box>
 			<DataGrid autoHeight rows={CustomerData?.data} columns={columns} />
-			<CustomerView open={open} handleClose={handleClose} customerId={viewCustomerId ?? ""} />
+			{/* <CustomerView open={open} handleClose={handleClose} customerId={viewCustomerId ?? ""} /> */}
 		</Box>
 	);
 };

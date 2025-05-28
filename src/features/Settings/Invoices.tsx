@@ -73,10 +73,8 @@ const Invoices = () => {
 		dueNotice: yup.number().required("Due Notice is required"),
 		overDueNotice: yup.number().required("Overdue Notice is required"),
 		companyAddressTemplate: yup.string(),
-		customerBillingAddressTemplate: yup
-			.string(),
-		customerShippingAddressTemplate: yup
-			.string(),
+		customerBillingAddressTemplate: yup.string(),
+		customerShippingAddressTemplate: yup.string(),
 		user_id: yup.string().required("User ID is required"),
 		invoiceTemplateId: yup.string().required("Invoice Template ID is required"),
 		invoiceHeadingType: yup
@@ -123,19 +121,19 @@ const Invoices = () => {
 						<Form>
 							<Grid container spacing={2}>
 								<Grid item xs={12}>
-									<Field 
-									name="invoiceHeadingType"
-									label="Invoice Heading Type"
-									component={AutocompleteField}
-									options={Object.values(InvoiceSettingsDtoInvoiceHeadingType).map((type)=>{
-										const label = type.replace(/_/g, " ");
-										return {
-											label: label,
-											value: type,
-										};
-									})}
+									<Field
+										name="invoiceHeadingType"
+										label="Invoice Heading Type"
+										component={AutocompleteField}
+										options={Object.values(InvoiceSettingsDtoInvoiceHeadingType).map((type) => {
+											const label = type.replace(/_/g, " ");
+											return {
+												label: label,
+												value: type,
+											};
+										})}
 									/>
-									</Grid>
+								</Grid>
 								<Grid item xs={12} sm={6} display={"flex"} alignItems={"center"}>
 									<Field
 										name="invoicePrefix"

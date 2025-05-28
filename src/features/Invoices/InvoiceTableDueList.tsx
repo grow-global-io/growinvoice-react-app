@@ -13,8 +13,14 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useConfirmDialogStore } from "@store/confirmDialog";
 import { useInvoiceHook } from "./invoiceHooks/useInvoiceHook";
 
-const InvoiceTableDueList = () => {
-	const invoiceData = useInvoiceControllerFindDueInvoices();
+const InvoiceTableDueList = ({
+	customerId,
+}:{
+	customerId?: string | null;
+}) => {
+	const invoiceData = useInvoiceControllerFindDueInvoices({
+		customerId: customerId ?? undefined,
+	});
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
 	const { handleDelete, handleEdit, handleView } = useInvoiceHook();
 	const columns: GridColDef<InvoiceWithAllDataDto>[] = [

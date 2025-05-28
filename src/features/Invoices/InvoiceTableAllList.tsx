@@ -14,11 +14,16 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useInvoiceHook } from "./invoiceHooks/useInvoiceHook";
 
-const InvoiceTableAllList = () => {
+const InvoiceTableAllList = ({
+	customerId,
+}: {
+	customerId?: string | null;
+}) => {
 	const { user } = useAuthStore();
-	const invoiceData = useInvoiceControllerFindAll();
+	const invoiceData = useInvoiceControllerFindAll({
+		customerId: customerId ?? undefined,
+	});
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
-	console.log(invoiceData?.data);
 
 	const { handleDelete, handleEdit, handleView } = useInvoiceHook();
 

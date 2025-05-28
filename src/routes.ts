@@ -40,6 +40,7 @@ import CustomerSalesPage from "@pages/CustomerSalesPage";
 import ProfitLossPage from "@pages/ProfitLossPage";
 import ExpensesPage from "@pages/ExpensesPage";
 import VendorsPage from "@pages/VendorsPage";
+import CustomerInvoicesPage from "@pages/CustomerInvoicesPage";
 
 export const unProtectedRoutes: Route[] = [
 	{
@@ -92,6 +93,10 @@ export const protectedRoutes: Route[] = [
 	{
 		path: "/customer/createcustomer",
 		Component: CreateCustomerPage,
+	},
+	{
+		path: "/invoice/customer/:customerId",
+		Component: CustomerInvoicesPage,
 	},
 	{
 		path: "/invoice/invoicelist",
