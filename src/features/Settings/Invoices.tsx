@@ -28,10 +28,14 @@ import {
 	useInvoicesettingsControllerUpdate,
 } from "@api/services/invoicesettings";
 import Loader from "@shared/components/Loader";
-import { CreateInvoiceSettingsDto } from "@api/services/models";
+import {
+	CreateInvoiceSettingsDto,
+	InvoiceSettingsDtoInvoiceHeadingType,
+} from "@api/services/models";
 import { useInvoicetemplateControllerFindAll } from "@api/services/invoicetemplate";
 import { useQueryClient } from "@tanstack/react-query";
 import AddressExpressionsDialog from "@shared/components/AddressExpressionsDialog";
+import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 
 const CustomFormControlLabel = styled(FormControlLabel)(() => ({
 	alignItems: "flex-start",
@@ -49,6 +53,7 @@ const Invoices = () => {
 	const deleteInvoiceSetting = useInvoicesettingsControllerRemove();
 
 	const initialValues: CreateInvoiceSettingsDto = {
+		invoiceHeadingType: invoiceSettings?.data?.invoiceHeadingType ?? "COMPANY_NAME",
 		invoicePrefix: invoiceSettings?.data?.invoicePrefix ?? "INV",
 		autoArchive: invoiceSettings?.data?.autoArchive ?? false,
 		footer: invoiceSettings?.data?.footer ?? "",
@@ -67,15 +72,17 @@ const Invoices = () => {
 		footer: yup.string().nullable(),
 		dueNotice: yup.number().required("Due Notice is required"),
 		overDueNotice: yup.number().required("Overdue Notice is required"),
-		companyAddressTemplate: yup.string().required("Company Address Template is required"),
+		companyAddressTemplate: yup.string(),
 		customerBillingAddressTemplate: yup
-			.string()
-			.required("Customer Billing Address Template is required"),
+			.string(),
 		customerShippingAddressTemplate: yup
-			.string()
-			.required("Customer Shipping Address Template is required"),
+			.string(),
 		user_id: yup.string().required("User ID is required"),
 		invoiceTemplateId: yup.string().required("Invoice Template ID is required"),
+		invoiceHeadingType: yup
+			.string()
+			.oneOf(Object.values(InvoiceSettingsDtoInvoiceHeadingType), "Invalid Invoice Heading Type")
+			.required("Invoice Heading Type is required"),
 	});
 
 	const handleSubmit = async (values: CreateInvoiceSettingsDto) => {
@@ -115,6 +122,20 @@ const Invoices = () => {
 					{(formik) => (
 						<Form>
 							<Grid container spacing={2}>
+								<Grid item xs={12}>
+									<Field 
+									name="invoiceHeadingType"
+									label="Invoice Heading Type"
+									component={AutocompleteField}
+									options={Object.values(InvoiceSettingsDtoInvoiceHeadingType).map((type)=>{
+										const label = type.replace(/_/g, " ");
+										return {
+											label: label,
+											value: type,
+										};
+									})}
+									/>
+									</Grid>
 								<Grid item xs={12} sm={6} display={"flex"} alignItems={"center"}>
 									<Field
 										name="invoicePrefix"

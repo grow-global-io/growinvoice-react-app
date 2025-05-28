@@ -39,7 +39,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 const drawerWidth = 240;
 function Sidebar({ children }: { children: React.ReactNode }) {
-	const {user} = useAuthStore()
+	const { user } = useAuthStore();
 	const queryClient = useQueryClient();
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
@@ -379,7 +379,10 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 						<Box sx={{ flexGrow: 0 }}>
 							<Tooltip title="Open settings">
 								<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-									<Avatar alt="Remy Sharp" src={user?.company?.[0]?.logo ?? "/static/images/avatar/2.jpg"} />
+									<Avatar
+										alt="Remy Sharp"
+										src={user?.company?.[0]?.logo ?? "/static/images/avatar/2.jpg"}
+									/>
 								</IconButton>
 							</Tooltip>
 							<Menu

@@ -47,7 +47,7 @@ const schema: yup.Schema<CreateProductDto> = yup.object({
 
 const ProductForm = () => {
 	const queryClient = useQueryClient();
-	const { user,isGetStartedDialogOpen } = useAuthStore();
+	const { user, isGetStartedDialogOpen } = useAuthStore();
 	const createProduct = useProductControllerCreate();
 	const { setOpenProductForm, editValues } = useCreateProductStore.getState();
 	const productUnit = useProductunitControllerFindAll();

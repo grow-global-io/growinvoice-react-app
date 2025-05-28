@@ -5,42 +5,45 @@ import GetStartedDialog from "../../features/Dashboard/GetStartedDialog";
 
 const GetStartedErrorComp = () => {
 	const { isGetStartedDialogOpen } = useAuthStore();
-    const {handleOpen} = useGetStartedDialogStore();
+	const { handleOpen } = useGetStartedDialogStore();
 	return (
 		<>
-        <GetStartedDialog />
+			<GetStartedDialog />
 			{isGetStartedDialogOpen() && (
-				<Alert severity="error"
-                    action={
-                        <Button
-                            color="error"
-                            onClick={() => {
-                                handleOpen();
-                            }}
-                            size="small"
-                            variant="contained"
-                        >
-                            Get Started
-                        </Button>
-                    }
-                    sx={{
-                        "& .MuiAlert-icon":{
-                            display: "flex",
-                            alignItems: "center",
-                        },
-                        "& .MuiAlert-action":{
-                            display: "flex",
-                            alignItems: "center",
-                        }
-                    }}
-                >
-					<AlertTitle sx={{
-                        fontWeight: "bold",
-                        textTransform: "uppercase",
-                        padding:0,
-                        margin: 0,
-                    }} >
-                        Action Required
+				<Alert
+					severity="error"
+					action={
+						<Button
+							color="error"
+							onClick={() => {
+								handleOpen();
+							}}
+							size="small"
+							variant="contained"
+						>
+							Get Started
+						</Button>
+					}
+					sx={{
+						"& .MuiAlert-icon": {
+							display: "flex",
+							alignItems: "center",
+						},
+						"& .MuiAlert-action": {
+							display: "flex",
+							alignItems: "center",
+						},
+					}}
+				>
+					<AlertTitle
+						sx={{
+							fontWeight: "bold",
+							textTransform: "uppercase",
+							padding: 0,
+							margin: 0,
+						}}
+					>
+						Action Required
 					</AlertTitle>
 					You need to complete the get started process before using this feature.
 				</Alert>

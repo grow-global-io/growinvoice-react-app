@@ -48,18 +48,17 @@ const PaymentForm = () => {
 	};
 
 	const schema: Yup.Schema<CreatePaymentsDto> = Yup.object({
-		amount: Yup.number().required("Amount is required").test(
-			"amount",
-			"Amount must be less than or equal to invoice total",
-			function (value) {
+		amount: Yup.number()
+			.required("Amount is required")
+			.test("amount", "Amount must be less than or equal to invoice total", function (value) {
 				const invoice = invoiceData?.data?.find((invoice) => invoice.id === invoiceId);
 				console.log("value", value, invoice);
 				if (invoice && value > 0) {
-					return value <= invoice.due_amount
+					return value <= invoice.due_amount;
 				}
 				return true;
-			}
-		).min(1, "Amount must be greater than 1"),
+			})
+			.min(1, "Amount must be greater than 1"),
 		invoice_id: Yup.string().required("Invoice is required"),
 		paymentDetails_id: Yup.string().required("Payment Details is required"),
 		user_id: Yup.string().required("User is required"),

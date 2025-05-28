@@ -116,7 +116,7 @@ function AppContainer() {
 							user?.company?.[0]?.address === ""
 						}
 					/> */}
-					<GetStartedErrorComp/>
+					<GetStartedErrorComp />
 					<Routes>
 						<Route path="*" element={<NotFoundPage />} />
 						{protectedRoutes.map(({ path, Component }) => (
@@ -136,7 +136,7 @@ function AppContainer() {
 							user?.company?.[0]?.address === ""
 						}
 					/> */}
-					<GetStartedErrorComp/>
+					<GetStartedErrorComp />
 					<Routes>
 						<Route path="*" element={<NotFoundPage />} />
 						{protectedRoutes.map(({ path, Component }) => (

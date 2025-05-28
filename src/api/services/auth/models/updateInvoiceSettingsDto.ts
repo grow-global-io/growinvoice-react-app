@@ -5,6 +5,7 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
+import type { UpdateInvoiceSettingsDtoInvoiceHeadingType } from "./updateInvoiceSettingsDtoInvoiceHeadingType";
 
 export interface UpdateInvoiceSettingsDto {
 	autoArchive?: boolean;
@@ -14,6 +15,7 @@ export interface UpdateInvoiceSettingsDto {
 	dueNotice?: number;
 	/** @nullable */
 	footer?: string | null;
+	invoiceHeadingType?: UpdateInvoiceSettingsDtoInvoiceHeadingType;
 	invoicePrefix?: string;
 	invoiceTemplateId?: string;
 	/** @nullable */
