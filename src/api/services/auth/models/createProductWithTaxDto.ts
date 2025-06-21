@@ -5,9 +5,9 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
-import type { CreateProductDtoType } from "./createProductDtoType";
+import type { CreateProductWithTaxDtoType } from "./createProductWithTaxDtoType";
 
-export interface CreateProductDto {
+export interface CreateProductWithTaxDto {
 	currency_id: string;
 	/** @nullable */
 	description?: string | null;
@@ -15,9 +15,12 @@ export interface CreateProductDto {
 	hsnCode_id?: string | null;
 	name: string;
 	price: number;
-	/** @nullable */
-	tax_id?: string | null;
-	type: CreateProductDtoType;
+	/**
+	 * List of tax id strings associated with the product
+	 * @nullable
+	 */
+	tax?: string[] | null;
+	type: CreateProductWithTaxDtoType;
 	unit_id: string;
 	user_id: string;
 }

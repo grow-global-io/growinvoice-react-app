@@ -42,7 +42,10 @@ const CustomerTableList = () => {
 			minWidth: 150,
 			renderCell: (params) => {
 				return (
-					<Typography variant="h6" color="secondary" textTransform={"capitalize"}
+					<Typography
+						variant="h6"
+						color="secondary"
+						textTransform={"capitalize"}
 						sx={{ cursor: "pointer" }}
 						onClick={() => {
 							// openCustomerView(params.row.id);

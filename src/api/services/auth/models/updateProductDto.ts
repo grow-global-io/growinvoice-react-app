@@ -15,8 +15,6 @@ export interface UpdateProductDto {
 	hsnCode_id?: string | null;
 	name?: string;
 	price?: number;
-	/** @nullable */
-	tax_id?: string | null;
 	type?: UpdateProductDtoType;
 	unit_id?: string;
 	user_id?: string;

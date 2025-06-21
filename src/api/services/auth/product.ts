@@ -19,7 +19,7 @@ import type {
 	UseQueryResult,
 } from "@tanstack/react-query";
 import type {
-	CreateProductDto,
+	CreateProductWithTaxDto,
 	ProductControllerCreate201,
 	ProductControllerUpdate200,
 	ProductDto,
@@ -34,12 +34,12 @@ type AwaitedInput<T> = PromiseLike<T> | T;
 
 type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
-export const productControllerCreate = (createProductDto: CreateProductDto) => {
+export const productControllerCreate = (createProductWithTaxDto: CreateProductWithTaxDto) => {
 	return authInstance<ProductControllerCreate201>({
 		url: `/api/product`,
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
-		data: createProductDto,
+		data: createProductWithTaxDto,
 	});
 };
 
@@ -50,20 +50,20 @@ export const getProductControllerCreateMutationOptions = <
 	mutation?: UseMutationOptions<
 		Awaited<ReturnType<typeof productControllerCreate>>,
 		TError,
-		{ data: CreateProductDto },
+		{ data: CreateProductWithTaxDto },
 		TContext
 	>;
 }): UseMutationOptions<
 	Awaited<ReturnType<typeof productControllerCreate>>,
 	TError,
-	{ data: CreateProductDto },
+	{ data: CreateProductWithTaxDto },
 	TContext
 > => {
 	const { mutation: mutationOptions } = options ?? {};
 
 	const mutationFn: MutationFunction<
 		Awaited<ReturnType<typeof productControllerCreate>>,
-		{ data: CreateProductDto }
+		{ data: CreateProductWithTaxDto }
 	> = (props) => {
 		const { data } = props ?? {};
 
@@ -76,7 +76,7 @@ export const getProductControllerCreateMutationOptions = <
 export type ProductControllerCreateMutationResult = NonNullable<
 	Awaited<ReturnType<typeof productControllerCreate>>
 >;
-export type ProductControllerCreateMutationBody = CreateProductDto;
+export type ProductControllerCreateMutationBody = CreateProductWithTaxDto;
 export type ProductControllerCreateMutationError = ErrorType<unknown>;
 
 export const useProductControllerCreate = <
@@ -86,13 +86,13 @@ export const useProductControllerCreate = <
 	mutation?: UseMutationOptions<
 		Awaited<ReturnType<typeof productControllerCreate>>,
 		TError,
-		{ data: CreateProductDto },
+		{ data: CreateProductWithTaxDto },
 		TContext
 	>;
 }): UseMutationResult<
 	Awaited<ReturnType<typeof productControllerCreate>>,
 	TError,
-	{ data: CreateProductDto },
+	{ data: CreateProductWithTaxDto },
 	TContext
 > => {
 	const mutationOptions = getProductControllerCreateMutationOptions(options);

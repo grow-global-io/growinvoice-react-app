@@ -18,8 +18,6 @@ export interface ProductDto {
 	isExist: boolean;
 	name: string;
 	price: number;
-	/** @nullable */
-	tax_id: string | null;
 	type: ProductDtoType;
 	unit_id: string;
 	/** @nullable */

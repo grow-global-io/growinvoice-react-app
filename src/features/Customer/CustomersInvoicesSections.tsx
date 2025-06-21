@@ -65,14 +65,14 @@ const CustomersInvoicesSections = ({ customerId }: { customerId: string }) => {
 						<Typography variant="h3" sx={{ paddingBottom: 2, textTransform: "capitalize" }}>
 							Due Invoices
 						</Typography>
-						<InvoiceTableDueList customerId={customerId}/>
+						<InvoiceTableDueList customerId={customerId} />
 					</TabPanel>
 
 					<TabPanel value={tabValue} index={1}>
 						<Typography variant="h3" sx={{ paddingBottom: 2, textTransform: "capitalize" }}>
 							Paid Invoices
 						</Typography>
-						<InvoiceTablePaidList customerId={customerId}/>
+						<InvoiceTablePaidList customerId={customerId} />
 					</TabPanel>
 
 					<TabPanel value={tabValue} index={2}>

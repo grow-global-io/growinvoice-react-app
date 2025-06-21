@@ -7,7 +7,6 @@
  */
 import type { Currencies } from "./currencies";
 import type { ProductHsnCode } from "./productHsnCode";
-import type { ProductTax } from "./productTax";
 import type { ProductType } from "./productType";
 import type { ProductUnit } from "./productUnit";
 import type { User } from "./user";
@@ -26,10 +25,6 @@ export interface Product {
 	isExist: boolean;
 	name: string;
 	price: number;
-	/** @nullable */
-	tax?: ProductTax;
-	/** @nullable */
-	tax_id: string | null;
 	type: ProductType;
 	unit?: ProductUnit;
 	unit_id: string;

@@ -10,11 +10,7 @@ import { CustomIconButton } from "@shared/components/CustomIconButton";
 import { useInvoiceHook } from "./invoiceHooks/useInvoiceHook";
 import { InvoiceWithAllDataDto } from "@api/services/models";
 
-const InvoiceTablePaidList = ({
-	customerId,
-}: {
-	customerId?: string | null;
-}) => {
+const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) => {
 	const invoiceData = useInvoiceControllerFindPaidInvoices({
 		customerId: customerId ?? undefined,
 	});

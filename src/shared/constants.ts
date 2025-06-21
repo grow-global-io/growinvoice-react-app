@@ -36,6 +36,7 @@ export type AddressExpressions = {
 	customerShippingAddressTemplate: Array<{ name: string; label: string }>;
 };
 export class Constants {
+	static readonly emptyString = "-";
 	static readonly customImages = {
 		invoiceIcon,
 		BgImageSvg,

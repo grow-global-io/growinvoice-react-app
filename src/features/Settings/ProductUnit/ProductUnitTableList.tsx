@@ -68,7 +68,6 @@ const ProductUnitTableList = () => {
 								});
 							}}
 						/>
-						,
 					</Box>
 				</Tooltip>,
 			],

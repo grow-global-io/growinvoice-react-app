@@ -1,11 +1,11 @@
-import { ProductDto } from "@api/services/models";
+import { ProductWithAllDataDto } from "@api/services/models";
 import { createStore } from "zustand/vanilla";
 
 interface ProductStore {
 	open: boolean;
-	editValues: ProductDto | null;
+	editValues: ProductWithAllDataDto | null;
 	setOpenProductForm: (open: boolean) => void;
-	updateProduct: (product: ProductDto) => void;
+	updateProduct: (product: ProductWithAllDataDto) => void;
 }
 
 export const useCreateProductStore = createStore<ProductStore>((set) => ({

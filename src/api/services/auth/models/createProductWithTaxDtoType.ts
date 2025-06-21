@@ -6,10 +6,11 @@
  * OpenAPI spec version: 1.0
  */
 
-export type CreateProductDtoType = (typeof CreateProductDtoType)[keyof typeof CreateProductDtoType];
+export type CreateProductWithTaxDtoType =
+	(typeof CreateProductWithTaxDtoType)[keyof typeof CreateProductWithTaxDtoType];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CreateProductDtoType = {
+export const CreateProductWithTaxDtoType = {
 	Service: "Service",
 	Goods: "Goods",
 } as const;

@@ -85,7 +85,6 @@ const GateWayDetailsList = () => {
 								});
 							}}
 						/>
-						,
 					</Box>
 				</Tooltip>,
 			],

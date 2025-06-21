@@ -117,7 +117,6 @@ const PaymentDetails = () => {
 								});
 							}}
 						/>
-						,
 					</Box>
 				</Tooltip>,
 			],

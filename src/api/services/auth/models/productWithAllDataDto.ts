@@ -6,6 +6,7 @@
  * OpenAPI spec version: 1.0
  */
 import type { CurrenciesDto } from "./currenciesDto";
+import type { TaxForProduct } from "./taxForProduct";
 import type { ProductWithAllDataDtoType } from "./productWithAllDataDtoType";
 import type { ProductUnitDto } from "./productUnitDto";
 
@@ -21,8 +22,7 @@ export interface ProductWithAllDataDto {
 	isExist: boolean;
 	name: string;
 	price: number;
-	/** @nullable */
-	tax_id: string | null;
+	tax?: TaxForProduct[];
 	type: ProductWithAllDataDtoType;
 	unit?: ProductUnitDto;
 	unit_id: string;

@@ -5,17 +5,17 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
+import type { Product } from "./product";
+import type { Tax } from "./tax";
 
-export interface TaxDto {
+export interface TaxForProduct {
 	createdAt: string;
-	/** @nullable */
-	description: string | null;
 	id: string;
 	isExist: boolean;
-	/** @nullable */
-	name: string | null;
-	percentage: number;
+	product?: Product;
+	product_id: string;
+	tax?: Tax;
+	tax_id: string;
 	/** @nullable */
 	updatedAt: string | null;
-	user_id: string;
 }

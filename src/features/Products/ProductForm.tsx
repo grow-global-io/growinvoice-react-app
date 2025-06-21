@@ -11,7 +11,7 @@ import CreateProductUnit from "../ProductUnit/CreateProductUnit";
 import CreateHSNCode from "../HSNCode/CreateHSNCode";
 import CreateTaxes from "../ProductTaxes/CreateTaxes";
 import { useCreateProductStore } from "@store/createProductStore";
-import { CreateProductDto, CreateProductDtoType } from "@api/services/models";
+import { CreateProductWithTaxDto, CreateProductWithTaxDtoType } from "@api/services/models";
 import { useAuthStore } from "@store/auth";
 import { ListDto, stringToListDto } from "@shared/models/ListDto";
 import {
@@ -26,15 +26,14 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useCurrencyControllerFindAll } from "@api/services/currency";
 import { AlertService } from "@shared/services/AlertService";
 
-const schema: yup.Schema<CreateProductDto> = yup.object({
+const schema: yup.Schema<CreateProductWithTaxDto> = yup.object({
 	type: yup
 		.string()
 		.required("Type is required")
-		.oneOf(Object.values(CreateProductDtoType), "Invalid Type"),
+		.oneOf(Object.values(CreateProductWithTaxDtoType), "Invalid Type"),
 	name: yup.string().required("Name is required"),
 	unit_id: yup.string().required("Unit is required"),
 	hsnCode_id: yup.string(),
-	tax_id: yup.string(),
 	currency_id: yup.string().required("Currency is required"),
 	price: yup
 		.number()
@@ -43,6 +42,8 @@ const schema: yup.Schema<CreateProductDto> = yup.object({
 		.min(0.0000000001, "Price should be greater than 0"),
 	description: yup.string().nullable(),
 	user_id: yup.string().required("User id is required"),
+	// tax: string[]
+	tax: yup.array().of(yup.string().required("Tax is required")).nullable().default([]),
 });
 
 const ProductForm = () => {
@@ -58,8 +59,8 @@ const ProductForm = () => {
 	const isIndia = user?.company?.[0]?.country?.name === "India";
 
 	const handleSubmit = async (
-		values: CreateProductDto,
-		action: FormikHelpers<CreateProductDto>,
+		values: CreateProductWithTaxDto,
+		action: FormikHelpers<CreateProductWithTaxDto>,
 	) => {
 		if (isGetStartedDialogOpen()) {
 			AlertService.instance.errorMessage(
@@ -71,7 +72,6 @@ const ProductForm = () => {
 		const transformedValues = {
 			...values,
 			price: Number(values.price), // Ensure the price is a number before submission
-			tax_id: values.tax_id === "" ? null : values.tax_id,
 			hsnCode_id: values.hsnCode_id === "" ? null : values.hsnCode_id,
 		};
 		if (editValues) {
@@ -92,12 +92,12 @@ const ProductForm = () => {
 		action.setSubmitting(false);
 	};
 
-	const initialValues: CreateProductDto = {
+	const initialValues: CreateProductWithTaxDto = {
 		type: editValues?.type ?? "Goods",
 		name: editValues?.name ?? "",
 		unit_id: editValues?.unit_id ?? "",
 		hsnCode_id: editValues?.hsnCode_id ?? "",
-		tax_id: editValues?.tax_id ?? "",
+		tax: editValues?.tax?.map((tax) => tax.tax_id) ?? [],
 		currency_id: editValues?.currency_id ?? "",
 		price: editValues?.price ?? 0,
 		description: editValues?.description ?? "",
@@ -157,7 +157,7 @@ const ProductForm = () => {
 										name="type"
 										label="Type"
 										component={AutocompleteField}
-										options={Object.values(CreateProductDtoType).map(stringToListDto)}
+										options={Object.values(CreateProductWithTaxDtoType).map(stringToListDto)}
 										isRequired={true}
 									/>
 								</Grid>
@@ -234,13 +234,16 @@ const ProductForm = () => {
 
 								<Grid item xs={12}>
 									<Field
-										name="tax_id"
+										name="tax"
 										label="Taxes"
+										multiple
 										component={AutocompleteField}
 										loading={taxCodes.isLoading || taxCodes.isFetching}
 										options={taxCodes?.data?.map((item) => {
 											return {
-												label: item?.percentage + "%",
+												label: [item?.name, item?.percentage ? `${item?.percentage}%` : ""]
+													.filter(Boolean)
+													.join(" - "),
 												value: item?.id,
 											};
 										})}

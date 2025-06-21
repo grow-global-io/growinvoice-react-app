@@ -13,6 +13,7 @@ import { useConfirmDialogStore } from "@store/confirmDialog";
 import Loader from "@shared/components/Loader";
 import { useCreateTaxCodeStore } from "@store/createTaxCodeStore";
 import { getHsncodeControllerFindAllQueryKey } from "@api/services/hsncode";
+import { Constants } from "@shared/constants";
 
 const TaxTypeTableList = () => {
 	const queryClient = useQueryClient();
@@ -23,12 +24,21 @@ const TaxTypeTableList = () => {
 
 	const columns: GridColDef[] = [
 		{
+			field: "name",
+			headerName: "Tax Name",
+			flex: 1,
+			minWidth: 150,
+			renderCell: (params) => {
+				return <Typography>{params.value ?? Constants.emptyString}</Typography>;
+			},
+		},
+		{
 			field: "percentage",
 			headerName: "Percentage",
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
-				return <Typography>{params.value}</Typography>;
+				return <Typography>{params.value ?? Constants.emptyString}</Typography>;
 			},
 		},
 		{
@@ -75,7 +85,6 @@ const TaxTypeTableList = () => {
 								});
 							}}
 						/>
-						,
 					</Box>
 				</Tooltip>,
 			],

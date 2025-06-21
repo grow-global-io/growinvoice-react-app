@@ -14,11 +14,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useInvoiceHook } from "./invoiceHooks/useInvoiceHook";
 
-const InvoiceTableAllList = ({
-	customerId,
-}: {
-	customerId?: string | null;
-}) => {
+const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => {
 	const { user } = useAuthStore();
 	const invoiceData = useInvoiceControllerFindAll({
 		customerId: customerId ?? undefined,

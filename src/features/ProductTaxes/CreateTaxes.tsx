@@ -35,6 +35,7 @@ const CreateTaxes = ({ handleClose }: { handleClose?: () => void }) => {
 	});
 
 	const validationSchema: Yup.Schema<CreateTaxDto> = Yup.object().shape({
+		name: Yup.string().required("Tax Name is required"),
 		description: Yup.string().nullable(),
 		percentage: Yup.number()
 			.required("Percentage is required")
@@ -44,6 +45,7 @@ const CreateTaxes = ({ handleClose }: { handleClose?: () => void }) => {
 	});
 
 	const initialValues: CreateTaxDto = {
+		name: editValues?.data?.name ?? "",
 		percentage: editValues?.data?.percentage ?? 0,
 		description: editValues?.data?.description ?? "",
 		user_id: user?.id ?? "",
@@ -85,6 +87,12 @@ const CreateTaxes = ({ handleClose }: { handleClose?: () => void }) => {
 				{({ handleSubmit }) => {
 					return (
 						<>
+							<Field
+								name="name"
+								component={TextFormField}
+								label="Tax Name"
+								placeholder={"Tax Name"}
+							/>
 							<Field component={TextFormField} type="number" name="percentage" label="Percentage" />
 							<Field
 								name="description"

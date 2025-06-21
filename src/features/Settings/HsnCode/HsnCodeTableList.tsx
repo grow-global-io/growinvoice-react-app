@@ -77,7 +77,6 @@ const HsnCodeTableList = () => {
 								});
 							}}
 						/>
-						,
 					</Box>
 				</Tooltip>,
 			],

@@ -13,6 +13,8 @@ export interface Tax {
 	description: string | null;
 	id: string;
 	isExist: boolean;
+	/** @nullable */
+	name: string | null;
 	percentage: number;
 	/** @nullable */
 	updatedAt: string | null;

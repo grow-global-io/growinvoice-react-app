@@ -9,6 +9,8 @@
 export interface UpdateTaxDto {
 	/** @nullable */
 	description?: string | null;
+	/** @nullable */
+	name?: string | null;
 	percentage?: number;
 	user_id?: string;
 }
