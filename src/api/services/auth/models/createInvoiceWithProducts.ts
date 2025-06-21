@@ -9,6 +9,8 @@ import type { OmitCreateInvoiceProductsDto } from "./omitCreateInvoiceProductsDt
 import type { CreateInvoiceWithProductsRecurring } from "./createInvoiceWithProductsRecurring";
 
 export interface CreateInvoiceWithProducts {
+	/** @nullable */
+	currency_id?: string | null;
 	customer_id: string;
 	date: string;
 	/** @nullable */

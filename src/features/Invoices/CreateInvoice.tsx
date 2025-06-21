@@ -55,13 +55,17 @@ import { useInvoicetemplateControllerFindAll } from "@api/services/invoicetempla
 import { convertToReadableText, formatDateToIso } from "@shared/formatter";
 import SubtotalFooter from "@shared/components/SubtotalFooter";
 import { useInvoicesettingsControllerFindFirst } from "@api/services/invoicesettings";
+import { useCurrencyControllerFindAll } from "@api/services/currency";
 
-export type OmitCreateInvoiceProductsExtended = Omit<OmitCreateInvoiceProductsDto, "tax_id"> & {
+export type OmitCreateInvoiceProductsExtended = Omit<
+	OmitCreateInvoiceProductsDto,
+	"tax_id" | "taxes"
+> & {
 	id: string;
 	isNew?: boolean;
 	isEditPosible?: boolean;
 	isEditble?: boolean;
-	tax_total_percentage?: number;
+	taxes?: string[];
 };
 
 const CreateInvoice = ({ id }: { id?: string }) => {
@@ -106,11 +110,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 					quantity: product?.quantity,
 					price: product?.price,
 					total: product?.total,
-					tax_total_percentage:
-						product?.product?.tax
-							?.map((tax) => tax.tax?.percentage)
-							.filter((p): p is number => typeof p === "number")
-							.reduce((a, b) => a + b, 0) ?? 0,
+					taxes: product?.tax_forInvoiceProducts?.map((tax) => tax?.tax_id) ?? [],
 					hsnCode_id: product?.hsnCode_id,
 					isNew: true,
 					isEditPosible: false,
@@ -121,6 +121,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 	}, [invoiceFindOne.isSuccess || invoiceFindOne?.isRefetching]);
 
 	const initialValues = {
+		currency_id: user?.currency_id ?? "",
 		customer_id: invoiceFindOne?.data?.customer_id ?? "",
 		user_id: user?.id ?? "",
 		invoice_number: invoiceFindOne?.data?.invoice_number ?? "",
@@ -137,7 +138,11 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 		due_amount: invoiceFindOne?.data?.due_amount ?? 0,
 		discountPercentage: invoiceFindOne?.data?.discountPercentage ?? 0,
 		recurring: invoiceFindOne?.data?.recurring ?? CreateInvoiceWithProductsRecurring.Daily,
-		product: invoiceFindOne?.data?.product ?? [],
+		product:
+			invoiceFindOne?.data?.product?.map((product) => ({
+				...product,
+				taxes: product?.product?.tax?.map((tax) => tax?.tax_id) ?? [],
+			})) ?? [],
 		template_id:
 			invoiceFindOne?.data?.template_id ?? invoiceSettings?.data?.invoiceTemplateId ?? "",
 	};
@@ -145,6 +150,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 	const formikRef = useRef<FormikProps<typeof initialValues>>(null);
 
 	const schema = yup.object().shape({
+		currency_id: yup.string().required("Currency is required"),
 		customer_id: yup.string().required("Customer is required"),
 		invoice_number: yup.string().required("Invoice number is required"),
 		reference_number: yup.string(),
@@ -178,6 +184,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 				quantity: yup.number().required("Quantity is required"),
 				price: yup.number().required("Price is required"),
 				total: yup.number().required("Total is required"),
+				taxes: yup.array().of(yup.string()).nullable().optional(),
 			}),
 		),
 		user_id: yup.string().required("User is required"),
@@ -208,7 +215,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 					paid_amount: 0,
 					product: rows.map((row) => ({
 						...row,
-						tax_id: undefined, // Assuming tax_id is not needed in the update
+						taxes: row.taxes?.length ? row.taxes : undefined,
 					})),
 				},
 			});
@@ -226,7 +233,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 					paid_amount: 0,
 					product: rows.map((row) => ({
 						...row,
-						tax_id: undefined,
+						taxes: row.taxes?.length ? row.taxes : undefined,
 					})),
 				},
 			});
@@ -265,6 +272,8 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 		setRows([]);
 		navigate("/invoice/invoicelist");
 	};
+
+	const currencyList = useCurrencyControllerFindAll();
 
 	if (
 		invoiceFindOne.isLoading ||
@@ -326,6 +335,19 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 										>
 											Add Customer
 										</Button>
+									</Grid>
+									<Grid item xs={12} sm={4}>
+										<Field
+											name="currency_id"
+											label="Currency"
+											component={AutocompleteField}
+											loading={currencyList.isLoading || currencyList.isFetching}
+											options={currencyList?.data?.map((currency) => ({
+												value: currency.id,
+												label: `${currency.short_code} - ${currency.name}`,
+											}))}
+											isRequired={true}
+										/>
 									</Grid>
 									<Grid item xs={12} mb={3}>
 										<Divider />

@@ -30,6 +30,8 @@ import { useTaxcodeControllerFindAll } from "@api/services/tax-code";
 import { useHsncodeControllerFindAll } from "@api/services/hsncode";
 import { CustomIconButton } from "./CustomIconButton";
 import { OmitCreateInvoiceProductsExtended } from "@features/Invoices/CreateInvoice";
+import GridMultiSelectField from "@shared/components/DataGridFields/GridMultiSelectField";
+import { useCurrencyControllerFindAll } from "@api/services/currency";
 
 export default function FullFeaturedCrudGrid({
 	rows,
@@ -45,6 +47,7 @@ export default function FullFeaturedCrudGrid({
 	// eslint-disable-next-line
 	formik: FormikProps<any>;
 }) {
+	const currency_id = formik?.values?.currency_id;
 	const taxCodes = useTaxcodeControllerFindAll();
 	const hsnCodes = useHsncodeControllerFindAll();
 
@@ -155,7 +158,7 @@ export default function FullFeaturedCrudGrid({
 				price: 0,
 				total: 0,
 				hsnCode_id: "",
-				tax_id: "",
+				taxes: [],
 				isNew: true,
 				isEditPosible: false,
 				isEditble: true,
@@ -168,12 +171,13 @@ export default function FullFeaturedCrudGrid({
 	};
 
 	const theme = useTheme();
+	const currencyList = useCurrencyControllerFindAll();
 
 	const columns: GridColDef<OmitCreateInvoiceProductsExtended>[] = [
 		{
 			field: "product_id",
 			headerName: "Product",
-			flex: 1.5,
+			flex: 1.0,
 			editable: true,
 			renderEditCell: (params) => {
 				const handleProductChange = (event: SelectChangeEvent, valuea?: string) => {
@@ -185,16 +189,17 @@ export default function FullFeaturedCrudGrid({
 							?.filter((t) => selectedProduct?.tax?.map((tax) => tax.tax_id).includes(t.id))
 							?.map((t) => t.percentage)
 							.reduce((acc, curr) => acc + curr, 0) ?? 0;
-					const total = selectedProduct?.price
-						? selectedProduct?.price + (selectedProduct?.price * taxPercentage) / 100
-						: 0;
+					const price =
+						selectedProduct?.priceBook?.find((price) => price.currency_id === currency_id)?.price ??
+						0;
+					const total = price + (price * taxPercentage) / 100;
 					const updatedRows: OmitCreateInvoiceProductsExtended[] = rows.map((row) => {
 						if (row.id === params.id) {
 							return {
 								...row,
 								product_id: value,
 								quantity: 1,
-								price: selectedProduct?.price ?? 0,
+								price: price,
 								total: total,
 								tax_total_percentage: taxPercentage,
 								hsnCode_id: selectedProduct?.hsnCode_id,
@@ -212,12 +217,14 @@ export default function FullFeaturedCrudGrid({
 					params.api.setEditCellValue({
 						id: params.id,
 						field: "price",
-						value: selectedProduct?.price,
+						value: price,
 					});
 					params.api.setEditCellValue({
 						id: params.id,
-						field: "tax_total_percentage",
-						value: taxPercentage,
+						field: "taxes",
+						value: taxCodes?.data
+							?.filter((t) => selectedProduct?.tax?.map((tax) => tax.tax_id).includes(t.id))
+							?.map((t) => t.id),
 					});
 					params.api.setEditCellValue({
 						id: params.id,
@@ -252,8 +259,8 @@ export default function FullFeaturedCrudGrid({
 		},
 		{
 			field: "quantity",
-			headerName: "Quantity",
-			flex: 0.8,
+			headerName: "QTY",
+			flex: 0.3,
 			editable: true,
 			preProcessEditCellProps: (params) => {
 				const hasError = params.props.value < 1;
@@ -268,7 +275,12 @@ export default function FullFeaturedCrudGrid({
 						setErrorText("");
 					}
 					const price = params.row.price;
-					const taxPercentage = params.row.tax_total_percentage ?? 0;
+					// const taxPercentage = params.row.tax_total_percentage ?? 0;
+					const taxPercentage =
+						taxCodes?.data
+							?.filter((t) => params.row.taxes?.includes(t.id))
+							?.map((t) => t.percentage)
+							.reduce((acc, curr) => acc + curr, 0) ?? 0;
 					params.api.setEditCellValue({
 						id: params.id,
 						field: "total",
@@ -318,7 +330,11 @@ export default function FullFeaturedCrudGrid({
 						setErrorText("");
 					}
 					const quantity = params.row.quantity;
-					const taxPercentage = params.row.tax_total_percentage ?? 0;
+					const taxPercentage =
+						taxCodes?.data
+							?.filter((t) => params.row.taxes?.includes(t.id))
+							?.map((t) => t.percentage)
+							.reduce((acc, curr) => acc + curr, 0) ?? 0;
 					params.api.setEditCellValue({
 						id: params.id,
 						field: "total",
@@ -351,28 +367,71 @@ export default function FullFeaturedCrudGrid({
 					<Typography>
 						{currencyFormatter(
 							params.value,
-							productList?.data?.find((product) => product.id === params.row.product_id)?.currency
-								?.short_code ?? "USD",
+							currencyList?.data?.find((currency) => currency.id === currency_id)?.short_code ??
+								"USD",
 						)}
 					</Typography>
 				);
 			},
 		},
 		{
-			field: "tax_total_percentage",
+			field: "taxes",
 			headerName: "Tax/GST %",
-			flex: 0.8,
+			flex: 1,
 			editable: true,
-			renderEditCell: (params) => (
-				<GridTextField
-					params={params}
-					label="Tax"
-					value={params.row.tax_total_percentage}
-					disabled={true}
-				/>
-			),
+			renderEditCell: (params) => {
+				const handleTaxChange = (_: SelectChangeEvent, value?: string[]) => {
+					const taxIds = value ?? [];
+					const taxPercentage =
+						taxCodes?.data
+							?.filter((t) => taxIds.includes(t.id))
+							?.map((t) => t.percentage)
+							.reduce((acc, curr) => acc + curr, 0) ?? 0;
+					const price = params.row.price;
+					const quantity = params.row.quantity;
+					params.api.setEditCellValue({
+						id: params.id,
+						field: "total",
+						value: price ? price * quantity + (price * quantity * taxPercentage) / 100 : 0,
+					});
+					const updatedRows = rows.map((row) => {
+						if (row.id === params.id) {
+							return {
+								...row,
+								taxes: taxIds,
+								tax_total_percentage: taxPercentage,
+								total: price ? price * quantity + (price * quantity * taxPercentage) / 100 : 0,
+							};
+						}
+						return row;
+					});
+					setRows(updatedRows);
+				};
+				return (
+					<GridMultiSelectField
+						params={params}
+						valueOptions={
+							taxCodes?.data?.map((item) => {
+								return {
+									label: [item?.name, item?.percentage ? `${item?.percentage}%` : ""]
+										.filter(Boolean)
+										.join(" - "),
+									value: item?.id,
+								};
+							}) ?? []
+						}
+						onChangeValue={handleTaxChange}
+					/>
+				);
+			},
 			renderCell: (params) => {
-				return <Typography>{params.value ? `${params.value} %` : "--"}</Typography>;
+				const totalTaxPercentage =
+					taxCodes?.data
+						?.filter((t) => params.row.taxes?.includes(t.id))
+						?.map((t) => t.percentage)
+						.reduce((acc, curr) => acc + curr, 0) ?? 0;
+
+				return <Typography>{totalTaxPercentage ? `${totalTaxPercentage} %` : "--"}</Typography>;
 			},
 		},
 		{
@@ -406,8 +465,8 @@ export default function FullFeaturedCrudGrid({
 					<Typography>
 						{currencyFormatter(
 							params.value,
-							productList?.data?.find((product) => product.id === params.row.product_id)?.currency
-								?.short_code ?? "USD",
+							currencyList?.data?.find((currency) => currency.id === currency_id)?.short_code ??
+								"USD",
 						)}
 					</Typography>
 				);

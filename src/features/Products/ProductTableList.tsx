@@ -1,19 +1,20 @@
 import Box from "@mui/material/Box";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Chip, Tooltip, Typography } from "@mui/material";
+import { Tooltip, Typography } from "@mui/material";
 import {
 	getProductControllerFindAllQueryKey,
 	useProductControllerFindAll,
 	useProductControllerRemove,
 } from "@api/services/product";
 import Loader from "@shared/components/Loader";
-import { currencyFormatter, timeAgo } from "@shared/formatter";
+import { timeAgo } from "@shared/formatter";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import { useCreateProductStore } from "@store/createProductStore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useQueryClient } from "@tanstack/react-query";
 import { useConfirmDialogStore } from "@store/confirmDialog";
+import { ProductWithAllDataDto } from "@api/services/models";
 
 const ProductTableList = () => {
 	const queryClient = useQueryClient();
@@ -23,7 +24,7 @@ const ProductTableList = () => {
 
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
 
-	const columns: GridColDef[] = [
+	const columns: GridColDef<ProductWithAllDataDto>[] = [
 		{
 			field: "name",
 			headerName: "Product",
@@ -47,21 +48,12 @@ const ProductTableList = () => {
 			},
 		},
 		{
-			field: "price",
-			headerName: "Price",
+			field: "productType",
+			headerName: "Product Type",
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
-				return (
-					<Chip
-						label={`${currencyFormatter(params.value, params.row.currency.short_code)}`}
-						style={{
-							color: "custom.productTblColor",
-							backgroundColor: "custom.productTbleBgColor",
-							fontWeight: "bold",
-						}}
-					/>
-				);
+				return <Typography>{params.row.type}</Typography>;
 			},
 		},
 		{

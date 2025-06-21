@@ -2,7 +2,7 @@ import { Autocomplete, Box, FormHelperText, SelectChangeEvent, TextField } from 
 import { GridRenderEditCellParams, useGridApiContext } from "@mui/x-data-grid";
 import { ListDto } from "@shared/models/ListDto";
 
-const GridSelectField = ({
+const GridMultiSelectField = ({
 	params,
 	valueOptions,
 	disabled = false,
@@ -11,7 +11,7 @@ const GridSelectField = ({
 	params: GridRenderEditCellParams;
 	valueOptions?: ListDto[];
 	disabled?: boolean;
-	onChangeValue?: (event: SelectChangeEvent, value?: string) => void;
+	onChangeValue?: (event: SelectChangeEvent, value?: string[]) => void;
 }) => {
 	// const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
 	// 	if (event.defaultPrevented) {
@@ -43,41 +43,42 @@ const GridSelectField = ({
 				sx={{
 					marginTop: 0.2,
 				}}
+				multiple
+				filterSelectedOptions
 				disabled={disabled}
 				options={optionsValues ?? []}
 				getOptionLabel={(option) => option.label}
 				onChange={(event, value) => {
-					console.log("value", value);
+					if (!value || value.length === 0) {
+						apiRef.current.setEditCellValue({
+							id: params.id,
+							field: params.field,
+							value: [],
+						});
+						onChangeValue?.(event as any, []);
+						return;
+					}
 					apiRef.current.setEditCellValue({
 						id: params.id,
 						field: params.field,
-						value: value?.value,
+						value: value?.map((item) => item.value), // Adjusted to handle multiple values
 					});
-					onChangeValue?.(event as any, value?.value as string);
+					onChangeValue?.(
+						event as any,
+						value?.map((item) => item.value as string),
+					); // Adjusted to handle multiple values
 				}}
 				renderInput={(params) => <TextField {...params} fullWidth />}
-				value={optionsValues?.find((option) => option.value === params.value) ?? null}
+				value={
+					Array.isArray(params.value)
+						? (optionsValues?.filter((option) => params.value.includes(option.value)) ?? [])
+						: []
+				}
 				isOptionEqualToValue={(option, value) => option.value === value.value}
 			/>
-			{/* <Select
-				value={params.value}
-				onKeyDown={onKeyDown}
-				onChange={onChange}
-				disabled={disabled}
-				fullWidth
-				error={params.error}
-			>
-				{optionsValues?.map((option) => {
-					return (
-						<MenuItem key={option.value} value={option.value}>
-							{option.label}
-						</MenuItem> 
-					);
-				})}
-			</Select> */}
 			{params.error && <FormHelperText error={params.error}>{params.helperText}</FormHelperText>}
 		</Box>
 	);
 };
 
-export default GridSelectField;
+export default GridMultiSelectField;

@@ -8,6 +8,7 @@
 import type { InvoiceProductWithAllDataDtoHsnCode } from "./invoiceProductWithAllDataDtoHsnCode";
 import type { Invoice } from "./invoice";
 import type { ProductWithAllDataDto } from "./productWithAllDataDto";
+import type { TaxForInvoiceProducts } from "./taxForInvoiceProducts";
 
 export interface InvoiceProductWithAllDataDto {
 	createdAt: string;
@@ -23,6 +24,7 @@ export interface InvoiceProductWithAllDataDto {
 	product?: ProductWithAllDataDto;
 	product_id: string;
 	quantity: number;
+	tax_forInvoiceProducts?: TaxForInvoiceProducts[];
 	total: number;
 	/** @nullable */
 	updatedAt: string | null;

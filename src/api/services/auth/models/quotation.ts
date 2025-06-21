@@ -5,6 +5,7 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
+import type { QuotationCurrency } from "./quotationCurrency";
 import type { Customer } from "./customer";
 import type { QuotationTax } from "./quotationTax";
 import type { QuotationTemplateProperty } from "./quotationTemplateProperty";
@@ -12,6 +13,10 @@ import type { User } from "./user";
 
 export interface Quotation {
 	createdAt: string;
+	/** @nullable */
+	currency?: QuotationCurrency;
+	/** @nullable */
+	currency_id: string | null;
 	customer?: Customer;
 	customer_id: string;
 	date: string;

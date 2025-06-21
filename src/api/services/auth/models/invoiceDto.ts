@@ -10,6 +10,8 @@ import type { InvoiceDtoRecurring } from "./invoiceDtoRecurring";
 
 export interface InvoiceDto {
 	createdAt: string;
+	/** @nullable */
+	currency_id: string | null;
 	customer_id: string;
 	date: string;
 	/** @nullable */

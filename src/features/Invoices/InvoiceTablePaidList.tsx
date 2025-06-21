@@ -95,7 +95,7 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 					<Typography>
 						{currencyFormatter(
 							params.value,
-							params.row.product?.[0]?.product?.currency?.short_code,
+							params.row.currency?.short_code
 						)}
 					</Typography>
 				);
@@ -111,7 +111,7 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 					<Typography>
 						{currencyFormatter(
 							params?.value,
-							params.row.product?.[0]?.product?.currency?.short_code,
+							params.row.currency?.short_code
 						)}
 					</Typography>
 				);

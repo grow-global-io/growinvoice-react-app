@@ -16,8 +16,9 @@ export const TextFormField: React.FC<
 		isRequired?: boolean;
 		type?: string;
 		backgroundColor?: string; // New prop for background color
+		marginWholeTop?: number;
 	}
-> = ({ field, form, label, backgroundColor, isRequired, ...props }) => {
+> = ({ field, form, label, backgroundColor, isRequired, marginWholeTop, ...props }) => {
 	const errorText = getIn(form.touched, field.name) && getIn(form.errors, field.name);
 	const [hidePassword, setHidePassword] = useState(true);
 	const handleClickHidePassword = () => setHidePassword((hide) => !hide);
@@ -26,7 +27,11 @@ export const TextFormField: React.FC<
 	};
 
 	return (
-		<FormControl fullWidth error={!!errorText}>
+		<FormControl
+			fullWidth
+			error={!!errorText}
+			sx={marginWholeTop ? { mt: marginWholeTop } : undefined}
+		>
 			{label && (
 				<InputLabel sx={{ ml: -1.6 }} shrink htmlFor={field.name}>
 					<Typography variant="h4" color="text.primary">

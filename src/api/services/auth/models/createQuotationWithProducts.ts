@@ -8,6 +8,8 @@
 import type { OmitCreateQuotationProductsDto } from "./omitCreateQuotationProductsDto";
 
 export interface CreateQuotationWithProducts {
+	/** @nullable */
+	currency_id?: string | null;
 	customer_id: string;
 	date: string;
 	/** @nullable */

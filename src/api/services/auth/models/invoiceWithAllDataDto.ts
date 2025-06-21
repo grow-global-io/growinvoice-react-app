@@ -5,6 +5,7 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
+import type { InvoiceWithAllDataDtoCurrency } from "./invoiceWithAllDataDtoCurrency";
 import type { Customer } from "./customer";
 import type { InvoiceWithAllDataDtoPaidStatus } from "./invoiceWithAllDataDtoPaidStatus";
 import type { InvoiceWithAllDataDtoPayment } from "./invoiceWithAllDataDtoPayment";
@@ -18,6 +19,10 @@ export interface InvoiceWithAllDataDto {
 	/** @nullable */
 	companyAddress?: string | null;
 	createdAt: string;
+	/** @nullable */
+	currency?: InvoiceWithAllDataDtoCurrency;
+	/** @nullable */
+	currency_id: string | null;
 	customer?: Customer;
 	customer_id: string;
 	/** @nullable */

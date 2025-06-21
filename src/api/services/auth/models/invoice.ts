@@ -5,6 +5,7 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
+import type { InvoiceCurrency } from "./invoiceCurrency";
 import type { Customer } from "./customer";
 import type { InvoicePaidStatus } from "./invoicePaidStatus";
 import type { InvoicePayment } from "./invoicePayment";
@@ -15,6 +16,10 @@ import type { User } from "./user";
 
 export interface Invoice {
 	createdAt: string;
+	/** @nullable */
+	currency?: InvoiceCurrency;
+	/** @nullable */
+	currency_id: string | null;
 	customer?: Customer;
 	customer_id: string;
 	date: string;

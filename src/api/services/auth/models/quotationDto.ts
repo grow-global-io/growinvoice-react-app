@@ -8,6 +8,8 @@
 
 export interface QuotationDto {
 	createdAt: string;
+	/** @nullable */
+	currency_id: string | null;
 	customer_id: string;
 	date: string;
 	/** @nullable */

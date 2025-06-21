@@ -2,7 +2,7 @@ import { Box, Grid, Typography, IconButton, Button, Divider } from "@mui/materia
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { Constants } from "@shared/constants";
-import { Formik, Field, Form, FormikHelpers } from "formik";
+import { Formik, Field, Form, FormikHelpers, FieldArray } from "formik";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import * as yup from "yup";
@@ -25,6 +25,7 @@ import { useTaxcodeControllerFindAll } from "@api/services/tax-code";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCurrencyControllerFindAll } from "@api/services/currency";
 import { AlertService } from "@shared/services/AlertService";
+import { CustomIconButton } from "@shared/components/CustomIconButton";
 
 const schema: yup.Schema<CreateProductWithTaxDto> = yup.object({
 	type: yup
@@ -34,16 +35,29 @@ const schema: yup.Schema<CreateProductWithTaxDto> = yup.object({
 	name: yup.string().required("Name is required"),
 	unit_id: yup.string().required("Unit is required"),
 	hsnCode_id: yup.string(),
-	currency_id: yup.string().required("Currency is required"),
-	price: yup
-		.number()
-		.typeError("Price must be a number")
-		.required("Price is required")
-		.min(0.0000000001, "Price should be greater than 0"),
+	// currency_id: yup.string().required("Currency is required"),
+	// price: yup
+	// 	.number()
+	// 	.typeError("Price must be a number")
+	// 	.required("Price is required")
+	// 	.min(0.0000000001, "Price should be greater than 0"),
 	description: yup.string().nullable(),
 	user_id: yup.string().required("User id is required"),
-	// tax: string[]
 	tax: yup.array().of(yup.string().required("Tax is required")).nullable().default([]),
+	priceBook: yup
+		.array()
+		.of(
+			yup.object({
+				currency_id: yup.string().required("Currency is required"),
+				price: yup
+					.number()
+					.typeError("Price must be a number")
+					.required("Price is required")
+					.min(0.0000000001, "Price should be greater than 0"),
+			}),
+		)
+		.required("Price book is required")
+		.min(1, "At least one price book is required"),
 });
 
 const ProductForm = () => {
@@ -71,7 +85,6 @@ const ProductForm = () => {
 		action.setSubmitting(true);
 		const transformedValues = {
 			...values,
-			price: Number(values.price), // Ensure the price is a number before submission
 			hsnCode_id: values.hsnCode_id === "" ? null : values.hsnCode_id,
 		};
 		if (editValues) {
@@ -98,10 +111,13 @@ const ProductForm = () => {
 		unit_id: editValues?.unit_id ?? "",
 		hsnCode_id: editValues?.hsnCode_id ?? "",
 		tax: editValues?.tax?.map((tax) => tax.tax_id) ?? [],
-		currency_id: editValues?.currency_id ?? "",
-		price: editValues?.price ?? 0,
 		description: editValues?.description ?? "",
 		user_id: user?.id ?? "",
+		priceBook:
+			editValues?.priceBook?.map((price) => ({
+				currency_id: price.currency_id,
+				price: price.price,
+			})) ?? [],
 	};
 
 	const {
@@ -123,7 +139,7 @@ const ProductForm = () => {
 	} = useDialog();
 
 	return (
-		<Box sx={{ width: { sm: "400px" } }}>
+		<Box sx={{ width: { sm: "400px", md: "600px" } }}>
 			<Grid container justifyContent={"space-between"} padding={2}>
 				<Typography
 					variant="h4"
@@ -148,7 +164,7 @@ const ProductForm = () => {
 
 			<Box sx={{ mb: 2, mt: 2 }}>
 				<Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit}>
-					{({ setFieldValue }) => (
+					{({ setFieldValue, values }) => (
 						<Form>
 							<Divider />
 							<Grid container my={1} padding={2}>
@@ -169,17 +185,6 @@ const ProductForm = () => {
 										isRequired={true}
 									/>
 								</Grid>
-								<Field
-									name="currency_id"
-									label="Currency"
-									loading={currencyList.isLoading || currencyList.isFetching}
-									component={AutocompleteField}
-									options={currencyList?.data?.map((currency) => ({
-										value: currency.id,
-										label: `${currency.short_code} - ${currency.name}`,
-									}))}
-									isRequired={true}
-								/>
 
 								<Grid item xs={12}>
 									<Field
@@ -263,18 +268,73 @@ const ProductForm = () => {
 									)}
 									{openTaxesForm && <CreateTaxes handleClose={handleTaxesClose} />}
 								</Grid>
-
 								<Grid item xs={12}>
-									<Field
-										name="price"
-										component={TextFormField}
-										label="Price"
-										type="number" // Change to text to handle empty string
-										isRequired={true}
-									/>
+									<Box>
+										<Typography variant="h6" gutterBottom>
+											Price Book
+										</Typography>
+									</Box>
+									<Box>
+										<FieldArray
+											name="priceBook"
+											render={(arrayHelpers) => (
+												<>
+													{values.priceBook && values.priceBook.length > 0 ? (
+														values.priceBook.map((_, index) => (
+															<Box key={index} sx={{ mb: 1 }}>
+																<Grid container spacing={2} alignItems="center">
+																	<Grid item xs={5}>
+																		<Field
+																			name={`priceBook.${index}.currency_id`}
+																			label="Currency"
+																			component={AutocompleteField}
+																			options={currencyList?.data?.map((currency) => ({
+																				value: currency.id,
+																				label: `${currency.short_code} - ${currency.name}`,
+																			}))}
+																			isRequired={true}
+																		/>
+																	</Grid>
+																	<Grid item xs={5}>
+																		<Field
+																			name={`priceBook.${index}.price`}
+																			component={TextFormField}
+																			label="Price"
+																			type="number"
+																			isRequired={true}
+																			marginWholeTop={-0.1}
+																		/>
+																	</Grid>
+																	<Grid item xs={2}>
+																		<CustomIconButton
+																			src={CloseIcon}
+																			buttonType="delete"
+																			iconColor="error"
+																			onClick={() => arrayHelpers.remove(index)}
+																		/>
+																	</Grid>
+																</Grid>
+															</Box>
+														))
+													) : (
+														<Typography variant="body2" color="error">
+															No price book entries found. Please add at least one.
+														</Typography>
+													)}
+													<Button
+														variant="outlined"
+														startIcon={<AddIcon />}
+														onClick={() => arrayHelpers.push({ currency_id: "", price: 0 })}
+													>
+														Add Price
+													</Button>
+												</>
+											)}
+										/>
+									</Box>
 								</Grid>
 
-								<Grid item xs={12}>
+								<Grid item xs={12} mt={2}>
 									<Field
 										name="description"
 										component={TextFormField}
