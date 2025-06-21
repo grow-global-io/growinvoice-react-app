@@ -25,7 +25,7 @@ import type {
 	ProductDto,
 	ProductWithAllDataDto,
 	SuccessResponseDto,
-	UpdateProductDto,
+	UpdateProductWithTaxDto,
 } from "./models";
 import { authInstance } from "../../instances/authInstance";
 import type { ErrorType } from "../../instances/authInstance";
@@ -302,12 +302,15 @@ export function useProductControllerFindOne<
 	return query;
 }
 
-export const productControllerUpdate = (id: string, updateProductDto: UpdateProductDto) => {
+export const productControllerUpdate = (
+	id: string,
+	updateProductWithTaxDto: UpdateProductWithTaxDto,
+) => {
 	return authInstance<ProductControllerUpdate200>({
 		url: `/api/product/${id}`,
 		method: "PUT",
 		headers: { "Content-Type": "application/json" },
-		data: updateProductDto,
+		data: updateProductWithTaxDto,
 	});
 };
 
@@ -318,20 +321,20 @@ export const getProductControllerUpdateMutationOptions = <
 	mutation?: UseMutationOptions<
 		Awaited<ReturnType<typeof productControllerUpdate>>,
 		TError,
-		{ id: string; data: UpdateProductDto },
+		{ id: string; data: UpdateProductWithTaxDto },
 		TContext
 	>;
 }): UseMutationOptions<
 	Awaited<ReturnType<typeof productControllerUpdate>>,
 	TError,
-	{ id: string; data: UpdateProductDto },
+	{ id: string; data: UpdateProductWithTaxDto },
 	TContext
 > => {
 	const { mutation: mutationOptions } = options ?? {};
 
 	const mutationFn: MutationFunction<
 		Awaited<ReturnType<typeof productControllerUpdate>>,
-		{ id: string; data: UpdateProductDto }
+		{ id: string; data: UpdateProductWithTaxDto }
 	> = (props) => {
 		const { id, data } = props ?? {};
 
@@ -344,7 +347,7 @@ export const getProductControllerUpdateMutationOptions = <
 export type ProductControllerUpdateMutationResult = NonNullable<
 	Awaited<ReturnType<typeof productControllerUpdate>>
 >;
-export type ProductControllerUpdateMutationBody = UpdateProductDto;
+export type ProductControllerUpdateMutationBody = UpdateProductWithTaxDto;
 export type ProductControllerUpdateMutationError = ErrorType<unknown>;
 
 export const useProductControllerUpdate = <
@@ -354,13 +357,13 @@ export const useProductControllerUpdate = <
 	mutation?: UseMutationOptions<
 		Awaited<ReturnType<typeof productControllerUpdate>>,
 		TError,
-		{ id: string; data: UpdateProductDto },
+		{ id: string; data: UpdateProductWithTaxDto },
 		TContext
 	>;
 }): UseMutationResult<
 	Awaited<ReturnType<typeof productControllerUpdate>>,
 	TError,
-	{ id: string; data: UpdateProductDto },
+	{ id: string; data: UpdateProductWithTaxDto },
 	TContext
 > => {
 	const mutationOptions = getProductControllerUpdateMutationOptions(options);

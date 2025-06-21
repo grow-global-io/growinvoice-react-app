@@ -169,7 +169,7 @@ export default function FullFeaturedCrudGrid({
 
 	const theme = useTheme();
 
-	const columns: GridColDef[] = [
+	const columns: GridColDef<OmitCreateInvoiceProductsExtended>[] = [
 		{
 			field: "product_id",
 			headerName: "Product",
@@ -181,7 +181,10 @@ export default function FullFeaturedCrudGrid({
 						parseInt(event.target.value) === 0 ? (valuea as string) : event.target.value;
 					const selectedProduct = productList?.data?.find((product) => product.id === value);
 					const taxPercentage =
-						taxCodes?.data?.find((tax) => tax.id === selectedProduct?.tax_id)?.percentage ?? 0;
+						taxCodes?.data
+							?.filter((t) => selectedProduct?.tax?.map((tax) => tax.tax_id).includes(t.id))
+							?.map((t) => t.percentage)
+							.reduce((acc, curr) => acc + curr, 0) ?? 0;
 					const total = selectedProduct?.price
 						? selectedProduct?.price + (selectedProduct?.price * taxPercentage) / 100
 						: 0;
@@ -193,7 +196,7 @@ export default function FullFeaturedCrudGrid({
 								quantity: 1,
 								price: selectedProduct?.price ?? 0,
 								total: total,
-								tax_id: selectedProduct?.tax_id,
+								tax_total_percentage: taxPercentage,
 								hsnCode_id: selectedProduct?.hsnCode_id,
 							};
 						}
@@ -213,8 +216,8 @@ export default function FullFeaturedCrudGrid({
 					});
 					params.api.setEditCellValue({
 						id: params.id,
-						field: "tax_id",
-						value: selectedProduct?.tax_id,
+						field: "tax_total_percentage",
+						value: taxPercentage,
 					});
 					params.api.setEditCellValue({
 						id: params.id,
@@ -265,8 +268,7 @@ export default function FullFeaturedCrudGrid({
 						setErrorText("");
 					}
 					const price = params.row.price;
-					const taxPercentage =
-						taxCodes?.data?.find((item) => item.id === params.row.tax_id)?.percentage ?? 0;
+					const taxPercentage = params.row.tax_total_percentage ?? 0;
 					params.api.setEditCellValue({
 						id: params.id,
 						field: "total",
@@ -290,7 +292,7 @@ export default function FullFeaturedCrudGrid({
 						label="quantity"
 						type="number"
 						onChangeValue={onChangeValue}
-						disabled={params.row.price === "" || params.row.product_id === ""}
+						disabled={params.row.price === 0 || params.row.product_id === ""}
 					/>
 				);
 			},
@@ -316,8 +318,7 @@ export default function FullFeaturedCrudGrid({
 						setErrorText("");
 					}
 					const quantity = params.row.quantity;
-					const taxPercentage =
-						taxCodes?.data?.find((item) => item.id === params.row.tax_id)?.percentage ?? 0;
+					const taxPercentage = params.row.tax_total_percentage ?? 0;
 					params.api.setEditCellValue({
 						id: params.id,
 						field: "total",
@@ -358,21 +359,20 @@ export default function FullFeaturedCrudGrid({
 			},
 		},
 		{
-			field: "tax_id",
-			headerName: "Tax/GST",
+			field: "tax_total_percentage",
+			headerName: "Tax/GST %",
 			flex: 0.8,
 			editable: true,
 			renderEditCell: (params) => (
 				<GridTextField
 					params={params}
 					label="Tax"
-					value={taxCodes?.data?.find((tax) => tax.id === params.row.tax_id)?.percentage}
+					value={params.row.tax_total_percentage}
 					disabled={true}
 				/>
 			),
 			renderCell: (params) => {
-				const tax = taxCodes?.data?.find((tax) => tax.id === params.value);
-				return <Typography>{tax?.percentage ? `${tax?.percentage} %` : "--"}</Typography>;
+				return <Typography>{params.value ? `${params.value} %` : "--"}</Typography>;
 			},
 		},
 		{

@@ -5,9 +5,9 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
-import type { Tax } from "./tax";
+import type { HSNCode } from "./hSNCode";
 
 /**
  * @nullable
  */
-export type QuotationProductsTax = Tax | null;
+export type InvoiceProductWithAllDataDtoHsnCode = HSNCode | null;

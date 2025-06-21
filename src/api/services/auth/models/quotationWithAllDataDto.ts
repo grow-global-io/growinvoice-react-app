@@ -6,7 +6,7 @@
  * OpenAPI spec version: 1.0
  */
 import type { Customer } from "./customer";
-import type { QuotationProducts } from "./quotationProducts";
+import type { QuotationProductsWithAllDataDto } from "./quotationProductsWithAllDataDto";
 import type { QuotationWithAllDataDtoTax } from "./quotationWithAllDataDtoTax";
 import type { QuotationWithAllDataDtoTemplate } from "./quotationWithAllDataDtoTemplate";
 import type { User } from "./user";
@@ -31,7 +31,7 @@ export interface QuotationWithAllDataDto {
 	notes: string | null;
 	/** @nullable */
 	private_notes: string | null;
-	product?: QuotationProducts[];
+	product?: QuotationProductsWithAllDataDto[];
 	quatation_number: string;
 	/** @nullable */
 	reference_number: string | null;

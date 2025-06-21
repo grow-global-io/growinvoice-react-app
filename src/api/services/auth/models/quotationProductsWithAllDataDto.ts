@@ -5,27 +5,27 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
-import type { QuotationProductsHsnCode } from "./quotationProductsHsnCode";
-import type { Product } from "./product";
+import type { QuotationProductsWithAllDataDtoHsnCode } from "./quotationProductsWithAllDataDtoHsnCode";
+import type { ProductWithAllDataDto } from "./productWithAllDataDto";
 import type { Quotation } from "./quotation";
-import type { QuotationProductsTax } from "./quotationProductsTax";
+import type { QuotationProductsWithAllDataDtoTax } from "./quotationProductsWithAllDataDtoTax";
 
-export interface QuotationProducts {
+export interface QuotationProductsWithAllDataDto {
 	createdAt: string;
 	/** @nullable */
-	hsnCode?: QuotationProductsHsnCode;
+	hsnCode?: QuotationProductsWithAllDataDtoHsnCode;
 	/** @nullable */
 	hsnCode_id: string | null;
 	id: string;
 	isExist: boolean;
 	price: number;
-	product?: Product;
+	product?: ProductWithAllDataDto;
 	product_id: string;
 	quantity: number;
 	quotation?: Quotation;
 	quotation_id: string;
 	/** @nullable */
-	tax?: QuotationProductsTax;
+	tax?: QuotationProductsWithAllDataDtoTax;
 	/** @nullable */
 	tax_id: string | null;
 	total: number;

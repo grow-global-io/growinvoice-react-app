@@ -40,6 +40,7 @@ import { useQuotationtemplateControllerFindAll } from "@api/services/quotationte
 import { useQuotationsettingsControllerFindFirst } from "@api/services/quotationsettings";
 import { useDialog } from "@shared/hooks/useDialog";
 import AppDialogHeader from "@shared/components/Dialog/AppDialogHeader";
+import { OmitCreateInvoiceProductsExtended } from "@features/Invoices/CreateInvoice";
 
 const CreateQuotation = ({ id }: { id?: string }) => {
 	const navigate = useNavigate();
@@ -48,7 +49,7 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 	const { setOpenCustomerForm } = useCreateCustomerStore.getState();
 	const [previewString, setPreviewString] = useState<string | undefined>(undefined);
 	const customerData = useCustomerControllerFindAll();
-	const [rows, setRows] = useState<GridRowsProp>([]);
+	const [rows, setRows] = useState<GridRowsProp<OmitCreateInvoiceProductsExtended>>([]);
 	const { user } = useAuthStore();
 	const createQuotation = useQuotationControllerCreate();
 	const quotationTemplate = useQuotationtemplateControllerFindAll();
@@ -81,7 +82,11 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 					product_id: product.product_id,
 					quantity: product.quantity,
 					price: product.price,
-					tax_id: product.tax_id,
+					tax_total_percentage:
+						product?.product?.tax
+							?.map((tax) => tax.tax?.percentage)
+							.filter((p): p is number => typeof p === "number")
+							.reduce((a, b) => a + b, 0) ?? 0,
 					hsnCode_id: product.hsnCode_id,
 					total: product.total,
 					isNew: true,
@@ -160,6 +165,10 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 					...values,
 					date: formatToIso(values.date),
 					expiry_at: formatToIso(values.expiry_at),
+					product: rows.map((row) => ({
+						...row,
+						tax_id: undefined, // Assuming tax_id is not needed in the update
+					})),
 				},
 			});
 		} else {
@@ -168,6 +177,10 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 					...values,
 					date: formatToIso(values.date),
 					expiry_at: formatToIso(values.expiry_at),
+					product: rows.map((row) => ({
+						...row,
+						tax_id: undefined, // Assuming tax_id is not needed in the update
+					})),
 				},
 			});
 		}

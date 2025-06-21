@@ -8,7 +8,7 @@
 import type { Customer } from "./customer";
 import type { InvoiceWithAllDataDtoPaidStatus } from "./invoiceWithAllDataDtoPaidStatus";
 import type { InvoiceWithAllDataDtoPayment } from "./invoiceWithAllDataDtoPayment";
-import type { InvoiceProducts } from "./invoiceProducts";
+import type { InvoiceProductWithAllDataDto } from "./invoiceProductWithAllDataDto";
 import type { InvoiceWithAllDataDtoRecurring } from "./invoiceWithAllDataDtoRecurring";
 import type { InvoiceWithAllDataDtoTax } from "./invoiceWithAllDataDtoTax";
 import type { InvoiceWithAllDataDtoTemplate } from "./invoiceWithAllDataDtoTemplate";
@@ -41,7 +41,7 @@ export interface InvoiceWithAllDataDto {
 	payment?: InvoiceWithAllDataDtoPayment;
 	/** @nullable */
 	paymentId: string | null;
-	product?: InvoiceProducts[];
+	product?: InvoiceProductWithAllDataDto[];
 	/** @nullable */
 	recurring: InvoiceWithAllDataDtoRecurring;
 	/** @nullable */

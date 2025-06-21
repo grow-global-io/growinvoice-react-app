@@ -56,11 +56,12 @@ import { convertToReadableText, formatDateToIso } from "@shared/formatter";
 import SubtotalFooter from "@shared/components/SubtotalFooter";
 import { useInvoicesettingsControllerFindFirst } from "@api/services/invoicesettings";
 
-export type OmitCreateInvoiceProductsExtended = OmitCreateInvoiceProductsDto & {
+export type OmitCreateInvoiceProductsExtended = Omit<OmitCreateInvoiceProductsDto, "tax_id"> & {
 	id: string;
 	isNew?: boolean;
 	isEditPosible?: boolean;
 	isEditble?: boolean;
+	tax_total_percentage?: number;
 };
 
 const CreateInvoice = ({ id }: { id?: string }) => {
@@ -105,7 +106,11 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 					quantity: product?.quantity,
 					price: product?.price,
 					total: product?.total,
-					tax_id: product?.tax_id,
+					tax_total_percentage:
+						product?.product?.tax
+							?.map((tax) => tax.tax?.percentage)
+							.filter((p): p is number => typeof p === "number")
+							.reduce((a, b) => a + b, 0) ?? 0,
 					hsnCode_id: product?.hsnCode_id,
 					isNew: true,
 					isEditPosible: false,
@@ -201,6 +206,10 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 					due_date: formatDateToIso(values.due_date),
 					due_amount: values.total,
 					paid_amount: 0,
+					product: rows.map((row) => ({
+						...row,
+						tax_id: undefined, // Assuming tax_id is not needed in the update
+					})),
 				},
 			});
 		} else {
@@ -215,6 +224,10 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 					due_date: formatDateToIso(values.due_date),
 					due_amount: values.total,
 					paid_amount: 0,
+					product: rows.map((row) => ({
+						...row,
+						tax_id: undefined,
+					})),
 				},
 			});
 		}
