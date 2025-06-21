@@ -5,7 +5,6 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
-import type { Currencies } from "./currencies";
 import type { ProductHsnCode } from "./productHsnCode";
 import type { ProductType } from "./productType";
 import type { ProductUnit } from "./productUnit";
@@ -13,8 +12,6 @@ import type { User } from "./user";
 
 export interface Product {
 	createdAt: string;
-	currency?: Currencies;
-	currency_id: string;
 	/** @nullable */
 	description: string | null;
 	/** @nullable */
@@ -24,7 +21,6 @@ export interface Product {
 	id: string;
 	isExist: boolean;
 	name: string;
-	price: number;
 	type: ProductType;
 	unit?: ProductUnit;
 	unit_id: string;

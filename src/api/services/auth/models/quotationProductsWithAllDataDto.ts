@@ -8,7 +8,6 @@
 import type { QuotationProductsWithAllDataDtoHsnCode } from "./quotationProductsWithAllDataDtoHsnCode";
 import type { ProductWithAllDataDto } from "./productWithAllDataDto";
 import type { Quotation } from "./quotation";
-import type { QuotationProductsWithAllDataDtoTax } from "./quotationProductsWithAllDataDtoTax";
 
 export interface QuotationProductsWithAllDataDto {
 	createdAt: string;
@@ -24,10 +23,6 @@ export interface QuotationProductsWithAllDataDto {
 	quantity: number;
 	quotation?: Quotation;
 	quotation_id: string;
-	/** @nullable */
-	tax?: QuotationProductsWithAllDataDtoTax;
-	/** @nullable */
-	tax_id: string | null;
 	total: number;
 	/** @nullable */
 	updatedAt: string | null;

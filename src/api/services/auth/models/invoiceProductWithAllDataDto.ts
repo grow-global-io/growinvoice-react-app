@@ -8,7 +8,6 @@
 import type { InvoiceProductWithAllDataDtoHsnCode } from "./invoiceProductWithAllDataDtoHsnCode";
 import type { Invoice } from "./invoice";
 import type { ProductWithAllDataDto } from "./productWithAllDataDto";
-import type { InvoiceProductWithAllDataDtoTax } from "./invoiceProductWithAllDataDtoTax";
 
 export interface InvoiceProductWithAllDataDto {
 	createdAt: string;
@@ -24,10 +23,6 @@ export interface InvoiceProductWithAllDataDto {
 	product?: ProductWithAllDataDto;
 	product_id: string;
 	quantity: number;
-	/** @nullable */
-	tax?: InvoiceProductWithAllDataDtoTax;
-	/** @nullable */
-	tax_id: string | null;
 	total: number;
 	/** @nullable */
 	updatedAt: string | null;

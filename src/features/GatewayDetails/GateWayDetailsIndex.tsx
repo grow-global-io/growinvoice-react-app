@@ -29,6 +29,15 @@ const GateWayDetailsIndex = () => {
 				</Grid>
 				<Grid item xs={6} display="flex" justifyContent="flex-end" alignItems={"center"}>
 					<Button
+						variant="outlined"
+						onClick={() => {
+							window.open("https://razorpay.com", "_blank");
+						}}
+						sx={{ mr: 2 }}
+					>
+						Get Razorpay Key
+					</Button>
+					<Button
 						variant="contained"
 						startIcon={<AddIcon />}
 						onClick={() => {

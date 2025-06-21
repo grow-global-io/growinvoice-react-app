@@ -5,9 +5,8 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
-import type { Tax } from "./tax";
 
-/**
- * @nullable
- */
-export type QuotationProductsWithAllDataDtoTax = Tax | null;
+export interface CreateProductPriceBookDto {
+	currency_id: string;
+	price: number;
+}

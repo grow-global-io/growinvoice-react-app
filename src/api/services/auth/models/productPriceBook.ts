@@ -5,25 +5,18 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
-import type { InvoiceProductsHsnCode } from "./invoiceProductsHsnCode";
-import type { Invoice } from "./invoice";
+import type { Currencies } from "./currencies";
 import type { Product } from "./product";
 
-export interface InvoiceProducts {
+export interface ProductPriceBook {
 	createdAt: string;
-	/** @nullable */
-	hsnCode?: InvoiceProductsHsnCode;
-	/** @nullable */
-	hsnCode_id: string | null;
+	currency?: Currencies;
+	currency_id: string;
 	id: string;
-	invoice?: Invoice;
-	invoice_id: string;
 	isExist: boolean;
 	price: number;
 	product?: Product;
 	product_id: string;
-	quantity: number;
-	total: number;
 	/** @nullable */
 	updatedAt: string | null;
 }

@@ -12,7 +12,5 @@ export interface OmitCreateInvoiceProductsDto {
 	price: number;
 	product_id: string;
 	quantity: number;
-	/** @nullable */
-	tax_id?: string | null;
 	total: number;
 }

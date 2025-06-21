@@ -152,7 +152,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			},
 		},
 		{
-			name: "Marked Paid",
+			name: "Mark as Paid",
 			func: async () => {
 				await handlePaid(invoiceId);
 				handleCloseAll();
@@ -253,7 +253,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 		},
 
 		{
-			name: "Marked Paid",
+			name: "Mark as Paid",
 			icon: PaidOutlined,
 			func: async () => {
 				await handlePaid(invoiceId);

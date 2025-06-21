@@ -9,7 +9,6 @@ import type { ProductDtoType } from "./productDtoType";
 
 export interface ProductDto {
 	createdAt: string;
-	currency_id: string;
 	/** @nullable */
 	description: string | null;
 	/** @nullable */
@@ -17,7 +16,6 @@ export interface ProductDto {
 	id: string;
 	isExist: boolean;
 	name: string;
-	price: number;
 	type: ProductDtoType;
 	unit_id: string;
 	/** @nullable */
