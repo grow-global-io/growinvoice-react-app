@@ -63,6 +63,7 @@ export default function FullFeaturedCrudGrid({
 					total: row.total,
 					tax_id: row.tax_id,
 					hsnCode_id: row.hsnCode_id,
+					taxes: row.taxes,
 				};
 			}),
 		);

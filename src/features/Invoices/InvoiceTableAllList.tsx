@@ -85,10 +85,7 @@ const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => 
 			renderCell: (params) => {
 				return (
 					<Typography>
-						{currencyFormatter(
-							params.value,
-							params.row.currency?.short_code
-						)}
+						{currencyFormatter(params.value, params.row.currency?.short_code)}
 					</Typography>
 				);
 			},
@@ -101,10 +98,7 @@ const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => 
 			renderCell: (params) => {
 				return (
 					<Typography>
-						{currencyFormatter(
-							params?.value,
-							params.row.currency?.short_code
-						)}
+						{currencyFormatter(params?.value, params.row.currency?.short_code)}
 					</Typography>
 				);
 			},

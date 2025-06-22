@@ -41,6 +41,7 @@ import { useQuotationsettingsControllerFindFirst } from "@api/services/quotation
 import { useDialog } from "@shared/hooks/useDialog";
 import AppDialogHeader from "@shared/components/Dialog/AppDialogHeader";
 import { OmitCreateInvoiceProductsExtended } from "@features/Invoices/CreateInvoice";
+import { useCurrencyControllerFindAll } from "@api/services/currency";
 
 const CreateQuotation = ({ id }: { id?: string }) => {
 	const navigate = useNavigate();
@@ -82,11 +83,7 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 					product_id: product.product_id,
 					quantity: product.quantity,
 					price: product.price,
-					tax_total_percentage:
-						product?.product?.tax
-							?.map((tax) => tax.tax?.percentage)
-							.filter((p): p is number => typeof p === "number")
-							.reduce((a, b) => a + b, 0) ?? 0,
+					taxes: product.tax_forQuotationProducts?.map((tax) => tax?.tax_id) ?? [],
 					hsnCode_id: product.hsnCode_id,
 					total: product.total,
 					isNew: true,
@@ -109,8 +106,12 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 		tax_id: quotationFindOne?.data?.tax_id ?? "",
 		total: quotationFindOne?.data?.total ?? 0,
 		discountPercentage: quotationFindOne?.data?.discountPercentage ?? 0,
-		product: quotationFindOne?.data?.product ?? [],
 		template_id: quotationFindOne?.data?.template_id ?? "",
+		product:
+			quotationFindOne?.data?.product?.map((product) => ({
+				...product,
+				taxes: product.tax_forQuotationProducts?.map((tax) => tax?.tax_id) ?? [],
+			})) ?? [],
 	};
 
 	const formikRef = useRef<FormikProps<typeof initialValues>>(null);
@@ -148,6 +149,7 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 					quantity: yup.number().required("Quantity is required"),
 					price: yup.number().required("Price is required"),
 					total: yup.number().required("Total is required"),
+					taxes: yup.array().of(yup.string()).nullable().optional(),
 				}),
 			)
 			.min(1, "At least one product is required"),
@@ -167,7 +169,7 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 					expiry_at: formatToIso(values.expiry_at),
 					product: rows.map((row) => ({
 						...row,
-						tax_id: undefined, // Assuming tax_id is not needed in the update
+						taxes: row.taxes?.length ? row.taxes : undefined, // Assuming taxes is an array of objects with a value property
 					})),
 				},
 			});
@@ -179,7 +181,7 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 					expiry_at: formatToIso(values.expiry_at),
 					product: rows.map((row) => ({
 						...row,
-						tax_id: undefined, // Assuming tax_id is not needed in the update
+						taxes: row.taxes?.length ? row.taxes : undefined, // Assuming taxes is an array of objects with a value property
 					})),
 				},
 			});
@@ -198,6 +200,8 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 		setRows([]);
 		navigate("/quotation/quotationlist");
 	};
+
+	const currencyList = useCurrencyControllerFindAll();
 
 	if (
 		quotationFindOne.isLoading ||
@@ -234,7 +238,6 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 					innerRef={formikRef}
 				>
 					{(formik) => {
-						console.log(formik?.errors);
 						return (
 							<Form>
 								<Grid container spacing={2}>
@@ -261,6 +264,19 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 										>
 											Add Customer
 										</Button>
+									</Grid>
+									<Grid item xs={12} sm={4}>
+										<Field
+											name="currency_id"
+											label="Currency"
+											component={AutocompleteField}
+											loading={currencyList.isLoading || currencyList.isFetching}
+											options={currencyList?.data?.map((currency) => ({
+												value: currency.id,
+												label: `${currency.short_code} - ${currency.name}`,
+											}))}
+											isRequired={true}
+										/>
 									</Grid>
 									<Grid item xs={12} mb={3}>
 										<Divider />

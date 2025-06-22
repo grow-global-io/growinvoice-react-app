@@ -12,5 +12,6 @@ export interface OmitCreateQuotationProductsDto {
 	price: number;
 	product_id: string;
 	quantity: number;
+	taxes?: string[];
 	total: number;
 }
