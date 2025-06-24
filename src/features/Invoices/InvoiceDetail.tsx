@@ -37,6 +37,10 @@ import { useGatewaydetailsControllerFindEnabledAll } from "@api/services/gateway
 import PrintOutlined from "@mui/icons-material/PrintOutlined";
 import { useDialog } from "@shared/hooks/useDialog";
 import ShareInvoice from "./ShareInvoice";
+import { AlertService } from "@shared/services/AlertService";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
+import { CustomIconButton } from "@shared/components/CustomIconButton";
+import QRCodeDialog from "./QRCodeDialog";
 
 const styles = {
 	width: { xs: "100%", sm: "auto" },
@@ -141,6 +145,8 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 
 	const { handleClickOpen, handleClose, open } = useDialog();
 
+	const { handleClickOpen: handleQrOpen, handleClose: handleQrClose, open: openQr } = useDialog();
+
 	const menuLists = [
 		{
 			name: "Share",
@@ -191,11 +197,31 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			},
 		},
 		{
+			name: "E-Invoice",
+			icon: CreditCardIcon, // You can replace this with a more suitable icon
+			func: () => {
+				AlertService.instance.errorMessage("This feature is coming soon!");
+			},
+		},
+		{
 			name: "Print",
 			icon: PrintOutlined, // Import this from MUI
 			func: () => {
 				if (iframeRef.current) {
-					iframeRef.current.contentWindow?.print();
+				
+					 const content = iframeRef.current.contentWindow
+
+					//  within content select id "tm_download_section" and print it
+					if (content) {
+						// get element by html
+						const element = content.document.getElementById("html_content");
+						if (element) {
+							const printWindow = window.open("", "_blank");
+							printWindow?.document.write(element.outerHTML);
+							printWindow?.document.close();
+							printWindow?.print();
+						}
+					}
 				}
 			},
 		},
@@ -349,9 +375,8 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 				)}
 				{(IsPublic || getInvoiceData?.data?.paid_status === "Paid") && (
 					<Box>
-						<Button
-							variant="contained"
-							startIcon={<DownloadIcon />}
+						<CustomIconButton
+							src={DownloadIcon}
 							onClick={() => {
 								if (isMobile) {
 									generatePdfFromHtml({
@@ -363,9 +388,23 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 									iframeRef,
 								});
 							}}
-						>
-							Download
-						</Button>
+						/>
+						{getInvoiceData?.data?.currency?.short_code === "INR" &&
+							getInvoiceData?.data?.payment?.paymentType === "UPI" && (
+								<Button
+									variant="contained"
+									onClick={() => {
+										handleQrOpen();
+									}}
+								>
+									Download UPI QR
+								</Button>
+							)}
+						<QRCodeDialog
+							open={openQr}
+							onClose={handleQrClose}
+							upidata={`upi://pay?pa=${getInvoiceData?.data?.payment?.upiId}&pn=${getInvoiceData?.data?.user?.name}&cu=INR&url=${window.location.origin}/invoice/invoicetemplate/${invoiceId}&am=${getInvoiceData?.data?.total?.toFixed(2)}`}
+						/>
 						{StripeObject && getInvoiceData?.data?.status !== "Paid" && (
 							<Button
 								onClick={() => {

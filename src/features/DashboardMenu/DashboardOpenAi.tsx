@@ -52,6 +52,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { CiBoxList } from "react-icons/ci";
 import PublishIcon from "@mui/icons-material/Publish";
 import { CustomToolbar } from "@shared/components/CustomToolbar";
+import moment from "moment";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -175,6 +176,25 @@ const DashboardOpenAi = () => {
 						minWidth: 150,
 						flex: 1,
 						show: true,
+						// eslint-disable-next-line
+						renderCell: (params: any) => {
+							if (params?.value === null || params?.value === undefined) {
+								return <span>--</span>;
+							}
+							if (typeof params?.value === "object") {
+								return <span>{JSON.stringify(params?.value)}</span>;
+							}
+							if (params.value.toString().includes("000Z")) {
+								return <span>{moment.utc(params?.value).format("YYYY-MM-DD HH:mm A")}</span>;
+							}
+							return (
+								<span>
+									{key?.toLocaleLowerCase()?.includes("date")
+										? moment.utc(params?.value).format("YYYY-MM-DD HH:mm A")
+										: params?.value}
+								</span>
+							);
+						},
 					};
 				});
 

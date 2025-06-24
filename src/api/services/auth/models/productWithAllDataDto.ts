@@ -6,6 +6,7 @@
  * OpenAPI spec version: 1.0
  */
 import type { CurrenciesDto } from "./currenciesDto";
+import type { HSNCode } from "./hSNCode";
 import type { ProductPriceBook } from "./productPriceBook";
 import type { TaxForProduct } from "./taxForProduct";
 import type { ProductWithAllDataDtoType } from "./productWithAllDataDtoType";
@@ -16,6 +17,7 @@ export interface ProductWithAllDataDto {
 	currency?: CurrenciesDto;
 	/** @nullable */
 	description: string | null;
+	hsnCode?: HSNCode;
 	/** @nullable */
 	hsnCode_id: string | null;
 	id: string;

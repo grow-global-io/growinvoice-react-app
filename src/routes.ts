@@ -1,5 +1,5 @@
 import LoginPage from "@pages/LoginPage";
-import MainHomePage from "@pages/MainHomePage";
+// import MainHomePage from "@pages/MainHomePage";
 import RegisterPage from "@pages/RegisterPage";
 import OveviewPage from "@pages/OveviewPage";
 import { Route } from "@shared/models/Route";
@@ -43,10 +43,6 @@ import VendorsPage from "@pages/VendorsPage";
 import CustomerInvoicesPage from "@pages/CustomerInvoicesPage";
 
 export const unProtectedRoutes: Route[] = [
-	{
-		path: "/",
-		Component: MainHomePage,
-	},
 	{
 		path: "/login",
 		Component: LoginPage,

@@ -20,6 +20,7 @@ import type {
 } from "@tanstack/react-query";
 import type {
 	CreateHSNCodeTaxDto,
+	HSNCode,
 	HSNCodeDto,
 	HsncodeControllerCreate201,
 	HsncodeControllerUpdate201,
@@ -99,7 +100,7 @@ export const useHsncodeControllerCreate = <
 	return useMutation(mutationOptions);
 };
 export const hsncodeControllerFindAll = (signal?: AbortSignal) => {
-	return authInstance<HSNCodeDto[]>({ url: `/api/hsncode`, method: "GET", signal });
+	return authInstance<HSNCode[]>({ url: `/api/hsncode`, method: "GET", signal });
 };
 
 export const getHsncodeControllerFindAllQueryKey = () => {

@@ -3095,6 +3095,11 @@
     "@types/qs" "*"
     "@types/serve-static" "*"
 
+"@types/file-saver@^2.0.7":
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/@types/file-saver/-/file-saver-2.0.7.tgz#8dbb2f24bdc7486c54aa854eb414940bbd056f7d"
+  integrity sha512-dNKVfHd/jk0SkR/exKGj2ggkB45MAkzvWCaqLUUgkyjITkGNzH8H+yUwr+BLJUBjZOe9w8X3wgmXhZDRg1ED6A==
+
 "@types/format-util@^1.0.4":
   version "1.0.4"
   resolved "https://registry.npmjs.org/@types/format-util/-/format-util-1.0.4.tgz"
@@ -6635,6 +6640,11 @@ file-loader@^6.2.0:
   dependencies:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
+
+file-saver@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-2.0.5.tgz#d61cfe2ce059f414d899e9dd6d4107ee25670c38"
+  integrity sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==
 
 filelist@^1.0.4:
   version "1.0.4"
@@ -10817,6 +10827,11 @@ react-share@^5.2.2:
   dependencies:
     classnames "^2.3.2"
     jsonp "^0.2.1"
+
+react-to-print@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/react-to-print/-/react-to-print-3.1.0.tgz#70f2f3e43314ce9e71bb0a69fad47208e89c1320"
+  integrity sha512-hiJZVmJtaRm9EHoUTG2bordyeRxVSGy9oFVV7fSvzOWwctPp6jbz2R6NFkaokaTYBxC7wTM/fMV5eCXsNpEwsA==
 
 react-toastify@^10.0.5:
   version "10.0.5"

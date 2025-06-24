@@ -47,12 +47,12 @@ const GridSelectField = ({
 				options={optionsValues ?? []}
 				getOptionLabel={(option) => option.label}
 				onChange={(event, value) => {
-					console.log("value", value);
 					apiRef.current.setEditCellValue({
 						id: params.id,
 						field: params.field,
 						value: value?.value,
 					});
+					// eslint-disable-next-line
 					onChangeValue?.(event as any, value?.value as string);
 				}}
 				renderInput={(params) => <TextField {...params} fullWidth />}

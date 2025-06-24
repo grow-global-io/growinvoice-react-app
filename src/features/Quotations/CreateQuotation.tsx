@@ -96,7 +96,7 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 	const initialValues = {
 		user_id: user?.id ?? "",
 		customer_id: quotationFindOne?.data?.customer_id ?? "",
-		quatation_number: quotationFindOne?.data?.quatation_number ?? "",
+		quatation_number: quotationFindOne?.data?.quatation_number ?? new Date().getTime().toString(),
 		reference_number: quotationFindOne?.data?.reference_number ?? "",
 		date: quotationFindOne?.data?.date ?? "",
 		expiry_at: quotationFindOne?.data?.expiry_at ?? "",

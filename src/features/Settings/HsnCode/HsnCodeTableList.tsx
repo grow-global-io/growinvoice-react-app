@@ -13,6 +13,7 @@ import { useConfirmDialogStore } from "@store/confirmDialog";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCreateHsnCodeStore } from "@store/createHsnCodeStore";
 import { getTaxcodeControllerFindAllQueryKey } from "@api/services/tax-code";
+import { HSNCode } from "@api/services/models";
 
 const HsnCodeTableList = () => {
 	const queryClient = useQueryClient();
@@ -21,7 +22,7 @@ const HsnCodeTableList = () => {
 	const removeHsnCode = useHsncodeControllerRemove();
 	const { updateHsnCode } = useCreateHsnCodeStore.getState();
 
-	const columns: GridColDef[] = [
+	const columns: GridColDef<HSNCode>[] = [
 		{
 			field: "code",
 			headerName: "Code",
@@ -31,7 +32,15 @@ const HsnCodeTableList = () => {
 				return <Typography>{params.value}</Typography>;
 			},
 		},
-
+		{
+			field:"percentage",
+			headerName: "Percentage",
+			flex: 1,
+			minWidth: 150,
+			renderCell: (params) => {
+				return <Typography>{params.row.tax?.percentage}%</Typography>;
+			}
+		},
 		{
 			field: "action",
 			headerName: "Action",

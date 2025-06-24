@@ -164,7 +164,7 @@ const ProductForm = () => {
 
 			<Box sx={{ mb: 2, mt: 2 }}>
 				<Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit}>
-					{({ setFieldValue, values }) => (
+					{({ values,setFieldValue }) => (
 						<Form>
 							<Divider />
 							<Grid container my={1} padding={2}>
@@ -217,14 +217,21 @@ const ProductForm = () => {
 											loading={hsnCodes.isLoading || hsnCodes.isFetching}
 											options={hsnCodes?.data?.map((item) => {
 												return {
-													label: `${item?.code}`,
+													label: `${item?.code} - ${item?.tax?.percentage}%`,
 													value: item?.id,
 												};
 											})}
-											onValueChange={(value: ListDto) => {
+											onValueChange={(value:ListDto) => {
 												if (value) {
-													const hsnCode = hsnCodes?.data?.find((item) => item.id === value.value);
-													setFieldValue("tax_id", hsnCode?.tax_id);
+													const selectedHsnCode = hsnCodes.data?.find(
+														(item) => item.id === value.value,
+													);
+													if (selectedHsnCode) {
+														setFieldValue("tax", [
+															...values.tax ?? [],
+															selectedHsnCode.tax?.id ?? "",
+														]);
+													}
 												}
 											}}
 										/>
@@ -252,14 +259,6 @@ const ProductForm = () => {
 												value: item?.id,
 											};
 										})}
-										onValueChange={(value: ListDto) => {
-											if (value === undefined) {
-												setFieldValue("hsnCode_id", "");
-											} else if (value) {
-												const taxCode = hsnCodes?.data?.find((item) => item.tax_id === value.value);
-												setFieldValue("hsnCode_id", taxCode?.id ?? "");
-											}
-										}}
 									/>
 									{!openTaxesForm && (
 										<Button variant="text" onClick={handleTaxesOpen} startIcon={<AddIcon />}>

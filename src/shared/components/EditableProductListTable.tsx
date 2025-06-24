@@ -193,7 +193,7 @@ export default function FullFeaturedCrudGrid({
 					const price =
 						selectedProduct?.priceBook?.find((price) => price.currency_id === currency_id)?.price ??
 						0;
-					const total = price + (price * taxPercentage) / 100;
+					const total = price + (price * taxPercentage) / 100
 					const updatedRows: OmitCreateInvoiceProductsExtended[] = rows.map((row) => {
 						if (row.id === params.id) {
 							return {
@@ -346,7 +346,7 @@ export default function FullFeaturedCrudGrid({
 							return {
 								...row,
 								price: value,
-								total: quantity ? quantity * value + (quantity * value * taxPercentage) / 100 : 0,
+								total: quantity ? quantity * value + (quantity * value * taxPercentage)	 / 100 : 0,
 							};
 						}
 						return row;
@@ -444,13 +444,13 @@ export default function FullFeaturedCrudGrid({
 				<GridTextField
 					params={params}
 					label="HSN Code"
-					value={hsnCodes?.data?.find((hsnCode) => hsnCode.id === params.row.hsnCode_id)?.code}
+					value={`${hsnCodes?.data?.find((hsnCode) => hsnCode.id === params.row.hsnCode_id)?.code} - ${hsnCodes?.data?.find((hsnCode) => hsnCode.id === params.row.hsnCode_id)?.tax?.percentage ?? 0}%`}
 					disabled={true}
 				/>
 			),
 			renderCell: (params) => {
 				const hsnCode = hsnCodes?.data?.find((hsnCode) => hsnCode.id === params.value);
-				return <Typography>{hsnCode?.code}</Typography>;
+				return <Typography>{hsnCode?.code} - {hsnCode?.tax?.percentage ?? 0}%</Typography>;
 			},
 		},
 		{

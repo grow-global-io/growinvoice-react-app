@@ -24,7 +24,7 @@ export const parseDateToFormat = (date: Date | string, format?: string) => {
 // currency formatter
 export const formatCurrency = (value: number, currency?: string) => {
 	if (!currency) {
-		currency = "USD";
+		currency = "INR";
 	}
 
 	return value.toLocaleString("en-US", {

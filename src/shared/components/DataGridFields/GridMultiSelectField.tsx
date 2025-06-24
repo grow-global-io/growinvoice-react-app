@@ -55,6 +55,7 @@ const GridMultiSelectField = ({
 							field: params.field,
 							value: [],
 						});
+						// eslint-disable-next-line
 						onChangeValue?.(event as any, []);
 						return;
 					}
@@ -64,6 +65,7 @@ const GridMultiSelectField = ({
 						value: value?.map((item) => item.value), // Adjusted to handle multiple values
 					});
 					onChangeValue?.(
+						// eslint-disable-next-line
 						event as any,
 						value?.map((item) => item.value as string),
 					); // Adjusted to handle multiple values

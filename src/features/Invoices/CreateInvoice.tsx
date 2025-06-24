@@ -124,7 +124,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 		currency_id: user?.currency_id ?? "",
 		customer_id: invoiceFindOne?.data?.customer_id ?? "",
 		user_id: user?.id ?? "",
-		invoice_number: invoiceFindOne?.data?.invoice_number ?? "",
+		invoice_number: invoiceFindOne?.data?.invoice_number ?? new Date().getTime().toString(),
 		reference_number: invoiceFindOne?.data?.reference_number ?? "",
 		date: invoiceFindOne?.data?.date ?? "",
 		due_date: invoiceFindOne?.data?.due_date ?? "",
