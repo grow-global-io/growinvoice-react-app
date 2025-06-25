@@ -14,6 +14,8 @@ export interface CreateCustomerWithAddressDto {
 	currencies_id: string;
 	display_name: string;
 	email: string;
+	/** @nullable */
+	gstIn?: string | null;
 	name: string;
 	option: CreateCustomerWithAddressDtoOption;
 	/** @nullable */

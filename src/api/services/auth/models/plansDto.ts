@@ -13,6 +13,7 @@ export interface PlansDto {
 	id: string;
 	is_active: boolean;
 	isExist: boolean;
+	isOneTime: boolean;
 	name: string;
 	price: number;
 	/** @nullable */

@@ -33,13 +33,13 @@ const HsnCodeTableList = () => {
 			},
 		},
 		{
-			field:"percentage",
+			field: "percentage",
 			headerName: "Percentage",
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
 				return <Typography>{params.row.tax?.percentage}%</Typography>;
-			}
+			},
 		},
 		{
 			field: "action",

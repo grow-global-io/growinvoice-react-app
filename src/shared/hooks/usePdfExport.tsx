@@ -3,7 +3,6 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
 export const usePdfExport = () => {
-
 	const generatePdfFromRef = async ({
 		iframeRef,
 	}: {

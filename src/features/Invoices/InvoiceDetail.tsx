@@ -208,8 +208,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			icon: PrintOutlined, // Import this from MUI
 			func: () => {
 				if (iframeRef.current) {
-				
-					 const content = iframeRef.current.contentWindow
+					const content = iframeRef.current.contentWindow;
 
 					//  within content select id "tm_download_section" and print it
 					if (content) {

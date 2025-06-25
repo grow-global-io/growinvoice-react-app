@@ -14,6 +14,7 @@ export interface PlanWithFeaturesDto {
 	id: string;
 	is_active: boolean;
 	isExist: boolean;
+	isOneTime: boolean;
 	name: string;
 	PlanFeatures: PlanFeaturesDto[];
 	price: number;

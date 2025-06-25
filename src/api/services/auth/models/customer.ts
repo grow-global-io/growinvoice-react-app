@@ -19,6 +19,8 @@ export interface Customer {
 	currencies_id: string;
 	display_name: string;
 	email: string;
+	/** @nullable */
+	gstIn: string | null;
 	id: string;
 	isExist: boolean;
 	name: string;

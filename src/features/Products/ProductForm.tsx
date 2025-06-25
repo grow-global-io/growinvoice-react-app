@@ -164,7 +164,7 @@ const ProductForm = () => {
 
 			<Box sx={{ mb: 2, mt: 2 }}>
 				<Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit}>
-					{({ values,setFieldValue }) => (
+					{({ values, setFieldValue }) => (
 						<Form>
 							<Divider />
 							<Grid container my={1} padding={2}>
@@ -221,14 +221,14 @@ const ProductForm = () => {
 													value: item?.id,
 												};
 											})}
-											onValueChange={(value:ListDto) => {
+											onValueChange={(value: ListDto) => {
 												if (value) {
 													const selectedHsnCode = hsnCodes.data?.find(
 														(item) => item.id === value.value,
 													);
 													if (selectedHsnCode) {
 														setFieldValue("tax", [
-															...values.tax ?? [],
+															...(values.tax ?? []),
 															selectedHsnCode.tax?.id ?? "",
 														]);
 													}

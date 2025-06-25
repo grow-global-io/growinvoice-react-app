@@ -164,7 +164,6 @@ export * from "./omitCreateInvoiceProductsDto";
 export * from "./omitCreatePlanFeatureDto";
 export * from "./omitCreatePlanFeatureDtoFeature";
 export * from "./omitCreateQuotationProductsDto";
-export * from "./openaiControllerChat201";
 export * from "./openaiControllerCreate200Item";
 export * from "./openaiControllerCreateGraph200Item";
 export * from "./openaiControllerDashboardDataGet200";

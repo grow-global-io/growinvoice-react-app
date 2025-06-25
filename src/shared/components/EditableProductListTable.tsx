@@ -120,7 +120,6 @@ export default function FullFeaturedCrudGrid({
 	const handleCancelClick = (id: GridRowId) => () => {
 		if (rows.filter((row) => row.id !== id)?.length === 0) {
 			setErrorText("At least one product is required");
-
 		}
 		setRows(rows.filter((row) => row.id !== id));
 		handleTotal(rows.filter((row) => row.id !== id));
@@ -193,7 +192,7 @@ export default function FullFeaturedCrudGrid({
 					const price =
 						selectedProduct?.priceBook?.find((price) => price.currency_id === currency_id)?.price ??
 						0;
-					const total = price + (price * taxPercentage) / 100
+					const total = price + (price * taxPercentage) / 100;
 					const updatedRows: OmitCreateInvoiceProductsExtended[] = rows.map((row) => {
 						if (row.id === params.id) {
 							return {
@@ -348,7 +347,7 @@ export default function FullFeaturedCrudGrid({
 							return {
 								...row,
 								price: value,
-								total: quantity ? quantity * value + (quantity * value * taxPercentage)	 / 100 : 0,
+								total: quantity ? quantity * value + (quantity * value * taxPercentage) / 100 : 0,
 							};
 						}
 						return row;
@@ -454,7 +453,11 @@ export default function FullFeaturedCrudGrid({
 			),
 			renderCell: (params) => {
 				const hsnCode = hsnCodes?.data?.find((hsnCode) => hsnCode.id === params.value);
-				return <Typography>{hsnCode?.code} - {hsnCode?.tax?.percentage ?? 0}%</Typography>;
+				return (
+					<Typography>
+						{hsnCode?.code} - {hsnCode?.tax?.percentage ?? 0}%
+					</Typography>
+				);
 			},
 		},
 		{

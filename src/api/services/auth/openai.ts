@@ -19,7 +19,6 @@ import type {
 	UseQueryResult,
 } from "@tanstack/react-query";
 import type {
-	OpenaiControllerChat201,
 	OpenaiControllerCreate200Item,
 	OpenaiControllerCreateGraph200Item,
 	OpenaiControllerDashboardDataGet200,
@@ -159,68 +158,6 @@ export const useOpenaiControllerCreateGraph = <
 	TContext
 > => {
 	const mutationOptions = getOpenaiControllerCreateGraphMutationOptions(options);
-
-	return useMutation(mutationOptions);
-};
-export const openaiControllerChat = (openaiControllerChatBody: string[]) => {
-	return authInstance<OpenaiControllerChat201>({
-		url: `/api/openai/chat`,
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		data: openaiControllerChatBody,
-	});
-};
-
-export const getOpenaiControllerChatMutationOptions = <
-	TError = ErrorType<unknown>,
-	TContext = unknown,
->(options?: {
-	mutation?: UseMutationOptions<
-		Awaited<ReturnType<typeof openaiControllerChat>>,
-		TError,
-		{ data: string[] },
-		TContext
-	>;
-}): UseMutationOptions<
-	Awaited<ReturnType<typeof openaiControllerChat>>,
-	TError,
-	{ data: string[] },
-	TContext
-> => {
-	const { mutation: mutationOptions } = options ?? {};
-
-	const mutationFn: MutationFunction<
-		Awaited<ReturnType<typeof openaiControllerChat>>,
-		{ data: string[] }
-	> = (props) => {
-		const { data } = props ?? {};
-
-		return openaiControllerChat(data);
-	};
-
-	return { mutationFn, ...mutationOptions };
-};
-
-export type OpenaiControllerChatMutationResult = NonNullable<
-	Awaited<ReturnType<typeof openaiControllerChat>>
->;
-export type OpenaiControllerChatMutationBody = string[];
-export type OpenaiControllerChatMutationError = ErrorType<unknown>;
-
-export const useOpenaiControllerChat = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
-	mutation?: UseMutationOptions<
-		Awaited<ReturnType<typeof openaiControllerChat>>,
-		TError,
-		{ data: string[] },
-		TContext
-	>;
-}): UseMutationResult<
-	Awaited<ReturnType<typeof openaiControllerChat>>,
-	TError,
-	{ data: string[] },
-	TContext
-> => {
-	const mutationOptions = getOpenaiControllerChatMutationOptions(options);
 
 	return useMutation(mutationOptions);
 };

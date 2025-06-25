@@ -56,6 +56,7 @@ const CustomerForm = () => {
 		currencies_id: editValues?.currencies_id ?? user?.currency_id ?? "",
 		name: editValues?.name ?? "",
 		option: editValues?.option ?? CreateCustomerWithAddressDtoOption.Freelancer,
+		gstIn: editValues?.gstIn ?? "",
 		user_id: user?.id ?? "",
 		billingDetails: {
 			address: editValues?.billingAddress?.address ?? "",
@@ -87,6 +88,14 @@ const CustomerForm = () => {
 			.string()
 			.required("Option is required")
 			.oneOf(Object.values(CreateCustomerWithAddressDtoOption), "Invalid Type"),
+		gstIn: yup.string().test("gst-in", "GST Number is invalid", function (value) {
+			// check option is bussinesswithgst then validate gstIn
+			if (this.parent.option === CreateCustomerWithAddressDtoOption.BusinessWithGST) {
+				if (!value) return false; // if value is empty, skip validation
+				return true;
+			}
+			return true; // if option is not BusinessWithGst, skip validation
+		}),
 		user_id: yup.string().required("User is required"),
 		billingDetails: yup.object().shape({
 			address: yup.string().required("Address is required"),
@@ -209,14 +218,7 @@ const CustomerForm = () => {
 												isRequired={true}
 											/>
 										</Grid>
-										{/* <Grid item xs={12} sm={8}>
-									<Field
-										name="gstNumber"
-										label="GST Number"
-										component={TextFormField}
-										type="number"
-									/>
-								</Grid> */}
+										
 										<Grid item xs={12} sm={6}>
 											<Field
 												name="email"
@@ -249,6 +251,18 @@ const CustomerForm = () => {
 												isRequired={true}
 											/>
 										</Grid>
+										{
+											values.option === CreateCustomerWithAddressDtoOption.BusinessWithGST && (
+												<Grid item xs={12} sm={6}>
+													<Field
+														name="gstIn"
+														label="GST Number"
+														component={TextFormField}
+														isRequired={true}
+													/>
+												</Grid>
+											)
+										}
 									</Grid>
 									<Grid container spacing={2} my={1}>
 										<Grid item xs={12} sm={12}>

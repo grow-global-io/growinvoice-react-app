@@ -12,6 +12,8 @@ export interface UpdateCustomerDto {
 	currencies_id?: string;
 	display_name?: string;
 	email?: string;
+	/** @nullable */
+	gstIn?: string | null;
 	name?: string;
 	option?: UpdateCustomerDtoOption;
 	/** @nullable */

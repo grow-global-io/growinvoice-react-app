@@ -12,6 +12,7 @@ export interface CreatePlanWithFeaturesDto {
 	description: string;
 	features: OmitCreatePlanFeatureDto[];
 	is_active: boolean;
+	isOneTime?: boolean;
 	name: string;
 	price: number;
 }
