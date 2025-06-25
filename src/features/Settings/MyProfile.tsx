@@ -69,7 +69,7 @@ const MyProfile = () => {
 				onCancel: () => {
 					cleanUp();
 				},
-				confirmButtonText: "Delete",
+				confirmButtonText: "Yes",
 			});
 		} else {
 			await dataSave(values);
