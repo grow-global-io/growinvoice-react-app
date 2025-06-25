@@ -64,15 +64,17 @@ const MyProfile = () => {
 				message: "Are you sure you want to change your email?",
 				onConfirm: async () => {
 					await dataSave(values);
+					actions.resetForm();
 				},
 				onCancel: () => {
 					cleanUp();
 				},
 				confirmButtonText: "Delete",
 			});
+		} else {
+			await dataSave(values);
+			actions.resetForm();
 		}
-		await dataSave(values);
-		actions.resetForm();
 	};
 
 	if (!user || isRefecthing) {
