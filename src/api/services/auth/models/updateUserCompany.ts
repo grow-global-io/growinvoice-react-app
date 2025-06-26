@@ -16,4 +16,6 @@ export interface UpdateUserCompany {
 	password?: string;
 	/** @nullable */
 	phone?: string | null;
+	/** @nullable */
+	storeName?: string | null;
 }

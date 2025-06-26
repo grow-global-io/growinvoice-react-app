@@ -17,7 +17,7 @@ const StoreNavbar = ({ children }: { children?: React.ReactNode }) => {
 		setCurrencyCode,
 		searchTerm,
 		handleSearchChange,
-		removeAllProductsFromCheckout
+		removeAllProductsFromCheckout,
 	} = useProductCheckoutStore();
 	const navigate = useNavigate();
 	const currency = useCurrencyControllerFindAll();

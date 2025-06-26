@@ -4,7 +4,16 @@ import { useProductCheckoutStore } from "@store/productCheckoutStore";
 import { useStoreControllerSearchProducts } from "@api/services/store";
 import Loader from "@shared/components/Loader";
 import NoDataFound from "@shared/components/NoDataFound";
-import { Avatar, Box, Card, CardContent, CardMedia, Divider, Grid, Typography } from "@mui/material";
+import {
+	Avatar,
+	Box,
+	Card,
+	CardContent,
+	CardMedia,
+	Divider,
+	Grid,
+	Typography,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "@shared/formatter";
 
@@ -51,7 +60,9 @@ const StoreSearchPage = () => {
 										transform: "scale(1.05)",
 										boxShadow: 3,
 									},
-									height: '100%', display: 'flex', flexDirection: 'column'
+									height: "100%",
+									display: "flex",
+									flexDirection: "column",
 								}}
 							>
 								<CardMedia
@@ -78,17 +89,15 @@ const StoreSearchPage = () => {
 										)}
 									</Typography>
 									<Divider sx={{ margin: "8px 0" }} />
-                                    <Typography variant="body2" color="text.secondary">
-                                            Company:
-                                    </Typography>
-									<Box
-										sx={{ display: "flex", alignItems: "center" }}
-									>
-                                        <Avatar
-                                            src={product?.company?.[0]?.logo || ""}
-                                            alt={product?.company?.[0]?.name || "Company Logo"}
-                                            sx={{ width: 40, height: 40, marginRight: 1 }}
-                                        />
+									<Typography variant="body2" color="text.secondary">
+										Company:
+									</Typography>
+									<Box sx={{ display: "flex", alignItems: "center" }}>
+										<Avatar
+											src={product?.company?.[0]?.logo || ""}
+											alt={product?.company?.[0]?.name || "Company Logo"}
+											sx={{ width: 40, height: 40, marginRight: 1 }}
+										/>
 										<Typography variant="h6" color="text.secondary">
 											{product?.company?.[0]?.name || "Unknown Company"}
 										</Typography>

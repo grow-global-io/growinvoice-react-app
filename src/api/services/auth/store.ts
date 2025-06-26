@@ -20,6 +20,7 @@ import type {
 } from "@tanstack/react-query";
 import type {
 	CheckoutInvoiceCreateDto,
+	CreateStoreDto,
 	InvoiceDto,
 	StoreControllerGetStoreParams,
 	StoreControllerSearchProductsParams,
@@ -32,6 +33,71 @@ type AwaitedInput<T> = PromiseLike<T> | T;
 
 type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
+export const storeControllerCreateUpdateStore = (createStoreDto: CreateStoreDto) => {
+	return authInstance<void>({
+		url: `/api/store/create-update-store`,
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		data: createStoreDto,
+	});
+};
+
+export const getStoreControllerCreateUpdateStoreMutationOptions = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof storeControllerCreateUpdateStore>>,
+		TError,
+		{ data: CreateStoreDto },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof storeControllerCreateUpdateStore>>,
+	TError,
+	{ data: CreateStoreDto },
+	TContext
+> => {
+	const { mutation: mutationOptions } = options ?? {};
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof storeControllerCreateUpdateStore>>,
+		{ data: CreateStoreDto }
+	> = (props) => {
+		const { data } = props ?? {};
+
+		return storeControllerCreateUpdateStore(data);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type StoreControllerCreateUpdateStoreMutationResult = NonNullable<
+	Awaited<ReturnType<typeof storeControllerCreateUpdateStore>>
+>;
+export type StoreControllerCreateUpdateStoreMutationBody = CreateStoreDto;
+export type StoreControllerCreateUpdateStoreMutationError = ErrorType<unknown>;
+
+export const useStoreControllerCreateUpdateStore = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof storeControllerCreateUpdateStore>>,
+		TError,
+		{ data: CreateStoreDto },
+		TContext
+	>;
+}): UseMutationResult<
+	Awaited<ReturnType<typeof storeControllerCreateUpdateStore>>,
+	TError,
+	{ data: CreateStoreDto },
+	TContext
+> => {
+	const mutationOptions = getStoreControllerCreateUpdateStoreMutationOptions(options);
+
+	return useMutation(mutationOptions);
+};
 export const storeControllerCreateCheckoutInvoice = (
 	checkoutInvoiceCreateDto: CheckoutInvoiceCreateDto,
 ) => {

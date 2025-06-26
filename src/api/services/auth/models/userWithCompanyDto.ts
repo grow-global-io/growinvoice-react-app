@@ -29,6 +29,8 @@ export interface UserWithCompanyDto {
 	/** @nullable */
 	resetTokenExpiry: string | null;
 	/** @nullable */
+	storeName: string | null;
+	/** @nullable */
 	updatedAt: string | null;
 	UserPlans?: UserPlans[];
 }

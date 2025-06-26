@@ -21,7 +21,13 @@ const ProductDialog = ({
 	handleClose: () => void;
 	product?: ProductWithAllDataDto;
 }) => {
-	const { currencyCode, checkoutProducts, removeAllProductsFromCheckout, addProductToCheckout,removeProductFromCheckout } = useProductCheckoutStore();
+	const {
+		currencyCode,
+		checkoutProducts,
+		removeAllProductsFromCheckout,
+		addProductToCheckout,
+		removeProductFromCheckout,
+	} = useProductCheckoutStore();
 	const priceBook = product?.priceBook?.find(
 		(price) => price.currency?.short_code === currencyCode,
 	);
@@ -79,9 +85,12 @@ const ProductDialog = ({
 
 			{/* 2. Add the DialogActions component for the footer buttons */}
 			<DialogActions sx={{ padding: "16px 24px" }}>
-				<Button variant="contained" color={
-                    checkoutProducts.some((p) => p.id === product?.id) ? "error" : "primary"
-                } onClick={handleAddToCart} sx={{ flexGrow: 1 }}>
+				<Button
+					variant="contained"
+					color={checkoutProducts.some((p) => p.id === product?.id) ? "error" : "primary"}
+					onClick={handleAddToCart}
+					sx={{ flexGrow: 1 }}
+				>
 					{checkoutProducts.some((p) => p.id === product?.id) ? "Remove from Cart" : "Add to Cart"}
 				</Button>
 			</DialogActions>

@@ -36,9 +36,13 @@ import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutl
 import { FaFileInvoice } from "react-icons/fa6";
 import SignalCellularAltOutlinedIcon from "@mui/icons-material/SignalCellularAltOutlined";
 import { useQueryClient } from "@tanstack/react-query";
+import { useStoreLinkStore } from "@store/storeLinkStore";
+import NewReleasesIcon from "@mui/icons-material/NewReleases";
+import LinkIcon from "@mui/icons-material/Link";
 
 const drawerWidth = 240;
 function Sidebar({ children }: { children: React.ReactNode }) {
+	const { handleOpen } = useStoreLinkStore();
 	const { user } = useAuthStore();
 	const queryClient = useQueryClient();
 	const { pathname } = useLocation();
@@ -367,15 +371,23 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 					</IconButton>
 					<Box display={"flex"} alignItems={"center"} gap={1}>
 						<NotificationMain />
-						{/* <Box
+						<Box
 							mx={{ xs: 0, sm: 2 }}
 							sx={{ cursor: "pointer" }}
 							onClick={() => {
-								navigate("/setting/myprofile");
+								handleOpen();
 							}}
 						>
-							<SettingsOutlinedIcon />
-						</Box> */}
+							{user?.storeName ? (
+								<Tooltip title="Store Link">
+									<LinkIcon sx={{ color: "custom.white" }} />
+								</Tooltip>
+							) : (
+								<Tooltip title="Create Store">
+									<NewReleasesIcon sx={{ color: "custom.white" }} />
+								</Tooltip>
+							)}
+						</Box>
 						<Box sx={{ flexGrow: 0 }}>
 							<Tooltip title="Open settings">
 								<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

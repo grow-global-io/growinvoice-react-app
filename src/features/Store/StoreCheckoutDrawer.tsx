@@ -11,7 +11,7 @@ const StoreCheckoutDrawer = ({
 	open: boolean;
 	setOpenCheckoutForm: (open: boolean) => void;
 }) => {
-	const { checkoutProducts,currencyCode } = useProductCheckoutStore();
+	const { checkoutProducts, currencyCode } = useProductCheckoutStore();
 	const { setOpenCheckoutForm: setCustomerForm } = useCustomerCheckoutStore();
 
 	const totalPrice = checkoutProducts.reduce((total, product) => {
@@ -75,7 +75,7 @@ const StoreCheckoutDrawer = ({
 				>
 					<Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
 						<Typography variant="h6">Total:</Typography>
-						<Typography variant="h6">{formatCurrency(totalPrice,currencyCode)}</Typography>
+						<Typography variant="h6">{formatCurrency(totalPrice, currencyCode)}</Typography>
 					</Box>
 					<Button
 						variant="contained"

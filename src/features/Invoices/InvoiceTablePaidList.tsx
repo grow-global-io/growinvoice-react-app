@@ -43,7 +43,13 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
-				return <Chip label={params.row.fromStore ? "Store": "Direct"} variant="filled" color="primary" />;
+				return (
+					<Chip
+						label={params.row.fromStore ? "Store" : "Direct"}
+						variant="filled"
+						color="primary"
+					/>
+				);
 			},
 		},
 		{

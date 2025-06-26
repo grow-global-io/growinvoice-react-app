@@ -15,7 +15,7 @@ const ProductCard = ({ product }: { product: ProductWithAllDataDto | undefined }
 		removeAllProductsFromCheckout,
 	} = useProductCheckoutStore();
 
-	const {handleClickOpen,handleClose,open} = useDialog();
+	const { handleClickOpen, handleClose, open } = useDialog();
 
 	const priceBook = useMemo(() => {
 		if (!product) return null;
@@ -23,7 +23,7 @@ const ProductCard = ({ product }: { product: ProductWithAllDataDto | undefined }
 		return product.priceBook?.find((price) => price.currency?.short_code === currencyCode) || null;
 	}, [product, currencyCode]);
 	return (
-		<Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+		<Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
 			{product?.image && (
 				<CardMedia
 					component="img"
@@ -40,7 +40,12 @@ const ProductCard = ({ product }: { product: ProductWithAllDataDto | undefined }
 				/>
 			)}
 			<CardContent sx={{ flexGrow: 1 }}>
-				<Typography variant="h5" component="div" sx={{ textTransform: "capitalize", cursor: "pointer" }} onClick={handleClickOpen}>
+				<Typography
+					variant="h5"
+					component="div"
+					sx={{ textTransform: "capitalize", cursor: "pointer" }}
+					onClick={handleClickOpen}
+				>
 					{product?.name}
 				</Typography>
 				<Typography variant="body2" color="text.secondary">
