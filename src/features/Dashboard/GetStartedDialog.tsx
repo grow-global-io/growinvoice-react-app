@@ -112,6 +112,8 @@ const GetStartedDialog = () => {
 		});
 		const user = await authControllerStatus();
 		setUser(user);
+		handleClose();
+		actions.resetForm();
 		actions.setSubmitting(false);
 	};
 
