@@ -10,7 +10,6 @@ import NotFoundPage from "@pages/NotFoundPage";
 import ConfirmDialog from "@shared/components/ConfirmDialog";
 import { useEffectOnce } from "@shared/hooks/useEffectOnce";
 import Navbar from "@layout/navbar/Home/Navbar";
-// import GetStartedDialog from "@features/Dashboard/GetStartedDialog";
 import { useCreateProductStore } from "@store/createProductStore";
 import { ProductDrawer } from "@features/Products/CreateProduct";
 import { useCreateCustomerStore } from "@store/createCustomerStore";
@@ -36,6 +35,8 @@ import PlansPage from "@pages/PlansPage";
 import { useQueryClient } from "@tanstack/react-query";
 import GetStartedErrorComp from "@shared/components/GetStartedErrorComp";
 import ExternalRedirect from "./shared/ExternalRedirectLink";
+import { useProductCheckoutStore } from "./store/productCheckoutStore";
+import StoreCheckoutDrawer from "@features/Store/StoreCheckoutDrawer";
 
 function AppContainer() {
 	const queryClient = useQueryClient();
@@ -97,12 +98,10 @@ function AppContainer() {
 	const includeParentofSidebar = location.pathname.includes("setting");
 	if (user?.UserPlans?.length === 0) {
 		return (
-			<>
-				<Routes>
-					<Route path={"/plan/planspage"} element={<PlansPage />} />
-					<Route path={"*"} element={<Navigate to="/plan/planspage" replace />} />
-				</Routes>
-			</>
+			<Routes>
+				<Route path={"/plan/planspage"} element={<PlansPage />} />
+				<Route path={"*"} element={<Navigate to="/plan/planspage" replace />} />
+			</Routes>
 		);
 	}
 
@@ -163,6 +162,7 @@ function App() {
 	const [openTaxCodeForm, setOpenTaxCodeForm] = useState(false);
 	const [openProductUnitForm, setOpenProductUnitForm] = useState(false);
 	const [openVendorViewForm, setOpenVendorViewForm] = useState(false);
+	const [openStoreCheckout, setOpenStoreCheckout] = useState(false);
 
 	const handleCloseProductForm = () => {
 		setOpenProductForm(false);
@@ -194,6 +194,9 @@ function App() {
 	const handleCloseVendorViewForm = () => {
 		setOpenVendorViewForm(false);
 	};
+	const handleCloseStoreCheckout = () => {
+		setOpenStoreCheckout(false);
+	};
 
 	const loaderRef = useRef(useLoaderStore.getState());
 	const createProduct = useRef(useCreateProductStore.getState());
@@ -204,6 +207,7 @@ function App() {
 	const createTaxCode = useRef(useCreateTaxCodeStore.getState());
 	const createProductUnit = useRef(useCreateProductUnitStore.getState());
 	const createVendorView = useRef(useCreateVendorsViewStore.getState());
+	const createStoreCheckout = useRef(useProductCheckoutStore.getState());
 
 	useEffect(() => {
 		const unsubscribeLoading = useLoaderStore.subscribe((state) => {
@@ -246,6 +250,10 @@ function App() {
 			createVendorView.current = state;
 			setOpenVendorViewForm(state.open);
 		});
+		const unsubscribeStoreCheckout = useProductCheckoutStore.subscribe((state) => {
+			createStoreCheckout.current = state;
+			setOpenStoreCheckout(state.open);
+		});
 
 		return () => {
 			unsubscribeLoading();
@@ -257,6 +265,7 @@ function App() {
 			unsubscribeTaxCodeForm();
 			unsubscribeProductUnitForm();
 			unsubscribeVendorViewForm();
+			unsubscribeStoreCheckout();
 		};
 	}, []);
 
@@ -292,6 +301,10 @@ function App() {
 			<TaxCodeDrawer open={openTaxCodeForm} handleClose={handleCloseTaxCodeForm} />
 			<ProductUnitDrawer open={openProductUnitForm} handleClose={handleCloseProductUnitForm} />
 			<VendorViewDialog open={openVendorViewForm} handleClose={handleCloseVendorViewForm} />
+			<StoreCheckoutDrawer
+				open={openStoreCheckout}
+				setOpenCheckoutForm={handleCloseStoreCheckout}
+			/>
 		</>
 	);
 }

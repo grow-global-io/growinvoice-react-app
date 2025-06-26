@@ -218,7 +218,7 @@ const CustomerForm = () => {
 												isRequired={true}
 											/>
 										</Grid>
-										
+
 										<Grid item xs={12} sm={6}>
 											<Field
 												name="email"
@@ -251,18 +251,16 @@ const CustomerForm = () => {
 												isRequired={true}
 											/>
 										</Grid>
-										{
-											values.option === CreateCustomerWithAddressDtoOption.BusinessWithGST && (
-												<Grid item xs={12} sm={6}>
-													<Field
-														name="gstIn"
-														label="GST Number"
-														component={TextFormField}
-														isRequired={true}
-													/>
-												</Grid>
-											)
-										}
+										{values.option === CreateCustomerWithAddressDtoOption.BusinessWithGST && (
+											<Grid item xs={12} sm={6}>
+												<Field
+													name="gstIn"
+													label="GST Number"
+													component={TextFormField}
+													isRequired={true}
+												/>
+											</Grid>
+										)}
 									</Grid>
 									<Grid container spacing={2} my={1}>
 										<Grid item xs={12} sm={12}>

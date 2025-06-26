@@ -21,6 +21,9 @@ export interface ProductWithAllDataDto {
 	/** @nullable */
 	hsnCode_id: string | null;
 	id: string;
+	/** @nullable */
+	image: string | null;
+	includeStore: boolean;
 	isExist: boolean;
 	name: string;
 	priceBook?: ProductPriceBook[];

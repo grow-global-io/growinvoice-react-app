@@ -4,15 +4,14 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import CircularProgress from "@mui/material/CircularProgress";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import ClearIcon from "@mui/icons-material/Clear";
-import { useUploadControllerUploadFile } from "@api/services/upload";
+import { useUploadControllerUploadMultipleFiles } from "../../../api/services/auth/upload";
 
-export const FileUploadFormField: React.FC<
+const MultipleFileUploadFormField: React.FC<
 	FieldProps & {
 		label: string;
 		required?: boolean;
@@ -23,29 +22,37 @@ export const FileUploadFormField: React.FC<
 	const errorText = getIn(form.touched, field.name) && getIn(form.errors, field.name);
 	const [docTypeError, setDocTypeError] = React.useState<boolean>(false);
 	const [fileSizeError, setFileSizeError] = React.useState<boolean>(false);
-	const { mutateAsync, isPending } = useUploadControllerUploadFile();
+	const { mutateAsync, isPending } = useUploadControllerUploadMultipleFiles();
 
 	const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (!event.target.files) return;
 		setDocTypeError(false);
 		setFileSizeError(false);
-		const file = event.target.files[0];
-		setName(file.name);
+		const files = Array.from(event.target.files);
+		setName(files.map((file) => file.name).join(", "));
 		const maxSizeInBytes = 5 * 1024 * 1024;
-		if (file.size > maxSizeInBytes) {
-			setFileSizeError(true);
-			return;
-		}
-		if (accept === ".pdf" && file.type !== "application/pdf") {
-			setDocTypeError(true);
-			return;
+		const latestFiles: File[] = [];
+		for (const file of files) {
+			if (file.size > maxSizeInBytes) {
+				setFileSizeError(true);
+				return;
+			}
+			if (accept === ".pdf" && file.type !== "application/pdf") {
+				setDocTypeError(true);
+				return;
+			}
+			latestFiles.push(file);
 		}
 		const uploadRes = await mutateAsync({
 			data: {
-				file,
+				files: latestFiles,
 			},
 		});
-		form.setFieldValue(field.name, uploadRes.link, true);
+		form.setFieldValue(
+			field.name,
+			uploadRes.map((file) => file.link),
+			true,
+		);
 	};
 
 	return (
@@ -79,6 +86,7 @@ export const FileUploadFormField: React.FC<
 									type="file"
 									accept={accept}
 									hidden
+									multiple
 									style={{ display: "none" }}
 								/>
 							</IconButton>
@@ -106,12 +114,14 @@ export const FileUploadFormField: React.FC<
 					Only PDF files are allowed
 				</Typography>
 			)}
-			{field.value && (
-				<Link href={field.value} target="_blank" rel="noopener noreferrer" color="text.secondary">
-					File Link
-				</Link>
+			{field.value?.length > 0 && (
+				<Typography variant="caption" color="text.secondary">
+					Uploaded Files: {field.value.join(", ")}
+				</Typography>
 			)}
 			{isPending && <CircularProgress size={20} color="secondary" />}
 		</FormControl>
 	);
 };
+
+export default MultipleFileUploadFormField;

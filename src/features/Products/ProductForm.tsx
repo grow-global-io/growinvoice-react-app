@@ -26,6 +26,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useCurrencyControllerFindAll } from "@api/services/currency";
 import { AlertService } from "@shared/services/AlertService";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
+import { FileUploadFormField } from "@shared/components/FormFields/FileUploadFormField";
+import { CheckBoxFormField } from "@shared/components/FormFields/CheckBoxFormField";
 
 const schema: yup.Schema<CreateProductWithTaxDto> = yup.object({
 	type: yup
@@ -35,6 +37,16 @@ const schema: yup.Schema<CreateProductWithTaxDto> = yup.object({
 	name: yup.string().required("Name is required"),
 	unit_id: yup.string().required("Unit is required"),
 	hsnCode_id: yup.string(),
+	image: yup.string().test("includeStore", "Image is required", function (value) {
+		const { includeStore } = this.parent;
+		if (includeStore && !value) {
+			return this.createError({
+				message: "Image is required when you want to include the product in the store.",
+			});
+		}
+		return true;
+	}),
+	includeStore: yup.boolean().optional(),
 	// currency_id: yup.string().required("Currency is required"),
 	// price: yup
 	// 	.number()
@@ -118,6 +130,8 @@ const ProductForm = () => {
 				currency_id: price.currency_id,
 				price: price.price,
 			})) ?? [],
+		image: editValues?.image ?? "",
+		includeStore: editValues?.includeStore ?? false,
 	};
 
 	const {
@@ -185,7 +199,21 @@ const ProductForm = () => {
 										isRequired={true}
 									/>
 								</Grid>
-
+								<Grid item xs={12}>
+									<Field
+										name="includeStore"
+										label="Include in Store Products"
+										component={CheckBoxFormField}
+									/>
+								</Grid>
+								<Grid item xs={12}>
+									<Field
+										name="image"
+										label="Product Image"
+										component={FileUploadFormField}
+										accept="image/*"
+									/>
+								</Grid>
 								<Grid item xs={12}>
 									<Field
 										name="unit_id"

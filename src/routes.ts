@@ -41,6 +41,8 @@ import ProfitLossPage from "@pages/ProfitLossPage";
 import ExpensesPage from "@pages/ExpensesPage";
 import VendorsPage from "@pages/VendorsPage";
 import CustomerInvoicesPage from "@pages/CustomerInvoicesPage";
+import StorePage from "@pages/StorePage";
+import StoreSearchPage from "./features/Store/StoreSearchPage";
 
 export const unProtectedRoutes: Route[] = [
 	{
@@ -67,12 +69,24 @@ export const unProtectedRoutes: Route[] = [
 		path: "/payment/success",
 		Component: PaymentSuccessPage,
 	},
+	{
+		path: "/store/:userId",
+		Component: StorePage,
+	},
+	{
+		path: "/store",
+		Component: StoreSearchPage,
+	},
 ];
 
 export const protectedRoutes: Route[] = [
 	{
 		path: "/",
 		Component: OveviewPage,
+	},
+	{
+		path: "/store/:userId",
+		Component: StorePage,
 	},
 	{
 		path: "/product/productlist",

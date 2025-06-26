@@ -17,6 +17,7 @@ export interface CreateInvoiceWithProducts {
 	discountPercentage?: number | null;
 	due_amount: number;
 	due_date: string;
+	fromStore?: boolean;
 	invoice_number: string;
 	is_recurring: boolean;
 	/** @nullable */

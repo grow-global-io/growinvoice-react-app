@@ -34,6 +34,7 @@ export interface InvoiceWithAllDataDto {
 	discountPercentage: number | null;
 	due_amount: number;
 	due_date: string;
+	fromStore: boolean;
 	id: string;
 	invoice_number: string;
 	is_recurring: boolean;

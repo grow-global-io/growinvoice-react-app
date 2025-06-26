@@ -19,6 +19,7 @@ export interface GetCustomerWithAddressDto {
 	currencies_id: string;
 	display_name: string;
 	email: string;
+	fromStore: boolean;
 	/** @nullable */
 	gstIn: string | null;
 	id: string;

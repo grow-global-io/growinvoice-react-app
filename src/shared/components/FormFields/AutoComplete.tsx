@@ -151,6 +151,7 @@ export const AutocompleteField: React.FC<
 		multiple?: boolean;
 		isRequired?: boolean;
 		isGpt?: boolean;
+		disableClearable?: boolean;
 	}
 > = ({
 	field,
@@ -161,6 +162,8 @@ export const AutocompleteField: React.FC<
 	onValueChange,
 	isRequired,
 	isGpt,
+	disableClearable = false,
+
 	...props
 }) => {
 	const errorText = getIn(form.touched, field.name) && getIn(form.errors, field.name);
@@ -198,6 +201,7 @@ export const AutocompleteField: React.FC<
 			<Autocomplete
 				{...props}
 				filterSelectedOptions
+				disableClearable={disableClearable}
 				id={field.name}
 				options={options}
 				onChange={(_, value) => {

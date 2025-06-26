@@ -11,7 +11,11 @@ import type {
 	UseMutationOptions,
 	UseMutationResult,
 } from "@tanstack/react-query";
-import type { UploadControllerUploadFileBody, UploadResponseDto } from "./models";
+import type {
+	UploadControllerUploadFileBody,
+	UploadControllerUploadMultipleFilesBody,
+	UploadResponseDto,
+} from "./models";
 import { authInstance } from "../../instances/authInstance";
 import type { ErrorType } from "../../instances/authInstance";
 
@@ -88,6 +92,81 @@ export const useUploadControllerUploadFile = <
 	TContext
 > => {
 	const mutationOptions = getUploadControllerUploadFileMutationOptions(options);
+
+	return useMutation(mutationOptions);
+};
+export const uploadControllerUploadMultipleFiles = (
+	uploadControllerUploadMultipleFilesBody: UploadControllerUploadMultipleFilesBody,
+) => {
+	const formData = new FormData();
+	if (uploadControllerUploadMultipleFilesBody.files !== undefined) {
+		uploadControllerUploadMultipleFilesBody.files.forEach((value) =>
+			formData.append("files", value),
+		);
+	}
+
+	return authInstance<UploadResponseDto[]>({
+		url: `/api/upload/multiple`,
+		method: "POST",
+		headers: { "Content-Type": "multipart/form-data" },
+		data: formData,
+	});
+};
+
+export const getUploadControllerUploadMultipleFilesMutationOptions = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof uploadControllerUploadMultipleFiles>>,
+		TError,
+		{ data: UploadControllerUploadMultipleFilesBody },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof uploadControllerUploadMultipleFiles>>,
+	TError,
+	{ data: UploadControllerUploadMultipleFilesBody },
+	TContext
+> => {
+	const { mutation: mutationOptions } = options ?? {};
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof uploadControllerUploadMultipleFiles>>,
+		{ data: UploadControllerUploadMultipleFilesBody }
+	> = (props) => {
+		const { data } = props ?? {};
+
+		return uploadControllerUploadMultipleFiles(data);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type UploadControllerUploadMultipleFilesMutationResult = NonNullable<
+	Awaited<ReturnType<typeof uploadControllerUploadMultipleFiles>>
+>;
+export type UploadControllerUploadMultipleFilesMutationBody =
+	UploadControllerUploadMultipleFilesBody;
+export type UploadControllerUploadMultipleFilesMutationError = ErrorType<unknown>;
+
+export const useUploadControllerUploadMultipleFiles = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof uploadControllerUploadMultipleFiles>>,
+		TError,
+		{ data: UploadControllerUploadMultipleFilesBody },
+		TContext
+	>;
+}): UseMutationResult<
+	Awaited<ReturnType<typeof uploadControllerUploadMultipleFiles>>,
+	TError,
+	{ data: UploadControllerUploadMultipleFilesBody },
+	TContext
+> => {
+	const mutationOptions = getUploadControllerUploadMultipleFilesMutationOptions(options);
 
 	return useMutation(mutationOptions);
 };
