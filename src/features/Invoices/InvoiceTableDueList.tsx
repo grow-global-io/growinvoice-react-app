@@ -41,12 +41,12 @@ const InvoiceTableDueList = ({ customerId }: { customerId?: string | null }) => 
 			},
 		},
 		{
-			field: "date",
-			headerName: "Invoice Date",
+			field: "source",
+			headerName: "Source",
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
-				return <Typography>{parseDateStringToFormat(params.value)}</Typography>;
+				return <Chip label={params.row.fromStore ? "Store": "Direct"} variant="filled" color="primary" />;
 			},
 		},
 		{

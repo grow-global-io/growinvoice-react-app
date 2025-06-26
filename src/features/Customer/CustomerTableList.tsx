@@ -18,6 +18,7 @@ import { useQueryClient } from "@tanstack/react-query";
 // import CustomerView from "./CustomerView";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
+import { GetCustomerWithAddressDto } from "@api/services/models";
 
 const CustomerTableList = () => {
 	const navigate = useNavigate();
@@ -34,7 +35,7 @@ const CustomerTableList = () => {
 	// 	handleClickOpen();
 	// };
 
-	const columns: GridColDef[] = [
+	const columns: GridColDef<GetCustomerWithAddressDto>[] = [
 		{
 			field: "name",
 			headerName: "Full Name",
@@ -58,12 +59,12 @@ const CustomerTableList = () => {
 			},
 		},
 		{
-			field: "display_name",
-			headerName: "Display Name",
+			field: "source",
+			headerName: "Source",
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
-				return <Typography textTransform={"capitalize"}>{params.value}</Typography>;
+				return <Chip label={params.row.fromStore ? "Store": "Direct"} variant="filled" color="primary" />;
 			},
 		},
 		{
@@ -159,7 +160,6 @@ const CustomerTableList = () => {
 								});
 							}}
 						/>
-						,
 					</Box>
 				</Tooltip>,
 			],
