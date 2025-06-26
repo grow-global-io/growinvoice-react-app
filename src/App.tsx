@@ -139,6 +139,7 @@ function AppContainer() {
 						}
 					/> */}
 					<GetStartedErrorComp />
+					<StoreLinkDialog />
 					<Routes>
 						<Route path="*" element={<NotFoundPage />} />
 						{protectedRoutes.map(({ path, Component }) => (
@@ -293,7 +294,7 @@ function App() {
 				<CircularProgress color="inherit" />
 			</Backdrop>
 			<ConfirmDialog />
-			<StoreLinkDialog />
+			
 			<ProductDrawer open={openProductForm} handleClose={handleCloseProductForm} />
 			<CustomerDrawer open={openCustomerForm} handleClose={handleCloseCustomerForm} />
 			<PaymentDrawer open={openPaymentForm} handleClose={handleClosePaymentForm} />

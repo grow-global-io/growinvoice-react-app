@@ -51,7 +51,7 @@ const StoreSearchPage = () => {
 						<Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
 							<Card
 								onClick={() => {
-									navigate(`/store/${product.id}`);
+									navigate(`/store/${product.storeName}`);
 								}}
 								sx={{
 									cursor: "pointer",

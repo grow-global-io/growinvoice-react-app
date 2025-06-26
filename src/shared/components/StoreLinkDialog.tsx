@@ -14,8 +14,10 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import EmailIcon from "@mui/icons-material/Email";
 import { useStoreControllerCreateUpdateStore } from "@api/services/store";
 import { useAuthControllerStatus } from "@api/services/auth";
+import { useAuthStore } from "@store/auth";
 
 const StoreLinkDialog = () => {
+    const {refecthUser} = useAuthStore();
 	const { open, handleClose } = useStoreLinkStore();
 	const user = useAuthControllerStatus();
 	const initialValues = {
@@ -38,6 +40,7 @@ const StoreLinkDialog = () => {
 			},
 		});
 		user?.refetch();
+        refecthUser();
 	};
 
 	const url = `${window.location.origin}/store/${user?.data?.storeName}`;
