@@ -47,7 +47,7 @@ const StoreMain = ({ userId }: { userId: string }) => {
 					))}
 				</Grid>
 			</Box>
-			<CustomerDetailsDrawer userId={userId} handleOpenInvoice={handleInvoiceDetails} />
+			<CustomerDetailsDrawer userId={store?.data?.id ?? ""} handleOpenInvoice={handleInvoiceDetails} />
 			<Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
 				<AppDialogHeader title="Invoice Details" handleClose={handleClose} />
 				<DialogContent>
