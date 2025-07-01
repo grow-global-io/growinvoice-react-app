@@ -6,14 +6,19 @@ import {
 	ListItem,
 	ListItemIcon,
 	ListItemText,
+	Menu,
+	MenuItem,
 	Typography,
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import { useAuthStore } from "@store/auth";
-import { usePaymentsControllerGrowlimitlessPyamentsForPlans } from "@api/services/payments";
+import {
+	usePaymentsControllerGrowlimitlessPyamentsForPlans,
+	usePaymentsControllerStripePaymentForPlans,
+} from "@api/services/payments";
 import { PlanWithFeaturesDto } from "@api/services/models";
 import { formatCurrency } from "@shared/formatter";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { environment } from "@enviroment";
 
 const style = {
@@ -34,9 +39,24 @@ function formatPlansPriceUnit(days: number) {
 }
 
 const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
+	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+	const open = Boolean(anchorEl);
+
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
+
+	const handleClickListItem = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const [selectedIndex, setSelectedIndex] = React.useState(0);
+	const options = ["Select Payment Method", "Stripe", "Growlimitless"];
+
 	const { user } = useAuthStore();
 	const createPlan = usePaymentsControllerGrowlimitlessPyamentsForPlans();
-	const handleUpgradePlan = async () => {
+	const stripePlan = usePaymentsControllerStripePaymentForPlans();
+	const handleUpgradePlan = async (type: "Stripe" | "Growlimitless") => {
 		const params = { user_id: user?.id ?? "", plan_id: item?.id ?? "" };
 		if (item.price === 0) {
 			// want to open in same tab
@@ -46,6 +66,11 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 			);
 			return;
 		}
+		if( type === "Stripe") {
+			const response = await stripePlan.mutateAsync({ params });
+			window.open(response as string, "_self");
+			return;
+		}
 		const response = await createPlan.mutateAsync({ params });
 		window.open(response as string, "_self");
 	};
@@ -53,6 +78,14 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 	const checkIsSubscribe = useMemo(() => {
 		return user?.UserPlans?.some((userPlan) => userPlan.plan_id === item?.id);
 	}, [user?.UserPlans]);
+
+	const handleMenuItemClick = (_: React.MouseEvent<HTMLElement>, index: number) => {
+		setSelectedIndex(index);
+		handleClose();
+		if (index > 0) {
+			handleUpgradePlan(options[index] as "Stripe" | "Growlimitless");
+		}
+	};
 
 	return (
 		<Card
@@ -92,9 +125,43 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 					</List>
 				</Grid>
 				<Grid item xs={12} px={5} py={2}>
-					<Button variant="outlined" fullWidth onClick={handleUpgradePlan}>
+					<Button
+						variant="outlined"
+						fullWidth
+						aria-expanded={open ? "true" : undefined}
+						onClick={handleClickListItem}
+						aria-controls="lock-menu"
+					>
 						Upgrade
 					</Button>
+					<Menu
+        id="lock-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+		MenuListProps={{
+		  "aria-labelledby": "lock-button",
+		}}
+		// fullWidth
+		PaperProps={{
+					  style: {
+						width: "100%",
+						maxWidth: 360,
+					  },
+		}}
+      >
+        {options.map((option, index) => (
+          <MenuItem
+            key={option}
+            disabled={index === 0}
+            selected={index === selectedIndex}
+            onClick={(event) => handleMenuItemClick(event, index)}
+          >
+            {option}
+          </MenuItem>
+        ))}
+      </Menu>
+
 				</Grid>
 			</Grid>
 		</Card>
