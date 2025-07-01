@@ -97,10 +97,8 @@ const CustomerDetailsDrawer = ({
 			open={open}
 			onClose={() => setOpenCheckoutForm(false)}
 			sx={{
-				width: 500,
-				flexShrink: 0,
 				"& .MuiDrawer-paper": {
-					width: 500,
+					maxWidth: 700,
 					boxSizing: "border-box",
 				},
 			}}

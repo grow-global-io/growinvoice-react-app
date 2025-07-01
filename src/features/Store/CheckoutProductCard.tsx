@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { ProductWithAllDataDto } from "../../api/services/auth/models";
-import { Card, CardActions, CardContent, IconButton, Typography, Box } from "@mui/material";
+import { Card, CardActions, CardContent, IconButton, Typography, Box, Grid } from "@mui/material";
 import { formatCurrency } from "../../shared/formatter";
 import { useProductCheckoutStore } from "../../store/productCheckoutStore";
 import { CustomIconButton } from "../../shared/components/CustomIconButton";
@@ -41,50 +41,56 @@ const CheckoutProductCard = ({
 			<CardContent
 				sx={{
 					padding: 2,
-					display: "flex",
-					height: "100%",
-					justifyContent: "space-between",
 				}}
 			>
-				<Box>
-					<Typography variant="h6" sx={{ textTransform: "capitalize" }}>
-						{product.name}
-					</Typography>
-					<Typography variant="body2" color="text.secondary">
-						{product.description || "No description available."}
-					</Typography>
-					<Typography variant="h6" color="primary" sx={{ marginTop: 1 }}>
-						Price: {formatCurrency(priceBook?.price || 0, priceBook?.currency?.short_code || "INR")}
-					</Typography>
-					<Typography variant="body2" color="text.secondary">
-						Tax ({taxPercentage}%):{" "}
-						{formatCurrency(taxAmount, priceBook?.currency?.short_code || "INR")}
-					</Typography>
-				</Box>
-				<Box sx={{ marginTop: 2, display: "flex", alignItems: "center", gap: 1 }}>
-					{/* decrement quantity */}
-					<IconButton
-						onClick={() => {
-							changeQuantity(product.id, quantity - 1);
-						}}
-						disabled={quantity <= 1}
-					>
-						<RemoveIcon />
-					</IconButton>
-					<Typography variant="body2">Quantity: {quantity}</Typography>
-					<IconButton
-						onClick={() => {
-							changeQuantity(product.id, quantity + 1);
-						}}
-					>
-						<AddIcon />
-					</IconButton>
-				</Box>
-				<Box sx={{ marginTop: 2 }}>
-					<Typography variant="body2">
-						Total: {formatCurrency(product?.totalPrice, priceBook?.currency?.short_code || "INR")}
-					</Typography>
-				</Box>
+				<Grid container spacing={2} alignItems="center">
+					<Grid item xs={12} sm={6}>
+						<Box>
+							<Typography variant="h6" sx={{ textTransform: "capitalize" }}>
+								{product.name}
+							</Typography>
+							<Typography variant="body2" color="text.secondary">
+								{product.description || "No description available."}
+							</Typography>
+							<Typography variant="h6" color="primary" sx={{ marginTop: 1 }}>
+								Price:{" "}
+								{formatCurrency(priceBook?.price || 0, priceBook?.currency?.short_code || "INR")}
+							</Typography>
+							<Typography variant="body2" color="text.secondary">
+								Tax ({taxPercentage}%):{" "}
+								{formatCurrency(taxAmount, priceBook?.currency?.short_code || "INR")}
+							</Typography>
+						</Box>
+					</Grid>
+					<Grid item xs={12} sm={4}>
+						<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+							{/* decrement quantity */}
+							<IconButton
+								onClick={() => {
+									changeQuantity(product.id, quantity - 1);
+								}}
+								disabled={quantity <= 1}
+							>
+								<RemoveIcon />
+							</IconButton>
+							<Typography variant="body2">Quantity: {quantity}</Typography>
+							<IconButton
+								onClick={() => {
+									changeQuantity(product.id, quantity + 1);
+								}}
+							>
+								<AddIcon />
+							</IconButton>
+						</Box>
+					</Grid>
+					<Grid item xs={12} sm={2}>
+						<Box >
+							<Typography variant="body2">
+								Total: <strong>{formatCurrency(product?.totalPrice, priceBook?.currency?.short_code || "INR")}</strong>
+							</Typography>
+						</Box>
+					</Grid>
+				</Grid>
 			</CardContent>
 			<CardActions sx={{ justifyContent: "flex-end" }}>
 				<CustomIconButton

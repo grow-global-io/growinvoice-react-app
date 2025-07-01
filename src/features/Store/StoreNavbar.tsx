@@ -1,4 +1,4 @@
-import { AppBar, Box, IconButton, TextField, Typography } from "@mui/material";
+import { AppBar, Box, Grid, IconButton, TextField } from "@mui/material";
 import React from "react";
 import { useProductCheckoutStore } from "../../store/productCheckoutStore";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -8,6 +8,7 @@ import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { useCurrencyControllerFindAll } from "@api/services/currency";
 import { ListDto } from "@shared/models/ListDto";
 import { useNavigate } from "react-router-dom";
+import { Constants } from "@shared/constants";
 
 const StoreNavbar = ({ children }: { children?: React.ReactNode }) => {
 	const {
@@ -33,34 +34,26 @@ const StoreNavbar = ({ children }: { children?: React.ReactNode }) => {
 	return (
 		<>
 			<AppBar position="static" sx={{ backgroundColor: "custom.lightBlue" }}>
-				<Box sx={{ display: "flex", alignItems: "center", px: 2, py: 1 }}>
-					<Box
-						sx={{
-							display: "flex",
-							justifyContent: "space-between",
-							alignItems: "center",
-							flexGrow: 1,
-							px: 2,
-						}}
+				<Grid container alignItems="center"p={2} >
+					<Grid item xs={12} sm={1} >
+							<img
+								src={Constants.customImages.Logo}
+								alt="Grow Invoice"
+								style={{ height: 40, marginRight: 16, verticalAlign: "middle" ,cursor: "pointer"}}
+								onClick={() => navigate("/store")}
+							/>
+					</Grid>
+					<Grid item xs={12} sm={7} sx={{ display: "flex", alignItems: "center" }}
 					>
-						<Typography
-							variant="h4"
-							sx={{ cursor: "pointer" }}
-							onClick={() => {
-								navigate("/store");
-							}}
-						>
-							Grow Invoice
-						</Typography>
-						<Box>
 							<TextField
 								variant="outlined"
 								placeholder="Search Products/Companies"
 								value={searchTerm || ""}
 								onChange={(e) => handleSearchChange?.(e.target.value)}
-								sx={{ width: 500 }}
+								sx={{ flexGrow: 1, marginRight: 2 }}
 							/>
-						</Box>
+					</Grid>
+					<Grid item xs={10} sm={3} >
 						<Box component={"span"} sx={{ display: "flex", alignItems: "center", gap: 2 }}>
 							<Formik
 								initialValues={initialValues}
@@ -70,8 +63,7 @@ const StoreNavbar = ({ children }: { children?: React.ReactNode }) => {
 								}}
 							>
 								{() => (
-									<Form style={{ margin: 0, padding: 0 }}>
-										<Box sx={{ minWidth: 240, maxWidth: 300 }}>
+									<Form style={{ margin: 0, padding: 0,flexGrow: 1, display: "flex", alignItems: "center" }}>
 											<Field
 												name="currency"
 												component={AutocompleteField}
@@ -89,21 +81,20 @@ const StoreNavbar = ({ children }: { children?: React.ReactNode }) => {
 													removeAllProductsFromCheckout?.();
 												}}
 											/>
-										</Box>
 									</Form>
 								)}
 							</Formik>
-							<IconButton onClick={() => setOpenCheckoutForm(true)}>
-								<ShoppingCartIcon />{" "}
-								{checkoutProducts.length > 0 && (
-									<span style={{ marginLeft: 8, fontWeight: "bold" }}>
-										{checkoutProducts.length}
-									</span>
-								)}
-							</IconButton>
 						</Box>
-					</Box>
-				</Box>
+					</Grid>
+					<Grid item xs={1} sm={1} sx={{ textAlign: "right" }}>
+						<IconButton onClick={() => setOpenCheckoutForm(true)}>
+							<ShoppingCartIcon />{" "}
+							{checkoutProducts.length > 0 && (
+								<span style={{ marginLeft: 8, fontWeight: "bold" }}>{checkoutProducts.length}</span>
+							)}
+						</IconButton>
+					</Grid>
+				</Grid>
 			</AppBar>
 			{children}
 		</>

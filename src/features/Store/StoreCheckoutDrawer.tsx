@@ -1,8 +1,9 @@
-import { Box, Button, Drawer, Grid, Typography } from "@mui/material";
+import { Box, Button, Drawer, Grid, IconButton, Typography } from "@mui/material";
 import { useProductCheckoutStore } from "@store/productCheckoutStore";
 import CheckoutProductCard from "./CheckoutProductCard";
 import { useCustomerCheckoutStore } from "@store/customerCheckoutStore";
 import { formatCurrency } from "@shared/formatter";
+import CloseIcon from "@mui/icons-material/Close";
 
 const StoreCheckoutDrawer = ({
 	open,
@@ -24,10 +25,8 @@ const StoreCheckoutDrawer = ({
 			open={open}
 			onClose={() => setOpenCheckoutForm(false)}
 			sx={{
-				width: 500,
-				flexShrink: 0,
 				"& .MuiDrawer-paper": {
-					width: 500,
+					maxWidth: 700,
 					boxSizing: "border-box",
 				},
 			}}
@@ -41,9 +40,23 @@ const StoreCheckoutDrawer = ({
 					height: "100%", // Take up the full drawer height
 				}}
 			>
+				<Box sx={{
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "space-between",
+				}}>
 				<Typography variant="h6" sx={{ padding: 2, flexShrink: 0 }}>
 					Checkout Items
 				</Typography>
+				<IconButton
+					onClick={() => {
+						setOpenCheckoutForm(false);
+					}}
+					sx={{ marginRight: 2 }}
+				>
+					<CloseIcon />
+				</IconButton>
+				</Box>
 
 				{/* --- 2. Scrollable Content Area --- */}
 				{/* This Box will grow to fill available space and handle scrolling */}
