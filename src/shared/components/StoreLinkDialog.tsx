@@ -121,7 +121,7 @@ const StoreLinkDialog = () => {
 										color="primary"
 										onClick={() => {
 											navigate(`/product/productlist`);
-											handleClose();
+											handleClose && handleClose();
 										}}
 									>
 										Upload Products to Store
