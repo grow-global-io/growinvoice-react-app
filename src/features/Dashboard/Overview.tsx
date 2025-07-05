@@ -43,16 +43,21 @@ const Overview = () => {
 			<ExpensesSummary />
 			<Grid container spacing={2} mt={1}>
 				<Grid item xs={12} textAlign={"right"}>
-					<Button
-						startIcon={<AddIcon />}
-						variant="contained"
-						color="primary"
-						onClick={() => {
-							navigate("/dashboard");
-						}}
-					>
-						Add Widget
-					</Button>
+					<Box display={"flex"} justifyContent={"flex-end"} mb={2}>
+						<Button variant="contained" color="secondary" onClick={() => navigate("/ai-store")}>
+							Roll UP AI Store
+						</Button>
+						<Button
+							startIcon={<AddIcon />}
+							variant="contained"
+							color="primary"
+							onClick={() => {
+								navigate("/dashboard");
+							}}
+						>
+							Add Widget
+						</Button>
+					</Box>
 				</Grid>
 				{dashbaordAll?.data?.length == 0 && (
 					<Grid item xs={12}>

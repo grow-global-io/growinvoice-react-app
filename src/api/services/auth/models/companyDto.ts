@@ -17,10 +17,14 @@ export interface CompanyDto {
 	id: string;
 	isExist: boolean;
 	/** @nullable */
+	lineOfBusiness: string | null;
+	/** @nullable */
 	logo: string | null;
 	name: string;
 	/** @nullable */
 	phone: string | null;
+	/** @nullable */
+	short_description: string | null;
 	/** @nullable */
 	state_id: string | null;
 	/** @nullable */

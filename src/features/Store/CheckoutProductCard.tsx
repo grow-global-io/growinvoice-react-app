@@ -84,9 +84,12 @@ const CheckoutProductCard = ({
 						</Box>
 					</Grid>
 					<Grid item xs={12} sm={2}>
-						<Box >
+						<Box>
 							<Typography variant="body2">
-								Total: <strong>{formatCurrency(product?.totalPrice, priceBook?.currency?.short_code || "INR")}</strong>
+								Total:{" "}
+								<strong>
+									{formatCurrency(product?.totalPrice, priceBook?.currency?.short_code || "INR")}
+								</strong>
 							</Typography>
 						</Box>
 					</Grid>

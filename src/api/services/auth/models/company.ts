@@ -22,10 +22,14 @@ export interface Company {
 	id: string;
 	isExist: boolean;
 	/** @nullable */
+	lineOfBusiness: string | null;
+	/** @nullable */
 	logo: string | null;
 	name: string;
 	/** @nullable */
 	phone: string | null;
+	/** @nullable */
+	short_description: string | null;
 	/** @nullable */
 	state?: CompanyState;
 	/** @nullable */

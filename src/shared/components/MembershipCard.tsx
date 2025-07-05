@@ -66,7 +66,7 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 			);
 			return;
 		}
-		if( type === "Stripe") {
+		if (type === "Stripe") {
 			const response = await stripePlan.mutateAsync({ params });
 			window.open(response as string, "_self");
 			return;
@@ -135,33 +135,32 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 						Upgrade
 					</Button>
 					<Menu
-        id="lock-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-		MenuListProps={{
-		  "aria-labelledby": "lock-button",
-		}}
-		// fullWidth
-		PaperProps={{
-					  style: {
-						width: "100%",
-						maxWidth: 360,
-					  },
-		}}
-      >
-        {options.map((option, index) => (
-          <MenuItem
-            key={option}
-            disabled={index === 0}
-            selected={index === selectedIndex}
-            onClick={(event) => handleMenuItemClick(event, index)}
-          >
-            {option}
-          </MenuItem>
-        ))}
-      </Menu>
-
+						id="lock-menu"
+						anchorEl={anchorEl}
+						open={open}
+						onClose={handleClose}
+						MenuListProps={{
+							"aria-labelledby": "lock-button",
+						}}
+						// fullWidth
+						PaperProps={{
+							style: {
+								width: "100%",
+								maxWidth: 360,
+							},
+						}}
+					>
+						{options.map((option, index) => (
+							<MenuItem
+								key={option}
+								disabled={index === 0}
+								selected={index === selectedIndex}
+								onClick={(event) => handleMenuItemClick(event, index)}
+							>
+								{option}
+							</MenuItem>
+						))}
+					</Menu>
 				</Grid>
 			</Grid>
 		</Card>

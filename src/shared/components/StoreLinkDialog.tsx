@@ -15,9 +15,11 @@ import EmailIcon from "@mui/icons-material/Email";
 import { useStoreControllerCreateUpdateStore } from "@api/services/store";
 import { useAuthControllerStatus } from "@api/services/auth";
 import { useAuthStore } from "@store/auth";
+import { useNavigate } from "react-router-dom";
 
 const StoreLinkDialog = () => {
-    const {refecthUser} = useAuthStore();
+	const navigate = useNavigate();
+	const { refecthUser } = useAuthStore();
 	const { open, handleClose } = useStoreLinkStore();
 	const user = useAuthControllerStatus();
 	const initialValues = {
@@ -40,7 +42,7 @@ const StoreLinkDialog = () => {
 			},
 		});
 		user?.refetch();
-        refecthUser();
+		refecthUser();
 	};
 
 	const url = `${window.location.origin}/store/${user?.data?.storeName}`;
@@ -105,14 +107,26 @@ const StoreLinkDialog = () => {
 								/>
 							</Grid>
 							<Grid item xs={12}>
-								<Button
-									variant="outlined"
-									onClick={handleCopyClick}
-									startIcon={<LinkIcon />}
-									disabled={copied}
-								>
-									{copied ? "Copied!" : "Copy Link"}
-								</Button>
+								<Box display="flex" gap={1} alignItems="center">
+									<Button
+										variant="outlined"
+										onClick={handleCopyClick}
+										startIcon={<LinkIcon />}
+										disabled={copied}
+									>
+										{copied ? "Copied!" : "Copy Link"}
+									</Button>
+									<Button
+										variant="contained"
+										color="primary"
+										onClick={() => {
+											navigate(`/product/productlist`);
+											handleClose();
+										}}
+									>
+										Upload Products to Store
+									</Button>
+								</Box>
 							</Grid>
 							<Grid item xs={12}>
 								<Typography variant="body2" color="textSecondary">

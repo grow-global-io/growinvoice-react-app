@@ -34,26 +34,25 @@ const StoreNavbar = ({ children }: { children?: React.ReactNode }) => {
 	return (
 		<>
 			<AppBar position="static" sx={{ backgroundColor: "custom.lightBlue" }}>
-				<Grid container alignItems="center"p={2} >
-					<Grid item xs={12} sm={1} >
-							<img
-								src={Constants.customImages.Logo}
-								alt="Grow Invoice"
-								style={{ height: 40, marginRight: 16, verticalAlign: "middle" ,cursor: "pointer"}}
-								onClick={() => navigate("/store")}
-							/>
+				<Grid container alignItems="center" p={2}>
+					<Grid item xs={12} sm={1}>
+						<img
+							src={Constants.customImages.Logo}
+							alt="Grow Invoice"
+							style={{ height: 40, marginRight: 16, verticalAlign: "middle", cursor: "pointer" }}
+							onClick={() => navigate("/store")}
+						/>
 					</Grid>
-					<Grid item xs={12} sm={7} sx={{ display: "flex", alignItems: "center" }}
-					>
-							<TextField
-								variant="outlined"
-								placeholder="Search Products/Companies"
-								value={searchTerm || ""}
-								onChange={(e) => handleSearchChange?.(e.target.value)}
-								sx={{ flexGrow: 1, marginRight: 2 }}
-							/>
+					<Grid item xs={12} sm={7} sx={{ display: "flex", alignItems: "center" }}>
+						<TextField
+							variant="outlined"
+							placeholder="Search Products/Companies"
+							value={searchTerm || ""}
+							onChange={(e) => handleSearchChange?.(e.target.value)}
+							sx={{ flexGrow: 1, marginRight: 2 }}
+						/>
 					</Grid>
-					<Grid item xs={10} sm={3} >
+					<Grid item xs={10} sm={3}>
 						<Box component={"span"} sx={{ display: "flex", alignItems: "center", gap: 2 }}>
 							<Formik
 								initialValues={initialValues}
@@ -63,24 +62,32 @@ const StoreNavbar = ({ children }: { children?: React.ReactNode }) => {
 								}}
 							>
 								{() => (
-									<Form style={{ margin: 0, padding: 0,flexGrow: 1, display: "flex", alignItems: "center" }}>
-											<Field
-												name="currency"
-												component={AutocompleteField}
-												options={currency?.data?.map((c) => ({
-													label: [c.name, c.short_code].join(" - "),
-													value: c.short_code,
-												}))}
-												disableClearable
-												sx={{
-													m: 0,
-													p: 0,
-												}}
-												onValueChange={(value: ListDto) => {
-													setCurrencyCode?.(String(value.value));
-													removeAllProductsFromCheckout?.();
-												}}
-											/>
+									<Form
+										style={{
+											margin: 0,
+											padding: 0,
+											flexGrow: 1,
+											display: "flex",
+											alignItems: "center",
+										}}
+									>
+										<Field
+											name="currency"
+											component={AutocompleteField}
+											options={currency?.data?.map((c) => ({
+												label: [c.name, c.short_code].join(" - "),
+												value: c.short_code,
+											}))}
+											disableClearable
+											sx={{
+												m: 0,
+												p: 0,
+											}}
+											onValueChange={(value: ListDto) => {
+												setCurrencyCode?.(String(value.value));
+												removeAllProductsFromCheckout?.();
+											}}
+										/>
 									</Form>
 								)}
 							</Formik>

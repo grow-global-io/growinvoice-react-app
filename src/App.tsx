@@ -294,7 +294,7 @@ function App() {
 				<CircularProgress color="inherit" />
 			</Backdrop>
 			<ConfirmDialog />
-			
+
 			<ProductDrawer open={openProductForm} handleClose={handleCloseProductForm} />
 			<CustomerDrawer open={openCustomerForm} handleClose={handleCloseCustomerForm} />
 			<PaymentDrawer open={openPaymentForm} handleClose={handleClosePaymentForm} />

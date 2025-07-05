@@ -43,6 +43,8 @@ import VendorsPage from "@pages/VendorsPage";
 import CustomerInvoicesPage from "@pages/CustomerInvoicesPage";
 import StorePage from "@pages/StorePage";
 import StoreSearchPage from "./features/Store/StoreSearchPage";
+import RollUpForm from "@features/AIStore/RollUpForm";
+import StoreUrlVerify from "@features/AIStore/StoreUrlVerify";
 
 export const unProtectedRoutes: Route[] = [
 	{
@@ -83,6 +85,14 @@ export const protectedRoutes: Route[] = [
 	{
 		path: "/",
 		Component: OveviewPage,
+	},
+	{
+		path: "/ai-store",
+		Component: RollUpForm,
+	},
+	{
+		path: "/store/verify",
+		Component: StoreUrlVerify,
 	},
 	{
 		path: "/store/:userId",

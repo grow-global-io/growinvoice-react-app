@@ -40,22 +40,24 @@ const StoreCheckoutDrawer = ({
 					height: "100%", // Take up the full drawer height
 				}}
 			>
-				<Box sx={{
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "space-between",
-				}}>
-				<Typography variant="h6" sx={{ padding: 2, flexShrink: 0 }}>
-					Checkout Items
-				</Typography>
-				<IconButton
-					onClick={() => {
-						setOpenCheckoutForm(false);
+				<Box
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "space-between",
 					}}
-					sx={{ marginRight: 2 }}
 				>
-					<CloseIcon />
-				</IconButton>
+					<Typography variant="h6" sx={{ padding: 2, flexShrink: 0 }}>
+						Checkout Items
+					</Typography>
+					<IconButton
+						onClick={() => {
+							setOpenCheckoutForm(false);
+						}}
+						sx={{ marginRight: 2 }}
+					>
+						<CloseIcon />
+					</IconButton>
 				</Box>
 
 				{/* --- 2. Scrollable Content Area --- */}
