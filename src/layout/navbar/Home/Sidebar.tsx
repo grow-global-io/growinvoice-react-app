@@ -27,7 +27,6 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Constants } from "@shared/constants";
-// import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PaymentIcon from "@mui/icons-material/Payment";
 import BusinessCenterOutlinedIcon from "@mui/icons-material/BusinessCenterOutlined";
 import SellOutlinedIcon from "@mui/icons-material/SellOutlined";
@@ -38,7 +37,6 @@ import SignalCellularAltOutlinedIcon from "@mui/icons-material/SignalCellularAlt
 import { useQueryClient } from "@tanstack/react-query";
 import { useStoreLinkStore } from "@store/storeLinkStore";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
-import LinkIcon from "@mui/icons-material/Link";
 
 const drawerWidth = 240;
 function Sidebar({ children }: { children: React.ReactNode }) {
@@ -380,7 +378,7 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 						>
 							{user?.storeName ? (
 								<Tooltip title="Store Link">
-									<LinkIcon sx={{ color: "custom.white" }} />
+									<HomeIcon sx={{ color: "custom.white" }} />
 								</Tooltip>
 							) : (
 								<Tooltip title="Create Store">

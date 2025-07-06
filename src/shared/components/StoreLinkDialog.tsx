@@ -15,6 +15,7 @@ import EmailIcon from "@mui/icons-material/Email";
 import { useStoreControllerCreateUpdateStore } from "@api/services/store";
 import { useAuthControllerStatus } from "@api/services/auth";
 import { useAuthStore } from "@store/auth";
+import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
 
 const StoreLinkDialog = () => {
@@ -103,6 +104,17 @@ const StoreLinkDialog = () => {
 									fullWidth
 									InputProps={{
 										readOnly: true,
+										endAdornment: (
+											<IconButton
+												aria-label="Copy link"
+												onClick={()=>{
+													navigate(`/store/verify`);
+											handleClose && handleClose();
+												}}
+											>
+												<EditIcon />
+											</IconButton>
+										)
 									}}
 								/>
 							</Grid>
