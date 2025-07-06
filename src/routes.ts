@@ -47,6 +47,8 @@ import RollUpForm from "@features/AIStore/RollUpForm";
 import StoreUrlVerify from "@features/AIStore/StoreUrlVerify";
 import AdminOverView from "@features/Admin/AdminOverView";
 import UserManagementList from "@features/Admin/UserManagement/UserManagementList";
+import InvoicesManagementList from "@features/Admin/InvoiceManagement/InvoicesManagementList";
+import PlansManagementList from "@features/Admin/PlansManagement/PlansManagementList";
 
 export const unProtectedRoutes: Route[] = [
 	{
@@ -271,4 +273,16 @@ export const adminRoutes: Route[] = [
 		path: "/user-management",
 		Component: UserManagementList,
 	},
+	{
+		path: "/invoice-management",
+		Component: InvoicesManagementList,
+	},
+	{
+		path: "/invoice/invoicedetails/:id",
+		Component: InvoiceDetailPage,
+	},
+	{
+		path: "/plan-management",
+		Component: PlansManagementList,
+	}
 ];

@@ -1,26 +1,22 @@
-import { useAuthControllerGetUserQuota } from "@api/services/auth";
-import { usePlansControllerFindAll } from "@api/services/plans";
+import React from "react";
 import {
 	Avatar,
 	Box,
-	Button,
 	Card,
 	CardContent,
 	Chip,
+	Dialog,
+	DialogContent,
 	Divider,
 	Grid,
 	LinearProgress,
 	Typography,
 } from "@mui/material";
-import Loader from "@shared/components/Loader";
-// import MembershipCard from "@shared/components/MembershipCard";
-import { numberToOrdinal, parseDateStringToFormat } from "@shared/formatter";
-import { useAuthStore } from "@store/auth";
-import moment from "moment";
-import { useNavigate } from "react-router-dom";
-
+import AppDialogHeader from "../../../shared/components/Dialog/AppDialogHeader";
+import { AdminUsersListDto } from "../../../api/services/auth/models";
+import { findLeftDate, numberToOrdinal, parseDateStringToFormat } from "@shared/formatter";
 import { AttachMoney, ShoppingCart, People, Store, Receipt } from "@mui/icons-material";
-import { useEffect } from "react";
+import { useAuthControllerGetUserQuota } from "@api/services/auth";
 
 const iconMapping: Record<string, JSX.Element> = {
 	Invoice: <Receipt />,
@@ -36,67 +32,38 @@ const iconMapping: Record<string, JSX.Element> = {
 	Payments: <AttachMoney />,
 };
 
-function findLeftDate(end_Date: string): number {
-	const todaysDate = moment();
-	const endDate = moment(end_Date);
-	const diffInMs = endDate.diff(todaysDate);
-	const msInDay = 24 * 60 * 60 * 1000;
-	return Math.floor(diffInMs / msInDay);
-}
-
 const getProgressColor = (percentage: number) => {
 	if (percentage >= 75) return "error";
 	if (percentage >= 50) return "warning";
 	return "success";
 };
 
-const Membership = () => {
-	const navigate = useNavigate();
-	const { user } = useAuthStore();
-	const findAllPlans = usePlansControllerFindAll();
-	const findQuota = useAuthControllerGetUserQuota({
-		userId: user?.id ?? "",
-	},{
-		query: {
-			enabled: !!user?.id,
-			refetchOnWindowFocus: true,
-			refetchOnMount: true,
+const UserData = ({
+	open,
+	handleClose,
+	userData: user,
+}: {
+	open: boolean;
+	handleClose: () => void;
+	userData: AdminUsersListDto;
+}) => {
+	const findQuota = useAuthControllerGetUserQuota(
+		{
+			userId: user?.id ?? "",
 		},
-	});
-	useEffect(() => {
-		findQuota.refetch();
-	}, []);
-	if (findAllPlans?.isLoading || findAllPlans?.isFetching) {
-		return <Loader />;
-	}
+		{
+			query: {
+				enabled: !!user?.id,
+				refetchOnWindowFocus: true,
+				refetchOnMount: true,
+			},
+		},
+	);
 	return (
-		<>
-			<Box
-				sx={{
-					maxHeight: "calc(100vh - 220px)",
-					overflowY: "auto",
-					py: 2,
-				}}
-			>
-				<Grid container spacing={2} display={"flex"} justifyContent={"center"}>
-					<Grid item xs={12} sm={12} textAlign={"center"}>
-						<Typography variant="h5" fontWeight={400} lineHeight={1.2}>
-							upgrade your plan to generate more other features.
-							<Button
-								variant="text"
-								color="primary"
-								sx={{
-									p: 0,
-									ml: 1,
-								}}
-								onClick={() => {
-									navigate("/plan/planspage");
-								}}
-							>
-								Click here to upgrade
-							</Button>
-						</Typography>
-					</Grid>
+		<Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+			<AppDialogHeader title="User Data" handleClose={handleClose} />
+			<DialogContent>
+				<Grid container spacing={2}>
 					<Grid item xs={12} sm={11}>
 						<Card
 							sx={{
@@ -179,9 +146,9 @@ const Membership = () => {
 						</Grid>
 					</Grid>
 				</Grid>
-			</Box>
-		</>
+			</DialogContent>
+		</Dialog>
 	);
 };
 
-export default Membership;
+export default UserData;

@@ -17,6 +17,7 @@ import type {
 } from "@tanstack/react-query";
 import type {
 	AuthControllerGetUserParams,
+	AuthControllerGetUserQuotaParams,
 	UserDto,
 	UserQuotaDto,
 	UserWithCompanyDto,
@@ -212,29 +213,42 @@ export function useAuthControllerGetUser<
 	return query;
 }
 
-export const authControllerGetUserQuota = (signal?: AbortSignal) => {
-	return authInstance<UserQuotaDto[]>({ url: `/api/auth/getUserQuota`, method: "GET", signal });
+export const authControllerGetUserQuota = (
+	params?: AuthControllerGetUserQuotaParams,
+	signal?: AbortSignal,
+) => {
+	return authInstance<UserQuotaDto[]>({
+		url: `/api/auth/getUserQuota`,
+		method: "GET",
+		params,
+		signal,
+	});
 };
 
-export const getAuthControllerGetUserQuotaQueryKey = () => {
-	return [`/api/auth/getUserQuota`] as const;
+export const getAuthControllerGetUserQuotaQueryKey = (
+	params?: AuthControllerGetUserQuotaParams,
+) => {
+	return [`/api/auth/getUserQuota`, ...(params ? [params] : [])] as const;
 };
 
 export const getAuthControllerGetUserQuotaQueryOptions = <
 	TData = Awaited<ReturnType<typeof authControllerGetUserQuota>>,
 	TError = ErrorType<unknown>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof authControllerGetUserQuota>>, TError, TData>
-	>;
-}) => {
+>(
+	params?: AuthControllerGetUserQuotaParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof authControllerGetUserQuota>>, TError, TData>
+		>;
+	},
+) => {
 	const { query: queryOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getAuthControllerGetUserQuotaQueryKey();
+	const queryKey = queryOptions?.queryKey ?? getAuthControllerGetUserQuotaQueryKey(params);
 
 	const queryFn: QueryFunction<Awaited<ReturnType<typeof authControllerGetUserQuota>>> = ({
 		signal,
-	}) => authControllerGetUserQuota(signal);
+	}) => authControllerGetUserQuota(params, signal);
 
 	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
 		Awaited<ReturnType<typeof authControllerGetUserQuota>>,
@@ -251,53 +265,65 @@ export type AuthControllerGetUserQuotaQueryError = ErrorType<unknown>;
 export function useAuthControllerGetUserQuota<
 	TData = Awaited<ReturnType<typeof authControllerGetUserQuota>>,
 	TError = ErrorType<unknown>,
->(options: {
-	query: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof authControllerGetUserQuota>>, TError, TData>
-	> &
-		Pick<
-			DefinedInitialDataOptions<
-				Awaited<ReturnType<typeof authControllerGetUserQuota>>,
-				TError,
-				TData
-			>,
-			"initialData"
-		>;
-}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+>(
+	params: undefined | AuthControllerGetUserQuotaParams,
+	options: {
+		query: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof authControllerGetUserQuota>>, TError, TData>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof authControllerGetUserQuota>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
 export function useAuthControllerGetUserQuota<
 	TData = Awaited<ReturnType<typeof authControllerGetUserQuota>>,
 	TError = ErrorType<unknown>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof authControllerGetUserQuota>>, TError, TData>
-	> &
-		Pick<
-			UndefinedInitialDataOptions<
-				Awaited<ReturnType<typeof authControllerGetUserQuota>>,
-				TError,
-				TData
-			>,
-			"initialData"
-		>;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+>(
+	params?: AuthControllerGetUserQuotaParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof authControllerGetUserQuota>>, TError, TData>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof authControllerGetUserQuota>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 export function useAuthControllerGetUserQuota<
 	TData = Awaited<ReturnType<typeof authControllerGetUserQuota>>,
 	TError = ErrorType<unknown>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof authControllerGetUserQuota>>, TError, TData>
-	>;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+>(
+	params?: AuthControllerGetUserQuotaParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof authControllerGetUserQuota>>, TError, TData>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
 export function useAuthControllerGetUserQuota<
 	TData = Awaited<ReturnType<typeof authControllerGetUserQuota>>,
 	TError = ErrorType<unknown>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof authControllerGetUserQuota>>, TError, TData>
-	>;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-	const queryOptions = getAuthControllerGetUserQuotaQueryOptions(options);
+>(
+	params?: AuthControllerGetUserQuotaParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof authControllerGetUserQuota>>, TError, TData>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+	const queryOptions = getAuthControllerGetUserQuotaQueryOptions(params, options);
 
 	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
 

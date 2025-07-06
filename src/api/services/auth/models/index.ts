@@ -11,6 +11,7 @@ export * from "./aIDashboardDtoType";
 export * from "./adminUsersListDto";
 export * from "./adminUsersListDtoCurrency";
 export * from "./authControllerGetUserParams";
+export * from "./authControllerGetUserQuotaParams";
 export * from "./billingAddress";
 export * from "./billingAddressDto";
 export * from "./checkoutInvoiceCreateDto";

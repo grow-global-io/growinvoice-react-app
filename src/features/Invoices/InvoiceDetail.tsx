@@ -41,6 +41,7 @@ import { AlertService } from "@shared/services/AlertService";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import QRCodeDialog from "./QRCodeDialog";
+import { useAuthStore } from "@store/auth";
 
 const styles = {
 	width: { xs: "100%", sm: "auto" },
@@ -67,6 +68,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 	const { generatePdfFromRef, generatePdfFromHtml } = usePdfExport();
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
 	const isMobile = useMediaQuery("(max-width:800px)");
+	const { user } = useAuthStore();
 	const {
 		handleDelete,
 		handlePaid,
@@ -171,13 +173,17 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 				handleCloseAll();
 			},
 		},
-		{
-			name: "Delete",
-			func: async () => {
-				handleInvoiceDelete();
-				handleCloseAll();
-			},
-		},
+		...(user?.isAdmin
+			? []
+			: [
+					{
+						name: "Delete",
+						func: async () => {
+							handleInvoiceDelete();
+							handleCloseAll();
+						},
+					},
+				]),
 	];
 	const buttonList = [
 		{
@@ -243,14 +249,18 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 				handleCloseAll();
 			},
 		},
-		{
-			name: "Edit",
-			icon: CreateOutlined,
-			func: () => {
-				handleEdit(invoiceId);
-				handleCloseAll();
-			},
-		},
+		...(user?.isAdmin
+			? []
+			: [
+					{
+						name: "Edit",
+						icon: CreateOutlined,
+						func: () => {
+							handleEdit(invoiceId);
+							handleCloseAll();
+						},
+					},
+				]),
 		{
 			name: "Enter Payment",
 			icon: PaymentsOutlined,
@@ -294,15 +304,18 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 				handleCloseAll();
 			},
 		},
-
-		{
-			name: "Delete",
-			icon: DeleteOutline,
-			func: () => {
-				handleInvoiceDelete();
-				handleCloseAll();
-			},
-		},
+		...(user?.isAdmin
+			? []
+			: [
+					{
+						name: "Delete",
+						icon: DeleteOutline,
+						func: () => {
+							handleInvoiceDelete();
+							handleCloseAll();
+						},
+					},
+				]),
 	];
 	if (
 		getHtmlText.isLoading ||

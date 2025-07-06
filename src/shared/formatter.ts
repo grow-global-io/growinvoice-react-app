@@ -315,3 +315,11 @@ export function numberToOrdinal(number: number): string {
 
 	return number + suffix;
 }
+
+export function findLeftDate(end_Date: string): number {
+	const todaysDate = moment();
+	const endDate = moment(end_Date);
+	const diffInMs = endDate.diff(todaysDate);
+	const msInDay = 24 * 60 * 60 * 1000;
+	return Math.floor(diffInMs / msInDay);
+}
