@@ -5,13 +5,21 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
+	DefinedInitialDataOptions,
+	DefinedUseQueryResult,
 	MutationFunction,
+	QueryFunction,
+	QueryKey,
+	UndefinedInitialDataOptions,
 	UseMutationOptions,
 	UseMutationResult,
+	UseQueryOptions,
+	UseQueryResult,
 } from "@tanstack/react-query";
 import type {
+	AdminUsersListDto,
 	CreateUserCompany,
 	ErrorMessageDto,
 	ForgotPasswordDto,
@@ -20,6 +28,7 @@ import type {
 	ResetPasswordTokenDto,
 	UpdateCurrencyCompanyDto,
 	UpdateUserCompany,
+	UserControllerBlockUser200,
 	UserControllerCreateUser201,
 	UserControllerUpdateCurrencyCompany201,
 	UserControllerUpdateUser201,
@@ -420,6 +429,257 @@ export const useUserControllerUpdateUser = <
 	TContext
 > => {
 	const mutationOptions = getUserControllerUpdateUserMutationOptions(options);
+
+	return useMutation(mutationOptions);
+};
+export const userControllerUserCount = (signal?: AbortSignal) => {
+	return authInstance<number>({ url: `/api/user/userCount`, method: "GET", signal });
+};
+
+export const getUserControllerUserCountQueryKey = () => {
+	return [`/api/user/userCount`] as const;
+};
+
+export const getUserControllerUserCountQueryOptions = <
+	TData = Awaited<ReturnType<typeof userControllerUserCount>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof userControllerUserCount>>, TError, TData>
+	>;
+}) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getUserControllerUserCountQueryKey();
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof userControllerUserCount>>> = ({
+		signal,
+	}) => userControllerUserCount(signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof userControllerUserCount>>,
+		TError,
+		TData
+	> & { queryKey: QueryKey };
+};
+
+export type UserControllerUserCountQueryResult = NonNullable<
+	Awaited<ReturnType<typeof userControllerUserCount>>
+>;
+export type UserControllerUserCountQueryError = ErrorType<unknown>;
+
+export function useUserControllerUserCount<
+	TData = Awaited<ReturnType<typeof userControllerUserCount>>,
+	TError = ErrorType<unknown>,
+>(options: {
+	query: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof userControllerUserCount>>, TError, TData>
+	> &
+		Pick<
+			DefinedInitialDataOptions<Awaited<ReturnType<typeof userControllerUserCount>>, TError, TData>,
+			"initialData"
+		>;
+}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useUserControllerUserCount<
+	TData = Awaited<ReturnType<typeof userControllerUserCount>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof userControllerUserCount>>, TError, TData>
+	> &
+		Pick<
+			UndefinedInitialDataOptions<
+				Awaited<ReturnType<typeof userControllerUserCount>>,
+				TError,
+				TData
+			>,
+			"initialData"
+		>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useUserControllerUserCount<
+	TData = Awaited<ReturnType<typeof userControllerUserCount>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof userControllerUserCount>>, TError, TData>
+	>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+export function useUserControllerUserCount<
+	TData = Awaited<ReturnType<typeof userControllerUserCount>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof userControllerUserCount>>, TError, TData>
+	>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+	const queryOptions = getUserControllerUserCountQueryOptions(options);
+
+	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const userControllerGetUsersList = (signal?: AbortSignal) => {
+	return authInstance<AdminUsersListDto[]>({
+		url: `/api/user/getUsersList`,
+		method: "GET",
+		signal,
+	});
+};
+
+export const getUserControllerGetUsersListQueryKey = () => {
+	return [`/api/user/getUsersList`] as const;
+};
+
+export const getUserControllerGetUsersListQueryOptions = <
+	TData = Awaited<ReturnType<typeof userControllerGetUsersList>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof userControllerGetUsersList>>, TError, TData>
+	>;
+}) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getUserControllerGetUsersListQueryKey();
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof userControllerGetUsersList>>> = ({
+		signal,
+	}) => userControllerGetUsersList(signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof userControllerGetUsersList>>,
+		TError,
+		TData
+	> & { queryKey: QueryKey };
+};
+
+export type UserControllerGetUsersListQueryResult = NonNullable<
+	Awaited<ReturnType<typeof userControllerGetUsersList>>
+>;
+export type UserControllerGetUsersListQueryError = ErrorType<unknown>;
+
+export function useUserControllerGetUsersList<
+	TData = Awaited<ReturnType<typeof userControllerGetUsersList>>,
+	TError = ErrorType<unknown>,
+>(options: {
+	query: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof userControllerGetUsersList>>, TError, TData>
+	> &
+		Pick<
+			DefinedInitialDataOptions<
+				Awaited<ReturnType<typeof userControllerGetUsersList>>,
+				TError,
+				TData
+			>,
+			"initialData"
+		>;
+}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useUserControllerGetUsersList<
+	TData = Awaited<ReturnType<typeof userControllerGetUsersList>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof userControllerGetUsersList>>, TError, TData>
+	> &
+		Pick<
+			UndefinedInitialDataOptions<
+				Awaited<ReturnType<typeof userControllerGetUsersList>>,
+				TError,
+				TData
+			>,
+			"initialData"
+		>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useUserControllerGetUsersList<
+	TData = Awaited<ReturnType<typeof userControllerGetUsersList>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof userControllerGetUsersList>>, TError, TData>
+	>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+export function useUserControllerGetUsersList<
+	TData = Awaited<ReturnType<typeof userControllerGetUsersList>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof userControllerGetUsersList>>, TError, TData>
+	>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+	const queryOptions = getUserControllerGetUsersListQueryOptions(options);
+
+	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const userControllerBlockUser = (id: string) => {
+	return authInstance<UserControllerBlockUser200>({
+		url: `/api/user/blockUser/${id}`,
+		method: "PUT",
+	});
+};
+
+export const getUserControllerBlockUserMutationOptions = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof userControllerBlockUser>>,
+		TError,
+		{ id: string },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof userControllerBlockUser>>,
+	TError,
+	{ id: string },
+	TContext
+> => {
+	const { mutation: mutationOptions } = options ?? {};
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof userControllerBlockUser>>,
+		{ id: string }
+	> = (props) => {
+		const { id } = props ?? {};
+
+		return userControllerBlockUser(id);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type UserControllerBlockUserMutationResult = NonNullable<
+	Awaited<ReturnType<typeof userControllerBlockUser>>
+>;
+
+export type UserControllerBlockUserMutationError = ErrorType<unknown>;
+
+export const useUserControllerBlockUser = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof userControllerBlockUser>>,
+		TError,
+		{ id: string },
+		TContext
+	>;
+}): UseMutationResult<
+	Awaited<ReturnType<typeof userControllerBlockUser>>,
+	TError,
+	{ id: string },
+	TContext
+> => {
+	const mutationOptions = getUserControllerBlockUserMutationOptions(options);
 
 	return useMutation(mutationOptions);
 };

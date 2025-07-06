@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { protectedRoutes, unProtectedRoutes } from "./routes";
+import { adminRoutes, protectedRoutes, unProtectedRoutes } from "./routes";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useAuthStore } from "@store/auth";
@@ -38,6 +38,7 @@ import ExternalRedirect from "./shared/ExternalRedirectLink";
 import { useProductCheckoutStore } from "./store/productCheckoutStore";
 import StoreCheckoutDrawer from "@features/Store/StoreCheckoutDrawer";
 import StoreLinkDialog from "@shared/components/StoreLinkDialog";
+import AdminSideBar from "@layout/navbar/Admin/AdminSideBar";
 
 function AppContainer() {
 	const queryClient = useQueryClient();
@@ -93,6 +94,18 @@ function AppContainer() {
 				<Route path="/" element={<ExternalRedirect to="https://www.growinvoice.com/" />} />
 				<Route path="*" element={<Navigate to="/login" replace />} />
 			</Routes>
+		);
+	}
+	if (user?.isAdmin) {
+		return (
+			<AdminSideBar>
+				<Routes>
+					{adminRoutes.map(({ path, Component }) => (
+						<Route key={path} path={path} element={<Component />} />
+					))}
+					<Route path="*" element={<NotFoundPage />} />
+				</Routes>
+			</AdminSideBar>
 		);
 	}
 

@@ -18,6 +18,8 @@ export interface UserWithProducts {
 	currency_id: string | null;
 	email: string;
 	id: string;
+	isActive: boolean;
+	isAdmin: boolean;
 	isExist: boolean;
 	/** @nullable */
 	name: string | null;

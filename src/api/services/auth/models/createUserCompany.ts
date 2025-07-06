@@ -11,6 +11,8 @@ export interface CreateUserCompany {
 	/** @nullable */
 	currency_id?: string | null;
 	email: string;
+	isActive?: boolean;
+	isAdmin?: boolean;
 	/** @nullable */
 	name?: string | null;
 	password: string;

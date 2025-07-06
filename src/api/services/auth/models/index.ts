@@ -8,6 +8,8 @@
 
 export * from "./aIDashboardDto";
 export * from "./aIDashboardDtoType";
+export * from "./adminUsersListDto";
+export * from "./adminUsersListDtoCurrency";
 export * from "./authControllerGetUserParams";
 export * from "./billingAddress";
 export * from "./billingAddressDto";
@@ -342,6 +344,8 @@ export * from "./uploadControllerUploadFileBody";
 export * from "./uploadControllerUploadMultipleFilesBody";
 export * from "./uploadResponseDto";
 export * from "./user";
+export * from "./userControllerBlockUser200";
+export * from "./userControllerBlockUser200AllOf";
 export * from "./userControllerCreateUser201";
 export * from "./userControllerCreateUser201AllOf";
 export * from "./userControllerUpdateCurrencyCompany201";

@@ -107,14 +107,14 @@ const StoreLinkDialog = () => {
 										endAdornment: (
 											<IconButton
 												aria-label="Copy link"
-												onClick={()=>{
+												onClick={() => {
 													navigate(`/store/verify`);
-											handleClose && handleClose();
+													handleClose && handleClose();
 												}}
 											>
 												<EditIcon />
 											</IconButton>
-										)
+										),
 									}}
 								/>
 							</Grid>

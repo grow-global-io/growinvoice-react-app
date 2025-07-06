@@ -6,14 +6,14 @@
  * OpenAPI spec version: 1.0
  */
 import type { Company } from "./company";
-import type { UserWithCompanyDtoCurrency } from "./userWithCompanyDtoCurrency";
+import type { AdminUsersListDtoCurrency } from "./adminUsersListDtoCurrency";
 import type { UserPlans } from "./userPlans";
 
-export interface UserWithCompanyDto {
-	company?: Company[];
+export interface AdminUsersListDto {
+	company: Company[];
 	createdAt: string;
 	/** @nullable */
-	currency?: UserWithCompanyDtoCurrency;
+	currency?: AdminUsersListDtoCurrency;
 	/** @nullable */
 	currency_id: string | null;
 	email: string;
@@ -34,5 +34,5 @@ export interface UserWithCompanyDto {
 	storeName: string | null;
 	/** @nullable */
 	updatedAt: string | null;
-	UserPlans?: UserPlans[];
+	UserPlans: UserPlans[];
 }

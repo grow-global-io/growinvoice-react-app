@@ -45,6 +45,8 @@ import StorePage from "@pages/StorePage";
 import StoreSearchPage from "./features/Store/StoreSearchPage";
 import RollUpForm from "@features/AIStore/RollUpForm";
 import StoreUrlVerify from "@features/AIStore/StoreUrlVerify";
+import AdminOverView from "@features/Admin/AdminOverView";
+import UserManagementList from "@features/Admin/UserManagement/UserManagementList";
 
 export const unProtectedRoutes: Route[] = [
 	{
@@ -257,5 +259,16 @@ export const protectedRoutes: Route[] = [
 	{
 		path: "/reports/vendors",
 		Component: VendorsPage,
+	},
+];
+
+export const adminRoutes: Route[] = [
+	{
+		path: "/",
+		Component: AdminOverView,
+	},
+	{
+		path: "/user-management",
+		Component: UserManagementList,
 	},
 ];

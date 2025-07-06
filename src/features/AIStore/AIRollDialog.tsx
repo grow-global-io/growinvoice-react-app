@@ -5,7 +5,7 @@ import lottie, { AnimationItem } from "lottie-web";
 import { useNavigate } from "react-router-dom";
 
 const AIRollDialog = ({ open, handleClose }: { open: boolean; handleClose: () => void }) => {
-  const navigate = useNavigate();
+	const navigate = useNavigate();
 	const container = useRef<HTMLDivElement>(null);
 	useEffect(() => {
 		let animation: AnimationItem | undefined;
@@ -18,10 +18,10 @@ const AIRollDialog = ({ open, handleClose }: { open: boolean; handleClose: () =>
 				animationData: storeLoader,
 			});
 		}
-    setTimeout(() => {
-      navigate("/store/verify");
-      handleClose();
-    }, 10000); // Close dialog after 10 seconds
+		setTimeout(() => {
+			navigate("/store/verify");
+			handleClose();
+		}, 10000); // Close dialog after 10 seconds
 		return () => {
 			animation?.destroy();
 		};
@@ -36,13 +36,11 @@ const AIRollDialog = ({ open, handleClose }: { open: boolean; handleClose: () =>
 						flexDirection: "column",
 						alignItems: "center",
 						height: "70vh",
-            justifyContent: "center",
+						justifyContent: "center",
 					}}
 				>
 					<div style={{ width: 300, height: 300 }} className="container" ref={container}></div>
-					<Typography sx={{ fontSize: 18 }}>
-            Loading your AI Store... Please wait. 
-          </Typography>
+					<Typography sx={{ fontSize: 18 }}>Loading your AI Store... Please wait.</Typography>
 				</Box>
 			</DialogContent>
 		</Dialog>
