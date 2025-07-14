@@ -8,6 +8,7 @@
 import type { OmitCreatePlanFeatureDto } from "./omitCreatePlanFeatureDto";
 
 export interface UpdatePlanWithFeaturesDto {
+	currency_id?: string;
 	days: number;
 	description: string;
 	features: OmitCreatePlanFeatureDto[];

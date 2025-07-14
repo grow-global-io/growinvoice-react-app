@@ -25,7 +25,7 @@ const PlansFeatureUpdate = ({
 	handleClose: () => void;
 	planData?: PlanWithFeaturesDto;
 }) => {
-    const queryClient = useQueryClient()
+	const queryClient = useQueryClient();
 	const plansUpdate = usePlansControllerUpdate();
 	const initialValues: {
 		data: OmitCreatePlanFeatureDto[];
@@ -53,21 +53,21 @@ const PlansFeatureUpdate = ({
 		await plansUpdate.mutateAsync({
 			id: planData?.id || "",
 			data: {
-                name: planData?.name || "",
-                description: planData?.description || "",
-                price: planData?.price || 0,
-                days: planData?.days || 0,
-                isOneTime: planData?.isOneTime || false,
-                is_active: planData?.is_active || true,
+				name: planData?.name || "",
+				description: planData?.description || "",
+				price: planData?.price || 0,
+				days: planData?.days || 0,
+				isOneTime: planData?.isOneTime || false,
+				is_active: planData?.is_active || true,
 				features: values.data.map((item) => ({
 					count: item.count,
 					feature: item.feature as OmitCreatePlanFeatureDtoFeature,
 				})),
 			},
 		});
-        queryClient.refetchQueries({
-            queryKey: getPlansControllerFindAllQueryKey()
-        })
+		queryClient.refetchQueries({
+			queryKey: getPlansControllerFindAllQueryKey(),
+		});
 	};
 
 	return (

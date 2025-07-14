@@ -162,17 +162,17 @@ const PlansManagementList = () => {
 							/>
 						</Box>
 					</Tooltip>,
-                    <Tooltip title="Update Features" key={params.row?.id + "features"}>
-                        <Box>
-                            <CustomIconButton
-                                onClick={() => {
-                                    setPlanData(params.row);
-                                    handleFeatureOpen();
-                                }}
-                                src={EditIcon}
-                            />
-                        </Box>
-                    </Tooltip>,
+					<Tooltip title="Update Features" key={params.row?.id + "features"}>
+						<Box>
+							<CustomIconButton
+								onClick={() => {
+									setPlanData(params.row);
+									handleFeatureOpen();
+								}}
+								src={EditIcon}
+							/>
+						</Box>
+					</Tooltip>,
 				];
 			},
 		},
@@ -196,11 +196,11 @@ const PlansManagementList = () => {
 				}}
 				planData={planData}
 			/>
-            <PlansFeatureUpdate
-                open={openFeatureDialog}
-                handleClose={handleFeatureClose}
-                planData={planData}
-            />
+			<PlansFeatureUpdate
+				open={openFeatureDialog}
+				handleClose={handleFeatureClose}
+				planData={planData}
+			/>
 		</Box>
 	);
 };

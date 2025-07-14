@@ -55,18 +55,12 @@ const UserManagementList = () => {
 			renderCell: (params) => {
 				return (
 					<Chip
-						label={
-							params?.row?.UserPlans?.length > 0
-								? params?.row?.UserPlans?.length
-								: "No Plan"
-						}
-						color={
-							params?.row?.UserPlans?.length > 0 ? "primary" : "default"
-						}
+						label={params?.row?.UserPlans?.length > 0 ? params?.row?.UserPlans?.length : "No Plan"}
+						color={params?.row?.UserPlans?.length > 0 ? "primary" : "default"}
 						variant={params?.row?.UserPlans?.length > 0 ? "filled" : "outlined"}
 					/>
-				)
-			}
+				);
+			},
 		},
 		{
 			field: "action",

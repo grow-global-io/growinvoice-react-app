@@ -54,15 +54,18 @@ const Membership = () => {
 	const navigate = useNavigate();
 	const { user } = useAuthStore();
 	const findAllPlans = usePlansControllerFindAll();
-	const findQuota = useAuthControllerGetUserQuota({
-		userId: user?.id ?? "",
-	},{
-		query: {
-			enabled: !!user?.id,
-			refetchOnWindowFocus: true,
-			refetchOnMount: true,
+	const findQuota = useAuthControllerGetUserQuota(
+		{
+			userId: user?.id ?? "",
 		},
-	});
+		{
+			query: {
+				enabled: !!user?.id,
+				refetchOnWindowFocus: true,
+				refetchOnMount: true,
+			},
+		},
+	);
 	useEffect(() => {
 		findQuota.refetch();
 	}, []);

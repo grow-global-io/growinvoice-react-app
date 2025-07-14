@@ -5,9 +5,12 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
+import type { Currencies } from "./currencies";
 
 export interface Plans {
 	createdAt: string;
+	currency?: Currencies;
+	currency_id: string;
 	days: number;
 	description: string;
 	id: string;

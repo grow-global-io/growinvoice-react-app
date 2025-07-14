@@ -8,6 +8,7 @@
 
 export interface PlansDto {
 	createdAt: string;
+	currency_id: string;
 	days: number;
 	description: string;
 	id: string;

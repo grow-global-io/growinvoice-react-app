@@ -284,5 +284,5 @@ export const adminRoutes: Route[] = [
 	{
 		path: "/plan-management",
 		Component: PlansManagementList,
-	}
+	},
 ];

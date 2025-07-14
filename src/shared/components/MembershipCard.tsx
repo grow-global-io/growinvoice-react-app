@@ -20,6 +20,7 @@ import { PlanWithFeaturesDto } from "@api/services/models";
 import { formatCurrency } from "@shared/formatter";
 import React, { useMemo } from "react";
 import { environment } from "@enviroment";
+import { useInvoiceHook } from "@features/Invoices/invoiceHooks/useInvoiceHook";
 
 const style = {
 	color: "secondary.dark",
@@ -51,12 +52,13 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 	};
 
 	const [selectedIndex, setSelectedIndex] = React.useState(0);
-	const options = ["Select Payment Method", "Stripe", "Growlimitless"];
+	const options = ["Select Payment Method", "Stripe", "Growlimitless", "Razorpay"];
 
 	const { user } = useAuthStore();
 	const createPlan = usePaymentsControllerGrowlimitlessPyamentsForPlans();
 	const stripePlan = usePaymentsControllerStripePaymentForPlans();
-	const handleUpgradePlan = async (type: "Stripe" | "Growlimitless") => {
+	const { handleRazorPayPaymentForPlans } = useInvoiceHook();
+	const handleUpgradePlan = async (type: "Stripe" | "Growlimitless" | "Razorpay") => {
 		const params = { user_id: user?.id ?? "", plan_id: item?.id ?? "" };
 		if (item.price === 0) {
 			// want to open in same tab
@@ -69,6 +71,14 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 		if (type === "Stripe") {
 			const response = await stripePlan.mutateAsync({ params });
 			window.open(response as string, "_self");
+			return;
+		}
+		if (type === "Razorpay") {
+			await handleRazorPayPaymentForPlans(
+				params.plan_id,
+				params.user_id,
+				"rzp_live_YzB8fovZA2pLja",
+			);
 			return;
 		}
 		const response = await createPlan.mutateAsync({ params });

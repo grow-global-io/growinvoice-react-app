@@ -11,7 +11,6 @@ export interface UpdateUserCompany {
 	currency_id?: string | null;
 	email?: string;
 	isActive?: boolean;
-	isAdmin?: boolean;
 	/** @nullable */
 	name?: string | null;
 	old_password: string;

@@ -12,7 +12,7 @@ import { useInvoiceHook } from "@features/Invoices/invoiceHooks/useInvoiceHook";
 
 const InvoicesManagementList = () => {
 	const invoice = useInvoiceControllerFindAll();
-  const {  handleView } = useInvoiceHook();
+	const { handleView } = useInvoiceHook();
 
 	const columns: GridColDef<Invoice>[] = [
 		{
@@ -82,13 +82,13 @@ const InvoicesManagementList = () => {
 				);
 			},
 		},
-    {
-      field: "action",
+		{
+			field: "action",
 			headerName: "Action",
 			flex: 1,
 			minWidth: 150,
 			type: "actions",
-      getActions: (params) => [
+			getActions: (params) => [
 				<Tooltip title="View Invoice" key={params.row?.id}>
 					<Box>
 						<CustomIconButton
@@ -100,7 +100,7 @@ const InvoicesManagementList = () => {
 					</Box>
 				</Tooltip>,
 			],
-    }
+		},
 	];
 
 	if (invoice.isLoading) {

@@ -12,7 +12,6 @@ export interface CreateUserCompany {
 	currency_id?: string | null;
 	email: string;
 	isActive?: boolean;
-	isAdmin?: boolean;
 	/** @nullable */
 	name?: string | null;
 	password: string;

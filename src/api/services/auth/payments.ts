@@ -27,6 +27,7 @@ import type {
 	PaymentsControllerGrowlimitlessPyamentsForPlans201,
 	PaymentsControllerGrowlimitlessPyamentsForPlansParams,
 	PaymentsControllerGrowlimitlessSuccessParams,
+	PaymentsControllerRazorpayPaymentForPlansParams,
 	PaymentsControllerRazorpayPaymentParams,
 	PaymentsControllerStripePaymentForPlansParams,
 	PaymentsControllerStripePaymentParams,
@@ -34,6 +35,7 @@ import type {
 	PaymentsControllerSuccessParams,
 	PaymentsControllerSuccessPlansParams,
 	PaymentsControllerSuccessRazorpayParams,
+	PaymentsControllerSuccessrazorpayPaymentParams,
 	PaymentsControllerUpdate200,
 	RazorpayPaymentDto,
 	SuccessResponseDto,
@@ -1414,6 +1416,138 @@ export const usePaymentsControllerStripePaymentForPlans = <
 	TContext
 > => {
 	const mutationOptions = getPaymentsControllerStripePaymentForPlansMutationOptions(options);
+
+	return useMutation(mutationOptions);
+};
+export const paymentsControllerRazorpayPaymentForPlans = (
+	params: PaymentsControllerRazorpayPaymentForPlansParams,
+) => {
+	return authInstance<RazorpayPaymentDto>({
+		url: `/api/payments/razorpayPaymentForPlans`,
+		method: "POST",
+		params,
+	});
+};
+
+export const getPaymentsControllerRazorpayPaymentForPlansMutationOptions = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof paymentsControllerRazorpayPaymentForPlans>>,
+		TError,
+		{ params: PaymentsControllerRazorpayPaymentForPlansParams },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof paymentsControllerRazorpayPaymentForPlans>>,
+	TError,
+	{ params: PaymentsControllerRazorpayPaymentForPlansParams },
+	TContext
+> => {
+	const { mutation: mutationOptions } = options ?? {};
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof paymentsControllerRazorpayPaymentForPlans>>,
+		{ params: PaymentsControllerRazorpayPaymentForPlansParams }
+	> = (props) => {
+		const { params } = props ?? {};
+
+		return paymentsControllerRazorpayPaymentForPlans(params);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type PaymentsControllerRazorpayPaymentForPlansMutationResult = NonNullable<
+	Awaited<ReturnType<typeof paymentsControllerRazorpayPaymentForPlans>>
+>;
+
+export type PaymentsControllerRazorpayPaymentForPlansMutationError = ErrorType<unknown>;
+
+export const usePaymentsControllerRazorpayPaymentForPlans = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof paymentsControllerRazorpayPaymentForPlans>>,
+		TError,
+		{ params: PaymentsControllerRazorpayPaymentForPlansParams },
+		TContext
+	>;
+}): UseMutationResult<
+	Awaited<ReturnType<typeof paymentsControllerRazorpayPaymentForPlans>>,
+	TError,
+	{ params: PaymentsControllerRazorpayPaymentForPlansParams },
+	TContext
+> => {
+	const mutationOptions = getPaymentsControllerRazorpayPaymentForPlansMutationOptions(options);
+
+	return useMutation(mutationOptions);
+};
+export const paymentsControllerSuccessrazorpayPayment = (
+	params: PaymentsControllerSuccessrazorpayPaymentParams,
+) => {
+	return authInstance<void>({
+		url: `/api/payments/successrazorpayPayment`,
+		method: "POST",
+		params,
+	});
+};
+
+export const getPaymentsControllerSuccessrazorpayPaymentMutationOptions = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof paymentsControllerSuccessrazorpayPayment>>,
+		TError,
+		{ params: PaymentsControllerSuccessrazorpayPaymentParams },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof paymentsControllerSuccessrazorpayPayment>>,
+	TError,
+	{ params: PaymentsControllerSuccessrazorpayPaymentParams },
+	TContext
+> => {
+	const { mutation: mutationOptions } = options ?? {};
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof paymentsControllerSuccessrazorpayPayment>>,
+		{ params: PaymentsControllerSuccessrazorpayPaymentParams }
+	> = (props) => {
+		const { params } = props ?? {};
+
+		return paymentsControllerSuccessrazorpayPayment(params);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type PaymentsControllerSuccessrazorpayPaymentMutationResult = NonNullable<
+	Awaited<ReturnType<typeof paymentsControllerSuccessrazorpayPayment>>
+>;
+
+export type PaymentsControllerSuccessrazorpayPaymentMutationError = ErrorType<unknown>;
+
+export const usePaymentsControllerSuccessrazorpayPayment = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof paymentsControllerSuccessrazorpayPayment>>,
+		TError,
+		{ params: PaymentsControllerSuccessrazorpayPaymentParams },
+		TContext
+	>;
+}): UseMutationResult<
+	Awaited<ReturnType<typeof paymentsControllerSuccessrazorpayPayment>>,
+	TError,
+	{ params: PaymentsControllerSuccessrazorpayPaymentParams },
+	TContext
+> => {
+	const mutationOptions = getPaymentsControllerSuccessrazorpayPaymentMutationOptions(options);
 
 	return useMutation(mutationOptions);
 };

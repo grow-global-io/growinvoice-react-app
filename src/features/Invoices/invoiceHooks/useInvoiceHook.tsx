@@ -17,7 +17,9 @@ import {
 import {
 	paymentsControllerRazorpayPayment,
 	paymentsControllerSuccessRazorpay,
+	paymentsControllerSuccessrazorpayPayment,
 	usePaymentsControllerGrowlimitlessPayment,
+	usePaymentsControllerRazorpayPaymentForPlans,
 	usePaymentsControllerStripePayment,
 } from "@api/services/payments";
 import { formatDateToIso } from "@shared/formatter";
@@ -39,6 +41,7 @@ export const useInvoiceHook = () => {
 	const markedMailedSent = useInvoiceControllerMarkedAsMailed();
 	const createstripPaymentUrl = usePaymentsControllerStripePayment();
 	const createGllPaymentUrl = usePaymentsControllerGrowlimitlessPayment();
+	const createRazorpaymentForPlans = usePaymentsControllerRazorpayPaymentForPlans();
 	const handleRedirectStripePayment = async (invoiceId: string, user_id: string) => {
 		const params = { invoice_id: invoiceId, user_id };
 		const response = await createstripPaymentUrl.mutateAsync({ params });
@@ -99,6 +102,55 @@ export const useInvoiceHook = () => {
 		},
 		[Razorpay],
 	);
+
+	const handleRazorPayPaymentForPlans = async (
+		planId: string,
+		userId: string,
+		razorpaykey: string,
+	) => {
+		const getOrderDetails = await createRazorpaymentForPlans.mutateAsync({
+			params: {
+				plan_id: planId,
+				user_id: userId,
+			},
+		});
+		const options: RazorpayOptions = {
+			key: razorpaykey,
+			amount: getOrderDetails?.amount.toLocaleString(),
+			currency: getOrderDetails?.currency,
+			name: "Plan Payment",
+			description: "Plan Payment for the plan number " + getOrderDetails?.receipt,
+			order_id: getOrderDetails?.id,
+			handler: async (res) => {
+				LoaderService.instance.showLoader();
+				const paymentId = res.razorpay_payment_id;
+				LoaderService.instance.hideLoader();
+				await paymentsControllerSuccessrazorpayPayment({
+					plan_id: planId,
+					user_id: userId,
+					razorpay_payment_id: paymentId,
+				});
+				// const paymentSubmit = await paymentsControllerSuccessRazorpay({
+				// 	invoice_id: invoiceId,
+				// 	user_id: userId,
+				// 	razorpay_payment_id: paymentId,
+				// });
+				// if (paymentSubmit) {
+				// 	navigate("/invoice/invoicetemplate/" + invoiceId);
+				// 	window.location.reload();
+				// }
+			},
+			notes: {
+				address: "Growinvoice",
+			},
+			theme: {
+				color: "#3399cc",
+			},
+		};
+
+		const rzpay = new Razorpay(options);
+		rzpay.open();
+	};
 
 	const handleEdit = (invoiceId: string) => {
 		navigate(`/invoice/createinvoice/${invoiceId}`);
@@ -242,5 +294,6 @@ export const useInvoiceHook = () => {
 		handleMailedSent,
 		handleRazorPayPayment,
 		handleRedirectGllPayment,
+		handleRazorPayPaymentForPlans
 	};
 };
