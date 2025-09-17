@@ -125,14 +125,6 @@ function AppContainer() {
 		<Navbar>
 			{includeParentofSidebar ? (
 				<ParentofSidebar>
-					{/* <GetStartedDialog
-						open={
-							user?.company?.length === 0 ||
-							user?.company?.[0]?.country_id === "" ||
-							user?.company?.[0]?.address === null ||
-							user?.company?.[0]?.address === ""
-						}
-					/> */}
 					<GetStartedErrorComp />
 					<Routes>
 						<Route path="*" element={<NotFoundPage />} />
@@ -145,14 +137,6 @@ function AppContainer() {
 				</ParentofSidebar>
 			) : (
 				<>
-					{/* <GetStartedDialog
-						open={
-							user?.company?.length === 0 ||
-							user?.company?.[0]?.country_id === "" ||
-							user?.company?.[0]?.address === null ||
-							user?.company?.[0]?.address === ""
-						}
-					/> */}
 					<GetStartedErrorComp />
 					<StoreLinkDialog />
 					<Routes>

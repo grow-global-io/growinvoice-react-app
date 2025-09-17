@@ -26,10 +26,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useCurrencyControllerFindAll } from "@api/services/currency";
 import { AlertService } from "@shared/services/AlertService";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
-import { FileUploadFormField } from "@shared/components/FormFields/FileUploadFormField";
 import { CheckBoxFormField } from "@shared/components/FormFields/CheckBoxFormField";
+import MultipleFileUploadFormField from "@shared/components/FormFields/MultipleFileUploadFormField";
 
-const schema: yup.Schema<CreateProductWithTaxDto> = yup.object({
+const schema = yup.object({
 	type: yup
 		.string()
 		.required("Type is required")
@@ -37,15 +37,23 @@ const schema: yup.Schema<CreateProductWithTaxDto> = yup.object({
 	name: yup.string().required("Name is required"),
 	unit_id: yup.string().required("Unit is required"),
 	hsnCode_id: yup.string(),
-	image: yup.string().test("includeStore", "Image is required", function (value) {
-		const { includeStore } = this.parent;
-		if (includeStore && !value) {
-			return this.createError({
-				message: "Image is required when you want to include the product in the store.",
-			});
-		}
-		return true;
-	}),
+	images: yup
+		.array()
+		.of(yup.string().url("Each image must be a valid URL"))
+		.test(
+			"includeStore",
+			"At least one image is required when including the product in the store.",
+			function (value) {
+				const { includeStore } = this.parent;
+				if (includeStore && (!value || value.length === 0)) {
+					return this.createError({
+						message: "At least one image is required when including the product in the store.",
+					});
+				}
+				return true;
+			},
+		).required("Images are required").default([]),
+
 	includeStore: yup.boolean().optional(),
 	// currency_id: yup.string().required("Currency is required"),
 	// price: yup
@@ -130,7 +138,7 @@ const ProductForm = () => {
 				currency_id: price.currency_id,
 				price: price.price,
 			})) ?? [],
-		image: editValues?.image ?? "",
+		images: editValues?.images ?? [],
 		includeStore: editValues?.includeStore ?? false,
 	};
 
@@ -178,7 +186,9 @@ const ProductForm = () => {
 
 			<Box sx={{ mb: 2, mt: 2 }}>
 				<Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit}>
-					{({ values, setFieldValue }) => (
+					{({ values, setFieldValue,errors }) => {
+						console.log("errors", errors);
+						return(
 						<Form>
 							<Divider />
 							<Grid container my={1} padding={2}>
@@ -208,9 +218,9 @@ const ProductForm = () => {
 								</Grid>
 								<Grid item xs={12}>
 									<Field
-										name="image"
-										label="Product Image"
-										component={FileUploadFormField}
+										name="images"
+										label="Product Images"
+										component={MultipleFileUploadFormField}
 										accept="image/*"
 									/>
 								</Grid>
@@ -378,7 +388,7 @@ const ProductForm = () => {
 								</Grid>
 							</Grid>
 						</Form>
-					)}
+					)}}
 				</Formik>
 			</Box>
 		</Box>

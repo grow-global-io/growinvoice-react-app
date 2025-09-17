@@ -10,7 +10,7 @@ import { ListDto } from "@shared/models/ListDto";
 import { useNavigate } from "react-router-dom";
 import { Constants } from "@shared/constants";
 
-const StoreNavbar = ({ children }: { children?: React.ReactNode }) => {
+const StoreNavbar = ({ children, logo }: { children?: React.ReactNode; logo?: string }) => {
 	const {
 		setOpenCheckoutForm,
 		checkoutProducts,
@@ -37,7 +37,7 @@ const StoreNavbar = ({ children }: { children?: React.ReactNode }) => {
 				<Grid container alignItems="center" p={2}>
 					<Grid item xs={12} sm={1}>
 						<img
-							src={Constants.customImages.Logo}
+							src={logo ?? Constants.customImages.Logo}
 							alt="Grow Invoice"
 							style={{ height: 40, marginRight: 16, verticalAlign: "middle", cursor: "pointer" }}
 							onClick={() => navigate("/store")}

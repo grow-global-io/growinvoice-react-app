@@ -294,6 +294,6 @@ export const useInvoiceHook = () => {
 		handleMailedSent,
 		handleRazorPayPayment,
 		handleRedirectGllPayment,
-		handleRazorPayPaymentForPlans
+		handleRazorPayPaymentForPlans,
 	};
 };

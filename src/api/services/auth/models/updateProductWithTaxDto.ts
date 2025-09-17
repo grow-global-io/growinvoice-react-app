@@ -13,8 +13,7 @@ export interface UpdateProductWithTaxDto {
 	description?: string | null;
 	/** @nullable */
 	hsnCode_id?: string | null;
-	/** @nullable */
-	image?: string | null;
+	images?: string[];
 	includeStore?: boolean;
 	name?: string;
 	priceBook: CreateProductPriceBookDto[];

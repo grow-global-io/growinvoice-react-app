@@ -19,8 +19,7 @@ export interface Product {
 	/** @nullable */
 	hsnCode_id: string | null;
 	id: string;
-	/** @nullable */
-	image: string | null;
+	images: string[];
 	includeStore: boolean;
 	isExist: boolean;
 	name: string;

@@ -29,7 +29,13 @@ const StoreMain = ({ userId }: { userId: string }) => {
 	}
 
 	return (
-		<StoreNavbar>
+		<StoreNavbar
+			logo={
+				store?.data?.company?.[0]?.logo === ""
+					? undefined
+					: (store?.data?.company?.[0]?.logo ?? undefined)
+			}
+		>
 			<Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
 				<Typography variant="h4" sx={{ marginTop: 2 }}>
 					{store?.data?.company?.[0]?.name || "Store"}

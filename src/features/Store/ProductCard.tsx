@@ -24,10 +24,10 @@ const ProductCard = ({ product }: { product: ProductWithAllDataDto | undefined }
 	}, [product, currencyCode]);
 	return (
 		<Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-			{product?.image && (
+			{/* {product?.images && (
 				<CardMedia
 					component="img"
-					src={product?.image}
+					src={product?.images[0]}
 					alt={product?.name}
 					title={product?.name}
 					sx={{
@@ -38,7 +38,41 @@ const ProductCard = ({ product }: { product: ProductWithAllDataDto | undefined }
 					}}
 					onClick={handleClickOpen}
 				/>
-			)}
+			)} */}
+			{
+				product?.images && product.images.length > 0 && (
+					<CardMedia
+						component="img"
+						src={product?.images[0]}
+						alt={product?.name}
+						title={product?.name}
+						sx={{
+							height: 140,
+							objectFit: "cover",
+							borderRadius: "8px 8px 0 0",
+							cursor: "pointer",
+						}}
+						onClick={handleClickOpen}
+					/>
+				)
+			}
+			{
+				(!product?.images || product.images.length === 0) && (
+					<CardMedia
+						component="img"
+						src={"https://via.placeholder.com/300x140?text=No+Image"}
+						alt={product?.name || "No Image"}
+						title={product?.name || "No Image"}
+						sx={{
+							height: 140,
+							objectFit: "cover",
+							borderRadius: "8px 8px 0 0",
+							cursor: "pointer",
+						}}
+						onClick={handleClickOpen}
+					/>
+				)
+			}
 			<CardContent sx={{ flexGrow: 1 }}>
 				<Typography
 					variant="h5"

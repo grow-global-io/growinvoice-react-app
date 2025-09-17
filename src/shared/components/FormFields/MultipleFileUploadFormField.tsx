@@ -9,7 +9,16 @@ import IconButton from "@mui/material/IconButton";
 import CircularProgress from "@mui/material/CircularProgress";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import ClearIcon from "@mui/icons-material/Clear";
-import { useUploadControllerUploadMultipleFiles } from "../../../api/services/auth/upload";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage } from "../../../firebase";
+import { AlertService } from "@shared/services/AlertService";
+
+type UploadFileResponse = {
+	filename: string;
+	fileurl: string;
+	message: string;
+	gcsPath: string;
+};
 
 const MultipleFileUploadFormField: React.FC<
 	FieldProps & {
@@ -19,41 +28,64 @@ const MultipleFileUploadFormField: React.FC<
 	}
 > = ({ field, form, label, accept = "image/*" }) => {
 	const [name, setName] = React.useState<string>("");
+	const [uploadProgress, setUploadProgress] = React.useState<Record<string, number>>({});
 	const errorText = getIn(form.touched, field.name) && getIn(form.errors, field.name);
 	const [docTypeError, setDocTypeError] = React.useState<boolean>(false);
 	const [fileSizeError, setFileSizeError] = React.useState<boolean>(false);
-	const { mutateAsync, isPending } = useUploadControllerUploadMultipleFiles();
+	const [isPending, setIsPending] = React.useState<boolean>(false);
 
 	const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (!event.target.files) return;
+
 		setDocTypeError(false);
 		setFileSizeError(false);
 		const files = Array.from(event.target.files);
 		setName(files.map((file) => file.name).join(", "));
-		const maxSizeInBytes = 5 * 1024 * 1024;
-		const latestFiles: File[] = [];
+		// const maxSizeInBytes = 5 * 1024 * 1024;
+		const filesurl = [...(field.value || [])];
 		for (const file of files) {
-			if (file.size > maxSizeInBytes) {
-				setFileSizeError(true);
-				return;
-			}
+			// if (file.size > maxSizeInBytes) {
+			// 	setFileSizeError(true);
+			// 	return;
+			// }
 			if (accept === ".pdf" && file.type !== "application/pdf") {
 				setDocTypeError(true);
 				return;
 			}
-			latestFiles.push(file);
+			const storageRef = ref(storage, `images/${file.name}`);
+			const uploadTask = uploadBytesResumable(storageRef, file);
+			const response = await new Promise<UploadFileResponse>((resolve, reject) => {
+				uploadTask.on(
+					"state_changed",
+					(snapshot) => {
+						const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+						setUploadProgress((prev) => ({ ...prev, [file.name]: progress }));
+					},
+					(error) => {
+						console.error("[useFileUpload] uploadFile error:", error);
+						AlertService.instance.errorMessage("File upload failed. Please try again.");
+						reject(error);
+					},
+					async () => {
+						const url = await getDownloadURL(uploadTask.snapshot.ref);
+						resolve({
+							filename: file.name,
+							fileurl: url,
+							gcsPath: uploadTask.snapshot.ref.fullPath,
+							message: "File uploaded successfully",
+						});
+
+						// if (!props.hideSuccessAlert) {
+						// 	ToastService.successMessage("File uploaded successfully");
+						// }
+					},
+				);
+			});
+			filesurl.push(response.fileurl);
 		}
-		const uploadRes = await mutateAsync({
-			data: {
-				files: latestFiles,
-			},
-		});
-		form.setFieldValue(
-			field.name,
-			uploadRes.map((file) => file.link),
-			true,
-		);
+		form.setFieldValue(field.name, filesurl, true);
 	};
+	console.log(errorText,field.name,form.errors,form.touched);
 
 	return (
 		<FormControl fullWidth error={!!errorText}>
@@ -65,6 +97,7 @@ const MultipleFileUploadFormField: React.FC<
 				</InputLabel>
 			)}
 			<TextField
+				{...field}
 				fullWidth
 				error={!!errorText}
 				value={name}
@@ -82,7 +115,11 @@ const MultipleFileUploadFormField: React.FC<
 							<IconButton component="label">
 								<FileUploadOutlinedIcon />
 								<input
-									onChange={handleUpload}
+									onChange={async (e) => {
+										setIsPending(true);
+										await handleUpload(e);
+										setIsPending(false);
+									}}
 									type="file"
 									accept={accept}
 									hidden
@@ -114,12 +151,22 @@ const MultipleFileUploadFormField: React.FC<
 					Only PDF files are allowed
 				</Typography>
 			)}
-			{field.value?.length > 0 && (
-				<Typography variant="caption" color="text.secondary">
-					Uploaded Files: {field.value.join(", ")}
-				</Typography>
-			)}
 			{isPending && <CircularProgress size={20} color="secondary" />}
+			{Object.keys(uploadProgress).map((fileName) => (
+				<Box key={fileName} sx={{ mt: 1 }}>
+					<Typography variant="body2">{fileName}</Typography>
+					<Box sx={{ width: "100%", backgroundColor: "#e0e0e0", borderRadius: 1 }}>
+						<Box
+							sx={{
+								width: `${uploadProgress[fileName]}%`,
+								backgroundColor: "primary.main",
+								height: 10,
+								borderRadius: 1,
+							}}
+						/>
+					</Box>
+				</Box>
+			))}
 		</FormControl>
 	);
 };

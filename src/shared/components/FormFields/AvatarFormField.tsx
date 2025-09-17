@@ -68,6 +68,17 @@ const AvatarFormField: React.FC<
 					Upload File
 					<input type="file" hidden onChange={handleUpload} />
 				</Button>
+				{field.value && (
+					<Button
+						variant="outlined"
+						color="error"
+						onClick={() => {
+							form.setFieldValue(field.name, "", true);
+						}}
+					>
+						Remove
+					</Button>
+				)}
 			</Box>
 			{fileSizeError && (
 				<Typography variant="caption" color="error">
