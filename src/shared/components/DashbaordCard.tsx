@@ -1,5 +1,6 @@
 import { Card, Grid, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import React from "react";
 
 interface OverviewCardProps {
 	name: string;

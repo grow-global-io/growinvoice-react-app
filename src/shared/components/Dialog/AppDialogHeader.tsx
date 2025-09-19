@@ -2,6 +2,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography from "@mui/material/Typography";
+import React from "react";
 
 export interface DialogTitleProps {
 	id: string;

@@ -147,7 +147,7 @@ export const AutocompleteField: React.FC<
 		required?: boolean;
 		options?: ListDto[];
 		optionUrl?: string;
-		onValueChange?: (_value: ListDto) => void;
+		onValueChange?: (_: ListDto) => void;
 		multiple?: boolean;
 		isRequired?: boolean;
 		isGpt?: boolean;
