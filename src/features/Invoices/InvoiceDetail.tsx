@@ -234,6 +234,10 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			name: "Send Mail",
 			icon: EmailOutlined,
 			func: async () => {
+				if(!getInvoiceData?.data?.customer?.email){
+					AlertService.instance.errorMessage("Customer email not found");
+					return;
+				}
 				await handleSendMail(invoiceId, getInvoiceData?.data?.customer?.email ?? "");
 				handleCloseAll();
 			},
@@ -242,8 +246,21 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			name: "Send Whatsapp",
 			icon: WhatsApp,
 			func: () => {
+				const formatMessage = `
+Dear ${getInvoiceData?.data?.customer?.name || ""},
+Thank you for making the purchase of ${getInvoiceData?.data?.total?.toFixed(2) || ""} on ${
+					getInvoiceData?.data?.createdAt
+						? new Date(getInvoiceData?.data?.createdAt).toLocaleDateString()
+						: ""
+				} at ${getInvoiceData?.data?.user?.name || ""}.
+Click here ${window.location.origin}/invoice/invoicetemplate/${invoiceId} to view Invoice.
+
+Your feedback is essential in helping us improve our services and serve you better. Please share your shopping experience on the above link.
+				`
 				window.open(
-					`https://api.whatsapp.com/send/?phone=${getInvoiceData?.data?.customer?.phone}&text=${window.location.origin}/invoice/invoicetemplate/${invoiceId}&type=url&app_absent=0`,
+					`https://api.whatsapp.com/send/?phone=${getInvoiceData?.data?.customer?.phone}&text=${encodeURIComponent(
+						formatMessage,
+					)}&app_absent=0`,
 					"_blank",
 				);
 				handleCloseAll();
