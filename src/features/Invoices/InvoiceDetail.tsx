@@ -42,6 +42,7 @@ import CreditCardIcon from "@mui/icons-material/CreditCard";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import QRCodeDialog from "./QRCodeDialog";
 import { useAuthStore } from "@store/auth";
+import { currencyFormatter } from "@shared/formatter";
 
 const styles = {
 	width: { xs: "100%", sm: "auto" },
@@ -234,7 +235,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			name: "Send Mail",
 			icon: EmailOutlined,
 			func: async () => {
-				if(!getInvoiceData?.data?.customer?.email){
+				if (!getInvoiceData?.data?.customer?.email) {
 					AlertService.instance.errorMessage("Customer email not found");
 					return;
 				}
@@ -248,7 +249,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			func: () => {
 				const formatMessage = `
 Dear ${getInvoiceData?.data?.customer?.name || ""},
-Thank you for making the purchase of ${getInvoiceData?.data?.total?.toFixed(2) || ""} on ${
+Thank you for making the purchase of ${currencyFormatter(getInvoiceData?.data?.total ?? 0, getInvoiceData?.data?.currency?.short_code)} on ${
 					getInvoiceData?.data?.createdAt
 						? new Date(getInvoiceData?.data?.createdAt).toLocaleDateString()
 						: ""
@@ -256,7 +257,7 @@ Thank you for making the purchase of ${getInvoiceData?.data?.total?.toFixed(2) |
 Click here ${window.location.origin}/invoice/invoicetemplate/${invoiceId} to view Invoice.
 
 Your feedback is essential in helping us improve our services and serve you better. Please share your shopping experience on the above link.
-				`
+				`;
 				window.open(
 					`https://api.whatsapp.com/send/?phone=${getInvoiceData?.data?.customer?.phone}&text=${encodeURIComponent(
 						formatMessage,

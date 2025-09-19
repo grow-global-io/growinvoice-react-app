@@ -18,18 +18,18 @@ import { findLeftDate, numberToOrdinal, parseDateStringToFormat } from "@shared/
 import { AttachMoney, ShoppingCart, People, Store, Receipt } from "@mui/icons-material";
 import { useAuthControllerGetUserQuota } from "@api/services/auth";
 
-const iconMapping: Record<string, JSX.Element> = {
-	Invoice: <Receipt />,
-	Quotation: <AttachMoney />,
-	Customer: <People />,
-	Product: <Store />,
-	Tax: <ShoppingCart />,
-	HSNCode: <Store />,
-	ProductUnit: <Store />,
-	PaymentDetails: <AttachMoney />,
-	InvoiceSettings: <Receipt />,
-	QuotationSettings: <AttachMoney />,
-	Payments: <AttachMoney />,
+const iconMapping: Record<string, React.ElementType> = {
+	Invoice: Receipt,
+	Quotation: AttachMoney,
+	Customer: People,
+	Product: Store,
+	Tax: ShoppingCart,
+	HSNCode: Store,
+	ProductUnit: Store,
+	PaymentDetails: AttachMoney,
+	InvoiceSettings: Receipt,
+	QuotationSettings: AttachMoney,
+	Payments: AttachMoney,
 };
 
 const getProgressColor = (percentage: number) => {
@@ -121,7 +121,9 @@ const UserData = ({
 									<Grid item xs={12} sm={6} md={4} key={index}>
 										<Card sx={{ p: 2, borderRadius: 2, boxShadow: 3 }}>
 											<CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-												<Avatar sx={{ bgcolor: "primary.main" }}>{Icon}</Avatar>
+												<Avatar sx={{ bgcolor: "primary.main" }}>
+													<Icon />
+												</Avatar>
 												<Box flexGrow={1}>
 													<Typography variant="h6" fontWeight={600}>
 														{feature}
