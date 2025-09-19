@@ -141,19 +141,19 @@ function AsyncAutoCompleteField({
 	);
 }
 
-export const AutocompleteField: React.FC<
-	FieldProps & {
-		label: string;
-		required?: boolean;
-		options?: ListDto[];
-		optionUrl?: string;
-		onValueChange?: (_: ListDto) => void;
-		multiple?: boolean;
-		isRequired?: boolean;
-		isGpt?: boolean;
-		disableClearable?: boolean;
-	}
-> = ({
+type AutocompleteProps = {
+	label: string;
+	required?: boolean;
+	options?: ListDto[];
+	optionUrl?: string;
+	onValueChange?: (_: ListDto) => void;
+	multiple?: boolean;
+	isRequired?: boolean;
+	isGpt?: boolean;
+	disableClearable?: boolean;
+};
+
+export const AutocompleteField: React.FC<FieldProps & AutocompleteProps> = ({
 	field,
 	form,
 	label,

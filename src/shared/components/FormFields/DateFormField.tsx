@@ -6,17 +6,17 @@ import { DesktopDatePicker as DatePicker } from "@mui/x-date-pickers/DesktopDate
 import { InputLabel, TextField, Typography, Box } from "@mui/material";
 import moment from "moment";
 
-export const DateFormField: React.FC<
-	FieldProps & {
-		requiredCancel?: boolean;
-		label?: string;
-		minDate?: Date;
-		maxDate?: Date;
-		onValueChange?: (_: string) => void;
-		disabled?: boolean;
-		isRequired?: boolean;
-	}
-> = ({
+type DateFormFieldProps = {
+	requiredCancel?: boolean;
+	label?: string;
+	minDate?: Date;
+	maxDate?: Date;
+	onValueChange?: (_: string) => void;
+	disabled?: boolean;
+	isRequired?: boolean;
+};
+
+export const DateFormField: React.FC<FieldProps & DateFormFieldProps> = ({
 	field,
 	form,
 	label,
