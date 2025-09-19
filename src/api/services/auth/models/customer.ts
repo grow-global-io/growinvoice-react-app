@@ -5,20 +5,25 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
-import type { BillingAddress } from "./billingAddress";
-import type { Currencies } from "./currencies";
+import type { CustomerBillingAddress } from "./customerBillingAddress";
+import type { CustomerCurrencies } from "./customerCurrencies";
 import type { CustomerOption } from "./customerOption";
-import type { ShippingAddress } from "./shippingAddress";
+import type { CustomerShippingAddress } from "./customerShippingAddress";
 import type { User } from "./user";
 
 export interface Customer {
-	billingAddress?: BillingAddress;
-	billingAddress_id: string;
+	/** @nullable */
+	billingAddress?: CustomerBillingAddress;
+	/** @nullable */
+	billingAddress_id: string | null;
 	createdAt: string;
-	currencies?: Currencies;
-	currencies_id: string;
+	/** @nullable */
+	currencies?: CustomerCurrencies;
+	/** @nullable */
+	currencies_id: string | null;
 	display_name: string;
-	email: string;
+	/** @nullable */
+	email: string | null;
 	fromStore: boolean;
 	/** @nullable */
 	gstIn: string | null;
@@ -26,10 +31,11 @@ export interface Customer {
 	isExist: boolean;
 	name: string;
 	option: CustomerOption;
+	phone: string;
 	/** @nullable */
-	phone: string | null;
-	shippingAddress?: ShippingAddress;
-	shippingAddress_id: string;
+	shippingAddress?: CustomerShippingAddress;
+	/** @nullable */
+	shippingAddress_id: string | null;
 	/** @nullable */
 	updatedAt: string | null;
 	user?: User;

@@ -52,7 +52,9 @@ const schema = yup.object({
 				}
 				return true;
 			},
-		).required("Images are required").default([]),
+		)
+		.required("Images are required")
+		.default([]),
 
 	includeStore: yup.boolean().optional(),
 	// currency_id: yup.string().required("Currency is required"),
@@ -186,209 +188,214 @@ const ProductForm = () => {
 
 			<Box sx={{ mb: 2, mt: 2 }}>
 				<Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit}>
-					{({ values, setFieldValue,errors }) => {
+					{({ values, setFieldValue, errors }) => {
 						console.log("errors", errors);
-						return(
-						<Form>
-							<Divider />
-							<Grid container my={1} padding={2}>
-								<Grid item xs={12}>
-									<Field
-										name="type"
-										label="Type"
-										component={AutocompleteField}
-										options={Object.values(CreateProductWithTaxDtoType).map(stringToListDto)}
-										isRequired={true}
-									/>
-								</Grid>
-								<Grid item xs={12}>
-									<Field
-										name="name"
-										component={TextFormField}
-										label="Product Name"
-										isRequired={true}
-									/>
-								</Grid>
-								<Grid item xs={12}>
-									<Field
-										name="includeStore"
-										label="Include in Store Products"
-										component={CheckBoxFormField}
-									/>
-								</Grid>
-								<Grid item xs={12}>
-									<Field
-										name="images"
-										label="Product Images"
-										component={MultipleFileUploadFormField}
-										accept="image/*"
-									/>
-								</Grid>
-								<Grid item xs={12}>
-									<Field
-										name="unit_id"
-										label="Unit"
-										loading={productUnit.isLoading || productUnit.isFetching}
-										component={AutocompleteField}
-										options={productUnit?.data?.map((unit) => ({
-											value: unit.id,
-											label: unit.name,
-										}))}
-										isRequired={true}
-									/>
-									{!openProductUnitForm && (
-										<Button variant="text" onClick={handleProductUnitOpen} startIcon={<AddIcon />}>
-											Add Unit
-										</Button>
-									)}
-									{openProductUnitForm && (
-										<CreateProductUnit handleClose={handleProductUnitClose} />
-									)}
-								</Grid>
-
-								{isIndia && (
+						return (
+							<Form>
+								<Divider />
+								<Grid container my={1} padding={2}>
 									<Grid item xs={12}>
 										<Field
-											name="hsnCode_id"
-											label="HSN Code (India)"
+											name="type"
+											label="Type"
 											component={AutocompleteField}
-											loading={hsnCodes.isLoading || hsnCodes.isFetching}
-											options={hsnCodes?.data?.map((item) => {
+											options={Object.values(CreateProductWithTaxDtoType).map(stringToListDto)}
+											isRequired={true}
+										/>
+									</Grid>
+									<Grid item xs={12}>
+										<Field
+											name="name"
+											component={TextFormField}
+											label="Product Name"
+											isRequired={true}
+										/>
+									</Grid>
+									<Grid item xs={12}>
+										<Field
+											name="includeStore"
+											label="Include in Store Products"
+											component={CheckBoxFormField}
+										/>
+									</Grid>
+									<Grid item xs={12}>
+										<Field
+											name="images"
+											label="Product Images"
+											component={MultipleFileUploadFormField}
+											accept="image/*"
+										/>
+									</Grid>
+									<Grid item xs={12}>
+										<Field
+											name="unit_id"
+											label="Unit"
+											loading={productUnit.isLoading || productUnit.isFetching}
+											component={AutocompleteField}
+											options={productUnit?.data?.map((unit) => ({
+												value: unit.id,
+												label: unit.name,
+											}))}
+											isRequired={true}
+										/>
+										{!openProductUnitForm && (
+											<Button
+												variant="text"
+												onClick={handleProductUnitOpen}
+												startIcon={<AddIcon />}
+											>
+												Add Unit
+											</Button>
+										)}
+										{openProductUnitForm && (
+											<CreateProductUnit handleClose={handleProductUnitClose} />
+										)}
+									</Grid>
+
+									{isIndia && (
+										<Grid item xs={12}>
+											<Field
+												name="hsnCode_id"
+												label="HSN Code (India)"
+												component={AutocompleteField}
+												loading={hsnCodes.isLoading || hsnCodes.isFetching}
+												options={hsnCodes?.data?.map((item) => {
+													return {
+														label: `${item?.code} - ${item?.tax?.percentage}%`,
+														value: item?.id,
+													};
+												})}
+												onValueChange={(value: ListDto) => {
+													if (value) {
+														const selectedHsnCode = hsnCodes.data?.find(
+															(item) => item.id === value.value,
+														);
+														if (selectedHsnCode) {
+															setFieldValue("tax", [
+																...(values.tax ?? []),
+																selectedHsnCode.tax?.id ?? "",
+															]);
+														}
+													}
+												}}
+											/>
+											{!openHsnCodeForm && (
+												<Button variant="text" onClick={handleHsnCodeOpen} startIcon={<AddIcon />}>
+													Add HSN
+												</Button>
+											)}
+											{openHsnCodeForm && <CreateHSNCode handleClose={handleHsnCodeClose} />}
+										</Grid>
+									)}
+
+									<Grid item xs={12}>
+										<Field
+											name="tax"
+											label="Taxes"
+											multiple
+											component={AutocompleteField}
+											loading={taxCodes.isLoading || taxCodes.isFetching}
+											options={taxCodes?.data?.map((item) => {
 												return {
-													label: `${item?.code} - ${item?.tax?.percentage}%`,
+													label: [item?.name, item?.percentage ? `${item?.percentage}%` : ""]
+														.filter(Boolean)
+														.join(" - "),
 													value: item?.id,
 												};
 											})}
-											onValueChange={(value: ListDto) => {
-												if (value) {
-													const selectedHsnCode = hsnCodes.data?.find(
-														(item) => item.id === value.value,
-													);
-													if (selectedHsnCode) {
-														setFieldValue("tax", [
-															...(values.tax ?? []),
-															selectedHsnCode.tax?.id ?? "",
-														]);
-													}
-												}
-											}}
 										/>
-										{!openHsnCodeForm && (
-											<Button variant="text" onClick={handleHsnCodeOpen} startIcon={<AddIcon />}>
-												Add HSN
+										{!openTaxesForm && (
+											<Button variant="text" onClick={handleTaxesOpen} startIcon={<AddIcon />}>
+												Add Taxes
 											</Button>
 										)}
-										{openHsnCodeForm && <CreateHSNCode handleClose={handleHsnCodeClose} />}
+										{openTaxesForm && <CreateTaxes handleClose={handleTaxesClose} />}
 									</Grid>
-								)}
+									<Grid item xs={12}>
+										<Box>
+											<Typography variant="h6" gutterBottom>
+												Price Book
+											</Typography>
+										</Box>
+										<Box>
+											<FieldArray
+												name="priceBook"
+												render={(arrayHelpers) => (
+													<>
+														{values.priceBook && values.priceBook.length > 0 ? (
+															values.priceBook.map((_, index) => (
+																<Box key={index} sx={{ mb: 1 }}>
+																	<Grid container spacing={2} alignItems="center">
+																		<Grid item xs={5}>
+																			<Field
+																				name={`priceBook.${index}.currency_id`}
+																				label="Currency"
+																				component={AutocompleteField}
+																				options={currencyList?.data?.map((currency) => ({
+																					value: currency.id,
+																					label: `${currency.short_code} - ${currency.name}`,
+																				}))}
+																				isRequired={true}
+																			/>
+																		</Grid>
+																		<Grid item xs={5}>
+																			<Field
+																				name={`priceBook.${index}.price`}
+																				component={TextFormField}
+																				label="Price"
+																				type="number"
+																				isRequired={true}
+																				marginWholeTop={-0.1}
+																			/>
+																		</Grid>
+																		<Grid item xs={2}>
+																			<CustomIconButton
+																				src={CloseIcon}
+																				buttonType="delete"
+																				iconColor="error"
+																				onClick={() => arrayHelpers.remove(index)}
+																			/>
+																		</Grid>
+																	</Grid>
+																</Box>
+															))
+														) : (
+															<Typography variant="body2" color="error">
+																No price book entries found. Please add at least one.
+															</Typography>
+														)}
+														<Button
+															variant="outlined"
+															startIcon={<AddIcon />}
+															onClick={() => arrayHelpers.push({ currency_id: "", price: 0 })}
+														>
+															Add Price
+														</Button>
+													</>
+												)}
+											/>
+										</Box>
+									</Grid>
 
-								<Grid item xs={12}>
-									<Field
-										name="tax"
-										label="Taxes"
-										multiple
-										component={AutocompleteField}
-										loading={taxCodes.isLoading || taxCodes.isFetching}
-										options={taxCodes?.data?.map((item) => {
-											return {
-												label: [item?.name, item?.percentage ? `${item?.percentage}%` : ""]
-													.filter(Boolean)
-													.join(" - "),
-												value: item?.id,
-											};
-										})}
-									/>
-									{!openTaxesForm && (
-										<Button variant="text" onClick={handleTaxesOpen} startIcon={<AddIcon />}>
-											Add Taxes
-										</Button>
-									)}
-									{openTaxesForm && <CreateTaxes handleClose={handleTaxesClose} />}
-								</Grid>
-								<Grid item xs={12}>
-									<Box>
-										<Typography variant="h6" gutterBottom>
-											Price Book
-										</Typography>
-									</Box>
-									<Box>
-										<FieldArray
-											name="priceBook"
-											render={(arrayHelpers) => (
-												<>
-													{values.priceBook && values.priceBook.length > 0 ? (
-														values.priceBook.map((_, index) => (
-															<Box key={index} sx={{ mb: 1 }}>
-																<Grid container spacing={2} alignItems="center">
-																	<Grid item xs={5}>
-																		<Field
-																			name={`priceBook.${index}.currency_id`}
-																			label="Currency"
-																			component={AutocompleteField}
-																			options={currencyList?.data?.map((currency) => ({
-																				value: currency.id,
-																				label: `${currency.short_code} - ${currency.name}`,
-																			}))}
-																			isRequired={true}
-																		/>
-																	</Grid>
-																	<Grid item xs={5}>
-																		<Field
-																			name={`priceBook.${index}.price`}
-																			component={TextFormField}
-																			label="Price"
-																			type="number"
-																			isRequired={true}
-																			marginWholeTop={-0.1}
-																		/>
-																	</Grid>
-																	<Grid item xs={2}>
-																		<CustomIconButton
-																			src={CloseIcon}
-																			buttonType="delete"
-																			iconColor="error"
-																			onClick={() => arrayHelpers.remove(index)}
-																		/>
-																	</Grid>
-																</Grid>
-															</Box>
-														))
-													) : (
-														<Typography variant="body2" color="error">
-															No price book entries found. Please add at least one.
-														</Typography>
-													)}
-													<Button
-														variant="outlined"
-														startIcon={<AddIcon />}
-														onClick={() => arrayHelpers.push({ currency_id: "", price: 0 })}
-													>
-														Add Price
-													</Button>
-												</>
-											)}
+									<Grid item xs={12} mt={2}>
+										<Field
+											name="description"
+											component={TextFormField}
+											label="Description"
+											multiline
+											rows={5}
 										/>
-									</Box>
-								</Grid>
+									</Grid>
 
-								<Grid item xs={12} mt={2}>
-									<Field
-										name="description"
-										component={TextFormField}
-										label="Description"
-										multiline
-										rows={5}
-									/>
+									<Grid item xs={12} textAlign={"center"}>
+										<Button variant="contained" type="submit">
+											Save
+										</Button>
+									</Grid>
 								</Grid>
-
-								<Grid item xs={12} textAlign={"center"}>
-									<Button variant="contained" type="submit">
-										Save
-									</Button>
-								</Grid>
-							</Grid>
-						</Form>
-					)}}
+							</Form>
+						);
+					}}
 				</Formik>
 			</Box>
 		</Box>

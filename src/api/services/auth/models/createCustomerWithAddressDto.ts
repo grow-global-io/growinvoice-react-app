@@ -11,16 +11,17 @@ import type { CreateShippingAddressDto } from "./createShippingAddressDto";
 
 export interface CreateCustomerWithAddressDto {
 	billingDetails?: CreateBillingAddressDto;
-	currencies_id: string;
+	/** @nullable */
+	currencies_id?: string | null;
 	display_name: string;
-	email: string;
+	/** @nullable */
+	email?: string | null;
 	fromStore?: boolean;
 	/** @nullable */
 	gstIn?: string | null;
 	name: string;
 	option: CreateCustomerWithAddressDtoOption;
-	/** @nullable */
-	phone?: string | null;
+	phone: string;
 	shippingDetails?: CreateShippingAddressDto;
 	user_id: string;
 	/** @nullable */

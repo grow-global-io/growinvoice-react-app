@@ -11,23 +11,23 @@ import { ProductWithAllDataDto } from "../../api/services/auth/models";
 import AppDialogHeader from "../../shared/components/Dialog/AppDialogHeader";
 import { useProductCheckoutStore } from "@store/productCheckoutStore";
 import { formatCurrency } from "@shared/formatter";
-import Carousel from 'react-multi-carousel';
-import 'react-multi-carousel/lib/styles.css';
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 
 const responsive = {
-  desktop: {
-    breakpoint: { max: 3000, min: 1024 },
-    items: 1,
-  },
-  tablet: {
-    breakpoint: { max: 1024, min: 464 },
-    items: 1,
-  },
-  mobile: {
-    breakpoint: { max: 464, min: 0 },
-    items: 1,
-  }
-}
+	desktop: {
+		breakpoint: { max: 3000, min: 1024 },
+		items: 1,
+	},
+	tablet: {
+		breakpoint: { max: 1024, min: 464 },
+		items: 1,
+	},
+	mobile: {
+		breakpoint: { max: 464, min: 0 },
+		items: 1,
+	},
+};
 
 const ProductDialog = ({
 	open,
@@ -64,45 +64,51 @@ const ProductDialog = ({
 		<Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
 			<AppDialogHeader title="Product Details" handleClose={handleClose} />
 			<DialogContent>
-					<Carousel responsive={responsive} centerMode={true} showDots={true} autoPlay={true} infinite={true} containerClass="carousel-container" itemClass="carousel-item-padding-40-px">
-						{product?.images?.map((img, index) => (
-							<Box
-								key={img}
-								sx={{
-									width: { xs: "100%", sm: "100%" },
-									height: "300px",
-									flexShrink: 0, // Prevent image box from shrinking
-								}}
-							>
-								<img
-
-									src	={img}
-									alt={`${product?.name} - ${index + 1}`}
-									style={{ width: "300px", height: "300px", borderRadius: "8px", objectFit: "cover" }}
-								/>
-							</Box>
-						))}
-						{!product?.images?.length && (
-							<Box
-								sx={{
-									width: { xs: "100%", sm: "300px" },
-									height: "300px",
-									flexShrink: 0, // Prevent image box from shrinking
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'center',
-									backgroundColor: '#f0f0f0',
-									borderRadius: '8px',
-								}}
-							>
-								<Typography variant="h6" color="text.secondary">
-									No Images Available
-								</Typography>
-							</Box>
-						)}
-					</Carousel>
+				<Carousel
+					responsive={responsive}
+					centerMode={true}
+					showDots={true}
+					autoPlay={true}
+					infinite={true}
+					containerClass="carousel-container"
+					itemClass="carousel-item-padding-40-px"
+				>
+					{product?.images?.map((img, index) => (
+						<Box
+							key={img}
+							sx={{
+								width: { xs: "100%", sm: "100%" },
+								height: "300px",
+								flexShrink: 0, // Prevent image box from shrinking
+							}}
+						>
+							<img
+								src={img}
+								alt={`${product?.name} - ${index + 1}`}
+								style={{ width: "300px", height: "300px", borderRadius: "8px", objectFit: "cover" }}
+							/>
+						</Box>
+					))}
+					{!product?.images?.length && (
+						<Box
+							sx={{
+								width: { xs: "100%", sm: "300px" },
+								height: "300px",
+								flexShrink: 0, // Prevent image box from shrinking
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center",
+								backgroundColor: "#f0f0f0",
+								borderRadius: "8px",
+							}}
+						>
+							<Typography variant="h6" color="text.secondary">
+								No Images Available
+							</Typography>
+						</Box>
+					)}
+				</Carousel>
 				<Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 3 }}>
-					
 					{/* <Box
 						sx={{
 							width: { xs: "100%", sm: "300px" },

@@ -85,7 +85,7 @@ const MultipleFileUploadFormField: React.FC<
 		}
 		form.setFieldValue(field.name, filesurl, true);
 	};
-	console.log(errorText,field.name,form.errors,form.touched);
+	console.log(errorText, field.name, form.errors, form.touched);
 
 	return (
 		<FormControl fullWidth error={!!errorText}>

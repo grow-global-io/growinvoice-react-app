@@ -8,18 +8,21 @@
 import type { UpdateCustomerDtoOption } from "./updateCustomerDtoOption";
 
 export interface UpdateCustomerDto {
-	billingAddress_id?: string;
-	currencies_id?: string;
+	/** @nullable */
+	billingAddress_id?: string | null;
+	/** @nullable */
+	currencies_id?: string | null;
 	display_name?: string;
-	email?: string;
+	/** @nullable */
+	email?: string | null;
 	fromStore?: boolean;
 	/** @nullable */
 	gstIn?: string | null;
 	name?: string;
 	option?: UpdateCustomerDtoOption;
+	phone?: string;
 	/** @nullable */
-	phone?: string | null;
-	shippingAddress_id?: string;
+	shippingAddress_id?: string | null;
 	user_id?: string;
 	/** @nullable */
 	website?: string | null;

@@ -47,7 +47,7 @@ const services = [
 ];
 
 // Create .env
-fs.writeFileSync("./.env", `REACT_APP_BASE_URL=${BASE_URL}`);
+// fs.writeFileSync("./.env", `REACT_APP_BASE_URL=${BASE_URL}`);
 
 // Create Instances folder
 fs.mkdirSync("./src/api/instances", { recursive: true });

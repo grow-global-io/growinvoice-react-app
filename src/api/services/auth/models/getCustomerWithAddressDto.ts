@@ -14,11 +14,14 @@ import type { CountTotalDueDto } from "./countTotalDueDto";
 export interface GetCustomerWithAddressDto {
 	_count?: CountInvoiceDto;
 	billingAddress?: BillingAddressDto;
-	billingAddress_id: string;
+	/** @nullable */
+	billingAddress_id: string | null;
 	createdAt: string;
-	currencies_id: string;
+	/** @nullable */
+	currencies_id: string | null;
 	display_name: string;
-	email: string;
+	/** @nullable */
+	email: string | null;
 	fromStore: boolean;
 	/** @nullable */
 	gstIn: string | null;
@@ -26,10 +29,10 @@ export interface GetCustomerWithAddressDto {
 	isExist: boolean;
 	name: string;
 	option: GetCustomerWithAddressDtoOption;
-	/** @nullable */
-	phone: string | null;
+	phone: string;
 	shippingAddress?: ShippingAddressDto;
-	shippingAddress_id: string;
+	/** @nullable */
+	shippingAddress_id: string | null;
 	totalDue?: CountTotalDueDto;
 	/** @nullable */
 	updatedAt: string | null;

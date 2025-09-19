@@ -41,6 +41,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import Loader from "@shared/components/Loader";
 import { useAuthControllerStatus } from "@api/services/auth";
 import { AlertService } from "@shared/services/AlertService";
+import { CheckBoxFormField } from "@shared/components/FormFields/CheckBoxFormField";
+
+type CustomerFormProps = CreateCustomerWithAddressDto & {
+	isBillingAddressRequired?: boolean;
+};
 
 const CustomerForm = () => {
 	const queryClient = useQueryClient();
@@ -52,7 +57,7 @@ const CustomerForm = () => {
 	const { data: userData, isLoading, isRefetching } = useAuthControllerStatus();
 
 	const { setOpenCustomerForm, editValues } = useCreateCustomerStore.getState();
-	const initialValues: CreateCustomerWithAddressDto = {
+	const initialValues: CustomerFormProps = {
 		currencies_id: editValues?.currencies_id ?? user?.currency_id ?? "",
 		name: editValues?.name ?? "",
 		option: editValues?.option ?? CreateCustomerWithAddressDtoOption.Freelancer,
@@ -76,10 +81,11 @@ const CustomerForm = () => {
 		email: editValues?.email ?? "",
 		phone: editValues?.phone ?? "",
 		website: editValues?.website ?? "",
+		isBillingAddressRequired: false,
 	};
 
-	const schema: yup.Schema<CreateCustomerWithAddressDto> = yup.object({
-		currencies_id: yup.string().required("Currency is required"),
+	const schema = yup.object({
+		currencies_id: yup.string(),
 		name: yup
 			.string()
 			.required("Name is required")
@@ -96,33 +102,121 @@ const CustomerForm = () => {
 			}
 			return true; // if option is not BusinessWithGst, skip validation
 		}),
+		isBillingAddressRequired: yup.boolean(),
 		user_id: yup.string().required("User is required"),
-		billingDetails: yup.object().shape({
-			address: yup.string().required("Address is required"),
-			city: yup.string().required("City is required"),
-			country_id: yup.string().required("Country is required"),
-			state_id: yup.string().required("State is required"),
-			zip: yup.string().required("Zip is required"),
-		}),
+		// billingDetails: yup.object().when("isBillingAddressRequired", {
+		// 	// @ts-expect-error "true" is not assignable to type 'boolean'
+		// 	is: true, // ✅ boolean, not "true"
+		// 	then: yup.object().shape({
+		// 		address: yup.string().required("Address is required"),
+		// 		city: yup.string().required("City is required"),
+		// 		country_id: yup.string().required("Country is required"),
+		// 		state_id: yup.string().required("State is required"),
+		// 		zip: yup.string().required("Zip is required"),
+		// 	}),
+		// 	otherwise: yup.object().shape({
+		// 		address: yup.string().nullable(),
+		// 		city: yup.string().nullable(),
+		// 		country_id: yup.string().nullable(),
+		// 		state_id: yup.string().nullable(),
+		// 		zip: yup.string().nullable(),
+		// 	}),
+		// }),
+		billingDetails: yup
+			.object().shape({
+				address: yup.string().test("billing-address", "Address is required", function (value) {
+					const { isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
+					if (isBillingAddressRequired) {
+						return value !== undefined && value.trim() !== "";
+					}
+					return true;
+				}),
+				city: yup.string().test("billing-city", "City is required", function (value) {
+					const { isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
+					if (isBillingAddressRequired) {
+						return value !== undefined && value.trim() !== "";
+					}
+					return true;
+				}),
+				country_id: yup.string().test("billing-country", "Country is required", function (value) {
+					const { isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
+					if (isBillingAddressRequired) {
+						return value !== undefined && value.trim() !== "";
+					}
+					return true;
+				}),
+				state_id: yup.string().test("billing-state", "State is required", function (value) {
+					const { isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
+					if (isBillingAddressRequired) {
+						return value !== undefined && value.trim() !== "";
+					}
+					return true;
+				}),
+				zip: yup.string().test("billing-zip", "Zip is required", function (value) {
+					const { isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
+					if (isBillingAddressRequired) {
+						return value !== undefined && value.trim() !== "";
+					}
+					return true;
+				}),
+			}),
 		shippingDetails: yup.object().shape({
-			address: yup.string().required("Address is required"),
-			city: yup.string().required("City is required"),
-			country_id: yup.string().required("Country is required"),
-			state_id: yup.string().required("State is required"),
-			zip: yup.string().required("Zip is required"),
+			address: yup.string().test("shipping-address", "Address is required", function (value) {
+				const {isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
+				if (isBillingAddressRequired) {
+					// if billing address is required, shipping address is also required
+					return value !== undefined && value.trim() !== "";
+				}
+				return true;
+			}),
+			city: yup.string().test("shipping-city", "City is required", function (value) {
+				const { isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
+				if (isBillingAddressRequired) {
+					// if billing address is required, shipping city is also required
+					return value !== undefined && value.trim() !== "";
+				}
+				return true;
+			}),
+			country_id: yup.string().test("shipping-country", "Country is required", function (value) {
+				const { isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
+				if (isBillingAddressRequired) {
+					// if billing address is required, shipping country is also required
+					return value !== undefined && value.trim() !== "";
+				}
+				return true;
+			}),
+			state_id: yup.string().test("shipping-state", "State is required", function (value) {
+				const { isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
+				if (isBillingAddressRequired) {
+					// if billing address is required, shipping state is also required
+					return value !== undefined && value.trim() !== "";
+				}
+				return true;
+			}),
+			zip: yup.string().test("shipping-zip", "Zip is required", function (value) {
+				const { isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
+				if (isBillingAddressRequired) {
+					// if billing address is required, shipping zip is also required
+					return value !== undefined && value.trim() !== "";
+				}
+				return true;
+			}),
 		}),
 		display_name: yup.string().required("Display Name is required"),
-		email: yup.string().required("Email is required").email("Email is invalid"),
-		phone: yup.string().test("is-phone", "Phone number is not valid", function (value) {
-			if (!value) return true;
-			return isValidPhoneNumber(value);
-		}),
+		email: yup.string().email("Email is invalid"),
+		phone: yup
+			.string()
+			.required("Phone number is required")
+			.test("is-phone", "Phone number is not valid", function (value) {
+				if (!value) return true;
+				return isValidPhoneNumber(value);
+			}),
 		website: yup.string().matches(RegexExp.linkRegex, "Website is invalid"),
 	});
 
 	const handleSubmit = async (
-		values: CreateCustomerWithAddressDto,
-		actions: FormikHelpers<CreateCustomerWithAddressDto>,
+		values: CustomerFormProps,
+		actions: FormikHelpers<CustomerFormProps>,
 	) => {
 		if (isGetStartedDialogOpen()) {
 			AlertService.instance.errorMessage(
@@ -132,16 +226,25 @@ const CustomerForm = () => {
 		}
 		actions.setSubmitting(true);
 		if (editValues !== null) {
+			const valuesAny: any = {
+					...values,
+					billingDetails: values.isBillingAddressRequired ? values.billingDetails : undefined,
+					shippingDetails: values.isBillingAddressRequired ? values.shippingDetails : undefined,
+				};
 			await updateCustomer.mutateAsync({
 				id: editValues.id,
-				data: values,
+					data: valuesAny,
 			});
 			queryClient.invalidateQueries({
 				queryKey: getCustomerControllerFindOneQueryKey(editValues?.id ?? ""),
 			});
 		} else {
 			await createCustomer.mutateAsync({
-				data: values,
+				data: {
+					...values,
+					billingDetails: values.isBillingAddressRequired ? values.billingDetails : undefined,
+					shippingDetails: values.isBillingAddressRequired ? values.shippingDetails : undefined,
+				},
 			});
 			await queryClient.refetchQueries({
 				queryKey: getCustomerControllerCustomerCountQueryKey(),
@@ -185,6 +288,7 @@ const CustomerForm = () => {
 			<Box sx={{ mb: 2, mt: 2 }}>
 				<Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit}>
 					{({ errors, values, setFieldValue }) => {
+						console.log({ values, errors });
 						return (
 							<Form>
 								<Divider />
@@ -211,21 +315,11 @@ const CustomerForm = () => {
 											/>
 										</Grid>
 										<Grid item xs={12} sm={6}>
-											<Field
-												name="display_name"
-												label="Display Name"
-												component={TextFormField}
-												isRequired={true}
-											/>
+											<Field name="display_name" label="Display Name" component={TextFormField} />
 										</Grid>
 
 										<Grid item xs={12} sm={6}>
-											<Field
-												name="email"
-												label="Email"
-												component={TextFormField}
-												isRequired={true}
-											/>
+											<Field name="email" label="Email" component={TextFormField} />
 										</Grid>
 										<Grid item xs={12} sm={6}>
 											<Field
@@ -248,7 +342,6 @@ const CustomerForm = () => {
 													value: currency.id,
 													label: `${currency.short_code} - ${currency.name}`,
 												}))}
-												isRequired={true}
 											/>
 										</Grid>
 										{values.option === CreateCustomerWithAddressDtoOption.BusinessWithGST && (
@@ -264,18 +357,27 @@ const CustomerForm = () => {
 									</Grid>
 									<Grid container spacing={2} my={1}>
 										<Grid item xs={12} sm={12}>
-											<Typography
-												variant="h4"
-												color={"secondary.dark"}
-												sx={{
-													display: "flex",
-													alignItems: "center",
-													gap: 1,
-												}}
-											>
-												<img src={Constants.customImages.BillingAddressIcon} alt="Invoice Icon" />{" "}
-												Billing Address
-											</Typography>
+											<Grid container my={1}>
+												<Typography
+													variant="h4"
+													color={"secondary.dark"}
+													sx={{
+														display: "flex",
+														alignItems: "center",
+														gap: 1,
+													}}
+												>
+													<img src={Constants.customImages.BillingAddressIcon} alt="Invoice Icon" />{" "}
+													Billing Address
+												</Typography>
+												<Grid item xs={12} sm={6} textAlign={{ xs: "start", sm: "center" }}>
+													<Field
+														name="isBillingAddressRequired"
+														component={CheckBoxFormField}
+														label="Do you want to add billing address?"
+													/>
+												</Grid>
+											</Grid>
 										</Grid>
 										<Grid item xs={12}>
 											<Grid container spacing={1}>
