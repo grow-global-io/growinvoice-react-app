@@ -121,7 +121,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 	}, [invoiceFindOne.isSuccess || invoiceFindOne?.isRefetching]);
 
 	const initialValues = {
-		currency_id: user?.currency_id ?? "",
+		currency_id: invoiceFindOne?.data?.currency_id ?? user?.currency_id ?? "",
 		customer_id: invoiceFindOne?.data?.customer_id ?? "",
 		user_id: user?.id ?? "",
 		invoice_number: invoiceFindOne?.data?.invoice_number ?? new Date().getTime().toString(),
