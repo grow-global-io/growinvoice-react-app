@@ -1331,6 +1331,115 @@ export function useInvoiceControllerTest<
 	return query;
 }
 
+export const invoiceControllerTestPDFGen = (id: string, signal?: AbortSignal) => {
+	return authInstance<string>({ url: `/api/invoice/test-pdf-gen/${id}`, method: "GET", signal });
+};
+
+export const getInvoiceControllerTestPDFGenQueryKey = (id: string) => {
+	return [`/api/invoice/test-pdf-gen/${id}`] as const;
+};
+
+export const getInvoiceControllerTestPDFGenQueryOptions = <
+	TData = Awaited<ReturnType<typeof invoiceControllerTestPDFGen>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof invoiceControllerTestPDFGen>>, TError, TData>
+		>;
+	},
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getInvoiceControllerTestPDFGenQueryKey(id);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof invoiceControllerTestPDFGen>>> = ({
+		signal,
+	}) => invoiceControllerTestPDFGen(id, signal);
+
+	return { queryKey, queryFn, enabled: !!id, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof invoiceControllerTestPDFGen>>,
+		TError,
+		TData
+	> & { queryKey: QueryKey };
+};
+
+export type InvoiceControllerTestPDFGenQueryResult = NonNullable<
+	Awaited<ReturnType<typeof invoiceControllerTestPDFGen>>
+>;
+export type InvoiceControllerTestPDFGenQueryError = ErrorType<unknown>;
+
+export function useInvoiceControllerTestPDFGen<
+	TData = Awaited<ReturnType<typeof invoiceControllerTestPDFGen>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options: {
+		query: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof invoiceControllerTestPDFGen>>, TError, TData>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof invoiceControllerTestPDFGen>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useInvoiceControllerTestPDFGen<
+	TData = Awaited<ReturnType<typeof invoiceControllerTestPDFGen>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof invoiceControllerTestPDFGen>>, TError, TData>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof invoiceControllerTestPDFGen>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useInvoiceControllerTestPDFGen<
+	TData = Awaited<ReturnType<typeof invoiceControllerTestPDFGen>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof invoiceControllerTestPDFGen>>, TError, TData>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+export function useInvoiceControllerTestPDFGen<
+	TData = Awaited<ReturnType<typeof invoiceControllerTestPDFGen>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof invoiceControllerTestPDFGen>>, TError, TData>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+	const queryOptions = getInvoiceControllerTestPDFGenQueryOptions(id, options);
+
+	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
 export const invoiceControllerInvoicePublicFindOne = (id: string, signal?: AbortSignal) => {
 	return authInstance<InvoiceWithAllDataDto>({
 		url: `/api/invoice/invoicePublicFindOne/${id}`,

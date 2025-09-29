@@ -123,47 +123,58 @@ const CustomerForm = () => {
 		// 		zip: yup.string().nullable(),
 		// 	}),
 		// }),
-		billingDetails: yup
-			.object().shape({
-				address: yup.string().test("billing-address", "Address is required", function (value) {
-					const { isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
-					if (isBillingAddressRequired) {
-						return value !== undefined && value.trim() !== "";
-					}
-					return true;
-				}),
-				city: yup.string().test("billing-city", "City is required", function (value) {
-					const { isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
-					if (isBillingAddressRequired) {
-						return value !== undefined && value.trim() !== "";
-					}
-					return true;
-				}),
-				country_id: yup.string().test("billing-country", "Country is required", function (value) {
-					const { isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
-					if (isBillingAddressRequired) {
-						return value !== undefined && value.trim() !== "";
-					}
-					return true;
-				}),
-				state_id: yup.string().test("billing-state", "State is required", function (value) {
-					const { isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
-					if (isBillingAddressRequired) {
-						return value !== undefined && value.trim() !== "";
-					}
-					return true;
-				}),
-				zip: yup.string().test("billing-zip", "Zip is required", function (value) {
-					const { isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
-					if (isBillingAddressRequired) {
-						return value !== undefined && value.trim() !== "";
-					}
-					return true;
-				}),
+		billingDetails: yup.object().shape({
+			address: yup.string().test("billing-address", "Address is required", function (value) {
+				const { isBillingAddressRequired } = this.options.context as {
+					isBillingAddressRequired: boolean;
+				};
+				if (isBillingAddressRequired) {
+					return value !== undefined && value.trim() !== "";
+				}
+				return true;
 			}),
+			city: yup.string().test("billing-city", "City is required", function (value) {
+				const { isBillingAddressRequired } = this.options.context as {
+					isBillingAddressRequired: boolean;
+				};
+				if (isBillingAddressRequired) {
+					return value !== undefined && value.trim() !== "";
+				}
+				return true;
+			}),
+			country_id: yup.string().test("billing-country", "Country is required", function (value) {
+				const { isBillingAddressRequired } = this.options.context as {
+					isBillingAddressRequired: boolean;
+				};
+				if (isBillingAddressRequired) {
+					return value !== undefined && value.trim() !== "";
+				}
+				return true;
+			}),
+			state_id: yup.string().test("billing-state", "State is required", function (value) {
+				const { isBillingAddressRequired } = this.options.context as {
+					isBillingAddressRequired: boolean;
+				};
+				if (isBillingAddressRequired) {
+					return value !== undefined && value.trim() !== "";
+				}
+				return true;
+			}),
+			zip: yup.string().test("billing-zip", "Zip is required", function (value) {
+				const { isBillingAddressRequired } = this.options.context as {
+					isBillingAddressRequired: boolean;
+				};
+				if (isBillingAddressRequired) {
+					return value !== undefined && value.trim() !== "";
+				}
+				return true;
+			}),
+		}),
 		shippingDetails: yup.object().shape({
 			address: yup.string().test("shipping-address", "Address is required", function (value) {
-				const {isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
+				const { isBillingAddressRequired } = this.options.context as {
+					isBillingAddressRequired: boolean;
+				};
 				if (isBillingAddressRequired) {
 					// if billing address is required, shipping address is also required
 					return value !== undefined && value.trim() !== "";
@@ -171,7 +182,9 @@ const CustomerForm = () => {
 				return true;
 			}),
 			city: yup.string().test("shipping-city", "City is required", function (value) {
-				const { isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
+				const { isBillingAddressRequired } = this.options.context as {
+					isBillingAddressRequired: boolean;
+				};
 				if (isBillingAddressRequired) {
 					// if billing address is required, shipping city is also required
 					return value !== undefined && value.trim() !== "";
@@ -179,7 +192,9 @@ const CustomerForm = () => {
 				return true;
 			}),
 			country_id: yup.string().test("shipping-country", "Country is required", function (value) {
-				const { isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
+				const { isBillingAddressRequired } = this.options.context as {
+					isBillingAddressRequired: boolean;
+				};
 				if (isBillingAddressRequired) {
 					// if billing address is required, shipping country is also required
 					return value !== undefined && value.trim() !== "";
@@ -187,7 +202,9 @@ const CustomerForm = () => {
 				return true;
 			}),
 			state_id: yup.string().test("shipping-state", "State is required", function (value) {
-				const { isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
+				const { isBillingAddressRequired } = this.options.context as {
+					isBillingAddressRequired: boolean;
+				};
 				if (isBillingAddressRequired) {
 					// if billing address is required, shipping state is also required
 					return value !== undefined && value.trim() !== "";
@@ -195,7 +212,9 @@ const CustomerForm = () => {
 				return true;
 			}),
 			zip: yup.string().test("shipping-zip", "Zip is required", function (value) {
-				const { isBillingAddressRequired } = this.options.context as { isBillingAddressRequired: boolean };
+				const { isBillingAddressRequired } = this.options.context as {
+					isBillingAddressRequired: boolean;
+				};
 				if (isBillingAddressRequired) {
 					// if billing address is required, shipping zip is also required
 					return value !== undefined && value.trim() !== "";
@@ -228,13 +247,13 @@ const CustomerForm = () => {
 		actions.setSubmitting(true);
 		if (editValues !== null) {
 			const valuesAny: any = {
-					...values,
-					billingDetails: values.isBillingAddressRequired ? values.billingDetails : undefined,
-					shippingDetails: values.isBillingAddressRequired ? values.shippingDetails : undefined,
-				};
+				...values,
+				billingDetails: values.isBillingAddressRequired ? values.billingDetails : undefined,
+				shippingDetails: values.isBillingAddressRequired ? values.shippingDetails : undefined,
+			};
 			await updateCustomer.mutateAsync({
 				id: editValues.id,
-					data: valuesAny,
+				data: valuesAny,
 			});
 			queryClient.invalidateQueries({
 				queryKey: getCustomerControllerFindOneQueryKey(editValues?.id ?? ""),

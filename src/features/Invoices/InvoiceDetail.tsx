@@ -22,10 +22,10 @@ import NoDataFound from "@shared/components/NoDataFound";
 import { useNavigate } from "react-router-dom";
 import InvoiceTemplateCard from "./InvoiceTemplateCard";
 import {
+	getInvoiceControllerTestPDFGenQueryKey,
 	useInvoiceControllerInvoicePublicFindOne,
 	useInvoiceControllerTest,
 } from "@api/services/invoice";
-import { usePdfExport } from "@shared/hooks/usePdfExport";
 import DownloadIcon from "@mui/icons-material/Download";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -43,6 +43,7 @@ import { CustomIconButton } from "@shared/components/CustomIconButton";
 import QRCodeDialog from "./QRCodeDialog";
 import { useAuthStore } from "@store/auth";
 import { currencyFormatter } from "@shared/formatter";
+import { environment } from "@enviroment";
 
 const styles = {
 	width: { xs: "100%", sm: "auto" },
@@ -66,7 +67,6 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 	const [moreAnchorEl, setMoreAnchorEl] = useState<null | HTMLElement>(null);
 	const [menuIconAnchorEl, setMenuIconAnchorEl] = useState<null | HTMLElement>(null);
 	const iframeRef = useRef<HTMLIFrameElement | null>(null);
-	const { generatePdfFromRef, generatePdfFromHtml } = usePdfExport();
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
 	const isMobile = useMediaQuery("(max-width:800px)");
 	const { user } = useAuthStore();
@@ -191,15 +191,19 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			name: "Download",
 			icon: FileDownloadOutlined,
 			func: () => {
-				if (isMobile) {
-					generatePdfFromHtml({
-						html: getHtmlText?.data ?? "",
-					});
-					return;
-				}
-				generatePdfFromRef({
-					iframeRef,
-				});
+				// if (isMobile) {
+				// 	generatePdfFromHtml({
+				// 		html: getHtmlText?.data ?? "",
+				// 	});
+				// 	return;
+				// }
+				// generatePdfFromRef({
+				// 	iframeRef,
+				// });
+				window.open(
+					environment?.baseUrl + getInvoiceControllerTestPDFGenQueryKey(invoiceId)[0],
+					"_blank",
+				);
 				handleCloseAll();
 			},
 		},
@@ -408,15 +412,17 @@ Your feedback is essential in helping us improve our services and serve you bett
 						<CustomIconButton
 							src={DownloadIcon}
 							onClick={() => {
-								if (isMobile) {
-									generatePdfFromHtml({
-										html: getHtmlText?.data ?? "",
-									});
-									return;
-								}
-								generatePdfFromRef({
-									iframeRef,
-								});
+								// if (isMobile) {
+
+								// 	return;
+								// }
+								// generatePdfFromRef({
+								// 	iframeRef,
+								// });
+								window.open(
+									environment?.baseUrl + getInvoiceControllerTestPDFGenQueryKey(invoiceId)[0],
+									"_blank",
+								);
 							}}
 						/>
 						{getInvoiceData?.data?.currency?.short_code === "INR" &&
@@ -552,15 +558,10 @@ Your feedback is essential in helping us improve our services and serve you bett
 				<InvoiceTemplateCard
 					invoiceId={invoiceId}
 					downloadfunc={() => {
-						if (isMobile) {
-							generatePdfFromHtml({
-								html: getHtmlText?.data ?? "",
-							});
-						} else {
-							generatePdfFromRef({
-								iframeRef,
-							});
-						}
+						window.open(
+							environment?.baseUrl + getInvoiceControllerTestPDFGenQueryKey(invoiceId)[0],
+							"_blank",
+						);
 					}}
 				/>
 			)}

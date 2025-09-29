@@ -655,6 +655,115 @@ export function useQuotationControllerTest<
 	return query;
 }
 
+export const quotationControllerTestPDFGen = (id: string, signal?: AbortSignal) => {
+	return authInstance<string>({ url: `/api/quotation/test-pdf-gen/${id}`, method: "GET", signal });
+};
+
+export const getQuotationControllerTestPDFGenQueryKey = (id: string) => {
+	return [`/api/quotation/test-pdf-gen/${id}`] as const;
+};
+
+export const getQuotationControllerTestPDFGenQueryOptions = <
+	TData = Awaited<ReturnType<typeof quotationControllerTestPDFGen>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof quotationControllerTestPDFGen>>, TError, TData>
+		>;
+	},
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getQuotationControllerTestPDFGenQueryKey(id);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof quotationControllerTestPDFGen>>> = ({
+		signal,
+	}) => quotationControllerTestPDFGen(id, signal);
+
+	return { queryKey, queryFn, enabled: !!id, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof quotationControllerTestPDFGen>>,
+		TError,
+		TData
+	> & { queryKey: QueryKey };
+};
+
+export type QuotationControllerTestPDFGenQueryResult = NonNullable<
+	Awaited<ReturnType<typeof quotationControllerTestPDFGen>>
+>;
+export type QuotationControllerTestPDFGenQueryError = ErrorType<unknown>;
+
+export function useQuotationControllerTestPDFGen<
+	TData = Awaited<ReturnType<typeof quotationControllerTestPDFGen>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options: {
+		query: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof quotationControllerTestPDFGen>>, TError, TData>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof quotationControllerTestPDFGen>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useQuotationControllerTestPDFGen<
+	TData = Awaited<ReturnType<typeof quotationControllerTestPDFGen>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof quotationControllerTestPDFGen>>, TError, TData>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof quotationControllerTestPDFGen>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useQuotationControllerTestPDFGen<
+	TData = Awaited<ReturnType<typeof quotationControllerTestPDFGen>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof quotationControllerTestPDFGen>>, TError, TData>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+export function useQuotationControllerTestPDFGen<
+	TData = Awaited<ReturnType<typeof quotationControllerTestPDFGen>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof quotationControllerTestPDFGen>>, TError, TData>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+	const queryOptions = getQuotationControllerTestPDFGenQueryOptions(id, options);
+
+	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
 export const quotationControllerQuotationPublicFindOne = (id: string, signal?: AbortSignal) => {
 	return authInstance<QuotationWithAllDataDto>({
 		url: `/api/quotation/quotationPublicFindOne/${id}`,
