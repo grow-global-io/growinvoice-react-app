@@ -37,10 +37,13 @@ import SignalCellularAltOutlinedIcon from "@mui/icons-material/SignalCellularAlt
 import { useQueryClient } from "@tanstack/react-query";
 import { useStoreLinkStore } from "@store/storeLinkStore";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
+import LinkIcon from "@mui/icons-material/Link";
+import { useAuthControllerStatus } from "@api/services/auth";
 
 const drawerWidth = 240;
 function Sidebar({ children }: { children: React.ReactNode }) {
 	const { handleOpen } = useStoreLinkStore();
+	const { data: userData } = useAuthControllerStatus();
 	const { user } = useAuthStore();
 	const queryClient = useQueryClient();
 	const { pathname } = useLocation();
@@ -378,7 +381,21 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 						>
 							{user?.storeName ? (
 								<Tooltip title="Store Link">
-									<HomeIcon sx={{ color: "custom.white" }} />
+									<IconButton
+										sx={{
+											gap: 1,
+										}}
+									>
+										<LinkIcon sx={{ color: "custom.white" }} />
+										<Typography
+											color={"custom.white"}
+											sx={{
+												textTransform: "capitalize",
+											}}
+										>
+											{userData?.storeName}
+										</Typography>
+									</IconButton>
 								</Tooltip>
 							) : (
 								<Tooltip title="Create Store">

@@ -96,76 +96,88 @@ const StoreLinkDialog = () => {
 				) : (
 					<Box>
 						<Grid container spacing={2}>
-							<Grid item xs={12}>
-								<TextField
-									label="Link"
-									value={url}
-									variant="outlined"
-									fullWidth
-									InputProps={{
-										readOnly: true,
-										endAdornment: (
-											<IconButton
-												aria-label="Copy link"
+							<Grid item xs={4} alignSelf="center">
+								<img
+									// qr generate for link
+									src={"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + url}
+									alt="QR Code"
+									style={{ display: "block", marginLeft: "auto", marginRight: "auto" }}
+								/>
+							</Grid>
+							<Grid item xs={6} alignSelf="center">
+								<Grid container spacing={1} justifyContent="center">
+									<Grid item xs={12}>
+										<TextField
+											label="Link"
+											value={url}
+											variant="outlined"
+											fullWidth
+											InputProps={{
+												readOnly: true,
+												endAdornment: (
+													<IconButton
+														aria-label="Copy link"
+														onClick={() => {
+															navigate(`/store/verify`);
+															handleClose && handleClose();
+														}}
+													>
+														<EditIcon />
+													</IconButton>
+												),
+											}}
+										/>
+									</Grid>
+									<Grid item xs={12}>
+										<Box display="flex" gap={1} alignItems="center">
+											<Button
+												variant="outlined"
+												onClick={handleCopyClick}
+												startIcon={<LinkIcon />}
+												disabled={copied}
+											>
+												{copied ? "Copied!" : "Copy Link"}
+											</Button>
+											<Button
+												variant="contained"
+												color="primary"
 												onClick={() => {
-													navigate(`/store/verify`);
+													navigate(`/product/productlist`);
 													handleClose && handleClose();
 												}}
 											>
-												<EditIcon />
-											</IconButton>
-										),
-									}}
-								/>
-							</Grid>
-							<Grid item xs={12}>
-								<Box display="flex" gap={1} alignItems="center">
-									<Button
-										variant="outlined"
-										onClick={handleCopyClick}
-										startIcon={<LinkIcon />}
-										disabled={copied}
-									>
-										{copied ? "Copied!" : "Copy Link"}
-									</Button>
-									<Button
-										variant="contained"
-										color="primary"
-										onClick={() => {
-											navigate(`/product/productlist`);
-											handleClose && handleClose();
-										}}
-									>
-										Upload Products to Store
-									</Button>
-								</Box>
-							</Grid>
-							<Grid item xs={12}>
-								<Typography variant="body2" color="textSecondary">
-									Share on social media:
-								</Typography>
-							</Grid>
-							<Grid item xs={12} container spacing={1}>
-								<Grid item>
-									<FacebookShareButton url={url}>
-										<IconButton aria-label="Facebook">
-											<FacebookIcon />
-										</IconButton>
-									</FacebookShareButton>
-								</Grid>
-								<Grid item>
-									<TwitterShareButton url={url}>
-										<IconButton aria-label="Twitter">
-											<TwitterIcon />
-										</IconButton>
-									</TwitterShareButton>
-								</Grid>
-								<Grid item>
-									<EmailShareButton url={url}>
-										<IconButton aria-label="Email">
-											<EmailIcon />
-										</IconButton>
-									</EmailShareButton>
+												Upload Products to Store
+											</Button>
+										</Box>
+									</Grid>
+									<Grid item xs={12}>
+										<Typography variant="body2" color="textSecondary">
+											Share on social media:
+										</Typography>
+									</Grid>
+									<Grid item xs={12} container spacing={1}>
+										<Grid item>
+											<FacebookShareButton url={url}>
+												<IconButton aria-label="Facebook">
+													<FacebookIcon />
+												</IconButton>
+											</FacebookShareButton>
+										</Grid>
+										<Grid item>
+											<TwitterShareButton url={url}>
+												<IconButton aria-label="Twitter">
+													<TwitterIcon />
+												</IconButton>
+											</TwitterShareButton>
+										</Grid>
+										<Grid item>
+											<EmailShareButton url={url}>
+												<IconButton aria-label="Email">
+													<EmailIcon />
+												</IconButton>
+											</EmailShareButton>
+										</Grid>
+									</Grid>
 								</Grid>
 							</Grid>
 						</Grid>
