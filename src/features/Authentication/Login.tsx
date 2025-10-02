@@ -7,6 +7,7 @@ import { useUserControllerLoginUser } from "@api/services/users";
 import { useAuthStore } from "@store/auth";
 import { useNavigate } from "react-router-dom";
 import { Constants } from "@shared/constants";
+import SigninWithGoogle from "./SigninWithGoogle";
 
 const Login = () => {
 	const navigation = useNavigate();
@@ -149,6 +150,7 @@ const Login = () => {
 												>
 													Register
 												</Button>
+												<SigninWithGoogle />
 											</Box>
 										</Form>
 									);

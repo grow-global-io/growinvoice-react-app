@@ -12,4 +12,5 @@ export const environment = {
 		appId: env.REACT_APP_FIREBASE_APP_ID,
 		measurementId: env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 	},
+	clientId: env.REACT_APP_GOOGLE_CLIENT_ID,
 };

@@ -10,6 +10,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { environment } from "@enviroment";
 import { ErrorBoundary } from "react-error-boundary";
 import InternalServerErrorPage from "@pages/InternalServerErrorPage";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -25,15 +26,17 @@ const queryClient = new QueryClient({
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
 	<React.StrictMode>
-		<QueryClientProvider client={queryClient}>
-			<ThemeProvider theme={theme}>
-				<BrowserRouter>
-					<ErrorBoundary FallbackComponent={InternalServerErrorPage}>
-						<App />
-					</ErrorBoundary>
-				</BrowserRouter>
-			</ThemeProvider>
-			{!environment.production && <ReactQueryDevtools />}
-		</QueryClientProvider>
+		<GoogleOAuthProvider clientId={environment.clientId ?? ""}>
+			<QueryClientProvider client={queryClient}>
+				<ThemeProvider theme={theme}>
+					<BrowserRouter>
+						<ErrorBoundary FallbackComponent={InternalServerErrorPage}>
+							<App />
+						</ErrorBoundary>
+					</BrowserRouter>
+				</ThemeProvider>
+				{!environment.production && <ReactQueryDevtools />}
+			</QueryClientProvider>
+		</GoogleOAuthProvider>
 	</React.StrictMode>,
 );

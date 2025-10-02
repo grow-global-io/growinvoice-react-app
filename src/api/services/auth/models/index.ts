@@ -379,3 +379,4 @@ export * from "./vendorsControllerCreate200AllOf";
 export * from "./vendorsControllerUpdate200";
 export * from "./vendorsControllerUpdate200AllOf";
 export * from "./vendorsDto";
+export * from "./verifyGoogleTokenDto";

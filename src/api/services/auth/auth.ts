@@ -5,22 +5,27 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
 	DefinedInitialDataOptions,
 	DefinedUseQueryResult,
+	MutationFunction,
 	QueryFunction,
 	QueryKey,
 	UndefinedInitialDataOptions,
+	UseMutationOptions,
+	UseMutationResult,
 	UseQueryOptions,
 	UseQueryResult,
 } from "@tanstack/react-query";
 import type {
 	AuthControllerGetUserParams,
 	AuthControllerGetUserQuotaParams,
+	LoginSuccessDto,
 	UserDto,
 	UserQuotaDto,
 	UserWithCompanyDto,
+	VerifyGoogleTokenDto,
 } from "./models";
 import { authInstance } from "../../instances/authInstance";
 import type { ErrorType } from "../../instances/authInstance";
@@ -331,3 +336,69 @@ export function useAuthControllerGetUserQuota<
 
 	return query;
 }
+
+export const authControllerVerifyGoogleToken = (verifyGoogleTokenDto: VerifyGoogleTokenDto) => {
+	return authInstance<LoginSuccessDto>({
+		url: `/api/auth/verify-google-token`,
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		data: verifyGoogleTokenDto,
+	});
+};
+
+export const getAuthControllerVerifyGoogleTokenMutationOptions = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof authControllerVerifyGoogleToken>>,
+		TError,
+		{ data: VerifyGoogleTokenDto },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof authControllerVerifyGoogleToken>>,
+	TError,
+	{ data: VerifyGoogleTokenDto },
+	TContext
+> => {
+	const { mutation: mutationOptions } = options ?? {};
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof authControllerVerifyGoogleToken>>,
+		{ data: VerifyGoogleTokenDto }
+	> = (props) => {
+		const { data } = props ?? {};
+
+		return authControllerVerifyGoogleToken(data);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type AuthControllerVerifyGoogleTokenMutationResult = NonNullable<
+	Awaited<ReturnType<typeof authControllerVerifyGoogleToken>>
+>;
+export type AuthControllerVerifyGoogleTokenMutationBody = VerifyGoogleTokenDto;
+export type AuthControllerVerifyGoogleTokenMutationError = ErrorType<unknown>;
+
+export const useAuthControllerVerifyGoogleToken = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof authControllerVerifyGoogleToken>>,
+		TError,
+		{ data: VerifyGoogleTokenDto },
+		TContext
+	>;
+}): UseMutationResult<
+	Awaited<ReturnType<typeof authControllerVerifyGoogleToken>>,
+	TError,
+	{ data: VerifyGoogleTokenDto },
+	TContext
+> => {
+	const mutationOptions = getAuthControllerVerifyGoogleTokenMutationOptions(options);
+
+	return useMutation(mutationOptions);
+};
