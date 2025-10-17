@@ -34,7 +34,6 @@ import useSocket from "@shared/hooks/useNotificationSocket";
 import PlansPage from "@pages/PlansPage";
 import { useQueryClient } from "@tanstack/react-query";
 import GetStartedErrorComp from "@shared/components/GetStartedErrorComp";
-import ExternalRedirect from "./shared/ExternalRedirectLink";
 import { useProductCheckoutStore } from "./store/productCheckoutStore";
 import StoreCheckoutDrawer from "@features/Store/StoreCheckoutDrawer";
 import StoreLinkDialog from "@shared/components/StoreLinkDialog";
@@ -91,7 +90,7 @@ function AppContainer() {
 				{unProtectedRoutes.map(({ path, Component }) => (
 					<Route key={path} path={path} element={<Component />} />
 				))}
-				<Route path="/" element={<ExternalRedirect to="https://www.growinvoice.com/" />} />
+				{/* <Route path="/" element={<ExternalRedirect to="https://www.growinvoice.com/" />} /> */}
 				<Route path="*" element={<Navigate to="/login" replace />} />
 			</Routes>
 		);

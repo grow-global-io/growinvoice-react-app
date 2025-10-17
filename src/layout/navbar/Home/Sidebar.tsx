@@ -2,6 +2,7 @@ import {
 	AppBar,
 	Avatar,
 	Box,
+	Button,
 	Collapse,
 	Divider,
 	Drawer,
@@ -39,6 +40,9 @@ import { useStoreLinkStore } from "@store/storeLinkStore";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
 import LinkIcon from "@mui/icons-material/Link";
 import { useAuthControllerStatus } from "@api/services/auth";
+import { usePWAInstall } from "../../../utils/usePwaInstall";
+import { toast } from "react-toastify";
+import IosInstallInstructionDialog from "@shared/components/IosInstallInstructionDialog";
 
 const drawerWidth = 240;
 function Sidebar({ children }: { children: React.ReactNode }) {
@@ -52,6 +56,9 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 	const [mobileOpen, setMobileOpen] = React.useState(false);
 	const [isClosing, setIsClosing] = React.useState(false);
 	const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+	const { isInstallable, isInstalled, installApp } = usePWAInstall();
+	const [showIosInstructions, setShowIOSInstructions] = useState<boolean>(false);
+
 	const settingsWithFunc = [
 		{
 			name: "Profile",
@@ -94,6 +101,28 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 
 	const handleCloseUserMenu = () => {
 		setAnchorElUser(null);
+	};
+
+	const handleInstallClick = async () => {
+		const result = await installApp();
+
+		switch (result) {
+			case "accepted":
+				toast.success("App installed successfully!");
+				break;
+
+			case "dismissed":
+				toast.warn("Installation cancelled");
+				break;
+
+			case "manual":
+				setShowIOSInstructions(true);
+				break;
+
+			case "unavailable":
+				toast.error("Installation not available at this time");
+				break;
+		}
 	};
 
 	const menuList = [
@@ -460,10 +489,22 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 					}}
 					sx={{
 						display: { sx: "block", lg: "none" },
-						"& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
+						"& .MuiDrawer-paper": {
+							boxSizing: "border-box",
+							width: drawerWidth,
+							justifyContent: "space-between",
+						},
 					}}
 				>
-					{drawer}
+					{" "}
+					<>
+						{drawer}
+						{isInstallable && !isInstalled && (
+							<Button sx={{ margin: "8px 16px" }} variant="contained" onClick={handleInstallClick}>
+								Install
+							</Button>
+						)}
+					</>
 				</Drawer>
 				<Drawer
 					variant="permanent"
@@ -491,6 +532,10 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 				<Toolbar></Toolbar>
 				{children}
 			</Box>
+			<IosInstallInstructionDialog
+				open={showIosInstructions}
+				onClose={() => setShowIOSInstructions(false)}
+			/>
 		</Box>
 	);
 }
