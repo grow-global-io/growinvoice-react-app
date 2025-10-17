@@ -41,6 +41,7 @@ import NewReleasesIcon from "@mui/icons-material/NewReleases";
 import LinkIcon from "@mui/icons-material/Link";
 import { useAuthControllerStatus } from "@api/services/auth";
 import { usePWAInstall } from "../../../utils/usePwaInstall";
+import useMobileDetection from "../../../utils/useMobileDetection";
 import { toast } from "react-toastify";
 import IosInstallInstructionDialog from "@shared/components/IosInstallInstructionDialog";
 
@@ -57,6 +58,7 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 	const [isClosing, setIsClosing] = React.useState(false);
 	const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 	const { isInstallable, isInstalled, installApp } = usePWAInstall();
+	const isMobile = useMobileDetection();
 	const [showIosInstructions, setShowIOSInstructions] = useState<boolean>(false);
 
 	const settingsWithFunc = [
@@ -400,6 +402,11 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 						<MenuIcon />
 					</IconButton>
 					<Box display={"flex"} alignItems={"center"} gap={1}>
+						{isMobile && isInstallable && !isInstalled && (
+							<Button sx={{ margin: 0 }} variant="contained" onClick={handleInstallClick}>
+								Install the App
+							</Button>
+						)}
 						<NotificationMain />
 						<Box
 							mx={{ xs: 0, sm: 2 }}
@@ -501,7 +508,7 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 						{drawer}
 						{isInstallable && !isInstalled && (
 							<Button sx={{ margin: "8px 16px" }} variant="contained" onClick={handleInstallClick}>
-								Install
+								Install the App
 							</Button>
 						)}
 					</>
