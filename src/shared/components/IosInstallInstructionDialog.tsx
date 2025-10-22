@@ -2,6 +2,7 @@ import { Box, List, ListItem, Modal } from "@mui/material";
 import { usePWAInstall } from "../../utils/usePwaInstall";
 import AppDialogHeader from "./Dialog/AppDialogHeader";
 
+
 interface IosInstallInstructionDialogProps {
 	open: boolean;
 	onClose: () => void;
