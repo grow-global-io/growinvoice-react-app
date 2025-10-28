@@ -130,19 +130,39 @@ const DashboardOpenAi = () => {
 
 				// Create AI response message
 				const replyText = (() => {
+					// If there's a message, show that instead of raw query
 					if ((keysData as any)?.message) return (keysData as any)?.message as string;
-					if ((keysData as any)?.query) return (keysData as any)?.query as string;
+
+					// If there's result data, format it nicely
 					if ((keysData as any)?.result) {
 						try {
-							const resultCount = Array.isArray((keysData as any)?.result)
-								? (keysData as any)?.result.length
-								: 0;
-							return `I found ${resultCount} records based on your request. Here's the data: ${JSON.stringify((keysData as any)?.result, null, 2).slice(0, 1000)}${JSON.stringify((keysData as any)?.result, null, 2).length > 1000 ? "..." : ""}`;
+							const result = (keysData as any)?.result;
+							const resultCount = Array.isArray(result) ? result.length : 0;
+
+							// If it's a single value (like profit calculation), show it nicely
+							if (resultCount === 1 && typeof result[0] === "object") {
+								const data = result[0];
+								const keys = Object.keys(data);
+								if (keys.length === 1) {
+									const key = keys[0];
+									const value = data[key];
+									return `📊 **${key.replace(/_/g, " ").toUpperCase()}**: ${value}`;
+								}
+							}
+
+							// For multiple records, show a summary
+							if (resultCount > 0) {
+								return `📊 I found ${resultCount} records. Here's the data:\n\n${JSON.stringify(result, null, 2).slice(0, 1500)}${JSON.stringify(result, null, 2).length > 1500 ? "\n\n... (truncated)" : ""}`;
+							}
+
+							return "📊 I processed your request but no data was found.";
 						} catch (_) {
-							return "I processed your request and found some data for you.";
+							return "📊 I processed your request and found some data for you.";
 						}
 					}
-					return "I've processed your request successfully.";
+
+					// Don't show raw SQL queries, show a friendly message instead
+					return "📊 I've processed your request and retrieved the data for you.";
 				})();
 
 				const assistantMessage: ChatMessage = {
@@ -156,7 +176,7 @@ const DashboardOpenAi = () => {
 				const errorMessage: ChatMessage = {
 					id: `${Date.now()}-assistant`,
 					role: "assistant",
-					text: "Sorry, I encountered an error processing your request. Please try again.",
+					text: "❌ Sorry, I encountered an error processing your request. Please try again.",
 					createdAt: Date.now(),
 				};
 				setMessages((prev) => [...prev, errorMessage]);
@@ -175,8 +195,7 @@ const DashboardOpenAi = () => {
 
 				const replyText =
 					(keysData as any)?.message ||
-					(keysData as any)?.query ||
-					"I've created a chart visualization based on your request.";
+					"📈 I've created a chart visualization based on your request.";
 				const assistantMessage: ChatMessage = {
 					id: `${Date.now()}-assistant`,
 					role: "assistant",
@@ -189,7 +208,7 @@ const DashboardOpenAi = () => {
 				const errorMessage: ChatMessage = {
 					id: `${Date.now()}-assistant`,
 					role: "assistant",
-					text: "Sorry, I encountered an error creating the chart. Please try again.",
+					text: "❌ Sorry, I encountered an error creating the chart. Please try again.",
 					createdAt: Date.now(),
 				};
 				setMessages((prev) => [...prev, errorMessage]);
