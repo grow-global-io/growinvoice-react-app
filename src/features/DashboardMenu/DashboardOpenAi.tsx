@@ -1,69 +1,38 @@
 import {
-	CreateAIDashboardDtoType,
 	OpenaiControllerCreate200Item,
 	OpenaiControllerCreateGraph200Item,
 } from "@api/services/models";
 import { useOpenaiControllerCreate, useOpenaiControllerCreateGraph } from "@api/services/openai";
 import {
 	Box,
-	Button,
-	Card,
-	CardContent,
-	Checkbox,
-	Dialog,
-	DialogContent,
-	FormControl,
-	Grid,
 	IconButton,
 	InputAdornment,
-	InputLabel,
-	ListItemText,
 	Menu,
 	MenuItem,
-	OutlinedInput,
-	Select,
-	SelectChangeEvent,
 	Tooltip,
 	ListItemIcon,
 	Radio,
+	Typography,
 } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
-import Loader from "@shared/components/Loader";
-import { snakeToReadableText } from "@shared/formatter";
 import { Field, Form, Formik, FormikProps } from "formik";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import * as Yup from "yup";
-import BarChart from "./DashboardChart";
-import { Constants } from "@shared/constants";
-import NoDataFound from "@shared/components/NoDataFound";
 import { AlertService } from "@shared/services/AlertService";
-import LottieNoDataFound from "@shared/components/LottieNoDataFound";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
-import { useDialog } from "@shared/hooks/useDialog";
-import AppDialogHeader from "@shared/components/Dialog/AppDialogHeader";
-import AppDialogFooter from "@shared/components/Dialog/AppDialogFooter";
-import {
-	getDashboardsControllerFindAllQueryKey,
-	useDashboardsControllerCreate,
-} from "@api/services/dashboards";
 import { useAuthStore } from "@store/auth";
-import { useQueryClient } from "@tanstack/react-query";
 
 import { CiBoxList } from "react-icons/ci";
 import PublishIcon from "@mui/icons-material/Publish";
-import { CustomToolbar } from "@shared/components/CustomToolbar";
-import moment from "moment";
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-	PaperProps: {
-		style: {
-			maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-			width: 250,
-		},
-	},
+// Chat message types
+type ChatMessage = {
+	id: string;
+	role: "user" | "assistant";
+	text: string;
+	createdAt: number;
 };
+
+const CHAT_STORAGE_KEY = "aiChatMessages";
 
 const DashboardOpenAi = () => {
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -74,8 +43,6 @@ const DashboardOpenAi = () => {
 	const handleCloseTypeMenu = () => {
 		setAnchorEl(null);
 	};
-	const queryClient = useQueryClient();
-	const { open, handleClickOpen, handleClose } = useDialog();
 	const { user } = useAuthStore();
 	const initialValues = {
 		prompt: "",
@@ -85,30 +52,45 @@ const DashboardOpenAi = () => {
 		query: "",
 	};
 	const formikRef = useRef<FormikProps<typeof initialValues>>(null);
-	const [rows, setRows] = useState<OpenaiControllerCreate200Item[]>([]);
-	// eslint-disable-next-line
-	const [columns, setColumns] = useState<any[]>([]);
-	const [isError, setIsError] = useState(false);
+	const messagesEndRef = useRef<HTMLDivElement | null>(null);
+	const [messages, setMessages] = useState<ChatMessage[]>([]);
 
-	// eslint-disable-next-line
-	const handleChange = (event: SelectChangeEvent<any[]>) => {
-		const {
-			target: { value },
-		} = event;
-		setColumns((prev) => {
-			return prev.map((item) => {
-				if (value.includes(item?.field)) {
-					return {
-						...item,
-						show: true,
-					};
-				}
-				return {
-					...item,
-					show: false,
-				};
-			});
-		});
+	// Load chat messages from localStorage on component mount
+	useEffect(() => {
+		try {
+			const cached = localStorage.getItem(CHAT_STORAGE_KEY);
+			if (cached) {
+				setMessages(JSON.parse(cached));
+			}
+		} catch (_) {
+			// ignore parsing errors
+		}
+	}, []);
+
+	// Save chat messages to localStorage whenever messages change
+	useEffect(() => {
+		try {
+			localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages));
+		} catch (_) {
+			// ignore storage errors
+		}
+		scrollToBottom();
+	}, [messages]);
+
+	// Clear chat history on logout
+	useEffect(() => {
+		const handleLogout = () => {
+			localStorage.removeItem(CHAT_STORAGE_KEY);
+			setMessages([]);
+		};
+
+		// Listen for logout events (you may need to adjust this based on your auth implementation)
+		window.addEventListener("logout", handleLogout);
+		return () => window.removeEventListener("logout", handleLogout);
+	}, []);
+
+	const scrollToBottom = () => {
+		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 	};
 
 	const validationSchema = Yup.object().shape({
@@ -121,20 +103,20 @@ const DashboardOpenAi = () => {
 		mutation: {
 			onError: () => {
 				AlertService.instance?.errorMessage("Error occurred! please try again after 30 seconds");
-				setIsError(true);
 			},
 		},
 	});
 
-	const [graphData, setGraphData] = useState<OpenaiControllerCreateGraph200Item | undefined>(
-		undefined,
-	);
-
 	const handleSubmit = async (values: typeof initialValues) => {
-		setRows([]);
-		setColumns([]);
-		setIsError(false);
-		setGraphData(undefined);
+		// Add user message to chat
+		const userMessage: ChatMessage = {
+			id: `${Date.now()}-user`,
+			role: "user",
+			text: values.prompt,
+			createdAt: Date.now(),
+		};
+		setMessages((prev) => [...prev, userMessage]);
+
 		if (values?.type === "Table") {
 			try {
 				const a = await openAiApi.mutateAsync({
@@ -145,64 +127,39 @@ const DashboardOpenAi = () => {
 				const keysData = a as unknown as OpenaiControllerCreate200Item;
 				formikRef.current?.setFieldValue("prompt", keysData?.prompt);
 				formikRef.current?.setFieldValue("query", keysData?.query);
-				const keys = Object.keys(keysData?.result?.[0] ?? []);
-				const rowsData = keysData?.result?.map(
-					(item: OpenaiControllerCreate200Item, index: number) => {
-						return {
-							id: item?.id ?? index + 1,
-							...item,
-						};
-					},
-				);
 
-				setRows(rowsData);
+				// Create AI response message
+				const replyText = (() => {
+					if ((keysData as any)?.message) return (keysData as any)?.message as string;
+					if ((keysData as any)?.query) return (keysData as any)?.query as string;
+					if ((keysData as any)?.result) {
+						try {
+							const resultCount = Array.isArray((keysData as any)?.result)
+								? (keysData as any)?.result.length
+								: 0;
+							return `I found ${resultCount} records based on your request. Here's the data: ${JSON.stringify((keysData as any)?.result, null, 2).slice(0, 1000)}${JSON.stringify((keysData as any)?.result, null, 2).length > 1000 ? "..." : ""}`;
+						} catch (_) {
+							return "I processed your request and found some data for you.";
+						}
+					}
+					return "I've processed your request successfully.";
+				})();
 
-				const columns = keys?.map((key) => {
-					if (
-						key === "id" ||
-						key === "createdAt" ||
-						key === "updatedAt" ||
-						key === "deletedAt" ||
-						key === "user_id" ||
-						key === "isExist" ||
-						key === "id" ||
-						key?.includes("password") ||
-						key?.includes("id")
-					)
-						return null;
-					return {
-						field: key,
-						headerName: snakeToReadableText(key),
-						minWidth: 150,
-						flex: 1,
-						show: true,
-						// eslint-disable-next-line
-						renderCell: (params: any) => {
-							if (params?.value === null || params?.value === undefined) {
-								return <span>--</span>;
-							}
-							if (typeof params?.value === "object") {
-								return <span>{JSON.stringify(params?.value)}</span>;
-							}
-							if (params.value.toString().includes("000Z")) {
-								return <span>{moment.utc(params?.value).format("YYYY-MM-DD HH:mm A")}</span>;
-							}
-							return (
-								<span>
-									{key?.toLocaleLowerCase()?.includes("date")
-										? moment.utc(params?.value).format("YYYY-MM-DD HH:mm A")
-										: params?.value}
-								</span>
-							);
-						},
-					};
-				});
-
-				setColumns(columns.filter((item) => item !== null));
+				const assistantMessage: ChatMessage = {
+					id: `${Date.now()}-assistant`,
+					role: "assistant",
+					text: replyText,
+					createdAt: Date.now(),
+				};
+				setMessages((prev) => [...prev, assistantMessage]);
 			} catch (error) {
-				setRows([]);
-				setIsError(true);
-				setColumns([]);
+				const errorMessage: ChatMessage = {
+					id: `${Date.now()}-assistant`,
+					role: "assistant",
+					text: "Sorry, I encountered an error processing your request. Please try again.",
+					createdAt: Date.now(),
+				};
+				setMessages((prev) => [...prev, errorMessage]);
 				console.error(error);
 			}
 		} else {
@@ -215,160 +172,116 @@ const DashboardOpenAi = () => {
 				const keysData = response as unknown as OpenaiControllerCreateGraph200Item;
 				formikRef.current?.setFieldValue("prompt", keysData?.prompt);
 				formikRef.current?.setFieldValue("query", keysData?.query);
-				setGraphData(keysData?.graphData as unknown as OpenaiControllerCreateGraph200Item);
+
+				const replyText =
+					(keysData as any)?.message ||
+					(keysData as any)?.query ||
+					"I've created a chart visualization based on your request.";
+				const assistantMessage: ChatMessage = {
+					id: `${Date.now()}-assistant`,
+					role: "assistant",
+					text: replyText,
+					createdAt: Date.now(),
+				};
+				setMessages((prev) => [...prev, assistantMessage]);
 			} catch (error) {
 				console.error(error);
-				setIsError(true);
-				setGraphData(undefined);
+				const errorMessage: ChatMessage = {
+					id: `${Date.now()}-assistant`,
+					role: "assistant",
+					text: "Sorry, I encountered an error creating the chart. Please try again.",
+					createdAt: Date.now(),
+				};
+				setMessages((prev) => [...prev, errorMessage]);
 			}
 		}
 	};
 
-	const handleReset = () => {
-		setRows([]);
-		setColumns([]);
-		setIsError(false);
-		setGraphData(undefined);
-		formikRef.current?.resetForm({
-			values: {
-				...initialValues, // Reset all values to initial values
-			},
-		});
-	};
-
-	const createDashboard = useDashboardsControllerCreate();
-	const handleSubmitData = async (values: typeof initialValues) => {
-		await createDashboard.mutateAsync({
-			data: {
-				...values,
-				prompt: formikRef.current?.values.prompt ?? "",
-				query: formikRef.current?.values.query ?? "",
-				type: graphData ? CreateAIDashboardDtoType?.Chart : CreateAIDashboardDtoType?.Table,
-			},
-		});
-
-		await queryClient.refetchQueries({
-			queryKey: getDashboardsControllerFindAllQueryKey(),
-		});
-		handleClose();
-		handleReset();
-	};
-	return (
-		<>
-			<Grid
-				container
-				spacing={2}
-				style={{ height: "85vh", display: "flex", flexDirection: "row", alignItems: "flex-end" }}
+	// Chat bubble component
+	const ChatBubble = ({ message }: { message: ChatMessage }) => {
+		const isUser = message.role === "user";
+		return (
+			<Box
+				sx={{
+					display: "flex",
+					justifyContent: isUser ? "flex-end" : "flex-start",
+					mb: 2,
+					px: 2,
+				}}
 			>
-				{rows?.length === 0 && !openAiApi?.isSuccess && (
-					<Grid item xs={12}>
-						<NoDataFound message="Prompt to get data" />
-					</Grid>
-				)}
-				{rows?.length > 0 && openAiApi?.isSuccess && (
-					<>
-						<Grid item xs={12}>
-							<Card
-								sx={{
-									width: "100%",
-								}}
-							>
-								<CardContent>
-									<FormControl sx={{ m: 1, width: 250 }}>
-										<InputLabel id="demo-multiple-checkbox-label">Column Filter</InputLabel>
-										<Select
-											labelId="demo-multiple-checkbox-label"
-											id="demo-multiple-checkbox"
-											multiple
-											value={columns?.filter((item) => item?.show)?.map((item) => item?.field)}
-											onChange={handleChange}
-											input={<OutlinedInput label="Column Filter" />}
-											renderValue={(selected) => selected.join(", ")}
-											MenuProps={MenuProps}
-										>
-											{columns.map((column) => (
-												<MenuItem key={column?.field} value={column?.field}>
-													<Checkbox
-														checked={
-															columns.some(
-																(item) => item?.field === column?.field && item?.show,
-															) as boolean
-														}
-													/>
-													<ListItemText primary={column?.headerName} />
-												</MenuItem>
-											))}
-										</Select>
-									</FormControl>
-									<div style={{ width: "100%" }}>
-										<div style={{ height: 350, width: "100%" }}>
-											<DataGrid
-												autoHeight
-												rows={rows ?? []}
-												columns={columns?.filter((item) => item?.show) ?? []}
-												slots={{ toolbar: () => <CustomToolbar rows={rows} /> }}
-												slotProps={{ toolbar: { rows } }}
-											/>
-										</div>
-									</div>
-								</CardContent>
-							</Card>
-						</Grid>
-						<Grid item sm={12} textAlign={"center"} gap={1}>
-							<Button variant="contained" onClick={handleClickOpen}>
-								Save
-							</Button>
-							<Button variant="outlined" onClick={handleReset}>
-								Reset
-							</Button>
-						</Grid>
-					</>
-				)}
-				{formikRef?.current?.values?.type === Constants.dashboardType.Graph && graphData && (
-					<>
-						<Grid item sm={12}>
-							<BarChart graphData={graphData} />
-						</Grid>
-						<Grid item sm={12} textAlign={"center"} gap={1}>
-							<Button variant="contained" onClick={handleClickOpen}>
-								Save
-							</Button>
-							<Button variant="outlined" onClick={handleReset}>
-								Reset
-							</Button>
-						</Grid>
-					</>
-				)}
-				{openAiApi?.isPending && (
-					<Grid item xs={12}>
-						<Box
-							sx={{
-								maxHeight: "50vh",
-							}}
-						>
-							<Loader />
-						</Box>
-					</Grid>
-				)}
-				{rows?.length === 0 && openAiApi?.isSuccess && graphData === undefined && (
-					<Grid item xs={12}>
-						<LottieNoDataFound message="Please request your widget again." />
-					</Grid>
-				)}
-				{formikRef?.current?.values?.type === "" ||
-					(formikRef?.current?.values?.prompt === "" && (
-						<Grid item xs={12} textAlign={"center"}>
-							Prompt to get data
-						</Grid>
-					))}
+				<Box
+					sx={{
+						maxWidth: "70%",
+						px: 2,
+						py: 1.5,
+						borderRadius: 3,
+						backgroundColor: isUser ? "primary.main" : "grey.100",
+						color: isUser ? "primary.contrastText" : "text.primary",
+						boxShadow: 1,
+						wordWrap: "break-word",
+						whiteSpace: "pre-wrap",
+					}}
+				>
+					<Typography variant="body1">{message.text}</Typography>
+				</Box>
+			</Box>
+		);
+	};
 
-				{openAiApi?.isError && isError && (
-					<Grid item xs={12}>
-						<NoDataFound message="Error occurred! please try again after 30 seconds" />
-					</Grid>
+	return (
+		<Box
+			sx={{
+				height: "85vh",
+				display: "flex",
+				flexDirection: "column",
+				position: "relative",
+			}}
+		>
+			{/* Chat messages area */}
+			<Box
+				sx={{
+					flex: 1,
+					overflow: "auto",
+					p: 2,
+					bgcolor: "background.paper",
+					display: "flex",
+					flexDirection: "column",
+					position: "relative",
+				}}
+			>
+				{messages.length === 0 && (
+					<Box
+						sx={{
+							position: "absolute",
+							top: "50%",
+							left: "50%",
+							transform: "translate(-50%, -50%)",
+							zIndex: 1,
+						}}
+					>
+						<Typography variant="h4" color="text.secondary" textAlign="center">
+							Hey! How can I help you today?
+						</Typography>
+					</Box>
 				)}
+				{messages.map((message) => (
+					<ChatBubble key={message.id} message={message} />
+				))}
+				<div ref={messagesEndRef} />
+			</Box>
 
-				<Grid item xs={12}>
+			{/* Input area - Fixed at bottom */}
+			<Box
+				sx={{
+					p: 2,
+					bgcolor: "background.paper",
+					display: "flex",
+					justifyContent: "center",
+					borderTop: 1,
+					borderColor: "divider",
+				}}
+			>
+				<Box sx={{ width: "100%", maxWidth: "600px" }}>
 					<Formik
 						initialValues={initialValues}
 						onSubmit={handleSubmit}
@@ -376,90 +289,60 @@ const DashboardOpenAi = () => {
 						innerRef={formikRef}
 					>
 						{(formik) => {
-							// const buttonText = openAiApi?.isPending ? "Loading..." : "Submit";
 							const handleMenuItemClick = (value: string) => {
 								formik.setFieldValue("type", value);
 								handleCloseTypeMenu();
 							};
 							return (
 								<Form>
-									<Grid container spacing={1} display={"flex"} justifyContent={"center"}>
-										<Grid item xs={12} md={8}>
-											<Field
-												name="prompt"
-												placeholder="Tell us what you want to see?"
-												InputProps={{
-													startAdornment: (
-														<InputAdornment position="start">
-															<Tooltip title="Type">
-																<Box>
-																	<IconButton onClick={handleClick}>
-																		<CiBoxList />
-																	</IconButton>
-																</Box>
-															</Tooltip>
-														</InputAdornment>
-													),
-													endAdornment: (
-														<InputAdornment position="end">
-															<IconButton type="submit" disabled={openAiApi?.isPending}>
-																<PublishIcon />
+									<Field
+										name="prompt"
+										placeholder="Tell us what you want to see?"
+										InputProps={{
+											startAdornment: (
+												<InputAdornment position="start">
+													<Tooltip title="Type">
+														<Box>
+															<IconButton onClick={handleClick}>
+																<CiBoxList />
 															</IconButton>
-														</InputAdornment>
-													),
-												}}
-												component={TextFormField}
-											/>
-										</Grid>
-										<Menu anchorEl={anchorEl} open={openTypeMenu} onClose={handleCloseTypeMenu}>
-											{["Table", "Graph"].map((item, index) => {
-												return (
-													<MenuItem
-														sx={{ pr: 6 }}
-														onClick={() => handleMenuItemClick(item)}
-														key={index}
-													>
-														<ListItemIcon>
-															<Radio checked={formik.values.type === item} value={item} />
-														</ListItemIcon>
-														{item}
-													</MenuItem>
-												);
-											})}
-										</Menu>
-									</Grid>
-								</Form>
-							);
-						}}
-					</Formik>
-				</Grid>
-
-				<Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-					<Formik initialValues={initialValues} onSubmit={handleSubmitData}>
-						{(formik) => {
-							return (
-								<Form>
-									<AppDialogHeader title="save the Data" handleClose={handleClose} />
-									<DialogContent>
-										<Field
-											name="title"
-											label="Title"
-											component={TextFormField}
-											placeholder="Enter Title"
-										/>
-									</DialogContent>
-									<AppDialogFooter
-										onClickCancel={handleClose}
-										saveButtonText="Submit"
-										saveButtonDisabled={!formik.isValid || formik.isSubmitting}
+														</Box>
+													</Tooltip>
+												</InputAdornment>
+											),
+											endAdornment: (
+												<InputAdornment position="end">
+													<IconButton type="submit" disabled={openAiApi?.isPending}>
+														<PublishIcon />
+													</IconButton>
+												</InputAdornment>
+											),
+										}}
+										component={TextFormField}
 									/>
+									<Menu anchorEl={anchorEl} open={openTypeMenu} onClose={handleCloseTypeMenu}>
+										{["Table", "Graph"].map((item, index) => {
+											return (
+												<MenuItem
+													sx={{ pr: 6 }}
+													onClick={() => handleMenuItemClick(item)}
+													key={index}
+												>
+													<ListItemIcon>
+														<Radio checked={formik.values.type === item} value={item} />
+													</ListItemIcon>
+													{item}
+												</MenuItem>
+											);
+										})}
+									</Menu>
 								</Form>
 							);
 						}}
 					</Formik>
-				</Dialog>
-			</Grid>
-		</>
+				</Box>
+			</Box>
+		</Box>
 	);
 };
 
