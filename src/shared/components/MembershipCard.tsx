@@ -48,6 +48,12 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 	};
 
 	const handleClickListItem = (event: React.MouseEvent<HTMLElement>) => {
+		// For free plans, directly start the trial without showing payment options
+		if (item?.price === 0) {
+			handleUpgradePlan("Growlimitless");
+			return;
+		}
+		// For paid plans, show the payment method selection menu
 		setAnchorEl(event.currentTarget);
 	};
 
@@ -126,7 +132,7 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 								<ListItemText
 									primary={
 										<Typography variant="h5" color={"secondary.dark"} fontWeight={500} ml={0}>
-											{plan?.count} {plan?.feature}
+											{item?.price === 0 ? "Unlimited" : plan?.count} {plan?.feature}
 										</Typography>
 									}
 								/>
@@ -142,7 +148,7 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 						onClick={handleClickListItem}
 						aria-controls="lock-menu"
 					>
-						Upgrade
+						{item?.price === 0 ? "Start Your Free Trial" : "Upgrade"}
 					</Button>
 					<Menu
 						id="lock-menu"
