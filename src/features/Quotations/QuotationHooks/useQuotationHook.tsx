@@ -2,12 +2,14 @@ import {
 	getQuotationControllerFindAllQueryKey,
 	getQuotationControllerQuotationPublicFindOneQueryKey,
 	getQuotationControllerTestQueryKey,
+	quotationControllerFindOne,
 	useQuotationControllerConvertToInvoice,
 	useQuotationControllerInvoiceSentToMail,
 	useQuotationControllerMarkedAsAccepted,
 	useQuotationControllerMarkedAsMailed,
 	useQuotationControllerMarkedAsRejected,
 	useQuotationControllerRemove,
+	useQuotationControllerUpdate,
 } from "@api/services/quotation";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
@@ -89,27 +91,58 @@ export const useQuotationHook = () => {
 	};
 
 	const convertToInvoice = useQuotationControllerConvertToInvoice();
+	const updateQuotation = useQuotationControllerUpdate();
 	const handleConvertToInvoice = async (quotationId: string) => {
-		await convertToInvoice.mutateAsync({
-			params: {
-				id: quotationId,
-			},
-		});
+		try {
+			// First convert to invoice
+			await convertToInvoice.mutateAsync({
+				params: {
+					id: quotationId,
+				},
+			});
 
-		queryClient.refetchQueries({
-			queryKey: getInvoiceControllerFindDueInvoicesQueryKey(),
-		});
-		queryClient.refetchQueries({
-			queryKey: getInvoiceControllerFindAllQueryKey(),
-		});
-		queryClient.refetchQueries({
-			queryKey: getInvoiceControllerFindPaidInvoicesQueryKey(),
-		});
-		queryClient?.refetchQueries({
-			queryKey: getQuotationControllerTestQueryKey(quotationId),
-		});
-		refetchQueries(quotationId);
-		navigate("/invoice/invoicelist");
+			// Fetch existing quotation data to get products
+			const existingQuotation = await quotationControllerFindOne(quotationId);
+
+			// Map existing products to the format required for update
+			const existingProducts =
+				existingQuotation.product?.map((product) => ({
+					hsnCode_id: product.hsnCode_id,
+					price: product.price,
+					product_id: product.product_id,
+					quantity: product.quantity,
+					taxes: product.tax_forQuotationProducts?.map((tax) => tax.tax_id) || [],
+					total: product.total,
+				})) || [];
+
+			// Then update the quotation status to "converted" with existing products
+			await updateQuotation.mutateAsync({
+				id: quotationId,
+				data: {
+					status: "converted",
+					product: existingProducts, // Use existing products
+				},
+			});
+
+			queryClient.refetchQueries({
+				queryKey: getInvoiceControllerFindDueInvoicesQueryKey(),
+			});
+			queryClient.refetchQueries({
+				queryKey: getInvoiceControllerFindAllQueryKey(),
+			});
+			queryClient.refetchQueries({
+				queryKey: getInvoiceControllerFindPaidInvoicesQueryKey(),
+			});
+			queryClient?.refetchQueries({
+				queryKey: getQuotationControllerTestQueryKey(quotationId),
+			});
+			refetchQueries(quotationId);
+			navigate("/invoice/invoicelist");
+		} catch (error) {
+			console.error("Error converting quotation to invoice:", error);
+			// Still navigate to invoice list even if status update fails
+			navigate("/invoice/invoicelist");
+		}
 	};
 
 	const markedAccepted = useQuotationControllerMarkedAsAccepted();
