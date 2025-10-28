@@ -2,7 +2,6 @@ import {
 	OpenaiControllerCreate200Item,
 	OpenaiControllerCreateGraph200Item,
 } from "@api/services/models";
-import { useOpenaiControllerCreate, useOpenaiControllerCreateGraph } from "@api/services/openai";
 import {
 	Box,
 	IconButton,
@@ -14,25 +13,48 @@ import {
 	Radio,
 	Typography,
 } from "@mui/material";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Field, Form, Formik, FormikProps } from "formik";
 import React, { useRef, useState, useEffect } from "react";
 import * as Yup from "yup";
-import { AlertService } from "@shared/services/AlertService";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { useAuthStore } from "@store/auth";
 
 import { CiBoxList } from "react-icons/ci";
 import PublishIcon from "@mui/icons-material/Publish";
+import BarChart from "./DashboardChart";
+import axios from "axios";
 
 // Chat message types
 type ChatMessage = {
 	id: string;
 	role: "user" | "assistant";
-	text: string;
+	kind: "text" | "table" | "chart" | "typing";
+	text?: string;
+	// table
+	tableColumns?: GridColDef[];
+	tableRows?: any[];
+	// chart
+	chartData?: OpenaiControllerCreateGraph200Item | any;
 	createdAt: number;
 };
 
 const CHAT_STORAGE_KEY = "aiChatMessages";
+
+// Custom API calls without global loader
+const createCustomApiCall = async (url: string, data: any) => {
+	const authToken = localStorage.getItem("authToken");
+	const response = await axios({
+		method: "POST",
+		url: `${process.env.REACT_APP_API_URL || ""}${url}`,
+		headers: {
+			"Content-Type": "application/json",
+			...(authToken && { Authorization: `Bearer ${authToken}` }),
+		},
+		data,
+	});
+	return response.data;
+};
 
 const DashboardOpenAi = () => {
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -98,37 +120,36 @@ const DashboardOpenAi = () => {
 		type: Yup.string().required("Type is required"),
 	});
 
-	const openAiApi = useOpenaiControllerCreate();
-	const openAiApiGraph = useOpenaiControllerCreateGraph({
-		mutation: {
-			onError: () => {
-				AlertService.instance?.errorMessage("Error occurred! please try again after 30 seconds");
-			},
-		},
-	});
-
 	const handleSubmit = async (values: typeof initialValues) => {
 		// Add user message to chat
 		const userMessage: ChatMessage = {
 			id: `${Date.now()}-user`,
 			role: "user",
+			kind: "text",
 			text: values.prompt,
 			createdAt: Date.now(),
 		};
 		setMessages((prev) => [...prev, userMessage]);
 
+		// Clear the input field immediately
+		formikRef.current?.setFieldValue("prompt", "");
+
+		// Add typing indicator
+		const typingId = `${Date.now()}-typing`;
+		setMessages((prev) => [
+			...prev,
+			{ id: typingId, role: "assistant", kind: "typing", createdAt: Date.now() },
+		]);
+
 		if (values?.type === "Table") {
 			try {
-				const a = await openAiApi.mutateAsync({
-					data: {
-						prompt: values.prompt,
-					},
-				});
-				const keysData = a as unknown as OpenaiControllerCreate200Item;
+				const keysData = (await createCustomApiCall("/api/openai", {
+					prompt: values.prompt,
+				})) as OpenaiControllerCreate200Item;
 				formikRef.current?.setFieldValue("prompt", keysData?.prompt);
 				formikRef.current?.setFieldValue("query", keysData?.query);
 
-				// Create AI response message
+				// Prepare response; decide table vs text
 				const replyText = (() => {
 					// If there's a message, show that instead of raw query
 					if ((keysData as any)?.message) return (keysData as any)?.message as string;
@@ -165,17 +186,51 @@ const DashboardOpenAi = () => {
 					return "📊 I've processed your request and retrieved the data for you.";
 				})();
 
-				const assistantMessage: ChatMessage = {
-					id: `${Date.now()}-assistant`,
-					role: "assistant",
-					text: replyText,
-					createdAt: Date.now(),
-				};
-				setMessages((prev) => [...prev, assistantMessage]);
+				// Remove typing indicator and push appropriate message
+				setMessages((prev) => prev.filter((m) => m.id !== typingId));
+
+				// If result looks tabular, render as table
+				if (
+					(keysData as any)?.result &&
+					Array.isArray((keysData as any)?.result) &&
+					(keysData as any)?.result.length
+				) {
+					const result = (keysData as any)?.result as any[];
+					const first = result[0] ?? {};
+					const cols: GridColDef[] = Object.keys(first)
+						.filter((k) => !k?.toLowerCase?.().includes("password"))
+						.map((k) => ({
+							field: k,
+							headerName: k.replace(/_/g, " ").toUpperCase(),
+							flex: 1,
+							minWidth: 120,
+						}));
+					const rows = result.map((r, idx) => ({ id: r?.id ?? idx + 1, ...r }));
+					const tableMsg: ChatMessage = {
+						id: `${Date.now()}-assistant`,
+						role: "assistant",
+						kind: "table",
+						tableColumns: cols,
+						tableRows: rows,
+						createdAt: Date.now(),
+					};
+					setMessages((prev) => [...prev, tableMsg]);
+				} else {
+					const assistantMessage: ChatMessage = {
+						id: `${Date.now()}-assistant`,
+						role: "assistant",
+						kind: "text",
+						text: replyText,
+						createdAt: Date.now(),
+					};
+					setMessages((prev) => [...prev, assistantMessage]);
+				}
 			} catch (error) {
+				setMessages((prev) => prev.filter((m) => m.id !== typingId));
 				const errorMessage: ChatMessage = {
 					id: `${Date.now()}-assistant`,
 					role: "assistant",
+					kind: "text",
 					text: "❌ Sorry, I encountered an error processing your request. Please try again.",
 					createdAt: Date.now(),
 				};
@@ -184,30 +239,44 @@ const DashboardOpenAi = () => {
 			}
 		} else {
 			try {
-				const response = await openAiApiGraph.mutateAsync({
-					data: {
-						prompt: values.prompt,
-					},
-				});
-				const keysData = response as unknown as OpenaiControllerCreateGraph200Item;
+				const keysData = (await createCustomApiCall("/api/openai/graph", {
+					prompt: values.prompt,
+				})) as OpenaiControllerCreateGraph200Item;
 				formikRef.current?.setFieldValue("prompt", keysData?.prompt);
 				formikRef.current?.setFieldValue("query", keysData?.query);
 
 				const replyText =
 					(keysData as any)?.message ||
 					"📈 I've created a chart visualization based on your request.";
-				const assistantMessage: ChatMessage = {
-					id: `${Date.now()}-assistant`,
-					role: "assistant",
-					text: replyText,
-					createdAt: Date.now(),
-				};
-				setMessages((prev) => [...prev, assistantMessage]);
+				setMessages((prev) => prev.filter((m) => m.id !== typingId));
+				if ((keysData as any)?.graphData) {
+					const chartMsg: ChatMessage = {
+						id: `${Date.now()}-assistant`,
+						role: "assistant",
+						kind: "chart",
+						chartData: (keysData as any)?.graphData,
+						createdAt: Date.now(),
+					};
+					setMessages((prev) => [...prev, chartMsg]);
+				} else {
+					setMessages((prev) => [
+						...prev,
+						{
+							id: `${Date.now()}-assistant`,
+							role: "assistant",
+							kind: "text",
+							text: replyText,
+							createdAt: Date.now(),
+						},
+					]);
+				}
 			} catch (error) {
 				console.error(error);
+				setMessages((prev) => prev.filter((m) => m.id !== typingId));
 				const errorMessage: ChatMessage = {
 					id: `${Date.now()}-assistant`,
 					role: "assistant",
+					kind: "text",
 					text: "❌ Sorry, I encountered an error creating the chart. Please try again.",
 					createdAt: Date.now(),
 				};
@@ -241,7 +310,63 @@ const DashboardOpenAi = () => {
 						whiteSpace: "pre-wrap",
 					}}
 				>
-					<Typography variant="body1">{message.text}</Typography>
+					{message.kind === "typing" && (
+						<Box sx={{ display: "flex", gap: 0.5 }}>
+							<Box
+								sx={{
+									width: 8,
+									height: 8,
+									borderRadius: "50%",
+									bgcolor: "grey.500",
+									animation: "typing 1.2s infinite",
+								}}
+							/>
+							<Box
+								sx={{
+									width: 8,
+									height: 8,
+									borderRadius: "50%",
+									bgcolor: "grey.500",
+									animation: "typing 1.2s infinite",
+									animationDelay: "0.2s",
+								}}
+							/>
+							<Box
+								sx={{
+									width: 8,
+									height: 8,
+									borderRadius: "50%",
+									bgcolor: "grey.500",
+									animation: "typing 1.2s infinite",
+									animationDelay: "0.4s",
+								}}
+							/>
+							<style>{`@keyframes typing {0%{opacity:.2}20%{opacity:1}100%{opacity:.2}}`}</style>
+						</Box>
+					)}
+					{message.kind === "text" && <Typography variant="body1">{message.text}</Typography>}
+					{message.kind === "table" && (
+						<Box
+							sx={{
+								width: 520,
+								maxWidth: "80vw",
+								bgcolor: "background.paper",
+								borderRadius: 1,
+								overflow: "hidden",
+							}}
+						>
+							<div style={{ width: "100%" }}>
+								<div style={{ height: 320, width: "100%" }}>
+									<DataGrid rows={message.tableRows ?? []} columns={message.tableColumns ?? []} />
+								</div>
+							</div>
+						</Box>
+					)}
+					{message.kind === "chart" && (
+						<Box sx={{ width: 560, maxWidth: "85vw" }}>
+							<BarChart graphData={message.chartData as any} />
+						</Box>
+					)}
 				</Box>
 			</Box>
 		);
@@ -306,6 +431,8 @@ const DashboardOpenAi = () => {
 						onSubmit={handleSubmit}
 						validationSchema={validationSchema}
 						innerRef={formikRef}
+						validateOnChange={false}
+						validateOnBlur={false}
 					>
 						{(formik) => {
 							const handleMenuItemClick = (value: string) => {
@@ -331,7 +458,7 @@ const DashboardOpenAi = () => {
 											),
 											endAdornment: (
 												<InputAdornment position="end">
-													<IconButton type="submit" disabled={openAiApi?.isPending}>
+													<IconButton type="submit">
 														<PublishIcon />
 													</IconButton>
 												</InputAdornment>
