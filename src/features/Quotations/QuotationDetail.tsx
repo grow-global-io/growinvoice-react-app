@@ -168,6 +168,9 @@ const QuotationDetail = ({
 			},
 		},
 	];
+	// Check if quotation is already converted
+	const isConverted = getQuotationData?.data?.status === "converted";
+
 	const buttonList = [
 		{
 			name: "Download",
@@ -207,12 +210,15 @@ const QuotationDetail = ({
 			},
 		},
 		{
-			name: "Convert to invoice",
+			name: isConverted ? "Already Converted" : "Convert to invoice",
 			icon: "WhatsApp",
 			func: async () => {
-				await handleConvertToInvoice(quotationId);
-				handleCloseAll();
+				if (!isConverted) {
+					await handleConvertToInvoice(quotationId);
+					handleCloseAll();
+				}
 			},
+			disabled: isConverted,
 		},
 		{
 			name: "Edit",
@@ -382,7 +388,19 @@ const QuotationDetail = ({
 					aria-label="Basic button group"
 				>
 					{buttonList.map((item, index) => (
-						<Button sx={styles} onClick={item.func} key={index}>
+						<Button
+							sx={{
+								...styles,
+								...(item.disabled && {
+									opacity: 0.5,
+									cursor: "not-allowed",
+									color: "text.disabled",
+								}),
+							}}
+							onClick={item.func}
+							key={index}
+							disabled={item.disabled}
+						>
 							<item.icon sx={{ mr: 1 }} />
 							{item.name}
 						</Button>
@@ -423,7 +441,18 @@ const QuotationDetail = ({
 					.filter((item) => item.name !== "")
 					.map((item, index) => {
 						return (
-							<MenuItem onClick={item.func} key={index}>
+							<MenuItem
+								onClick={item.func}
+								key={index}
+								disabled={item.disabled}
+								sx={{
+									...(item.disabled && {
+										opacity: 0.5,
+										cursor: "not-allowed",
+										color: "text.disabled",
+									}),
+								}}
+							>
 								<item.icon sx={{ mr: 1 }} />
 								{item.name}
 							</MenuItem>
