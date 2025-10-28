@@ -44,6 +44,7 @@ import { useAuthControllerStatus } from "@api/services/auth";
 import { usePWAInstall } from "../../../utils/usePwaInstall";
 import useMobileDetection from "../../../utils/useMobileDetection";
 import { toast } from "react-toastify";
+import { findLeftDate } from "@shared/formatter";
 import IosInstallInstructionDialog from "@shared/components/IosInstallInstructionDialog";
 
 const drawerWidth = 240;
@@ -408,6 +409,39 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 								Install the App
 							</Button>
 						)}
+						{/* Trial Days Display for Free Plan Users Only */}
+						{user?.UserPlans?.some((plan) => plan?.plan?.price === 0) &&
+							!user?.UserPlans?.some((plan) => plan?.plan?.price && plan?.plan?.price > 0) && (
+								<Box
+									sx={{
+										display: "flex",
+										alignItems: "center",
+										backgroundColor: "rgba(255, 255, 255, 0.1)",
+										borderRadius: 2,
+										px: 2,
+										py: 0.5,
+										mr: 1,
+									}}
+								>
+									<Typography
+										variant="body2"
+										sx={{
+											color: "custom.white",
+											fontWeight: 500,
+											fontSize: "0.875rem",
+										}}
+									>
+										{(() => {
+											const freePlan = user?.UserPlans?.find((plan) => plan?.plan?.price === 0);
+											if (freePlan?.end_date) {
+												const daysLeft = findLeftDate(freePlan.end_date);
+												return daysLeft > 0 ? `${daysLeft} days left` : "Trial expired";
+											}
+											return "Trial active";
+										})()}
+									</Typography>
+								</Box>
+							)}
 						<NotificationMain />
 						<Box
 							mx={{ xs: 0, sm: 2 }}
