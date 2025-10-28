@@ -44,6 +44,7 @@ import QRCodeDialog from "./QRCodeDialog";
 import { useAuthStore } from "@store/auth";
 import { currencyFormatter } from "@shared/formatter";
 import { environment } from "@enviroment";
+import { http } from "@shared/axios";
 
 const styles = {
 	width: { xs: "100%", sm: "auto" },
@@ -131,6 +132,26 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 		handleMoreClose();
 	};
 
+	const downloadPdf = async () => {
+		try {
+			const invoiceNumber = getInvoiceData?.data?.invoice_number ?? invoiceId;
+			const fileName = `INV-${invoiceNumber}.pdf`;
+			const pdfUrl = environment?.baseUrl + getInvoiceControllerTestPDFGenQueryKey(invoiceId)[0];
+			const response = await http.get(pdfUrl, { responseType: "blob" });
+			const blob = new Blob([response.data], { type: "application/pdf" });
+			const blobUrl = window.URL.createObjectURL(blob);
+			const link = document.createElement("a");
+			link.href = blobUrl;
+			link.download = fileName;
+			document.body.appendChild(link);
+			link.click();
+			link.remove();
+			window.URL.revokeObjectURL(blobUrl);
+		} catch (e) {
+			console.error("Failed to download invoice PDF", e);
+		}
+	};
+
 	const handleInvoiceDelete = () => {
 		handleOpen({
 			title: "Delete Invoice",
@@ -200,10 +221,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 				// generatePdfFromRef({
 				// 	iframeRef,
 				// });
-				window.open(
-					environment?.baseUrl + getInvoiceControllerTestPDFGenQueryKey(invoiceId)[0],
-					"_blank",
-				);
+				downloadPdf();
 				handleCloseAll();
 			},
 		},
@@ -419,10 +437,7 @@ Your feedback is essential in helping us improve our services and serve you bett
 								// generatePdfFromRef({
 								// 	iframeRef,
 								// });
-								window.open(
-									environment?.baseUrl + getInvoiceControllerTestPDFGenQueryKey(invoiceId)[0],
-									"_blank",
-								);
+								downloadPdf();
 							}}
 						/>
 						{getInvoiceData?.data?.currency?.short_code === "INR" &&
@@ -558,10 +573,7 @@ Your feedback is essential in helping us improve our services and serve you bett
 				<InvoiceTemplateCard
 					invoiceId={invoiceId}
 					downloadfunc={() => {
-						window.open(
-							environment?.baseUrl + getInvoiceControllerTestPDFGenQueryKey(invoiceId)[0],
-							"_blank",
-						);
+						downloadPdf();
 					}}
 				/>
 			)}
