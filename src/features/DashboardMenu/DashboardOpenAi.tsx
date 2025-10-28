@@ -26,6 +26,7 @@ import {
 	Tooltip,
 	ListItemIcon,
 	Radio,
+	Typography,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import Loader from "@shared/components/Loader";
@@ -260,11 +261,6 @@ const DashboardOpenAi = () => {
 				spacing={2}
 				style={{ height: "85vh", display: "flex", flexDirection: "row", alignItems: "flex-end" }}
 			>
-				{rows?.length === 0 && !openAiApi?.isSuccess && (
-					<Grid item xs={12}>
-						<NoDataFound message="Prompt to get data" />
-					</Grid>
-				)}
 				{rows?.length > 0 && openAiApi?.isSuccess && (
 					<>
 						<Grid item xs={12}>
@@ -355,12 +351,23 @@ const DashboardOpenAi = () => {
 						<LottieNoDataFound message="Please request your widget again." />
 					</Grid>
 				)}
-				{formikRef?.current?.values?.type === "" ||
-					(formikRef?.current?.values?.prompt === "" && (
-						<Grid item xs={12} textAlign={"center"}>
-							Prompt to get data
+				{rows?.length === 0 &&
+					!openAiApi?.isSuccess &&
+					!openAiApi?.isPending &&
+					!openAiApi?.isError && (
+						<Grid
+							item
+							xs={12}
+							display="flex"
+							justifyContent="center"
+							alignItems="center"
+							sx={{ minHeight: "50vh" }}
+						>
+							<Typography variant="h3" textAlign="center" color="text.secondary">
+								Hey! How can I help you today?
+							</Typography>
 						</Grid>
-					))}
+					)}
 
 				{openAiApi?.isError && isError && (
 					<Grid item xs={12}>

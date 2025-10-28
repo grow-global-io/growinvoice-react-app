@@ -1,7 +1,6 @@
 import { Box, Button, Card, CardContent, Grid, Typography } from "@mui/material";
 import ExpensesSummary from "./ExpensesSummary";
 import LottieNoDataFound from "@shared/components/LottieNoDataFound";
-import AddIcon from "@mui/icons-material/Add";
 import { useNavigate } from "react-router-dom";
 import {
 	getDashboardsControllerFindAllQueryKey,
@@ -48,14 +47,13 @@ const Overview = () => {
 							Roll UP AI Store
 						</Button>
 						<Button
-							startIcon={<AddIcon />}
 							variant="contained"
 							color="primary"
 							onClick={() => {
 								navigate("/dashboard");
 							}}
 						>
-							Add Widget
+							AI Assistant
 						</Button>
 					</Box>
 				</Grid>
