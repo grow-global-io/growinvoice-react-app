@@ -509,9 +509,11 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 															)}
 															{payment.paymentType === "EuropeanBank" && (
 																<>
-																	<Typography variant="subtitle1">
-																		BIC Number: <b>{payment.bicNumber}</b>
-																	</Typography>
+																	{payment.bicNumber && (
+																		<Typography variant="subtitle1">
+																			BIC Number:<b>{payment.bicNumber}</b>
+																		</Typography>
+																	)}
 																	<Typography variant="subtitle1">
 																		IBAN Number: <b>{payment.ibanNumber}</b>
 																	</Typography>
