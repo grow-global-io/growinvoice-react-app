@@ -331,10 +331,16 @@ const ProductForm = () => {
 																				name={`priceBook.${index}.currency_id`}
 																				label="Currency"
 																				component={AutocompleteField}
-																				options={currencyList?.data?.map((currency) => ({
-																					value: currency.id,
-																					label: `${currency.short_code} - ${currency.name}`,
-																				}))}
+																				options={currencyList?.data
+																					?.filter(
+																						(currency) =>
+																							currency.short_code === "EUR" ||
+																							currency.short_code === "INR",
+																					)
+																					?.map((currency) => ({
+																						value: currency.id,
+																						label: `${currency.short_code} - ${currency.name}`,
+																					}))}
 																				isRequired={true}
 																			/>
 																		</Grid>

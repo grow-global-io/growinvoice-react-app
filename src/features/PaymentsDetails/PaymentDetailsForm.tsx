@@ -33,7 +33,7 @@ const validationSchema: yup.Schema<CreatePaymentDetailsDto> = yup.object().shape
 	}),
 	bicNumber: yup.string().when("paymentType", (paymentType, schema) => {
 		if (paymentType.find((item) => item === "EuropeanBank")) {
-			return schema.required("BIC number is required");
+			return schema; // BIC number is optional
 		}
 		return schema;
 	}),
@@ -191,7 +191,11 @@ const PaymentDetailsForm = ({
 							{values.paymentType === "EuropeanBank" && (
 								<>
 									<Grid item xs={12}>
-										<Field name="bicNumber" label="BIC Number" component={TextFormField} />
+										<Field
+											name="bicNumber"
+											label="BIC Number (optional)"
+											component={TextFormField}
+										/>
 									</Grid>
 									<Grid item xs={12}>
 										<Field name="ibanNumber" label="IBAN Number" component={TextFormField} />
