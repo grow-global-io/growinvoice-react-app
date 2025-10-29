@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
 	Box,
 	Grid,
@@ -42,7 +42,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import Loader from "@shared/components/Loader";
 import { useAuthControllerStatus } from "@api/services/auth";
 import { AlertService } from "@shared/services/AlertService";
-import { CheckBoxFormField } from "@shared/components/FormFields/CheckBoxFormField";
 
 type CustomerFormProps = CreateCustomerWithAddressDto & {
 	isBillingAddressRequired?: boolean;
@@ -309,6 +308,34 @@ const CustomerForm = () => {
 				<Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit}>
 					{({ errors, values, setFieldValue }) => {
 						console.log({ values, errors });
+
+						// Automatically set isBillingAddressRequired to true when any billing address field changes
+						useEffect(() => {
+							const billingFields = [
+								values.billingDetails?.address,
+								values.billingDetails?.city,
+								values.billingDetails?.country_id,
+								values.billingDetails?.state_id,
+								values.billingDetails?.zip,
+							];
+
+							const hasBillingData = billingFields.some(
+								(field) => field && field.toString().trim() !== "",
+							);
+
+							if (hasBillingData && !values.isBillingAddressRequired) {
+								setFieldValue("isBillingAddressRequired", true);
+							}
+						}, [
+							values.billingDetails?.address,
+							values.billingDetails?.city,
+							values.billingDetails?.country_id,
+							values.billingDetails?.state_id,
+							values.billingDetails?.zip,
+							values.isBillingAddressRequired,
+							setFieldValue,
+						]);
+
 						return (
 							<Form>
 								<Divider />
@@ -390,13 +417,8 @@ const CustomerForm = () => {
 													<img src={Constants.customImages.BillingAddressIcon} alt="Invoice Icon" />{" "}
 													Billing Address
 												</Typography>
-												<Grid item xs={12} sm={6} textAlign={{ xs: "start", sm: "center" }}>
-													<Field
-														name="isBillingAddressRequired"
-														component={CheckBoxFormField}
-														label="Do you want to add billing address?"
-													/>
-												</Grid>
+												{/* Hidden field for isBillingAddressRequired - automatically managed */}
+												<Field name="isBillingAddressRequired" component="input" type="hidden" />
 											</Grid>
 										</Grid>
 										<Grid item xs={12}>

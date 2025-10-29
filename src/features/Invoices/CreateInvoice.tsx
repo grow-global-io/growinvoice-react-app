@@ -342,10 +342,15 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 											label="Currency"
 											component={AutocompleteField}
 											loading={currencyList.isLoading || currencyList.isFetching}
-											options={currencyList?.data?.map((currency) => ({
-												value: currency.id,
-												label: `${currency.short_code} - ${currency.name}`,
-											}))}
+											options={currencyList?.data
+												?.filter(
+													(currency) =>
+														currency.short_code === "EUR" || currency.short_code === "INR",
+												)
+												?.map((currency) => ({
+													value: currency.id,
+													label: `${currency.short_code} - ${currency.name}`,
+												}))}
 											isRequired={true}
 										/>
 									</Grid>
