@@ -2,10 +2,12 @@ import { useCustomerControllerCustomerCount } from "@api/services/customer";
 import {
 	useInvoiceControllerInvoiceCount,
 	useInvoiceControllerTotalDue,
+	useInvoiceControllerFindAll,
 } from "@api/services/invoice";
 import { Grid } from "@mui/material";
 import Loader from "@shared/components/Loader";
 import { currencyFormatter } from "@shared/formatter";
+import { convertToTargetCurrency } from "@shared/currencyConversion";
 import { useAuthStore } from "@store/auth";
 import DashbaordCard from "@shared/components/DashbaordCard";
 import { FaFileInvoiceDollar, FaFileInvoice } from "react-icons/fa";
@@ -18,7 +20,23 @@ const ExpensesSummary = () => {
 	const customerCount = useCustomerControllerCustomerCount();
 	const invoiceCount = useInvoiceControllerInvoiceCount();
 	const invoiceDueAmount = useInvoiceControllerTotalDue();
+	const allInvoices = useInvoiceControllerFindAll(undefined, {
+		query: {
+			enabled: true,
+			refetchOnWindowFocus: false,
+		},
+	});
 	const quotationCount = useQuotationControllerCountTotal();
+
+	const targetCurrency = user?.currency?.short_code ?? "INR";
+	const computedDue = (allInvoices?.data ?? [])
+		.filter((inv) => inv?.paid_status !== "Paid")
+		.reduce((sum, inv) => {
+			const fromCode = inv?.currency?.short_code ?? targetCurrency;
+			return sum + convertToTargetCurrency(inv?.due_amount ?? 0, fromCode, targetCurrency);
+		}, 0);
+
+	const dueAmountValue = currencyFormatter(computedDue, targetCurrency);
 
 	const data = [
 		{
@@ -43,7 +61,7 @@ const ExpensesSummary = () => {
 			navigateToPath: "/quotation/quotationlist",
 		},
 		{
-			value: currencyFormatter(invoiceDueAmount?.data ?? 0, user?.currency?.short_code),
+			value: dueAmountValue,
 			name: "Due Amount",
 			img: <MdAccountBalanceWallet color="#fff" fontSize={"50px"} />,
 			BgColor: "custom.DashboardGreen",
@@ -55,6 +73,7 @@ const ExpensesSummary = () => {
 		customerCount.isLoading ||
 		invoiceCount.isLoading ||
 		invoiceDueAmount.isLoading ||
+		allInvoices.isLoading ||
 		quotationCount?.isLoading
 	) {
 		return <Loader />;

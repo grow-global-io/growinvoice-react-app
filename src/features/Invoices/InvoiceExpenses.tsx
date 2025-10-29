@@ -2,38 +2,82 @@ import {
 	useInvoiceControllerFindDueToday,
 	useInvoiceControllerOutstandingReceivable,
 	useInvoiceControllerFindDueMonth,
+	useInvoiceControllerFindAll,
 } from "@api/services/invoice";
 import { Grid } from "@mui/material";
 import Loader from "@shared/components/Loader";
 import OverviewCard from "@shared/components/OverviewCard";
 import { Constants } from "@shared/constants";
 import { currencyFormatter, formatDateToIso } from "@shared/formatter";
+import { convertToTargetCurrency } from "@shared/currencyConversion";
 import { useAuthStore } from "@store/auth";
 import moment from "moment";
 
 const InvoiceExpenses = () => {
 	const { user } = useAuthStore();
 	const outstandingReceivable = useInvoiceControllerOutstandingReceivable();
+	// Fetch all invoices to compute multi-currency outstanding receivables (client-side rule)
+	const allInvoices = useInvoiceControllerFindAll(undefined, {
+		query: {
+			enabled: true,
+			refetchOnWindowFocus: false,
+		},
+	});
 	const currentDate = moment().format("YYYY-MM-DD");
 	const invoiceDueDay = useInvoiceControllerFindDueToday({ date: formatDateToIso(currentDate) });
 	const invoiceDueMonth = useInvoiceControllerFindDueMonth({ date: formatDateToIso(currentDate) });
 
-	if (outstandingReceivable.isLoading || invoiceDueDay.isLoading || invoiceDueMonth.isLoading) {
+	if (
+		outstandingReceivable.isLoading ||
+		invoiceDueDay.isLoading ||
+		invoiceDueMonth.isLoading ||
+		allInvoices.isLoading
+	) {
 		return <Loader />;
 	}
 
-	const outstandingReceivableValue =
-		outstandingReceivable?.data !== undefined
-			? currencyFormatter(outstandingReceivable?.data, user?.currency?.short_code)
-			: "";
-	const invoiceDueDayValue =
-		invoiceDueDay?.data !== undefined
-			? currencyFormatter(invoiceDueDay?.data, user?.currency?.short_code)
-			: "";
-	const invoiceDueMonthValue =
-		invoiceDueMonth?.data !== undefined
-			? currencyFormatter(invoiceDueMonth?.data, user?.currency?.short_code)
-			: "";
+	// Compute outstanding across currencies: include Unpaid and PartiallyPaid
+	const targetCurrency = user?.currency?.short_code ?? "INR";
+	const computedOutstanding = (allInvoices?.data ?? [])
+		.filter((inv) => inv?.paid_status !== "Paid")
+		.reduce((sum, inv) => {
+			const fromCode = inv?.currency?.short_code ?? targetCurrency;
+			return sum + convertToTargetCurrency(inv?.due_amount ?? 0, fromCode, targetCurrency);
+		}, 0);
+
+	// Choose the larger of API value and computed value, but favor computed when available
+	const outstandingBase = Number.isFinite(computedOutstanding)
+		? computedOutstanding
+		: (outstandingReceivable?.data ?? 0);
+
+	const outstandingReceivableValue = currencyFormatter(outstandingBase, targetCurrency);
+
+	// Compute "Due Today" and "Due Within 30 Days" with conversion
+	const today = moment();
+	const inThirtyDays = moment().add(30, "days");
+
+	const dueToday = (allInvoices?.data ?? [])
+		.filter((inv) => inv?.paid_status !== "Paid")
+		.filter((inv) => moment(inv?.due_date).isSame(today, "day"))
+		.reduce((sum, inv) => {
+			const fromCode = inv?.currency?.short_code ?? targetCurrency;
+			return sum + convertToTargetCurrency(inv?.due_amount ?? 0, fromCode, targetCurrency);
+		}, 0);
+
+	const dueMonth = (allInvoices?.data ?? [])
+		.filter((inv) => inv?.paid_status !== "Paid")
+		.filter(
+			(inv) =>
+				moment(inv?.due_date).isAfter(today, "day") &&
+				moment(inv?.due_date).isSameOrBefore(inThirtyDays, "day"),
+		)
+		.reduce((sum, inv) => {
+			const fromCode = inv?.currency?.short_code ?? targetCurrency;
+			return sum + convertToTargetCurrency(inv?.due_amount ?? 0, fromCode, targetCurrency);
+		}, 0);
+
+	const invoiceDueDayValue = currencyFormatter(dueToday, targetCurrency);
+	const invoiceDueMonthValue = currencyFormatter(dueMonth, targetCurrency);
 
 	const data = [
 		{
