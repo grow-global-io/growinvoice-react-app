@@ -13,8 +13,10 @@ import { CustomIconButton } from "@shared/components/CustomIconButton";
 import Loader from "@shared/components/Loader";
 import { useQuotationHook } from "./QuotationHooks/useQuotationHook";
 import { Constants } from "@shared/constants";
+import { useTranslation } from "react-i18next";
 
 const QuotationTableList = () => {
+	const { t } = useTranslation();
 	const { user } = useAuthStore();
 	const quationdata = useQuotationControllerFindAll();
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
@@ -22,7 +24,7 @@ const QuotationTableList = () => {
 	const columns: GridColDef<Quotation>[] = [
 		{
 			field: "quatation_number",
-			headerName: "Quation Number",
+			headerName: t("quotation.number", { defaultValue: "Quotation Number" }),
 			flex: 1,
 			minWidth: 150,
 
@@ -36,7 +38,7 @@ const QuotationTableList = () => {
 		},
 		{
 			field: "date",
-			headerName: "Quotaion Date",
+			headerName: t("quotation.date", { defaultValue: "Quotation Date" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -45,7 +47,7 @@ const QuotationTableList = () => {
 		},
 		{
 			field: "expiry_at",
-			headerName: "Expiry Date",
+			headerName: t("quotation.expiryDate", { defaultValue: "Expiry Date" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -54,7 +56,7 @@ const QuotationTableList = () => {
 		},
 		{
 			field: "status",
-			headerName: "Status",
+			headerName: t("quotation.status", { defaultValue: "Status" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -70,7 +72,7 @@ const QuotationTableList = () => {
 
 		{
 			field: "total",
-			headerName: "Total",
+			headerName: t("quotation.total", { defaultValue: "Total" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {

@@ -25,8 +25,10 @@ import {
 	usePaymentsControllerCreate,
 } from "@api/services/payments";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 const PaymentForm = () => {
+	const { t } = useTranslation();
 	const queryClient = useQueryClient();
 	const { invoiceId, setOpenPaymentForm } = useCreatePaymentStore.getState();
 	const paymentData = usePaymentdetailsControllerFindAll();
@@ -49,8 +51,8 @@ const PaymentForm = () => {
 
 	const schema: Yup.Schema<CreatePaymentsDto> = Yup.object({
 		amount: Yup.number()
-			.required("Amount is required")
-			.test("amount", "Amount must be less than or equal to invoice total", function (value) {
+			.required(t("paymentForm.validation.amountRequired"))
+			.test("amount", t("paymentForm.validation.amountLteInvoice"), function (value) {
 				const invoice = invoiceData?.data?.find((invoice) => invoice.id === invoiceId);
 				console.log("value", value, invoice);
 				if (invoice && value > 0) {
@@ -58,12 +60,12 @@ const PaymentForm = () => {
 				}
 				return true;
 			})
-			.min(1, "Amount must be greater than 1"),
-		invoice_id: Yup.string().required("Invoice is required"),
-		paymentDetails_id: Yup.string().required("Payment Details is required"),
-		user_id: Yup.string().required("User is required"),
+			.min(1, t("paymentForm.validation.amountMin")),
+		invoice_id: Yup.string().required(t("paymentForm.validation.invoiceRequired")),
+		paymentDetails_id: Yup.string().required(t("paymentForm.validation.paymentDetailsRequired")),
+		user_id: Yup.string().required(t("paymentForm.validation.userRequired")),
 		notes: Yup.string().nullable(),
-		paymentDate: Yup.string().required("Payment Date is required"),
+		paymentDate: Yup.string().required(t("paymentForm.validation.paymentDateRequired")),
 		private_notes: Yup.string().nullable(),
 		reference_number: Yup.string().nullable(),
 	});
@@ -109,7 +111,8 @@ const PaymentForm = () => {
 							gap: 1,
 						}}
 					>
-						<img src={Constants.customImages.ProductSymbol} alt="Invoice Icon" /> New Payment
+						<img src={Constants.customImages.ProductSymbol} alt={t("paymentForm.iconAlt")} />{" "}
+						{t("paymentForm.title")}
 					</Typography>
 
 					<IconButton
@@ -132,7 +135,7 @@ const PaymentForm = () => {
 										<Field
 											name="reference_number"
 											component={TextFormField}
-											label="Reference Number"
+											label={t("paymentForm.referenceNumber")}
 											type="number"
 										/>
 									</Grid>
@@ -140,7 +143,7 @@ const PaymentForm = () => {
 										<Grid item xs={12}>
 											<Field
 												name="invoice_id"
-												label="Invoice"
+												label={t("paymentForm.invoice")}
 												component={AutocompleteField}
 												options={invoiceData?.data?.map((invoice) => ({
 													value: invoice.id,
@@ -162,7 +165,7 @@ const PaymentForm = () => {
 										<Field
 											name="amount"
 											component={TextFormField}
-											label="Amount"
+											label={t("paymentForm.amount")}
 											type="number"
 											// disabled={true}
 											isRequired={true}
@@ -171,7 +174,7 @@ const PaymentForm = () => {
 									<Grid item xs={12}>
 										<Field
 											name="paymentDetails_id"
-											label="Payment Details"
+											label={t("paymentForm.paymentDetails")}
 											component={AutocompleteField}
 											options={paymentData?.data?.map((payment) => ({
 												value: payment.id,
@@ -182,7 +185,7 @@ const PaymentForm = () => {
 										/>
 										<Box>
 											<Button variant="text" startIcon={<AddIcon />} onClick={handleClickOpen}>
-												Add Payment
+												{t("paymentForm.addPayment")}
 											</Button>
 										</Box>
 									</Grid>
@@ -191,7 +194,7 @@ const PaymentForm = () => {
 										<Field
 											name="notes"
 											component={TextFormField}
-											label="Notes"
+											label={t("paymentForm.notes")}
 											multiline
 											rows={5}
 										/>
@@ -200,7 +203,7 @@ const PaymentForm = () => {
 										<Field
 											name="private_notes"
 											component={TextFormField}
-											label="Private Notes"
+											label={t("paymentForm.privateNotes")}
 											multiline
 											rows={5}
 										/>
@@ -208,7 +211,7 @@ const PaymentForm = () => {
 
 									<Grid item xs={12} textAlign={"center"}>
 										<Button variant="contained" type="submit">
-											Save
+											{t("paymentForm.save")}
 										</Button>
 									</Grid>
 								</Grid>

@@ -7,8 +7,10 @@ import DashbaordCard from "@shared/components/DashbaordCard";
 import React from "react";
 import { FaFileInvoiceDollar, FaFileInvoice } from "react-icons/fa";
 import { FaPeopleGroup } from "react-icons/fa6";
+import { useTranslation } from "react-i18next";
 
 const AdminOverView = () => {
+	const { t } = useTranslation();
 	const customerCount = useCustomerControllerCustomerCount();
 	const invoiceCount = useInvoiceControllerInvoiceCount();
 	const quotationCount = useQuotationControllerCountTotal();
@@ -17,28 +19,28 @@ const AdminOverView = () => {
 	const data = [
 		{
 			value: customerCount?.data ?? "",
-			name: "Customers",
+			name: t("admin.customers", { defaultValue: "Customers" }),
 			img: <FaPeopleGroup color="#fff" fontSize={"50px"} />,
 			BgColor: "custom.DashboardBlue",
 			navigateToPath: "/customer/customerlist",
 		},
 		{
 			value: invoiceCount?.data ?? "",
-			name: "Invoices",
+			name: t("admin.invoices", { defaultValue: "Invoices" }),
 			img: <FaFileInvoice color="#fff" fontSize={"40px"} />,
 			BgColor: "custom.DashbaordYellow",
 			navigateToPath: "/invoice/invoicelist?invoiceTab=2",
 		},
 		{
 			value: quotationCount?.data?.total ?? "",
-			name: "Estimates",
+			name: t("admin.estimates", { defaultValue: "Estimates" }),
 			img: <FaFileInvoiceDollar color="#fff" fontSize={"40px"} />,
 			BgColor: "custom.DashboadRed",
 			navigateToPath: "/quotation/quotationlist",
 		},
 		{
 			value: userCount?.data ?? "",
-			name: "Users",
+			name: t("admin.users", { defaultValue: "Users" }),
 			img: <FaPeopleGroup color="#fff" fontSize={"50px"} />,
 			BgColor: "custom.DashboardGreen",
 			navigateToPath: "/users/userlist",
@@ -47,7 +49,7 @@ const AdminOverView = () => {
 	return (
 		<>
 			<Typography variant="h3" textTransform={"capitalize"} mb={"10px"}>
-				Overview
+				{t("admin.overview", { defaultValue: "Overview" })}
 			</Typography>
 			<Grid container spacing={2}>
 				{data.map((item, index) => (

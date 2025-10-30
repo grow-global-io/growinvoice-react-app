@@ -36,6 +36,7 @@ import { useInvoicetemplateControllerFindAll } from "@api/services/invoicetempla
 import { useQueryClient } from "@tanstack/react-query";
 import AddressExpressionsDialog from "@shared/components/AddressExpressionsDialog";
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
+import { useTranslation } from "react-i18next";
 
 const CustomFormControlLabel = styled(FormControlLabel)(() => ({
 	alignItems: "flex-start",
@@ -43,6 +44,7 @@ const CustomFormControlLabel = styled(FormControlLabel)(() => ({
 }));
 
 const Invoices = () => {
+	const { t } = useTranslation();
 	const queryClient = useQueryClient();
 	const { user } = useAuthStore();
 	const { open, handleClickOpen, handleClose } = useDialog();
@@ -67,20 +69,23 @@ const Invoices = () => {
 	};
 
 	const schema: yup.Schema<CreateInvoiceSettingsDto> = yup.object().shape({
-		invoicePrefix: yup.string().required("Invoice Prefix is required"),
-		autoArchive: yup.boolean().required("Auto Archive is required"),
+		invoicePrefix: yup.string().required(t("settings.invoice.validation.invoicePrefixRequired")),
+		autoArchive: yup.boolean().required(t("settings.invoice.validation.autoArchiveRequired")),
 		footer: yup.string().nullable(),
-		dueNotice: yup.number().required("Due Notice is required"),
-		overDueNotice: yup.number().required("Overdue Notice is required"),
+		dueNotice: yup.number().required(t("settings.invoice.validation.dueNoticeRequired")),
+		overDueNotice: yup.number().required(t("settings.invoice.validation.overdueNoticeRequired")),
 		companyAddressTemplate: yup.string(),
 		customerBillingAddressTemplate: yup.string(),
 		customerShippingAddressTemplate: yup.string(),
-		user_id: yup.string().required("User ID is required"),
-		invoiceTemplateId: yup.string().required("Invoice Template ID is required"),
+		user_id: yup.string().required(t("settings.invoice.validation.userIdRequired")),
+		invoiceTemplateId: yup.string().required(t("settings.invoice.validation.templateIdRequired")),
 		invoiceHeadingType: yup
 			.string()
-			.oneOf(Object.values(InvoiceSettingsDtoInvoiceHeadingType), "Invalid Invoice Heading Type")
-			.required("Invoice Heading Type is required"),
+			.oneOf(
+				Object.values(InvoiceSettingsDtoInvoiceHeadingType),
+				t("settings.invoice.validation.invalidHeadingType"),
+			)
+			.required(t("settings.invoice.validation.invoiceHeadingTypeRequired")),
 	});
 
 	const handleSubmit = async (values: CreateInvoiceSettingsDto) => {
@@ -123,7 +128,7 @@ const Invoices = () => {
 								<Grid item xs={12}>
 									<Field
 										name="invoiceHeadingType"
-										label="Invoice Heading Type"
+										label={t("settings.invoice.invoiceHeadingType")}
 										component={AutocompleteField}
 										options={Object.values(InvoiceSettingsDtoInvoiceHeadingType).map((type) => {
 											const label = type.replace(/_/g, " ");
@@ -137,56 +142,73 @@ const Invoices = () => {
 								<Grid item xs={12} sm={6} display={"flex"} alignItems={"center"}>
 									<Field
 										name="invoicePrefix"
-										label="Invoice Prefix"
+										label={t("settings.invoice.invoicePrefix")}
 										component={TextFormField}
 										required={true}
-										placeholder="Ex “INV”"
+										placeholder={t("settings.invoice.invoicePrefixPlaceholder", {
+											defaultValue: "Ex \u201CINV\u201D",
+										})}
 									/>
 								</Grid>
 								<Grid item xs={12} sm={6}>
 									<Box>
-										<Typography variant="h5">Auto Archive</Typography>
-										<Field name="autoArchive" label="YES" component={CheckBoxFormField} />
+										<Typography variant="h5">{t("settings.invoice.autoArchive")}</Typography>
+										<Field
+											name="autoArchive"
+											label={t("common.yes", { defaultValue: "YES" })}
+											component={CheckBoxFormField}
+										/>
 										<Typography variant="body1" lineHeight={1.2}>
-											Enable this, If you wish to auto archive approved or rejected estimates after
-											30 days.
+											{t("settings.invoice.autoArchiveHelp", {
+												defaultValue:
+													"Enable this if you wish to auto archive approved or rejected estimates after 30 days.",
+											})}
 										</Typography>
 									</Box>
 								</Grid>
 								<Grid item xs={12}>
-									<Field name="footer" label="Footer" component={RichTextEditor} required={true} />
+									<Field
+										name="footer"
+										label={t("settings.invoice.footer")}
+										component={RichTextEditor}
+										required={true}
+									/>
 								</Grid>
 								<Grid item xs={12}>
 									<Divider />
 								</Grid>
 								<SettingFormHeading
-									heading="Due Notices"
+									heading={t("settings.invoice.dueNotices")}
 									icon={Constants.customImages.OrangeNoticeIcon}
-									text="Due reminders are sent to unpaid and partially paid invoices as reminders to the customer to pay the invoice before is due."
+									text={t("settings.invoice.dueNoticesHelp")}
 								/>
 								<Grid item xs={6}>
 									<Field
 										name="dueNotice"
-										label="Due Notice in Days"
+										label={t("settings.invoice.dueNoticeInDays")}
 										component={TextFormField}
 										required={true}
-										placeholder="x days before due date"
+										placeholder={t("settings.invoice.daysBeforeDue", {
+											defaultValue: "x days before due date",
+										})}
 										type="number"
 									/>
 								</Grid>
 
 								<SettingFormHeading
-									heading="Overdue Notices"
+									heading={t("settings.invoice.overdueNotices")}
 									icon={Constants.customImages.redNoticeIcon}
-									text="Due reminders are sent to unpaid and partially paid invoices as reminders to the customer to pay the invoice before is due."
+									text={t("settings.invoice.overdueNoticesHelp")}
 								/>
 								<Grid item xs={6}>
 									<Field
 										name="overDueNotice"
-										label="Overdue Notice in Days"
+										label={t("settings.invoice.overdueNoticeInDays")}
 										component={TextFormField}
 										required={true}
-										placeholder="x days before due date"
+										placeholder={t("settings.invoice.daysBeforeDue", {
+											defaultValue: "x days before due date",
+										})}
 										type="number"
 									/>
 								</Grid>
@@ -195,7 +217,7 @@ const Invoices = () => {
 									<Divider />
 								</Grid>
 								<SettingFormHeading
-									heading="Addresses"
+									heading={t("settings.invoice.addresses")}
 									icon={Constants.customImages.BlueLocationIcon}
 								/>
 								<Grid item xs={12}>
@@ -206,12 +228,12 @@ const Invoices = () => {
 										}}
 									>
 										<Typography variant="h5" mb={1} sx={{ cursor: "pointer" }}>
-											Show Templates
+											{t("settings.invoice.showTemplates")}
 										</Typography>
 									</Box>
 									<Field
 										name="companyAddressTemplate"
-										label="Company Address Format"
+										label={t("settings.invoice.companyAddressFormat")}
 										component={RichTextEditor}
 										required={true}
 									/>
@@ -224,12 +246,12 @@ const Invoices = () => {
 										}}
 									>
 										<Typography variant="h5" mb={1} sx={{ cursor: "pointer" }}>
-											Show Templates
+											{t("settings.invoice.showTemplates")}
 										</Typography>
 									</Box>
 									<Field
 										name="customerBillingAddressTemplate"
-										label="Customer Billing Address Format"
+										label={t("settings.invoice.customerBillingAddressFormat")}
 										component={RichTextEditor}
 										required={true}
 									/>
@@ -242,12 +264,12 @@ const Invoices = () => {
 										}}
 									>
 										<Typography variant="h5" mb={1} sx={{ cursor: "pointer" }}>
-											Show Templates
+											{t("settings.invoice.showTemplates")}
 										</Typography>
 									</Box>
 									<Field
 										name="customerShippingAddressTemplate"
-										label="Customer Shipping Address Format"
+										label={t("settings.invoice.customerShippingAddressFormat")}
 										component={RichTextEditor}
 										required={true}
 									/>
@@ -256,7 +278,7 @@ const Invoices = () => {
 									<Divider />
 								</Grid>
 								<SettingFormHeading
-									heading="Invoice Templates"
+									heading={t("settings.invoice.invoiceTemplates")}
 									icon={Constants.customImages.TemplateIcon}
 								/>
 								<Grid item xs={12}>
@@ -288,7 +310,7 @@ const Invoices = () => {
 								</Grid>
 								<Grid item xs={12} textAlign={"center"}>
 									<Button type="submit" variant="contained">
-										Save Settings
+										{t("settings.invoice.saveSettings")}
 									</Button>
 									{invoiceSettings?.data && (
 										<Button
@@ -303,7 +325,7 @@ const Invoices = () => {
 												});
 											}}
 										>
-											Reset Settings
+											{t("settings.invoice.resetSettings")}
 										</Button>
 									)}
 								</Grid>

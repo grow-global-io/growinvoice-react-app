@@ -11,6 +11,7 @@ import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import StateFormField from "@shared/components/FormFields/StateFormField";
 import { useProductCheckoutStore } from "@store/productCheckoutStore";
 import { useStoreControllerCreateCheckoutInvoice } from "@api/services/store";
+import { useTranslation } from "react-i18next";
 
 const CustomerDetailsDrawer = ({
 	userId,
@@ -19,6 +20,7 @@ const CustomerDetailsDrawer = ({
 	userId: string; // Assuming userId is passed as a prop
 	handleOpenInvoice?: () => void; // Optional callback for handling invoice details
 }) => {
+	const { t } = useTranslation();
 	const { open, setOpenCheckoutForm } = useCustomerCheckoutStore();
 	const {
 		setOpenCheckoutForm: setProductForm,
@@ -39,15 +41,17 @@ const CustomerDetailsDrawer = ({
 	};
 	const formikRef = useRef<FormikProps<typeof initialValues>>(null);
 	const schema = Yup.object().shape({
-		name: Yup.string().required("Name is required"),
-		email: Yup.string().email("Invalid email").required("Email is required"),
-		phone: Yup.string().required("Phone number is required"),
+		name: Yup.string().required(t("store.customer.validation.nameRequired")),
+		email: Yup.string()
+			.email(t("store.customer.validation.emailInvalid"))
+			.required(t("store.customer.validation.emailRequired")),
+		phone: Yup.string().required(t("store.customer.validation.phoneRequired")),
 		shippingDetails: Yup.object().shape({
-			address: Yup.string().required("Address is required"),
-			city: Yup.string().required("City is required"),
-			country_id: Yup.string().required("Country is required"),
-			state_id: Yup.string().required("State is required"),
-			zip: Yup.string().required("Zip code is required"),
+			address: Yup.string().required(t("store.customer.validation.addressRequired")),
+			city: Yup.string().required(t("store.customer.validation.cityRequired")),
+			country_id: Yup.string().required(t("store.customer.validation.countryRequired")),
+			state_id: Yup.string().required(t("store.customer.validation.stateRequired")),
+			zip: Yup.string().required(t("store.customer.validation.zipRequired")),
 		}),
 	});
 	const countryFindAll = useCurrencyControllerFindCountries();
@@ -111,7 +115,7 @@ const CustomerDetailsDrawer = ({
 				}}
 			>
 				<Typography variant="h6" sx={{ padding: 2, flexShrink: 0 }}>
-					Customer Details
+					{t("store.customer.title", { defaultValue: "Customer Details" })}
 				</Typography>
 				{/* Add form fields for customer details here */}
 				<Box sx={{ flexGrow: 1, overflowY: "auto", padding: "0 16px" }}>
@@ -123,11 +127,21 @@ const CustomerDetailsDrawer = ({
 					>
 						{() => (
 							<Form id="customer-details-form" style={{ margin: 0, padding: 0 }}>
-								<Field name="name" label="Name" component={TextFormField} isRequired={true} />
-								<Field name="email" label="Email" component={TextFormField} isRequired={true} />
+								<Field
+									name="name"
+									label={t("store.customer.name")}
+									component={TextFormField}
+									isRequired={true}
+								/>
+								<Field
+									name="email"
+									label={t("store.customer.email")}
+									component={TextFormField}
+									isRequired={true}
+								/>
 								<Field
 									name="phone"
-									label="Phone"
+									label={t("store.customer.phone")}
 									component={PhoneInputFormField}
 									isRequired={true}
 								/>
@@ -140,12 +154,15 @@ const CustomerDetailsDrawer = ({
 										gap: 1,
 									}}
 								>
-									<img src={Constants.customImages.BillingAddressIcon} alt="Invoice Icon" />{" "}
-									Shipping Address
+									<img
+										src={Constants.customImages.BillingAddressIcon}
+										alt={t("store.customer.iconAlt")}
+									/>{" "}
+									{t("store.customer.shippingAddress")}
 								</Typography>
 								<Field
 									name="shippingDetails.country_id"
-									label="Country"
+									label={t("store.customer.country")}
 									options={countryFindAll?.data?.map((item) => ({
 										label: item.name,
 										value: item.id,
@@ -157,25 +174,25 @@ const CustomerDetailsDrawer = ({
 								<StateFormField
 									countryFieldName="shippingDetails.country_id"
 									stateFieldName="shippingDetails.state_id"
-									stateLabel="State"
+									stateLabel={t("store.customer.state")}
 									isRequired={true}
 								/>
 								<Field
 									name="shippingDetails.city"
 									component={TextFormField}
-									label="City"
+									label={t("store.customer.city")}
 									isRequired={true}
 								/>
 								<Field
 									name="shippingDetails.zip"
 									component={TextFormField}
-									label="Zip Code"
+									label={t("store.customer.zip")}
 									isRequired={true}
 								/>
 								<Field
 									name="shippingDetails.address"
 									component={TextFormField}
-									label="Address"
+									label={t("store.customer.address")}
 									multiline
 									rows={6}
 									isRequired={true}
@@ -193,7 +210,9 @@ const CustomerDetailsDrawer = ({
 					}}
 				>
 					<Typography variant="body2" sx={{ marginBottom: 2 }}>
-						Please review your details before proceeding to payment.
+						{t("store.customer.review", {
+							defaultValue: "Please review your details before proceeding to payment.",
+						})}
 					</Typography>
 					<Box sx={{ display: "flex" }}>
 						<Button
@@ -205,7 +224,7 @@ const CustomerDetailsDrawer = ({
 								}
 							}}
 						>
-							Proceed to Payment
+							{t("store.customer.proceedToPayment", { defaultValue: "Proceed to Payment" })}
 						</Button>
 						<Button
 							variant="outlined"
@@ -216,7 +235,7 @@ const CustomerDetailsDrawer = ({
 							}}
 							sx={{ marginRight: 1 }}
 						>
-							Back
+							{t("store.customer.back", { defaultValue: "Back" })}
 						</Button>
 					</Box>
 				</Box>

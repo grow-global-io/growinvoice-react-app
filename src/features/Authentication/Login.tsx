@@ -8,8 +8,10 @@ import { useAuthStore } from "@store/auth";
 import { useNavigate } from "react-router-dom";
 import { Constants } from "@shared/constants";
 import SigninWithGoogle from "./SigninWithGoogle";
+import { useTranslation } from "react-i18next";
 
 const Login = () => {
+	const { t } = useTranslation();
 	const navigation = useNavigate();
 	const { setToken } = useAuthStore();
 	const login = useUserControllerLoginUser();
@@ -19,8 +21,14 @@ const Login = () => {
 	};
 
 	const schema = yup.object().shape({
-		email: yup.string().email().required("Email is required"),
-		password: yup.string().min(7, "Password is atleast 7 chars").required("Password is required"),
+		email: yup
+			.string()
+			.email()
+			.required(t("auth.emailRequired", { defaultValue: "Email is required" })),
+		password: yup
+			.string()
+			.min(7, t("auth.passwordMin", { defaultValue: "Password is at least 7 chars" }))
+			.required(t("auth.passwordRequired", { defaultValue: "Password is required" })),
 	});
 
 	const handleSubmit = async (values: typeof initialValues) => {
@@ -72,7 +80,7 @@ const Login = () => {
 							}}
 						>
 							<Typography fontWeight="600" sx={{ mb: 2, fontSize: 26 }}>
-								Welcome Back!
+								{t("auth.welcome", { defaultValue: "Welcome back" })}
 							</Typography>
 							<Typography
 								color="text.secondary"
@@ -80,7 +88,9 @@ const Login = () => {
 								variant="caption"
 								fontWeight="400"
 							>
-								Please login to continue with growinvoice &nbsp;
+								{t("auth.pleaseLogin", {
+									defaultValue: "Please login to continue with growinvoice",
+								})}
 								<Typography color="text.secondary" variant="caption" fontWeight="700">
 									GROWINVOICE
 								</Typography>
@@ -95,12 +105,17 @@ const Login = () => {
 								{(formik) => {
 									return (
 										<Form>
-											<Field name="email" component={TextFormField} label="Email" required={true} />
+											<Field
+												name="email"
+												component={TextFormField}
+												label={t("auth.email")}
+												required={true}
+											/>
 											<Field
 												name="password"
 												type={"password"}
 												component={TextFormField}
-												label="Password"
+												label={t("auth.password")}
 												required={true}
 											/>
 											<Box
@@ -133,7 +148,7 @@ const Login = () => {
 														minWidth: 200,
 													}}
 												>
-													Login
+													{t("auth.signIn")}
 												</Button>
 												<Button
 													variant="outlined"
@@ -148,7 +163,7 @@ const Login = () => {
 														navigation("/register");
 													}}
 												>
-													Register
+													{t("auth.signUp")}
 												</Button>
 												<SigninWithGoogle />
 											</Box>

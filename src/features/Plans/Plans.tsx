@@ -4,8 +4,10 @@ import { usePlansControllerFindAll } from "@api/services/plans";
 import Loader from "@shared/components/Loader";
 import { Constants } from "@shared/constants";
 import { useAuthStore } from "@store/auth";
+import { useTranslation } from "react-i18next";
 
 const Plans = () => {
+	const { t } = useTranslation();
 	const { logout, user } = useAuthStore();
 	const findAllPlans = usePlansControllerFindAll();
 	if (findAllPlans?.isLoading || findAllPlans?.isFetching) {
@@ -37,7 +39,7 @@ const Plans = () => {
 						<Box>
 							<Button onClick={() => logout()}>
 								<Typography variant="h4" color={"custom.white"} fontWeight={400}>
-									Logout
+									{t("nav.logout")}
 								</Typography>
 							</Button>
 						</Box>
@@ -46,7 +48,7 @@ const Plans = () => {
 			)}
 
 			<Typography variant="h3" textTransform={"capitalize"} mb={"10px"}>
-				Plans
+				{t("plans.title")}
 			</Typography>
 			<Grid container spacing={2} display={"flex"} justifyContent={"center"} mt={5}>
 				{findAllPlans?.data?.map((item, index) => (

@@ -3,8 +3,10 @@ import lottie, { AnimationItem } from "lottie-web";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import loderJson from "@assets/loader.json";
+import { useTranslation } from "react-i18next";
 
 export default function Loader() {
+	const { t } = useTranslation();
 	const container = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -34,7 +36,9 @@ export default function Loader() {
 			}}
 		>
 			<div style={{ width: 300, height: 300 }} className="container" ref={container}></div>
-			<Typography sx={{ fontSize: 18 }}>Loading...</Typography>
+			<Typography sx={{ fontSize: 18 }}>
+				{t("common.loading", { defaultValue: "Loading..." })}
+			</Typography>
 		</Box>
 	);
 }

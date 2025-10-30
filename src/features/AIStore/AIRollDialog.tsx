@@ -1,11 +1,13 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Box, Dialog, DialogContent, Typography } from "@mui/material";
 import storeLoader from "@assets/store.json";
 import lottie, { AnimationItem } from "lottie-web";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const AIRollDialog = ({ open, handleClose }: { open: boolean; handleClose: () => void }) => {
 	const navigate = useNavigate();
+	const { t } = useTranslation();
 	const container = useRef<HTMLDivElement>(null);
 	useEffect(() => {
 		let animation: AnimationItem | undefined;
@@ -40,7 +42,9 @@ const AIRollDialog = ({ open, handleClose }: { open: boolean; handleClose: () =>
 					}}
 				>
 					<div style={{ width: 300, height: 300 }} className="container" ref={container}></div>
-					<Typography sx={{ fontSize: 18 }}>Loading your AI Store... Please wait.</Typography>
+					<Typography sx={{ fontSize: 18 }}>
+						{t("store.loadingAiStore", { defaultValue: "Loading your AI Store... Please wait." })}
+					</Typography>
 				</Box>
 			</DialogContent>
 		</Dialog>

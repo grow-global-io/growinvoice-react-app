@@ -4,7 +4,9 @@ import AppDialogHeader from "@shared/components/Dialog/AppDialogHeader";
 import Loader from "@shared/components/Loader";
 import { useCreateVendorsStore } from "@store/createVendorsStore";
 import { useCreateVendorsViewStore } from "@store/createVendorViewStore";
+import { useTranslation } from "react-i18next";
 const VendorViewDialog = ({ open, handleClose }: { open: boolean; handleClose: () => void }) => {
+	const { t } = useTranslation();
 	const { updateVendors } = useCreateVendorsStore.getState();
 	const { VendorId } = useCreateVendorsViewStore.getState();
 
@@ -15,7 +17,10 @@ const VendorViewDialog = ({ open, handleClose }: { open: boolean; handleClose: (
 	});
 	return (
 		<Dialog open={open} onClose={handleClose} fullWidth>
-			<AppDialogHeader title="Vendors Details" handleClose={handleClose} />
+			<AppDialogHeader
+				title={t("vendor.view.title", { defaultValue: "Vendor Details" })}
+				handleClose={handleClose}
+			/>
 			<DialogContent>
 				{isLoading ? (
 					<Loader />
@@ -29,13 +34,13 @@ const VendorViewDialog = ({ open, handleClose }: { open: boolean; handleClose: (
 							}}
 						>
 							<Typography variant="inherit">
-								<b>Name:</b> {data?.name}
+								<b>{t("vendor.view.name", { defaultValue: "Name:" })}</b> {data?.name}
 							</Typography>
 							<Typography variant="inherit">
-								<b>Email:</b> {data?.email}
+								<b>{t("vendor.view.email", { defaultValue: "Email:" })}</b> {data?.email}
 							</Typography>
 							<Typography variant="inherit">
-								<b>Phone:</b> {data?.phone}
+								<b>{t("vendor.view.phone", { defaultValue: "Phone:" })}</b> {data?.phone}
 							</Typography>
 							<Typography
 								variant="h5"
@@ -43,7 +48,7 @@ const VendorViewDialog = ({ open, handleClose }: { open: boolean; handleClose: (
 									textDecoration: "underline",
 								}}
 							>
-								Billing Address:
+								{t("vendor.view.billingAddress", { defaultValue: "Billing Address:" })}
 							</Typography>
 							<Typography variant="inherit">
 								{data?.billingAddress?.address}, {data?.billingAddress?.city}
@@ -56,7 +61,7 @@ const VendorViewDialog = ({ open, handleClose }: { open: boolean; handleClose: (
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={handleClose} variant="outlined">
-					Close
+					{t("common.close", { defaultValue: "Close" })}
 				</Button>
 				<Button
 					onClick={() => {
@@ -66,7 +71,7 @@ const VendorViewDialog = ({ open, handleClose }: { open: boolean; handleClose: (
 					}}
 					variant="contained"
 				>
-					Edit
+					{t("common.edit", { defaultValue: "Edit" })}
 				</Button>
 			</DialogActions>
 		</Dialog>

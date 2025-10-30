@@ -8,8 +8,10 @@ import CustomerDetailsDrawer from "./CustomerDetailsDrawer";
 import { useDialog } from "@shared/hooks/useDialog";
 import AppDialogHeader from "@shared/components/Dialog/AppDialogHeader";
 import { AlertService } from "@shared/services/AlertService";
+import { useTranslation } from "react-i18next";
 
 const StoreMain = ({ userId }: { userId: string }) => {
+	const { t } = useTranslation();
 	const { currencyCode } = useProductCheckoutStore();
 	const store = useStoreControllerGetStore({
 		userId,
@@ -20,7 +22,9 @@ const StoreMain = ({ userId }: { userId: string }) => {
 
 	const handleInvoiceDetails = () => {
 		// Logic to handle invoice details can be added here
-		AlertService.instance.successMessage("Invoice Sent to your email");
+		AlertService.instance.successMessage(
+			t("store.invoiceSent", { defaultValue: "Invoice Sent to your email" }),
+		);
 		handleClickOpen();
 	};
 
@@ -41,7 +45,7 @@ const StoreMain = ({ userId }: { userId: string }) => {
 					{store?.data?.company?.[0]?.name || "Store"}
 				</Typography>
 				<Typography variant="subtitle1" sx={{ marginTop: 1 }}>
-					Welcome to the store!
+					{t("store.welcome", { defaultValue: "Welcome to the store!" })}
 				</Typography>
 			</Box>
 			<Box sx={{ padding: 2 }}>
@@ -58,7 +62,10 @@ const StoreMain = ({ userId }: { userId: string }) => {
 				handleOpenInvoice={handleInvoiceDetails}
 			/>
 			<Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-				<AppDialogHeader title="Invoice Details" handleClose={handleClose} />
+				<AppDialogHeader
+					title={t("store.invoiceDetails", { defaultValue: "Invoice Details" })}
+					handleClose={handleClose}
+				/>
 				<DialogContent>
 					<Box>
 						<Typography variant="h6">Invoice sent to your email</Typography>

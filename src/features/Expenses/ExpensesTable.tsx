@@ -14,8 +14,10 @@ import {
 import { useNavigate } from "react-router-dom";
 import { parseDateStringToFormat } from "@shared/formatter";
 import { useCreateVendorsViewStore } from "@store/createVendorViewStore";
+import { useTranslation } from "react-i18next";
 
 const ExpensesTable = () => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const allExpenses = useExpensesControllerFindAll();
@@ -33,7 +35,7 @@ const ExpensesTable = () => {
 	const columns: GridColDef[] = [
 		{
 			field: "vendor",
-			headerName: "Vendor Name",
+			headerName: t("expenses.vendorName", { defaultValue: "Vendor Name" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -54,7 +56,7 @@ const ExpensesTable = () => {
 
 		{
 			field: "category",
-			headerName: "Category",
+			headerName: t("expenses.category", { defaultValue: "Category" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -63,7 +65,7 @@ const ExpensesTable = () => {
 		},
 		{
 			field: "expenseDate",
-			headerName: "Date",
+			headerName: t("expenses.date", { defaultValue: "Date" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -72,7 +74,7 @@ const ExpensesTable = () => {
 		},
 		{
 			field: "notes",
-			headerName: "Notes",
+			headerName: t("expenses.notes", { defaultValue: "Notes" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {

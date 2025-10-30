@@ -11,6 +11,8 @@ import { environment } from "@enviroment";
 import { ErrorBoundary } from "react-error-boundary";
 import InternalServerErrorPage from "@pages/InternalServerErrorPage";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import "./i18s"; // Initialize translations
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration.js";
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -40,3 +42,6 @@ root.render(
 		</GoogleOAuthProvider>
 	</React.StrictMode>,
 );
+
+// Register service worker
+serviceWorkerRegistration.register();

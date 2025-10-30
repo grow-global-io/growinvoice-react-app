@@ -4,6 +4,7 @@ import CheckoutProductCard from "./CheckoutProductCard";
 import { useCustomerCheckoutStore } from "@store/customerCheckoutStore";
 import { formatCurrency } from "@shared/formatter";
 import CloseIcon from "@mui/icons-material/Close";
+import { useTranslation } from "react-i18next";
 
 const StoreCheckoutDrawer = ({
 	open,
@@ -12,6 +13,7 @@ const StoreCheckoutDrawer = ({
 	open: boolean;
 	setOpenCheckoutForm: (open: boolean) => void;
 }) => {
+	const { t } = useTranslation();
 	const { checkoutProducts, currencyCode } = useProductCheckoutStore();
 	const { setOpenCheckoutForm: setCustomerForm } = useCustomerCheckoutStore();
 
@@ -48,7 +50,7 @@ const StoreCheckoutDrawer = ({
 					}}
 				>
 					<Typography variant="h6" sx={{ padding: 2, flexShrink: 0 }}>
-						Checkout Items
+						{t("store.checkout.title", { defaultValue: "Checkout Items" })}
 					</Typography>
 					<IconButton
 						onClick={() => {
@@ -73,7 +75,7 @@ const StoreCheckoutDrawer = ({
 						</Grid>
 					) : (
 						<Typography sx={{ padding: 2, textAlign: "center", color: "text.secondary" }}>
-							Your cart is empty.
+							{t("store.checkout.empty", { defaultValue: "Your cart is empty." })}
 						</Typography>
 					)}
 				</Box>
@@ -89,7 +91,9 @@ const StoreCheckoutDrawer = ({
 					}}
 				>
 					<Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-						<Typography variant="h6">Total:</Typography>
+						<Typography variant="h6">
+							{t("store.checkout.total", { defaultValue: "Total:" })}
+						</Typography>
 						<Typography variant="h6">{formatCurrency(totalPrice, currencyCode)}</Typography>
 					</Box>
 					<Button
@@ -102,7 +106,7 @@ const StoreCheckoutDrawer = ({
 						fullWidth
 						disabled={checkoutProducts.length === 0}
 					>
-						Proceed to Next Step
+						{t("store.checkout.next", { defaultValue: "Proceed to Next Step" })}
 					</Button>
 				</Box>
 			</Box>

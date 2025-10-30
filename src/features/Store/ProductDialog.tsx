@@ -13,6 +13,7 @@ import { useProductCheckoutStore } from "@store/productCheckoutStore";
 import { formatCurrency } from "@shared/formatter";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import { useTranslation } from "react-i18next";
 
 const responsive = {
 	desktop: {
@@ -38,6 +39,7 @@ const ProductDialog = ({
 	handleClose: () => void;
 	product?: ProductWithAllDataDto;
 }) => {
+	const { t } = useTranslation();
 	const {
 		currencyCode,
 		checkoutProducts,
@@ -62,7 +64,10 @@ const ProductDialog = ({
 	};
 	return (
 		<Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-			<AppDialogHeader title="Product Details" handleClose={handleClose} />
+			<AppDialogHeader
+				title={t("store.product.details", { defaultValue: "Product Details" })}
+				handleClose={handleClose}
+			/>
 			<DialogContent>
 				<Carousel
 					responsive={responsive}
@@ -103,7 +108,7 @@ const ProductDialog = ({
 							}}
 						>
 							<Typography variant="h6" color="text.secondary">
-								No Images Available
+								{t("store.product.noImages", { defaultValue: "No Images Available" })}
 							</Typography>
 						</Box>
 					)}
@@ -131,13 +136,14 @@ const ProductDialog = ({
 						}}
 					>
 						<Typography variant="h3" sx={{ textTransform: "capitalize" }}>
-							{product?.name || "Product Name"}
+							{product?.name || t("store.product.name", { defaultValue: "Product Name" })}
 						</Typography>
 						<Typography variant="body1" color="text.secondary">
-							{product?.description || "Product Description"}
+							{product?.description ||
+								t("store.product.description", { defaultValue: "Product Description" })}
 						</Typography>
 						<Typography variant="h6" color="primary" sx={{ marginTop: 2 }}>
-							Price:{" "}
+							{t("store.product.price", { defaultValue: "Price:" })}{" "}
 							{formatCurrency(priceBook?.price || 0, priceBook?.currency?.short_code || "INR")}
 						</Typography>
 					</Box>
@@ -152,7 +158,9 @@ const ProductDialog = ({
 					onClick={handleAddToCart}
 					sx={{ flexGrow: 1 }}
 				>
-					{checkoutProducts.some((p) => p.id === product?.id) ? "Remove from Cart" : "Add to Cart"}
+					{checkoutProducts.some((p) => p.id === product?.id)
+						? t("store.removeFromCart", { defaultValue: "Remove from Cart" })
+						: t("store.addToCart", { defaultValue: "Add to Cart" })}
 				</Button>
 			</DialogActions>
 		</Dialog>

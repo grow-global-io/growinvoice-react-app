@@ -1,4 +1,5 @@
 import { toast } from "react-toastify";
+import i18next from "i18next";
 
 export class AlertService {
 	private static _instance: AlertService;
@@ -20,5 +21,13 @@ export class AlertService {
 		toast.error(message, {
 			autoClose: 15000,
 		});
+	}
+
+	public success(key: string, defaultValue?: string): void {
+		toast.success(i18next.t(key, { defaultValue }));
+	}
+
+	public error(key: string, defaultValue?: string): void {
+		toast.error(i18next.t(key, { defaultValue }), { autoClose: 15000 });
 	}
 }

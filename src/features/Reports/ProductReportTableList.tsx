@@ -7,8 +7,10 @@ import { convertUtcToFormat, currencyFormatter } from "@shared/formatter";
 import { useMemo } from "react";
 import { useInvoiceHook } from "@features/Invoices/invoiceHooks/useInvoiceHook";
 import { CustomToolbar } from "@shared/components/CustomToolbar";
+import { useTranslation } from "react-i18next";
 
 const ProductReportTableList = ({ fromDate, toDate }: { fromDate: string; toDate: string }) => {
+	const { t } = useTranslation();
 	const productReportData = useReportsControllerGetProductReports(
 		{
 			end: toDate,
@@ -37,7 +39,7 @@ const ProductReportTableList = ({ fromDate, toDate }: { fromDate: string; toDate
 	const columns: GridColDef[] = [
 		{
 			field: "product",
-			headerName: "Product Name",
+			headerName: t("report.product.productName", { defaultValue: "Product Name" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -56,7 +58,7 @@ const ProductReportTableList = ({ fromDate, toDate }: { fromDate: string; toDate
 		},
 		{
 			field: "invoiceDate",
-			headerName: "Invoice Date",
+			headerName: t("report.product.invoiceDate", { defaultValue: "Invoice Date" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -65,7 +67,7 @@ const ProductReportTableList = ({ fromDate, toDate }: { fromDate: string; toDate
 		},
 		{
 			field: "invoiceNumber",
-			headerName: "Invoice Number",
+			headerName: t("report.product.invoiceNumber", { defaultValue: "Invoice Number" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -85,7 +87,7 @@ const ProductReportTableList = ({ fromDate, toDate }: { fromDate: string; toDate
 		},
 		{
 			field: "invoiceAmount",
-			headerName: "Invoice Amount",
+			headerName: t("report.product.invoiceAmount", { defaultValue: "Invoice Amount" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {

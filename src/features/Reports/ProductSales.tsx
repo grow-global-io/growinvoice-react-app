@@ -3,7 +3,9 @@ import ProductReportTableList from "./ProductReportTableList";
 import { DateCalander } from "@shared/components/DateCalendar";
 import Loader from "@shared/components/Loader";
 import ReportsHooks from "./reportHooks/ReportsHooks";
+import { useTranslation } from "react-i18next";
 const ProductSales = () => {
+	const { t } = useTranslation();
 	const { fromDate, toDate, dateRange, dayRange, setDayRange } = ReportsHooks();
 	if (dateRange?.isLoading || dateRange?.isRefetching) {
 		return <Loader />;
@@ -20,11 +22,11 @@ const ProductSales = () => {
 				mb={2}
 			>
 				<Typography variant="h3" fontWeight={"500"} textTransform={"capitalize"}>
-					Product Report
+					{t("report.product.title", { defaultValue: "Product Report" })}
 				</Typography>
 				<Box>
 					<Typography variant="h6" fontWeight={"500"} textTransform={"capitalize"}>
-						Select Date Range
+						{t("report.selectDateRange", { defaultValue: "Select Date Range" })}
 					</Typography>
 					<DateCalander dayRange={dayRange} setDayRange={setDayRange} />
 				</Box>

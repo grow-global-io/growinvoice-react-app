@@ -20,6 +20,7 @@ import {
 	MuiEvent,
 } from "@mui/x-data-grid";
 import { Grid, SelectChangeEvent, Tooltip, Typography, useTheme } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import GridSelectField from "@shared/components/DataGridFields/GridSelectField";
 import GridTextField from "@shared/components/DataGridFields/GridTextField";
 import { useProductControllerFindAll } from "@api/services/product";
@@ -47,6 +48,7 @@ export default function FullFeaturedCrudGrid({
 	// eslint-disable-next-line
 	formik: FormikProps<any>;
 }) {
+	const { t } = useTranslation();
 	const currency_id = formik?.values?.currency_id;
 	const taxCodes = useTaxcodeControllerFindAll();
 	const hsnCodes = useHsncodeControllerFindAll();
@@ -102,7 +104,9 @@ export default function FullFeaturedCrudGrid({
 
 		const row = rows.find((row) => row.id === id);
 		if (!row?.product_id) {
-			setErrorText("Product must be selected before saving.");
+			setErrorText(
+				t("invoiceForm.validation.productRequired", { defaultValue: "Product is required" }),
+			);
 			return;
 		}
 		setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
@@ -111,7 +115,11 @@ export default function FullFeaturedCrudGrid({
 
 	const handleDeleteClick = (id: GridRowId) => () => {
 		if (rows.filter((row) => row.id !== id)?.length === 0) {
-			setErrorText("At least one product is required");
+			setErrorText(
+				t("invoiceForm.validation.atLeastOneProduct", {
+					defaultValue: "At least one product is required",
+				}),
+			);
 		}
 		setRows(rows.filter((row) => row.id !== id));
 		handleTotal(rows.filter((row) => row.id !== id));
@@ -119,7 +127,11 @@ export default function FullFeaturedCrudGrid({
 
 	const handleCancelClick = (id: GridRowId) => () => {
 		if (rows.filter((row) => row.id !== id)?.length === 0) {
-			setErrorText("At least one product is required");
+			setErrorText(
+				t("invoiceForm.validation.atLeastOneProduct", {
+					defaultValue: "At least one product is required",
+				}),
+			);
 		}
 		setRows(rows.filter((row) => row.id !== id));
 		handleTotal(rows.filter((row) => row.id !== id));
@@ -176,7 +188,7 @@ export default function FullFeaturedCrudGrid({
 	const columns: GridColDef<OmitCreateInvoiceProductsExtended>[] = [
 		{
 			field: "product_id",
-			headerName: "Product",
+			headerName: t("invoice.table.product", { defaultValue: "Product" }),
 			flex: 1.0,
 			editable: true,
 			renderEditCell: (params) => {
@@ -260,7 +272,7 @@ export default function FullFeaturedCrudGrid({
 		},
 		{
 			field: "quantity",
-			headerName: "QTY",
+			headerName: t("invoice.table.qty", { defaultValue: "QTY" }),
 			flex: 0.3,
 			editable: true,
 			preProcessEditCellProps: (params) => {
@@ -271,7 +283,11 @@ export default function FullFeaturedCrudGrid({
 				const onChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
 					const value = parseInt(event.target.value, 10);
 					if (value < 1) {
-						setErrorText("Quantity should not be less than 0");
+						setErrorText(
+							t("invoiceForm.validation.quantityMin", {
+								defaultValue: "Quantity should be greater than 0",
+							}),
+						);
 					} else {
 						setErrorText("");
 					}
@@ -316,7 +332,7 @@ export default function FullFeaturedCrudGrid({
 		},
 		{
 			field: "price",
-			headerName: "Price",
+			headerName: t("invoice.table.price", { defaultValue: "Price" }),
 			flex: 0.8,
 			editable: true,
 			preProcessEditCellProps: (params) => {
@@ -327,7 +343,11 @@ export default function FullFeaturedCrudGrid({
 				const onChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
 					const value = parseFloat(event.target.value);
 					if (value < 0.00001) {
-						setErrorText("Price should not be less than 0");
+						setErrorText(
+							t("invoiceForm.validation.priceMin", {
+								defaultValue: "Price should be greater than 0",
+							}),
+						);
 					} else {
 						setErrorText("");
 					}
@@ -379,7 +399,7 @@ export default function FullFeaturedCrudGrid({
 		},
 		{
 			field: "taxes",
-			headerName: "Tax/GST %",
+			headerName: t("invoice.table.taxPercent", { defaultValue: "Tax/GST %" }),
 			flex: 1,
 			editable: true,
 			renderEditCell: (params) => {
@@ -440,13 +460,13 @@ export default function FullFeaturedCrudGrid({
 		},
 		{
 			field: "hsnCode_id",
-			headerName: "HSN Code",
+			headerName: t("invoice.table.hsnCode", { defaultValue: "HSN Code" }),
 			flex: 0.8,
 			editable: true,
 			renderEditCell: (params) => (
 				<GridTextField
 					params={params}
-					label="HSN Code"
+					label={t("invoice.table.hsnCode", { defaultValue: "HSN Code" })}
 					value={`${hsnCodes?.data?.find((hsnCode) => hsnCode.id === params.row.hsnCode_id)?.code} - ${hsnCodes?.data?.find((hsnCode) => hsnCode.id === params.row.hsnCode_id)?.tax?.percentage ?? 0}%`}
 					disabled={true}
 				/>
@@ -462,11 +482,16 @@ export default function FullFeaturedCrudGrid({
 		},
 		{
 			field: "total",
-			headerName: "Amount",
+			headerName: t("invoice.table.amount", { defaultValue: "Amount" }),
 			flex: 0.8,
 			editable: true,
 			renderEditCell: (params) => (
-				<GridTextField params={params} label="Amount" type="number" disabled={true} />
+				<GridTextField
+					params={params}
+					label={t("invoice.table.amount", { defaultValue: "Amount" })}
+					type="number"
+					disabled={true}
+				/>
 			),
 			renderCell: (params) => {
 				return (
@@ -483,7 +508,7 @@ export default function FullFeaturedCrudGrid({
 		{
 			field: "actions",
 			type: "actions",
-			headerName: "Actions",
+			headerName: t("common.actions", { defaultValue: "Actions" }),
 			flex: 0.7,
 			cellClassName: "actions",
 			getActions: ({ id }) => {
@@ -494,7 +519,7 @@ export default function FullFeaturedCrudGrid({
 						<GridActionsCellItem
 							key={0}
 							icon={
-								<Tooltip title="Save Record">
+								<Tooltip title={t("invoice.table.saveRecord", { defaultValue: "Save Record" })}>
 									<Box>
 										<CustomIconButton src={SaveIcon} />
 									</Box>
@@ -509,13 +534,13 @@ export default function FullFeaturedCrudGrid({
 						<GridActionsCellItem
 							key={1}
 							icon={
-								<Tooltip title="Cancel Record">
+								<Tooltip title={t("invoice.table.cancelRecord", { defaultValue: "Cancel Record" })}>
 									<Box>
 										<CustomIconButton src={CancelIcon} buttonType="delete" iconColor="error" />
 									</Box>
 								</Tooltip>
 							}
-							label="Cancel"
+							label={t("common.cancel", { defaultValue: "Cancel" })}
 							className="textPrimary"
 							onClick={handleCancelClick(id)}
 							color="inherit"
@@ -526,14 +551,14 @@ export default function FullFeaturedCrudGrid({
 				return [
 					<GridActionsCellItem
 						icon={
-							<Tooltip title="Edit Record">
+							<Tooltip title={t("invoice.table.editRecord", { defaultValue: "Edit Record" })}>
 								<Box>
 									<CustomIconButton src={EditIcon} />
 								</Box>
 							</Tooltip>
 						}
 						key={0}
-						label="Edit"
+						label={t("common.edit", { defaultValue: "Edit" })}
 						className="textPrimary"
 						onClick={handleEditClick(id)}
 						color="inherit"
@@ -541,13 +566,13 @@ export default function FullFeaturedCrudGrid({
 					<GridActionsCellItem
 						key={1}
 						icon={
-							<Tooltip title="Delete Record">
+							<Tooltip title={t("invoice.table.deleteRecord", { defaultValue: "Delete Record" })}>
 								<Box>
 									<CustomIconButton src={DeleteIcon} buttonType="delete" iconColor="error" />
 								</Box>
 							</Tooltip>
 						}
-						label="Delete"
+						label={t("common.delete", { defaultValue: "Delete" })}
 						onClick={handleDeleteClick(id)}
 						color="inherit"
 					/>,
@@ -597,7 +622,9 @@ export default function FullFeaturedCrudGrid({
 									borderColor: "divider",
 								}}
 							>
-								<Typography variant="h5">Add Products:</Typography>
+								<Typography variant="h5">
+									{t("invoiceForm.addProducts", { defaultValue: "Add Products:" })}
+								</Typography>
 								<CreateProduct />
 							</Box>
 						);
@@ -618,7 +645,7 @@ export default function FullFeaturedCrudGrid({
 										onClick={handleAddRow}
 										disabled={isRowEditing}
 									>
-										Add record
+										{t("invoiceForm.addRecord", { defaultValue: "Add record" })}
 									</Button>
 								</Grid>
 							</Grid>
