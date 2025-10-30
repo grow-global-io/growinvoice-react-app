@@ -18,9 +18,11 @@ import { useQueryClient } from "@tanstack/react-query";
 // import CustomerView from "./CustomerView";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { GetCustomerWithAddressDto } from "@api/services/models";
 
 const CustomerTableList = () => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const CustomerData = useCustomerControllerFindAll();
@@ -38,7 +40,7 @@ const CustomerTableList = () => {
 	const columns: GridColDef<GetCustomerWithAddressDto>[] = [
 		{
 			field: "name",
-			headerName: "Full Name",
+			headerName: t("customer.table.fullName", { defaultValue: "Full Name" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -60,13 +62,17 @@ const CustomerTableList = () => {
 		},
 		{
 			field: "source",
-			headerName: "Source",
+			headerName: t("customer.table.source", { defaultValue: "Source" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
 				return (
 					<Chip
-						label={params.row.fromStore ? "Store" : "Direct"}
+						label={
+							params.row.fromStore
+								? t("customer.table.store", { defaultValue: "Store" })
+								: t("customer.table.direct", { defaultValue: "Direct" })
+						}
 						variant="filled"
 						color="primary"
 					/>
@@ -75,7 +81,7 @@ const CustomerTableList = () => {
 		},
 		{
 			field: "email",
-			headerName: "Contact Email",
+			headerName: t("customer.table.contactEmail", { defaultValue: "Contact Email" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -84,7 +90,7 @@ const CustomerTableList = () => {
 		},
 		{
 			field: "phone",
-			headerName: "Contact Number",
+			headerName: t("customer.table.contactNumber", { defaultValue: "Contact Number" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -93,7 +99,7 @@ const CustomerTableList = () => {
 		},
 		{
 			field: "_count",
-			headerName: "Invoice",
+			headerName: t("customer.table.invoiceCount", { defaultValue: "Invoice" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -103,7 +109,7 @@ const CustomerTableList = () => {
 
 		{
 			field: "totalDue",
-			headerName: "Amount Due",
+			headerName: t("customer.table.amountDue", { defaultValue: "Amount Due" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -116,12 +122,15 @@ const CustomerTableList = () => {
 		},
 		{
 			field: "action",
-			headerName: "Action",
+			headerName: t("customer.table.action", { defaultValue: "Action" }),
 			flex: 1,
 			minWidth: 150,
 			type: "actions",
 			getActions: (params) => [
-				<Tooltip title="View Customer" key={params.row?.id}>
+				<Tooltip
+					title={t("customer.table.viewCustomer", { defaultValue: "View Customer" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							src={VisibilityIcon}
@@ -132,7 +141,10 @@ const CustomerTableList = () => {
 						/>
 					</Box>
 				</Tooltip>,
-				<Tooltip title="Edit Customer" key={params.row?.id}>
+				<Tooltip
+					title={t("customer.table.editCustomer", { defaultValue: "Edit Customer" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							src={EditIcon}
@@ -142,7 +154,10 @@ const CustomerTableList = () => {
 						/>
 					</Box>
 				</Tooltip>,
-				<Tooltip title="Delete Customer" key={params.row?.id}>
+				<Tooltip
+					title={t("customer.table.deleteCustomer", { defaultValue: "Delete Customer" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							key={params.row?.id}
@@ -151,8 +166,10 @@ const CustomerTableList = () => {
 							iconColor="error"
 							onClick={async () => {
 								handleOpen({
-									title: "Delete Customer",
-									message: "Are you sure you want to delete this customer?",
+									title: t("customer.actions.deleteTitle", { defaultValue: "Delete Customer" }),
+									message: t("customer.actions.deleteConfirm", {
+										defaultValue: "Are you sure you want to delete this customer?",
+									}),
 									onConfirm: async () => {
 										await removeCustomer.mutateAsync({ id: params.row.id });
 										queryClient.invalidateQueries({
@@ -162,7 +179,7 @@ const CustomerTableList = () => {
 									onCancel: () => {
 										cleanUp();
 									},
-									confirmButtonText: "Delete",
+									confirmButtonText: t("common.delete", { defaultValue: "Delete" }),
 								});
 							}}
 						/>
@@ -178,7 +195,14 @@ const CustomerTableList = () => {
 
 	return (
 		<Box>
-			<DataGrid autoHeight rows={CustomerData?.data} columns={columns} />
+			<DataGrid
+				autoHeight
+				rows={CustomerData?.data}
+				columns={columns}
+				localeText={{
+					toolbarQuickFilterPlaceholder: t("common.search", { defaultValue: "Search" }),
+				}}
+			/>
 			{/* <CustomerView open={open} handleClose={handleClose} customerId={viewCustomerId ?? ""} /> */}
 		</Box>
 	);

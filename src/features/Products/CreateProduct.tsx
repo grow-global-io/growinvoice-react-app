@@ -2,6 +2,7 @@ import { Drawer, Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ProductForm from "./ProductForm";
 import { useCreateProductStore } from "@store/createProductStore";
+import { useTranslation } from "react-i18next";
 
 export const ProductDrawer = ({
 	open,
@@ -16,6 +17,7 @@ export const ProductDrawer = ({
 );
 
 export default function CreateProduct() {
+	const { t } = useTranslation();
 	const { setOpenProductForm } = useCreateProductStore.getState();
 	return (
 		<>
@@ -26,7 +28,7 @@ export default function CreateProduct() {
 				}}
 				startIcon={<AddIcon />}
 			>
-				Create New Product
+				{t("product.createNew", { defaultValue: "Create New Product" })}
 			</Button>
 		</>
 	);

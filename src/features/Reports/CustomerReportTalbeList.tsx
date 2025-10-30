@@ -8,8 +8,10 @@ import { useAuthStore } from "@store/auth";
 import { useMemo } from "react";
 import { useInvoiceHook } from "@features/Invoices/invoiceHooks/useInvoiceHook";
 import { CustomToolbar } from "@shared/components/CustomToolbar";
+import { useTranslation } from "react-i18next";
 
 const CustomerReportTalbeList = ({ fromDate, toDate }: { fromDate: string; toDate: string }) => {
+	const { t } = useTranslation();
 	const { user } = useAuthStore();
 	const { handleView } = useInvoiceHook();
 	const customerReportData = useReportsControllerGetCustomerReports(
@@ -40,7 +42,7 @@ const CustomerReportTalbeList = ({ fromDate, toDate }: { fromDate: string; toDat
 	const columns: GridColDef[] = [
 		{
 			field: "name",
-			headerName: "Customer Name",
+			headerName: t("report.customer.customerName", { defaultValue: "Customer Name" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -59,7 +61,7 @@ const CustomerReportTalbeList = ({ fromDate, toDate }: { fromDate: string; toDat
 		},
 		{
 			field: "date",
-			headerName: "Invoice Date",
+			headerName: t("report.customer.invoiceDate", { defaultValue: "Invoice Date" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -68,7 +70,7 @@ const CustomerReportTalbeList = ({ fromDate, toDate }: { fromDate: string; toDat
 		},
 		{
 			field: "invoice_number",
-			headerName: "Invoice Number",
+			headerName: t("report.customer.invoiceNumber", { defaultValue: "Invoice Number" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -88,7 +90,7 @@ const CustomerReportTalbeList = ({ fromDate, toDate }: { fromDate: string; toDat
 		},
 		{
 			field: "total",
-			headerName: "Invoice Amount",
+			headerName: t("report.customer.invoiceAmount", { defaultValue: "Invoice Amount" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {

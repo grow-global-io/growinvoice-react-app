@@ -6,15 +6,17 @@ import Loader from "@shared/components/Loader";
 import NoDataFound from "@shared/components/NoDataFound";
 import { currencyFormatter, parseDateStringToFormat } from "@shared/formatter";
 import { useAuthStore } from "@store/auth";
+import { useTranslation } from "react-i18next";
 
 const PaymentsTableList = () => {
+	const { t } = useTranslation();
 	const { user } = useAuthStore();
 	const paymentsList = usePaymentsControllerFindAll();
 	const { handleView } = useInvoiceHook();
 	const columns: GridColDef[] = [
 		{
 			field: "paymentDate",
-			headerName: "Payment Date",
+			headerName: t("payment.date", { defaultValue: "Payment Date" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -27,7 +29,7 @@ const PaymentsTableList = () => {
 		},
 		{
 			field: "amount",
-			headerName: "Payment Amount",
+			headerName: t("payment.amount", { defaultValue: "Payment Amount" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -45,7 +47,7 @@ const PaymentsTableList = () => {
 		},
 		{
 			field: "paymentMethod",
-			headerName: "Payment Method",
+			headerName: t("payment.method", { defaultValue: "Payment Method" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -58,7 +60,7 @@ const PaymentsTableList = () => {
 		},
 		{
 			field: "invoiceNumber",
-			headerName: "Invoice Number",
+			headerName: t("invoice.table.invoiceNumber", { defaultValue: "Invoice Number" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -83,7 +85,9 @@ const PaymentsTableList = () => {
 	}
 
 	if (paymentsList?.data === undefined) {
-		return <NoDataFound message="No Payments Found" />;
+		return (
+			<NoDataFound message={t("payment.noPaymentsFound", { defaultValue: "No Payments Found" })} />
+		);
 	}
 
 	return (

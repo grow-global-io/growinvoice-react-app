@@ -9,8 +9,10 @@ import { useCurrencyControllerFindAll } from "@api/services/currency";
 import { ListDto } from "@shared/models/ListDto";
 import { useNavigate } from "react-router-dom";
 import { Constants } from "@shared/constants";
+import { useTranslation } from "react-i18next";
 
 const StoreNavbar = ({ children, logo }: { children?: React.ReactNode; logo?: string }) => {
+	const { t } = useTranslation();
 	const {
 		setOpenCheckoutForm,
 		checkoutProducts,
@@ -28,7 +30,9 @@ const StoreNavbar = ({ children, logo }: { children?: React.ReactNode; logo?: st
 	};
 
 	const validationSchema = yup.object({
-		currency: yup.string().required("Currency is required"),
+		currency: yup
+			.string()
+			.required(t("store.currencyRequired", { defaultValue: "Currency is required" })),
 	});
 
 	return (
@@ -46,7 +50,9 @@ const StoreNavbar = ({ children, logo }: { children?: React.ReactNode; logo?: st
 					<Grid item xs={12} sm={7} sx={{ display: "flex", alignItems: "center" }}>
 						<TextField
 							variant="outlined"
-							placeholder="Search Products/Companies"
+							placeholder={t("store.searchPlaceholder", {
+								defaultValue: "Search Products/Companies",
+							})}
 							value={searchTerm || ""}
 							onChange={(e) => handleSearchChange?.(e.target.value)}
 							sx={{ flexGrow: 1, marginRight: 2 }}

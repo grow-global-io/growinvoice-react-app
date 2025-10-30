@@ -9,12 +9,14 @@ import { currencyFormatter, parseDateStringToFormat } from "@shared/formatter";
 import { useAuthStore } from "@store/auth";
 import EditIcon from "@mui/icons-material/Edit";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
+import { useTranslation } from "react-i18next";
 import { useConfirmDialogStore } from "@store/confirmDialog";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useInvoiceHook } from "./invoiceHooks/useInvoiceHook";
 
 const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => {
+	const { t } = useTranslation();
 	const { user } = useAuthStore();
 	const invoiceData = useInvoiceControllerFindAll({
 		customerId: customerId ?? undefined,
@@ -26,7 +28,7 @@ const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => 
 	const columns: GridColDef<InvoiceWithAllDataDto>[] = [
 		{
 			field: "invoice_number",
-			headerName: "Invoice Number",
+			headerName: t("invoice.table.invoiceNumber", { defaultValue: "Invoice Number" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -46,7 +48,7 @@ const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => 
 		},
 		{
 			field: "source",
-			headerName: "Source",
+			headerName: t("invoice.table.source", { defaultValue: "Source" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -61,7 +63,7 @@ const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => 
 		},
 		{
 			field: "due_date",
-			headerName: "Due Date",
+			headerName: t("invoice.table.dueDate", { defaultValue: "Due Date" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -70,7 +72,7 @@ const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => 
 		},
 		{
 			field: "status",
-			headerName: "Status",
+			headerName: t("invoice.table.status", { defaultValue: "Status" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -85,7 +87,7 @@ const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => 
 		},
 		{
 			field: "due_amount",
-			headerName: "Due Amount",
+			headerName: t("invoice.table.dueAmount", { defaultValue: "Due Amount" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -98,7 +100,7 @@ const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => 
 		},
 		{
 			field: "paid_amount",
-			headerName: "Paid Amount",
+			headerName: t("invoice.table.paidAmount", { defaultValue: "Paid Amount" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -112,7 +114,7 @@ const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => 
 
 		{
 			field: "paid_status",
-			headerName: "Paid Status",
+			headerName: t("invoice.table.paidStatus", { defaultValue: "Paid Status" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -128,7 +130,7 @@ const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => 
 
 		{
 			field: "total",
-			headerName: "Total",
+			headerName: t("invoice.table.total", { defaultValue: "Total" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -140,12 +142,15 @@ const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => 
 
 		{
 			field: "action",
-			headerName: "Action",
+			headerName: t("invoice.table.action", { defaultValue: "Action" }),
 			flex: 1,
 			minWidth: 150,
 			type: "actions",
 			getActions: (params) => [
-				<Tooltip title="View Invoice" key={params.row?.id}>
+				<Tooltip
+					title={t("invoice.table.viewInvoice", { defaultValue: "View Invoice" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							onClick={() => {
@@ -155,7 +160,10 @@ const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => 
 						/>
 					</Box>
 				</Tooltip>,
-				<Tooltip title="Edit Invoice" key={params.row?.id}>
+				<Tooltip
+					title={t("invoice.table.editInvoice", { defaultValue: "Edit Invoice" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							onClick={() => {
@@ -165,7 +173,10 @@ const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => 
 						/>
 					</Box>
 				</Tooltip>,
-				<Tooltip title="Delete Invoice" key={params.row?.id}>
+				<Tooltip
+					title={t("invoice.table.deleteInvoice", { defaultValue: "Delete Invoice" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							src={DeleteIcon}
@@ -173,15 +184,17 @@ const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => 
 							iconColor="error"
 							onClick={async () => {
 								handleOpen({
-									title: "Delete Invoice",
-									message: "Are you sure you want to delete this invoice?",
+									title: t("invoice.actions.deleteTitle", { defaultValue: "Delete Invoice" }),
+									message: t("invoice.actions.deleteConfirm", {
+										defaultValue: "Are you sure you want to delete this invoice?",
+									}),
 									onConfirm: async () => {
 										await handleDelete(params.row.id);
 									},
 									onCancel: () => {
 										cleanUp();
 									},
-									confirmButtonText: "Delete",
+									confirmButtonText: t("common.delete", { defaultValue: "Delete" }),
 								});
 							}}
 						/>

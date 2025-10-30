@@ -15,8 +15,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useQueryClient } from "@tanstack/react-query";
 import { useConfirmDialogStore } from "@store/confirmDialog";
 import { ProductWithAllDataDto } from "@api/services/models";
+import { useTranslation } from "react-i18next";
 
 const ProductTableList = () => {
+	const { t } = useTranslation();
 	const queryClient = useQueryClient();
 	const { updateProduct } = useCreateProductStore.getState();
 	const productList = useProductControllerFindAll();
@@ -27,7 +29,7 @@ const ProductTableList = () => {
 	const columns: GridColDef<ProductWithAllDataDto>[] = [
 		{
 			field: "name",
-			headerName: "Product",
+			headerName: t("product.table.product", { defaultValue: "Product" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -40,7 +42,7 @@ const ProductTableList = () => {
 		},
 		{
 			field: "unit",
-			headerName: "Unit",
+			headerName: t("product.table.unit", { defaultValue: "Unit" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -49,7 +51,7 @@ const ProductTableList = () => {
 		},
 		{
 			field: "productType",
-			headerName: "Product Type",
+			headerName: t("product.table.productType", { defaultValue: "Product Type" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -58,7 +60,7 @@ const ProductTableList = () => {
 		},
 		{
 			field: "createdAt",
-			headerName: "Created At",
+			headerName: t("product.table.createdAt", { defaultValue: "Created At" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -67,12 +69,15 @@ const ProductTableList = () => {
 		},
 		{
 			field: "action",
-			headerName: "Action",
+			headerName: t("product.table.action", { defaultValue: "Action" }),
 			flex: 1,
 			minWidth: 150,
 			type: "actions",
 			getActions: (params) => [
-				<Tooltip title="Edit Product" key={params.row?.id}>
+				<Tooltip
+					title={t("product.table.editProduct", { defaultValue: "Edit Product" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							src={EditIcon}
@@ -82,7 +87,10 @@ const ProductTableList = () => {
 						/>
 					</Box>
 				</Tooltip>,
-				<Tooltip title="Delete Product" key={params.row?.id}>
+				<Tooltip
+					title={t("product.table.deleteProduct", { defaultValue: "Delete Product" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							src={DeleteIcon}
@@ -90,8 +98,10 @@ const ProductTableList = () => {
 							iconColor="error"
 							onClick={async () => {
 								handleOpen({
-									title: "Delete Product",
-									message: "Are you sure you want to delete this product?",
+									title: t("product.actions.deleteTitle", { defaultValue: "Delete Product" }),
+									message: t("product.actions.deleteConfirm", {
+										defaultValue: "Are you sure you want to delete this product?",
+									}),
 									onConfirm: async () => {
 										await removeProduct.mutateAsync({ id: params.row.id });
 										queryClient.invalidateQueries({
@@ -101,7 +111,7 @@ const ProductTableList = () => {
 									onCancel: () => {
 										cleanUp();
 									},
-									confirmButtonText: "Delete",
+									confirmButtonText: t("common.delete", { defaultValue: "Delete" }),
 								});
 							}}
 						/>

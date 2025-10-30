@@ -28,32 +28,36 @@ import { AlertService } from "@shared/services/AlertService";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import { CheckBoxFormField } from "@shared/components/FormFields/CheckBoxFormField";
 import MultipleFileUploadFormField from "@shared/components/FormFields/MultipleFileUploadFormField";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 
 const schema = yup.object({
 	type: yup
 		.string()
-		.required("Type is required")
-		.oneOf(Object.values(CreateProductWithTaxDtoType), "Invalid Type"),
-	name: yup.string().required("Name is required"),
-	unit_id: yup.string().required("Unit is required"),
+		.required(() => i18n.t("productForm.validation.typeRequired"))
+		.oneOf(Object.values(CreateProductWithTaxDtoType), () =>
+			i18n.t("productForm.validation.invalidType"),
+		),
+	name: yup.string().required(() => i18n.t("productForm.validation.nameRequired")),
+	unit_id: yup.string().required(() => i18n.t("productForm.validation.unitRequired")),
 	hsnCode_id: yup.string(),
 	images: yup
 		.array()
-		.of(yup.string().url("Each image must be a valid URL"))
+		.of(yup.string().url(() => i18n.t("productForm.validation.imageUrl")))
 		.test(
 			"includeStore",
-			"At least one image is required when including the product in the store.",
+			() => i18n.t("productForm.validation.imageRequiredForStore"),
 			function (value) {
 				const { includeStore } = this.parent;
 				if (includeStore && (!value || value.length === 0)) {
 					return this.createError({
-						message: "At least one image is required when including the product in the store.",
+						message: i18n.t("productForm.validation.imageRequiredForStore"),
 					});
 				}
 				return true;
 			},
 		)
-		.required("Images are required")
+		.required(() => i18n.t("productForm.validation.imagesRequired"))
 		.default([]),
 
 	includeStore: yup.boolean().optional(),
@@ -64,25 +68,30 @@ const schema = yup.object({
 	// 	.required("Price is required")
 	// 	.min(0.0000000001, "Price should be greater than 0"),
 	description: yup.string().nullable(),
-	user_id: yup.string().required("User id is required"),
-	tax: yup.array().of(yup.string().required("Tax is required")).nullable().default([]),
+	user_id: yup.string().required(() => i18n.t("productForm.validation.userIdRequired")),
+	tax: yup
+		.array()
+		.of(yup.string().required(() => i18n.t("productForm.validation.taxRequired")))
+		.nullable()
+		.default([]),
 	priceBook: yup
 		.array()
 		.of(
 			yup.object({
-				currency_id: yup.string().required("Currency is required"),
+				currency_id: yup.string().required(() => i18n.t("productForm.validation.currencyRequired")),
 				price: yup
 					.number()
-					.typeError("Price must be a number")
-					.required("Price is required")
-					.min(0.0000000001, "Price should be greater than 0"),
+					.typeError(() => i18n.t("productForm.validation.priceNumber"))
+					.required(() => i18n.t("productForm.validation.priceRequired"))
+					.min(0.0000000001, () => i18n.t("productForm.validation.priceMin")),
 			}),
 		)
-		.required("Price book is required")
-		.min(1, "At least one price book is required"),
+		.required(() => i18n.t("productForm.validation.priceBookRequired"))
+		.min(1, () => i18n.t("productForm.validation.priceBookAtLeastOne")),
 });
 
 const ProductForm = () => {
+	const { t } = useTranslation();
 	const queryClient = useQueryClient();
 	const { user, isGetStartedDialogOpen } = useAuthStore();
 	const createProduct = useProductControllerCreate();
@@ -173,7 +182,8 @@ const ProductForm = () => {
 						gap: 1,
 					}}
 				>
-					<img src={Constants.customImages.ProductSymbol} alt="Invoice Icon" /> New Product
+					<img src={Constants.customImages.ProductSymbol} alt={t("productForm.iconAlt")} />{" "}
+					{t("productForm.title")}
 				</Typography>
 
 				<IconButton
@@ -197,7 +207,7 @@ const ProductForm = () => {
 									<Grid item xs={12}>
 										<Field
 											name="type"
-											label="Type"
+											label={t("productForm.type")}
 											component={AutocompleteField}
 											options={Object.values(CreateProductWithTaxDtoType).map(stringToListDto)}
 											isRequired={true}
@@ -207,21 +217,21 @@ const ProductForm = () => {
 										<Field
 											name="name"
 											component={TextFormField}
-											label="Product Name"
+											label={t("productForm.productName")}
 											isRequired={true}
 										/>
 									</Grid>
 									<Grid item xs={12}>
 										<Field
 											name="includeStore"
-											label="Include in Store Products"
+											label={t("productForm.includeStore")}
 											component={CheckBoxFormField}
 										/>
 									</Grid>
 									<Grid item xs={12}>
 										<Field
 											name="images"
-											label="Product Images"
+											label={t("productForm.productImages")}
 											component={MultipleFileUploadFormField}
 											accept="image/*"
 										/>
@@ -229,7 +239,7 @@ const ProductForm = () => {
 									<Grid item xs={12}>
 										<Field
 											name="unit_id"
-											label="Unit"
+											label={t("productForm.unit")}
 											loading={productUnit.isLoading || productUnit.isFetching}
 											component={AutocompleteField}
 											options={productUnit?.data?.map((unit) => ({
@@ -244,7 +254,7 @@ const ProductForm = () => {
 												onClick={handleProductUnitOpen}
 												startIcon={<AddIcon />}
 											>
-												Add Unit
+												{t("productForm.addUnit")}
 											</Button>
 										)}
 										{openProductUnitForm && (
@@ -256,7 +266,7 @@ const ProductForm = () => {
 										<Grid item xs={12}>
 											<Field
 												name="hsnCode_id"
-												label="HSN Code (India)"
+												label={t("productForm.hsnCodeIndia")}
 												component={AutocompleteField}
 												loading={hsnCodes.isLoading || hsnCodes.isFetching}
 												options={hsnCodes?.data?.map((item) => {
@@ -281,7 +291,7 @@ const ProductForm = () => {
 											/>
 											{!openHsnCodeForm && (
 												<Button variant="text" onClick={handleHsnCodeOpen} startIcon={<AddIcon />}>
-													Add HSN
+													{t("productForm.addHsn")}
 												</Button>
 											)}
 											{openHsnCodeForm && <CreateHSNCode handleClose={handleHsnCodeClose} />}
@@ -291,7 +301,7 @@ const ProductForm = () => {
 									<Grid item xs={12}>
 										<Field
 											name="tax"
-											label="Taxes"
+											label={t("productForm.taxes")}
 											multiple
 											component={AutocompleteField}
 											loading={taxCodes.isLoading || taxCodes.isFetching}
@@ -306,7 +316,7 @@ const ProductForm = () => {
 										/>
 										{!openTaxesForm && (
 											<Button variant="text" onClick={handleTaxesOpen} startIcon={<AddIcon />}>
-												Add Taxes
+												{t("productForm.addTaxes")}
 											</Button>
 										)}
 										{openTaxesForm && <CreateTaxes handleClose={handleTaxesClose} />}
@@ -314,7 +324,7 @@ const ProductForm = () => {
 									<Grid item xs={12}>
 										<Box>
 											<Typography variant="h6" gutterBottom>
-												Price Book
+												{t("productForm.priceBook")}
 											</Typography>
 										</Box>
 										<Box>
@@ -329,7 +339,7 @@ const ProductForm = () => {
 																		<Grid item xs={5}>
 																			<Field
 																				name={`priceBook.${index}.currency_id`}
-																				label="Currency"
+																				label={t("productForm.currency")}
 																				component={AutocompleteField}
 																				options={currencyList?.data
 																					?.filter(
@@ -348,7 +358,7 @@ const ProductForm = () => {
 																			<Field
 																				name={`priceBook.${index}.price`}
 																				component={TextFormField}
-																				label="Price"
+																				label={t("productForm.price")}
 																				type="number"
 																				isRequired={true}
 																				marginWholeTop={-0.1}
@@ -367,7 +377,7 @@ const ProductForm = () => {
 															))
 														) : (
 															<Typography variant="body2" color="error">
-																No price book entries found. Please add at least one.
+																{t("productForm.noPriceBook")}
 															</Typography>
 														)}
 														<Button
@@ -375,7 +385,7 @@ const ProductForm = () => {
 															startIcon={<AddIcon />}
 															onClick={() => arrayHelpers.push({ currency_id: "", price: 0 })}
 														>
-															Add Price
+															{t("productForm.addPrice")}
 														</Button>
 													</>
 												)}
@@ -387,7 +397,7 @@ const ProductForm = () => {
 										<Field
 											name="description"
 											component={TextFormField}
-											label="Description"
+											label={t("productForm.description")}
 											multiline
 											rows={5}
 										/>
@@ -395,7 +405,7 @@ const ProductForm = () => {
 
 									<Grid item xs={12} textAlign={"center"}>
 										<Button variant="contained" type="submit">
-											Save
+											{t("productForm.save")}
 										</Button>
 									</Grid>
 								</Grid>

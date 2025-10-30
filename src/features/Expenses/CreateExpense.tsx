@@ -25,8 +25,10 @@ import { useNavigate } from "react-router-dom";
 import Loader from "@shared/components/Loader";
 import { useCreateVendorsStore } from "@store/createVendorsStore";
 import AddIcon from "@mui/icons-material/Add";
+import { useTranslation } from "react-i18next";
 
 const CreateExpense = ({ id }: { id?: string }) => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const vendorsData = useVendorsControllerFindAll();
 	const currencyList = useCurrencyControllerFindAll();
@@ -54,13 +56,13 @@ const CreateExpense = ({ id }: { id?: string }) => {
 		receipt_url: yup.string(),
 		category: yup
 			.string()
-			.required("Category is required")
-			.oneOf(Object.values(CreateExpensesDtoCategory), "Invalid Type"),
-		vendor_id: yup.string().required("Vendor is required"),
-		user_id: yup.string().required("User is required"),
-		expenseDate: yup.string().required("Vendor is required"),
-		amount: yup.number().required("Amount is required"),
-		currency_id: yup.string().required("currency is required"),
+			.required(t("expensesForm.validation.categoryRequired"))
+			.oneOf(Object.values(CreateExpensesDtoCategory), t("expensesForm.validation.invalidType")),
+		vendor_id: yup.string().required(t("expensesForm.validation.vendorRequired")),
+		user_id: yup.string().required(t("expensesForm.validation.userRequired")),
+		expenseDate: yup.string().required(t("expensesForm.validation.expenseDateRequired")),
+		amount: yup.number().required(t("expensesForm.validation.amountRequired")),
+		currency_id: yup.string().required(t("expensesForm.validation.currencyRequired")),
 		notes: yup.string(),
 	});
 
@@ -116,7 +118,8 @@ const CreateExpense = ({ id }: { id?: string }) => {
 					gap: 2,
 				}}
 			>
-				<img src={Constants.customImages.invoiceIcon} alt="Invoice Icon" /> New Expenses
+				<img src={Constants.customImages.invoiceIcon} alt={t("expensesForm.iconAlt")} />{" "}
+				{t("expensesForm.title")}
 			</Typography>
 
 			<Box sx={{ mb: 2, mt: 2 }}>
@@ -126,12 +129,16 @@ const CreateExpense = ({ id }: { id?: string }) => {
 							<Form>
 								<Grid container spacing={2}>
 									<Grid item xs={12} sm={6}>
-										<Field name="receipt_url" label="Receipt" component={FileUploadFormField} />
+										<Field
+											name="receipt_url"
+											label={t("expensesForm.receipt")}
+											component={FileUploadFormField}
+										/>
 									</Grid>
 									<Grid item xs={12} sm={6}>
 										<Field
 											name="category"
-											label="Category"
+											label={t("expensesForm.category")}
 											component={AutocompleteField}
 											options={Object.values(CreateExpensesDtoCategory).map(stringToListDto)}
 											isRequired={true}
@@ -140,7 +147,7 @@ const CreateExpense = ({ id }: { id?: string }) => {
 									<Grid item xs={12} sm={6}>
 										<Field
 											name="vendor_id"
-											label="Vendor"
+											label={t("expensesForm.vendor")}
 											component={AutocompleteField}
 											options={vendorsData?.data?.map((customer) => ({
 												value: customer.id,
@@ -154,13 +161,13 @@ const CreateExpense = ({ id }: { id?: string }) => {
 											onClick={() => setOpenVendorsForm(true)}
 											startIcon={<AddIcon />}
 										>
-											Add Vendor
+											{t("expensesForm.addVendor")}
 										</Button>
 									</Grid>
 									<Grid item xs={12} sm={6}>
 										<Field
 											name="expenseDate"
-											label="Expense Date"
+											label={t("expensesForm.expenseDate")}
 											component={DateFormField}
 											isRequired={true}
 										/>
@@ -168,7 +175,7 @@ const CreateExpense = ({ id }: { id?: string }) => {
 									<Grid item xs={12} sm={6}>
 										<Field
 											name="amount"
-											label="Amount"
+											label={t("expensesForm.amount")}
 											component={TextFormField}
 											isRequired={true}
 										/>
@@ -176,7 +183,7 @@ const CreateExpense = ({ id }: { id?: string }) => {
 									<Grid item xs={12} sm={6}>
 										<Field
 											name="currency_id"
-											label="Currency"
+											label={t("expensesForm.currency")}
 											loading={currencyList.isLoading || currencyList.isFetching}
 											component={AutocompleteField}
 											options={currencyList?.data?.map((currency) => ({
@@ -189,7 +196,7 @@ const CreateExpense = ({ id }: { id?: string }) => {
 									<Grid item xs={12} sm={6}>
 										<Field
 											name="notes"
-											label="Notes"
+											label={t("expensesForm.notes")}
 											component={TextFormField}
 											multiline
 											rows={5}
@@ -197,7 +204,7 @@ const CreateExpense = ({ id }: { id?: string }) => {
 									</Grid>
 									<Grid item xs={12} textAlign={"center"}>
 										<Button variant="contained" type="submit">
-											Save
+											{t("expensesForm.save")}
 										</Button>
 									</Grid>
 								</Grid>

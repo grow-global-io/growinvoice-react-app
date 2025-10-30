@@ -6,14 +6,16 @@ import { useTabs } from "@shared/hooks/useTabs";
 import TabPanel from "@shared/components/TabPanel";
 import InvoiceTableDueList from "./InvoiceTableDueList";
 import InvoiceTablePaidList from "./InvoiceTablePaidList";
+import { useTranslation } from "react-i18next";
 
 const InvoiceListIndex = () => {
+	const { t } = useTranslation();
 	const { handleChange, tabValue } = useTabs("invoiceTab");
 
 	return (
 		<>
 			<Typography variant="h3" textTransform={"capitalize"} mb={"10px"}>
-				Invoices
+				{t("invoice.title")}
 			</Typography>
 			<InvoiceExpenses />
 			<Grid container sx={{ width: { xs: "90vw", sm: "100%" } }} my={2}>
@@ -27,15 +29,15 @@ const InvoiceListIndex = () => {
 						scrollButtons="auto"
 					>
 						<Tab
-							label="Due Invoices"
+							label={t("invoice.dueInvoices", { defaultValue: "Due Invoices" })}
 							style={{ fontWeight: "bold", fontSize: 14, textTransform: "capitalize" }}
 						/>
 						<Tab
-							label="Paid Invoices"
+							label={t("invoice.paidInvoices", { defaultValue: "Paid Invoices" })}
 							style={{ fontWeight: "bold", fontSize: 14, textTransform: "capitalize" }}
 						/>
 						<Tab
-							label="All Invoices"
+							label={t("invoice.allInvoices", { defaultValue: "All Invoices" })}
 							style={{ fontWeight: "bold", fontSize: 14, textTransform: "capitalize" }}
 						/>
 					</Tabs>
@@ -43,21 +45,21 @@ const InvoiceListIndex = () => {
 				<Grid item xs={12}>
 					<TabPanel value={tabValue} index={0}>
 						<Typography variant="h3" sx={{ paddingBottom: 2, textTransform: "capitalize" }}>
-							Due Invoices
+							{t("invoice.dueInvoices", { defaultValue: "Due Invoices" })}
 						</Typography>
 						<InvoiceTableDueList />
 					</TabPanel>
 
 					<TabPanel value={tabValue} index={1}>
 						<Typography variant="h3" sx={{ paddingBottom: 2, textTransform: "capitalize" }}>
-							Paid Invoices
+							{t("invoice.paidInvoices", { defaultValue: "Paid Invoices" })}
 						</Typography>
 						<InvoiceTablePaidList />
 					</TabPanel>
 
 					<TabPanel value={tabValue} index={2}>
 						<Typography variant="h3" sx={{ paddingBottom: 2, textTransform: "capitalize" }}>
-							All Invoices
+							{t("invoice.allInvoices", { defaultValue: "All Invoices" })}
 						</Typography>
 						<InvoiceTableList />
 					</TabPanel>

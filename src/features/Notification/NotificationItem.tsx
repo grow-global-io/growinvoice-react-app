@@ -1,8 +1,10 @@
 import { NotificationDto } from "@api/services/models";
 import { ListItem, ListItemText, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const NotificationItem = ({ data }: { data: NotificationDto }) => {
+	const { t } = useTranslation();
 	return (
 		<ListItem sx={{ backgroundColor: data?.read && data?.read === true ? "" : "#f1f1f1" }} divider>
 			{/* <ListItemAvatar>
@@ -39,11 +41,11 @@ const NotificationItem = ({ data }: { data: NotificationDto }) => {
 									textDecoration: "none",
 								}}
 							>
-								{data?.body ?? "Loading..................."}
+								{data?.body ?? t("common.loading", { defaultValue: "Loading..." })}
 							</Typography>
 						) : (
 							<Typography ml={2} color="text.secondary">
-								{data?.body ?? "Loading..................."}
+								{data?.body ?? t("common.loading", { defaultValue: "Loading..." })}
 							</Typography>
 						)}
 					</>

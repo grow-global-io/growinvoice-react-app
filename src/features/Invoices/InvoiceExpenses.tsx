@@ -12,8 +12,10 @@ import { currencyFormatter, formatDateToIso } from "@shared/formatter";
 import { convertToTargetCurrency } from "@shared/currencyConversion";
 import { useAuthStore } from "@store/auth";
 import moment from "moment";
+import { useTranslation } from "react-i18next";
 
 const InvoiceExpenses = () => {
+	const { t } = useTranslation();
 	const { user } = useAuthStore();
 	const outstandingReceivable = useInvoiceControllerOutstandingReceivable();
 	// Fetch all invoices to compute multi-currency outstanding receivables (client-side rule)
@@ -82,22 +84,24 @@ const InvoiceExpenses = () => {
 	const data = [
 		{
 			value: outstandingReceivableValue,
-			text: "Outstanding Receivables",
+			text: t("invoice.summary.outstandingReceivables", {
+				defaultValue: "Outstanding Receivables",
+			}),
 			img: Constants.customImages.LeftDownArr,
 		},
 		{
 			value: invoiceDueDayValue,
-			text: "Due Today",
+			text: t("invoice.summary.dueToday", { defaultValue: "Due Today" }),
 			img: Constants.customImages.DueDateRed,
 		},
 		{
 			value: invoiceDueMonthValue,
-			text: "Due Within 30 Days",
+			text: t("invoice.summary.dueWithin30Days", { defaultValue: "Due Within 30 Days" }),
 			img: Constants.customImages.DueDateBlue,
 		},
 		{
 			value: 0,
-			text: "Overdue Invoice",
+			text: t("invoice.summary.overdueInvoice", { defaultValue: "Overdue Invoice" }),
 			img: Constants.customImages.Stack,
 		},
 	];

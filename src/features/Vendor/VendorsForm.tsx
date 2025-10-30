@@ -23,7 +23,9 @@ import {
 } from "@api/services/vendors";
 import Loader from "@shared/components/Loader";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 const VendorsForm = () => {
+	const { t } = useTranslation();
 	const { user } = useAuthStore();
 	const { setOpenVendorsForm, editVendorId } = useCreateVendorsStore.getState();
 	const editValues = useVendorsControllerFindOne(editVendorId ?? "", {
@@ -51,22 +53,25 @@ const VendorsForm = () => {
 	const schema: yup.Schema<CreateVendorsWithAddressDto> = yup.object({
 		name: yup
 			.string()
-			.required("Name is required")
-			.matches(RegexExp.fullNameRegex, "Name is invalid"),
-		display_name: yup.string().required("Display Name is required"),
-		email: yup.string().required("Email is required").email("Email is invalid"),
-		phone: yup.string().test("is-phone", "Phone number is not valid", function (value) {
+			.required(t("vendorForm.validation.nameRequired"))
+			.matches(RegexExp.fullNameRegex, t("vendorForm.validation.nameInvalid")),
+		display_name: yup.string().required(t("vendorForm.validation.displayNameRequired")),
+		email: yup
+			.string()
+			.required(t("vendorForm.validation.emailRequired"))
+			.email(t("vendorForm.validation.emailInvalid")),
+		phone: yup.string().test("is-phone", t("vendorForm.validation.phoneInvalid"), function (value) {
 			if (!value) return true;
 			return isValidPhoneNumber(value);
 		}),
-		website: yup.string().matches(RegexExp.linkRegex, "Website is invalid"),
-		user_id: yup.string().required("User is required"),
+		website: yup.string().matches(RegexExp.linkRegex, t("vendorForm.validation.websiteInvalid")),
+		user_id: yup.string().required(t("vendorForm.validation.userRequired")),
 		billingAddress: yup.object().shape({
-			address: yup.string().required("Address is required"),
-			city: yup.string().required("City is required"),
-			country_id: yup.string().required("Country is required"),
-			state_id: yup.string().required("State is required"),
-			zip: yup.string().required("Zip is required"),
+			address: yup.string().required(t("vendorForm.validation.addressRequired")),
+			city: yup.string().required(t("vendorForm.validation.cityRequired")),
+			country_id: yup.string().required(t("vendorForm.validation.countryRequired")),
+			state_id: yup.string().required(t("vendorForm.validation.stateRequired")),
+			zip: yup.string().required(t("vendorForm.validation.zipRequired")),
 		}),
 	});
 	const createVendors = useVendorsControllerCreate();
@@ -122,7 +127,8 @@ const VendorsForm = () => {
 							gap: 1,
 						}}
 					>
-						<PersonOutlineOutlinedIcon /> Add New Vendor
+						<PersonOutlineOutlinedIcon />{" "}
+						{t("vendorForm.addNew", { defaultValue: "Add New Vendor" })}
 					</Typography>
 
 					<IconButton
@@ -142,20 +148,36 @@ const VendorsForm = () => {
 								<Divider />
 								<Grid container spacing={2} bgcolor={"custom.lightgray"} padding={2}>
 									<Grid item xs={12} md={6}>
-										<Field name="name" label="Contact Name" component={TextFormField} />
+										<Field
+											name="name"
+											label={t("vendorForm.contactName")}
+											component={TextFormField}
+										/>
 									</Grid>
 									<Grid item xs={12} md={6}>
-										<Field name="display_name" label="Display Name" component={TextFormField} />
+										<Field
+											name="display_name"
+											label={t("vendorForm.displayName")}
+											component={TextFormField}
+										/>
 									</Grid>
 									<Grid item xs={12} md={6}>
-										<Field name="email" label="Email" component={TextFormField} />
+										<Field name="email" label={t("vendorForm.email")} component={TextFormField} />
 									</Grid>
 
 									<Grid item xs={12} md={6}>
-										<Field name="phone" label="Phone" component={PhoneInputFormField} />
+										<Field
+											name="phone"
+											label={t("vendorForm.phone")}
+											component={PhoneInputFormField}
+										/>
 									</Grid>
 									<Grid item xs={12} md={6}>
-										<Field name="website" label="Website" component={TextFormField} />
+										<Field
+											name="website"
+											label={t("vendorForm.website")}
+											component={TextFormField}
+										/>
 									</Grid>
 								</Grid>
 								<Grid container spacing={2} padding={2}>
@@ -169,8 +191,11 @@ const VendorsForm = () => {
 												gap: 1,
 											}}
 										>
-											<img src={Constants.customImages.BillingAddressIcon} alt="Invoice Icon" />{" "}
-											Billing Address
+											<img
+												src={Constants.customImages.BillingAddressIcon}
+												alt={t("vendorForm.iconAlt")}
+											/>{" "}
+											{t("vendorForm.billingAddress")}
 										</Typography>
 									</Grid>
 									<Grid item xs={12}>
@@ -179,7 +204,7 @@ const VendorsForm = () => {
 												<Field
 													name="billingAddress.country_id"
 													component={AutocompleteField}
-													label="Country"
+													label={t("vendorForm.country")}
 													options={countryFindAll?.data?.map((item) => ({
 														label: item.name,
 														value: item.id,
@@ -192,7 +217,7 @@ const VendorsForm = () => {
 												<StateFormField
 													countryFieldName="billingAddress.country_id"
 													stateFieldName="billingAddress.state_id"
-													stateLabel="State"
+													stateLabel={t("vendorForm.state")}
 													isRequired={true}
 												/>
 											</Grid>
@@ -200,13 +225,13 @@ const VendorsForm = () => {
 												<Field
 													name="billingAddress.city"
 													component={TextFormField}
-													label="City"
+													label={t("vendorForm.city")}
 													isRequired={true}
 												/>
 												<Field
 													name="billingAddress.zip"
 													component={TextFormField}
-													label="Pincode"
+													label={t("vendorForm.pincode")}
 													isRequired={true}
 												/>
 											</Grid>
@@ -214,7 +239,7 @@ const VendorsForm = () => {
 												<Field
 													name="billingAddress.address"
 													component={TextFormField}
-													label="Address"
+													label={t("vendorForm.address")}
 													multiline
 													rows={6}
 													isRequired={true}
@@ -224,7 +249,7 @@ const VendorsForm = () => {
 									</Grid>
 									<Grid item xs={12} textAlign={"center"}>
 										<Button variant="contained" type="submit">
-											Save
+											{t("vendorForm.save")}
 										</Button>
 									</Grid>
 								</Grid>

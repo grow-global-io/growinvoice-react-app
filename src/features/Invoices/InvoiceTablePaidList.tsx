@@ -9,8 +9,10 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import { useInvoiceHook } from "./invoiceHooks/useInvoiceHook";
 import { InvoiceWithAllDataDto } from "@api/services/models";
+import { useTranslation } from "react-i18next";
 
 const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) => {
+	const { t } = useTranslation();
 	const invoiceData = useInvoiceControllerFindPaidInvoices({
 		customerId: customerId ?? undefined,
 	});
@@ -19,7 +21,7 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 	const columns: GridColDef<InvoiceWithAllDataDto>[] = [
 		{
 			field: "invoice_number",
-			headerName: "Invoice Number",
+			headerName: t("invoice.table.invoiceNumber", { defaultValue: "Invoice Number" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -39,7 +41,7 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 		},
 		{
 			field: "source",
-			headerName: "Source",
+			headerName: t("invoice.table.source", { defaultValue: "Source" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -54,7 +56,7 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 		},
 		{
 			field: "due_date",
-			headerName: "Due Date",
+			headerName: t("invoice.table.dueDate", { defaultValue: "Due Date" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -63,7 +65,7 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 		},
 		{
 			field: "status",
-			headerName: "Status",
+			headerName: t("invoice.table.status", { defaultValue: "Status" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -78,7 +80,7 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 		},
 		{
 			field: "paid_status",
-			headerName: "Paid Status",
+			headerName: t("invoice.table.paidStatus", { defaultValue: "Paid Status" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -93,7 +95,7 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 		},
 		{
 			field: "paid_amount",
-			headerName: "Total Paid Amount",
+			headerName: t("invoice.table.totalPaidAmount", { defaultValue: "Total Paid Amount" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -106,7 +108,7 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 		},
 		{
 			field: "total",
-			headerName: "Total",
+			headerName: t("invoice.table.total", { defaultValue: "Total" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -120,7 +122,7 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 
 		{
 			field: "action",
-			headerName: "Action",
+			headerName: t("invoice.table.action", { defaultValue: "Action" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => (

@@ -5,8 +5,10 @@ import { formatCurrency } from "@shared/formatter";
 import { useProductCheckoutStore } from "@store/productCheckoutStore";
 import { useDialog } from "@shared/hooks/useDialog";
 import ProductDialog from "./ProductDialog";
+import { useTranslation } from "react-i18next";
 
 const ProductCard = ({ product }: { product: ProductWithAllDataDto | undefined }) => {
+	const { t } = useTranslation();
 	const {
 		currencyCode,
 		addProductToCheckout,
@@ -102,7 +104,9 @@ const ProductCard = ({ product }: { product: ProductWithAllDataDto | undefined }
 						}
 					}}
 				>
-					{checkoutProducts.some((p) => p.id === product?.id) ? "Remove from Cart" : "Add to Cart"}
+					{checkoutProducts.some((p) => p.id === product?.id)
+						? t("store.removeFromCart", { defaultValue: "Remove from Cart" })
+						: t("store.addToCart", { defaultValue: "Add to Cart" })}
 				</Button>
 				<ProductDialog product={product} handleClose={handleClose} open={open} />
 			</CardActions>

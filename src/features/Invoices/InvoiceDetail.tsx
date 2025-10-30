@@ -45,6 +45,7 @@ import { useAuthStore } from "@store/auth";
 import { currencyFormatter } from "@shared/formatter";
 import { environment } from "@enviroment";
 import { http } from "@shared/axios";
+import { useTranslation } from "react-i18next";
 
 const styles = {
 	width: { xs: "100%", sm: "auto" },
@@ -63,6 +64,7 @@ const styles = {
 };
 
 const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: boolean }) => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const [shareInvoiceId, setShareInvoiceId] = useState<string | null>(null);
 	const [moreAnchorEl, setMoreAnchorEl] = useState<null | HTMLElement>(null);
@@ -154,8 +156,10 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 
 	const handleInvoiceDelete = () => {
 		handleOpen({
-			title: "Delete Invoice",
-			message: "Are you sure you want to delete this invoice?",
+			title: t("invoice.actions.deleteTitle", { defaultValue: "Delete Invoice" }),
+			message: t("invoice.actions.deleteConfirm", {
+				defaultValue: "Are you sure you want to delete this invoice?",
+			}),
 			onConfirm: async () => {
 				await handleDelete(invoiceId);
 				navigate("/invoice/invoicelist");
@@ -163,7 +167,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			onCancel: () => {
 				cleanUp();
 			},
-			confirmButtonText: "Delete",
+			confirmButtonText: t("common.delete", { defaultValue: "Delete" }),
 		});
 	};
 
@@ -173,7 +177,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 
 	const menuLists = [
 		{
-			name: "Share",
+			name: t("invoice.detail.share", { defaultValue: "Share" }),
 			func: () => {
 				// handleShare(invoiceId);
 				setShareInvoiceId(invoiceId);
@@ -182,14 +186,14 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			},
 		},
 		{
-			name: "Mark as Paid",
+			name: t("invoice.detail.markAsPaid", { defaultValue: "Mark as Paid" }),
 			func: async () => {
 				await handlePaid(invoiceId);
 				handleCloseAll();
 			},
 		},
 		{
-			name: "Mark Send",
+			name: t("invoice.detail.markSend", { defaultValue: "Mark Send" }),
 			func: async () => {
 				await handleMailedSent(invoiceId);
 				handleCloseAll();
@@ -199,7 +203,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			? []
 			: [
 					{
-						name: "Delete",
+						name: t("common.delete", { defaultValue: "Delete" }),
 						func: async () => {
 							handleInvoiceDelete();
 							handleCloseAll();
@@ -209,7 +213,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 	];
 	const buttonList = [
 		{
-			name: "Download",
+			name: t("invoice.detail.download", { defaultValue: "Download" }),
 			icon: FileDownloadOutlined,
 			func: () => {
 				// if (isMobile) {
@@ -226,14 +230,16 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			},
 		},
 		{
-			name: "E-Invoice",
+			name: t("invoice.detail.eInvoice", { defaultValue: "E-Invoice" }),
 			icon: CreditCardIcon, // You can replace this with a more suitable icon
 			func: () => {
-				AlertService.instance.errorMessage("This feature is coming soon!");
+				AlertService.instance.errorMessage(
+					t("common.comingSoon", { defaultValue: "This feature is coming soon!" }),
+				);
 			},
 		},
 		{
-			name: "Print",
+			name: t("invoice.detail.print", { defaultValue: "Print" }),
 			icon: PrintOutlined, // Import this from MUI
 			func: () => {
 				if (iframeRef.current) {
@@ -254,11 +260,13 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			},
 		},
 		{
-			name: "Send Mail",
+			name: t("invoice.detail.sendMail", { defaultValue: "Send Mail" }),
 			icon: EmailOutlined,
 			func: async () => {
 				if (!getInvoiceData?.data?.customer?.email) {
-					AlertService.instance.errorMessage("Customer email not found");
+					AlertService.instance.errorMessage(
+						t("invoice.detail.customerEmailNotFound", { defaultValue: "Customer email not found" }),
+					);
 					return;
 				}
 				await handleSendMail(invoiceId, getInvoiceData?.data?.customer?.email ?? "");
@@ -266,19 +274,19 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			},
 		},
 		{
-			name: "Send Whatsapp",
+			name: t("invoice.detail.sendWhatsapp", { defaultValue: "Send Whatsapp" }),
 			icon: WhatsApp,
 			func: () => {
 				const formatMessage = `
-Dear ${getInvoiceData?.data?.customer?.name || ""},
-Thank you for making the purchase of ${currencyFormatter(getInvoiceData?.data?.total ?? 0, getInvoiceData?.data?.currency?.short_code)} on ${
+${t("invoice.detail.dear", { defaultValue: "Dear" })} ${getInvoiceData?.data?.customer?.name || ""},
+${t("invoice.detail.thankYouPurchase", { defaultValue: "Thank you for making the purchase of" })} ${currencyFormatter(getInvoiceData?.data?.total ?? 0, getInvoiceData?.data?.currency?.short_code)} ${t("invoice.detail.on", { defaultValue: "on" })} ${
 					getInvoiceData?.data?.createdAt
 						? new Date(getInvoiceData?.data?.createdAt).toLocaleDateString()
 						: ""
-				} at ${getInvoiceData?.data?.user?.name || ""}.
-Click here ${window.location.origin}/invoice/invoicetemplate/${invoiceId} to view Invoice.
+				} ${t("invoice.detail.at", { defaultValue: "at" })} ${getInvoiceData?.data?.user?.name || ""}.
+${t("invoice.detail.clickHereToView", { defaultValue: "Click here" })} ${window.location.origin}/invoice/invoicetemplate/${invoiceId} ${t("invoice.detail.toViewInvoice", { defaultValue: "to view Invoice." })}
 
-Your feedback is essential in helping us improve our services and serve you better. Please share your shopping experience on the above link.
+${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essential in helping us improve our services and serve you better. Please share your shopping experience on the above link." })}
 				`;
 				window.open(
 					`https://api.whatsapp.com/send/?phone=${getInvoiceData?.data?.customer?.phone}&text=${encodeURIComponent(
@@ -293,7 +301,7 @@ Your feedback is essential in helping us improve our services and serve you bett
 			? []
 			: [
 					{
-						name: "Edit",
+						name: t("common.edit", { defaultValue: "Edit" }),
 						icon: CreateOutlined,
 						func: () => {
 							handleEdit(invoiceId);
@@ -319,7 +327,7 @@ Your feedback is essential in helping us improve our services and serve you bett
 	const buttonListForSmallSrn = [
 		...(buttonList ?? []).filter((item) => item.name !== "Print"),
 		{
-			name: "Share",
+			name: t("invoice.detail.share", { defaultValue: "Share" }),
 			icon: ShareOutlined,
 			func: () => {
 				navigate(`/invoice/invoicetemplate/${invoiceId}`);
@@ -328,7 +336,7 @@ Your feedback is essential in helping us improve our services and serve you bett
 		},
 
 		{
-			name: "Mark as Paid",
+			name: t("invoice.detail.markAsPaid", { defaultValue: "Mark as Paid" }),
 			icon: PaidOutlined,
 			func: async () => {
 				await handlePaid(invoiceId);
@@ -337,7 +345,7 @@ Your feedback is essential in helping us improve our services and serve you bett
 		},
 
 		{
-			name: "Mark Send",
+			name: t("invoice.detail.markSend", { defaultValue: "Mark Send" }),
 			icon: SendOutlined,
 			func: async () => {
 				await handleMailedSent(invoiceId);
@@ -348,7 +356,7 @@ Your feedback is essential in helping us improve our services and serve you bett
 			? []
 			: [
 					{
-						name: "Delete",
+						name: t("common.delete", { defaultValue: "Delete" }),
 						icon: DeleteOutline,
 						func: () => {
 							handleInvoiceDelete();
@@ -367,7 +375,8 @@ Your feedback is essential in helping us improve our services and serve you bett
 	) {
 		return <Loader />;
 	}
-	if (!getHtmlText?.data) return <NoDataFound message="No Data Found" />;
+	if (!getHtmlText?.data)
+		return <NoDataFound message={t("common.noDataFound", { defaultValue: "No Data Found" })} />;
 
 	const openMore = Boolean(moreAnchorEl);
 	const openMenuIcon = Boolean(menuIconAnchorEl);
@@ -399,7 +408,7 @@ Your feedback is essential in helping us improve our services and serve you bett
 						}}
 					>
 						<Typography variant="body1" color={"secondary.dark"}>
-							Status:
+							{t("invoice.detail.status", { defaultValue: "Status:" })}
 						</Typography>
 						<Chip
 							label={getInvoiceData?.data?.status}
@@ -448,7 +457,7 @@ Your feedback is essential in helping us improve our services and serve you bett
 										handleQrOpen();
 									}}
 								>
-									Download UPI QR
+									{t("invoice.detail.downloadUpiQr", { defaultValue: "Download UPI QR" })}
 								</Button>
 							)}
 						<QRCodeDialog
@@ -463,7 +472,7 @@ Your feedback is essential in helping us improve our services and serve you bett
 								}}
 								variant="outlined"
 							>
-								Payment With Stripe
+								{t("invoice.detail.paymentWithStripe", { defaultValue: "Payment With Stripe" })}
 							</Button>
 						)}
 						{gllObject && getInvoiceData?.data?.status !== "Paid" && (
@@ -473,7 +482,9 @@ Your feedback is essential in helping us improve our services and serve you bett
 								}}
 								variant="outlined"
 							>
-								Payment With Growlimitless
+								{t("invoice.detail.paymentWithGrowlimitless", {
+									defaultValue: "Payment With Growlimitless",
+								})}
 							</Button>
 						)}
 						{razorpayObject && getInvoiceData?.data?.status !== "Paid" && (
@@ -488,7 +499,7 @@ Your feedback is essential in helping us improve our services and serve you bett
 								}}
 								variant="outlined"
 							>
-								Payment With Razorpay
+								{t("invoice.detail.paymentWithRazorpay", { defaultValue: "Payment With Razorpay" })}
 							</Button>
 						)}
 					</Box>

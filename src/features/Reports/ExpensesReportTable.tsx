@@ -6,8 +6,10 @@ import Loader from "@shared/components/Loader";
 import { currencyFormatter, parseDateStringToFormat } from "@shared/formatter";
 import { useMemo } from "react";
 import { CustomToolbar } from "@shared/components/CustomToolbar";
+import { useTranslation } from "react-i18next";
 
 const ExpensesReportTable = ({ fromDate, toDate }: { fromDate: string; toDate: string }) => {
+	const { t } = useTranslation();
 	const expensesDate = useReportsControllerGetExpenseReports(
 		{
 			end: toDate,
@@ -37,7 +39,7 @@ const ExpensesReportTable = ({ fromDate, toDate }: { fromDate: string; toDate: s
 	const columns: GridColDef[] = [
 		{
 			field: "category",
-			headerName: "Expense Category",
+			headerName: t("report.expenses.category", { defaultValue: "Expense Category" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -46,7 +48,7 @@ const ExpensesReportTable = ({ fromDate, toDate }: { fromDate: string; toDate: s
 		},
 		{
 			field: "expenseDate",
-			headerName: "Expense Date",
+			headerName: t("report.expenses.date", { defaultValue: "Expense Date" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -55,7 +57,7 @@ const ExpensesReportTable = ({ fromDate, toDate }: { fromDate: string; toDate: s
 		},
 		{
 			field: "amount",
-			headerName: "Expense Amount",
+			headerName: t("report.expenses.amount", { defaultValue: "Expense Amount" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {

@@ -42,8 +42,10 @@ import { useDialog } from "@shared/hooks/useDialog";
 import AppDialogHeader from "@shared/components/Dialog/AppDialogHeader";
 import { OmitCreateInvoiceProductsExtended } from "@features/Invoices/CreateInvoice";
 import { useCurrencyControllerFindAll } from "@api/services/currency";
+import { useTranslation } from "react-i18next";
 
 const CreateQuotation = ({ id }: { id?: string }) => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const [errorText, setErrorText] = useState<string | undefined>(undefined);
 	const queryClient = useQueryClient();
@@ -118,18 +120,18 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 	const formikRef = useRef<FormikProps<typeof initialValues>>(null);
 
 	const schema = yup.object().shape({
-		customer_id: yup.string().required("Customer is required"),
-		currency_id: yup.string().required("Currency is required"),
-		user_id: yup.string().required("User is required"),
-		quatation_number: yup.string().required("Quotaion number is required"),
+		customer_id: yup.string().required(t("quotationForm.validation.customerRequired")),
+		currency_id: yup.string().required(t("quotationForm.validation.currencyRequired")),
+		user_id: yup.string().required(t("quotationForm.validation.userRequired")),
+		quatation_number: yup.string().required(t("quotationForm.validation.numberRequired")),
 		reference_number: yup.string(),
-		date: yup.string().required("Quotation date is required"),
+		date: yup.string().required(t("quotationForm.validation.dateRequired")),
 		expiry_at: yup
 			.string()
-			.required("Due date is required")
+			.required(t("quotationForm.validation.expiryRequired"))
 			.test({
 				name: "expiry_at",
-				message: "Expiry date should be greater than quotation date",
+				message: t("quotationForm.validation.expiryAfterDate"),
 				test: (value) => {
 					if (formikRef.current?.values.date) {
 						return moment(value).isAfter(moment(formikRef.current?.values.date));
@@ -139,23 +141,23 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 			}),
 		notes: yup.string(),
 		private_notes: yup.string(),
-		sub_total: yup.number().required("Subtotal is required"),
+		sub_total: yup.number().required(t("quotationForm.validation.subtotalRequired")),
 		tax_id: yup.string(),
-		total: yup.number().required("Total is required"),
+		total: yup.number().required(t("quotationForm.validation.totalRequired")),
 		discountPercentage: yup.number(),
 		quotation: yup
 			.array()
 			.of(
 				yup.object({
-					product_id: yup.string().required("Product is required"),
-					quantity: yup.number().required("Quantity is required"),
-					price: yup.number().required("Price is required"),
-					total: yup.number().required("Total is required"),
+					product_id: yup.string().required(t("quotationForm.validation.productRequired")),
+					quantity: yup.number().required(t("quotationForm.validation.quantityRequired")),
+					price: yup.number().required(t("quotationForm.validation.priceRequired")),
+					total: yup.number().required(t("quotationForm.validation.totalRequired")),
 					taxes: yup.array().of(yup.string()).nullable().optional(),
 				}),
 			)
-			.min(1, "At least one product is required"),
-		template_id: yup.string().required("Template is required"),
+			.min(1, t("quotationForm.validation.atLeastOneProduct")),
+		template_id: yup.string().required(t("quotationForm.validation.templateRequired")),
 	});
 
 	const handleSubmit = async (
@@ -225,7 +227,8 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 				}}
 				textTransform={"capitalize"}
 			>
-				<img src={Constants.customImages.QuotationIcon} alt="Invoice Icon" /> New Quotation
+				<img src={Constants.customImages.QuotationIcon} alt={t("quotationForm.iconAlt")} />{" "}
+				{t("quotationForm.title")}
 			</Typography>
 			<Divider
 				sx={{
@@ -246,7 +249,7 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 									<Grid item xs={12} sm={4}>
 										<Field
 											name="customer_id"
-											label="Customer Name"
+											label={t("quotationForm.customerName")}
 											component={AutocompleteField}
 											options={customerData?.data?.map((customer) => ({
 												value: customer.id,
@@ -264,13 +267,13 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 												setOpenCustomerForm(true);
 											}}
 										>
-											Add Customer
+											{t("quotationForm.addCustomer")}
 										</Button>
 									</Grid>
 									<Grid item xs={12} sm={4}>
 										<Field
 											name="currency_id"
-											label="Currency"
+											label={t("quotationForm.currency")}
 											component={AutocompleteField}
 											loading={currencyList.isLoading || currencyList.isFetching}
 											options={currencyList?.data?.map((currency) => ({
@@ -287,7 +290,7 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 										<Field
 											name="quatation_number"
 											component={TextFormField}
-											label="Quotation Number"
+											label={t("quotationForm.number")}
 											InputProps={{
 												startAdornment: (
 													<InputAdornment position="start">
@@ -304,14 +307,14 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 										<Field
 											name="reference_number"
 											component={TextFormField}
-											label="Reference Number"
+											label={t("quotationForm.referenceNumber")}
 										/>
 									</Grid>
 									<Grid item xs={12} sm={6} lg={4}>
 										<Field
 											name="date"
 											component={DateFormField}
-											label="Quotation Date"
+											label={t("quotationForm.date")}
 											isRequired={true}
 										/>
 									</Grid>
@@ -319,7 +322,7 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 										<Field
 											name="expiry_at"
 											component={DateFormField}
-											label="Expiry Date"
+											label={t("quotationForm.expiryDate")}
 											minDate={moment(formik?.values.date).add(1, "days").toDate()}
 											isRequired={true}
 										/>
@@ -353,14 +356,14 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 										<Field
 											name="notes"
 											component={TextFormField}
-											label="Add Notes"
+											label={t("quotationForm.notes")}
 											multiline
 											rows={5}
 										/>
 										<Field
 											name="private_notes"
 											component={TextFormField}
-											label=" Private Notes"
+											label={t("quotationForm.privateNotes")}
 											multiline
 											rows={5}
 										/>
@@ -371,7 +374,7 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 									<Grid item xs={12} sm={3.5}>
 										<Field
 											name="template_id"
-											label="Quotation Template"
+											label={t("quotationForm.template")}
 											component={AutocompleteField}
 											options={quotationTemplate?.data?.map((template) => ({
 												value: template.id,
@@ -409,12 +412,12 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 											}}
 											disabled={formik.isValid === false || rows?.length === 0}
 										>
-											Preview
+											{t("quotationForm.preview")}
 										</Button>
 									</Grid>
 									<Grid item xs={12} textAlign={"center"}>
 										<Button variant="contained" type="submit">
-											Save Quotation
+											{t("quotationForm.save")}
 										</Button>
 									</Grid>
 								</Grid>
@@ -424,7 +427,7 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 				</Formik>
 			</Box>
 			<Dialog open={openQuotationPreview} onClose={handleClosePreview} fullWidth maxWidth="md">
-				<AppDialogHeader title="Quotation Preview" handleClose={handleClosePreview} />
+				<AppDialogHeader title={t("quotationForm.previewTitle")} handleClose={handleClosePreview} />
 				<DialogContent>
 					<Box
 						component="iframe"

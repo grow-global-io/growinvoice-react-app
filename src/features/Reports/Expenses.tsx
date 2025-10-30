@@ -3,8 +3,10 @@ import ExpensesReportTable from "./ExpensesReportTable";
 import { DateCalander } from "@shared/components/DateCalendar";
 import Loader from "@shared/components/Loader";
 import ReportsHooks from "./reportHooks/ReportsHooks";
+import { useTranslation } from "react-i18next";
 
 const Expenses = () => {
+	const { t } = useTranslation();
 	const { fromDate, toDate, dateRange, dayRange, setDayRange } = ReportsHooks();
 	if (dateRange?.isLoading || dateRange?.isRefetching) {
 		return <Loader />;
@@ -21,11 +23,11 @@ const Expenses = () => {
 				mb={2}
 			>
 				<Typography variant="h3" fontWeight={"500"} textTransform={"capitalize"}>
-					Expenses Report
+					{t("report.expenses.title", { defaultValue: "Expenses Report" })}
 				</Typography>
 				<Box>
 					<Typography variant="h6" fontWeight={"500"} textTransform={"capitalize"}>
-						Select Date Range
+						{t("report.selectDateRange", { defaultValue: "Select Date Range" })}
 					</Typography>
 					<DateCalander dayRange={dayRange} setDayRange={setDayRange} />
 				</Box>

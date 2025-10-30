@@ -5,6 +5,7 @@ import { TransitionProps } from "@mui/material/transitions";
 import { Box, Slide } from "@mui/material";
 import type {} from "@mui/x-data-grid/themeAugmentation";
 import { GridToolbarQuickFilter } from "@mui/x-data-grid";
+import i18next from "i18next";
 
 const Transition = React.forwardRef(function Transition(
 	props: TransitionProps & {
@@ -25,7 +26,11 @@ function QuickSearchToolbar() {
 				float: "left",
 			}}
 		>
-			<GridToolbarQuickFilter variant="outlined" />
+			<GridToolbarQuickFilter
+				variant="outlined"
+				quickFilterParser={(input) => input.split(/\s+/).filter(Boolean)}
+				placeholder={i18next.t("common.search", { defaultValue: "Search" }) as string}
+			/>
 		</Box>
 	);
 }

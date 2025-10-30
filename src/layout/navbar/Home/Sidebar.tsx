@@ -46,9 +46,11 @@ import useMobileDetection from "../../../utils/useMobileDetection";
 import { toast } from "react-toastify";
 import { findLeftDate } from "@shared/formatter";
 import IosInstallInstructionDialog from "@shared/components/IosInstallInstructionDialog";
+import { useTranslation } from "react-i18next";
 
 const drawerWidth = 240;
 function Sidebar({ children }: { children: React.ReactNode }) {
+	const { t } = useTranslation();
 	const { handleOpen } = useStoreLinkStore();
 	const { data: userData } = useAuthControllerStatus();
 	const { user } = useAuthStore();
@@ -65,7 +67,7 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 
 	const settingsWithFunc = [
 		{
-			name: "Profile",
+			name: t("nav.profile"),
 			func: () => {
 				navigate("/setting/myprofile");
 			},
@@ -77,7 +79,7 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 		// 	},
 		// },
 		{
-			name: "Logout",
+			name: t("nav.logout"),
 			func: () => {
 				queryClient.clear();
 				logout();
@@ -133,75 +135,93 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 		{
 			path: "/",
 			icon: <HomeIcon />,
-			menuName: "Home",
+			menuName: t("nav.home"),
 			menuItems: [],
 		},
 		{
 			path: "/product/productlist",
 			icon: <StoreIcon />,
-			menuName: "Product",
+			menuName: t("product.title"),
 			menuItems: [],
 		},
 		{
 			path: "/customer/customerlist",
 			icon: <PeopleIcon />,
-			menuName: "Customer",
+			menuName: t("customer.title"),
 			menuItems: [],
 		},
 		{
 			path: "/invoice",
 			icon: <ReceiptIcon />,
-			menuName: "Invoice",
+			menuName: t("invoice.title"),
 			menuItems: [
-				{ path: "/invoice/invoicelist", label: "Invoice" },
-				{ path: "/invoice/createinvoice", label: "Create Invoice" },
+				{ path: "/invoice/invoicelist", label: t("invoice.title") },
+				{ path: "/invoice/createinvoice", label: t("invoice.create") },
 			],
 		},
 		{
 			path: "/quotation",
 			icon: <FaFileInvoice fontSize={"20px"} />,
-			menuName: "Quotation",
+			menuName: t("quotation.title", { defaultValue: "Quotation" }),
 			menuItems: [
-				{ path: "/quotation/quotationlist", label: "Quotation" },
-				{ path: "/quotation/createquotation", label: "Create Quotation" },
+				{
+					path: "/quotation/quotationlist",
+					label: t("quotation.title", { defaultValue: "Quotation" }),
+				},
+				{
+					path: "/quotation/createquotation",
+					label: t("quotation.create", { defaultValue: "Create Quotation" }),
+				},
 			],
 		},
 		{
 			path: "/expenses",
 			icon: <InsertDriveFileOutlinedIcon />,
-			menuName: "Expenses",
+			menuName: t("report.expenses.title", { defaultValue: "Expenses" }),
 			menuItems: [
-				{ path: "/expenses/expenseslist", label: "Expenses" },
-				{ path: "/expenses/createexpenses", label: "Create Expense" },
+				{
+					path: "/expenses/expenseslist",
+					label: t("report.expenses.title", { defaultValue: "Expenses" }),
+				},
+				{
+					path: "/expenses/createexpenses",
+					label: t("expenses.create", { defaultValue: "Create Expense" }),
+				},
 			],
 		},
 		{
 			path: "/payment/paymentList",
 			icon: <PaymentIcon />,
-			menuName: "Payment",
+			menuName: t("payment.title"),
 			menuItems: [],
 		},
 		{
 			path: "/plan/planspage",
 			icon: <BusinessCenterOutlinedIcon />,
-			menuName: "Plans",
+			menuName: t("nav.plans"),
 			menuItems: [],
 		},
 		{
 			path: "/vendors/vendorslist",
 			icon: <SellOutlinedIcon />,
-			menuName: "Vendors",
+			menuName: t("vendor.title"),
 			menuItems: [],
 		},
 		{
 			path: "/reports",
 			icon: <SignalCellularAltOutlinedIcon />,
-			menuName: "Reports",
+			menuName: t("nav.reports"),
 			menuItems: [
-				{ path: "/reports/productsales", label: "Product Sales" },
-				{ path: "/reports/customersales", label: "Customer Sales" },
-				{ path: "/reports/profitloss", label: "Profit Loss" },
-				{ path: "/reports/Expenses", label: "Expenses" },
+				{ path: "/reports/productsales", label: t("report.sales", { defaultValue: "Sales" }) },
+				{
+					path: "/reports/customersales",
+					label: t("customer.title") + " " + t("report.sales", { defaultValue: "Sales" }),
+				},
+				{ path: "/reports/profitloss", label: t("report.profitLoss") },
+				{
+					path: "/reports/Expenses",
+					label: t("report.expenses.title", { defaultValue: "Expenses" }),
+				},
 				// { path: "/reports/vendors", label: "Vendors" },
 			],
 		},
@@ -406,7 +426,7 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 					<Box display={"flex"} alignItems={"center"} gap={1}>
 						{isMobile && isInstallable && !isInstalled && (
 							<Button sx={{ margin: 0 }} variant="contained" onClick={handleInstallClick}>
-								Install the App
+								{t("app.install", { defaultValue: "Install the App" })}
 							</Button>
 						)}
 						{/* Trial Days Display for Free Plan Users Only */}
@@ -451,7 +471,7 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 							}}
 						>
 							{user?.storeName ? (
-								<Tooltip title="Store Link">
+								<Tooltip title={t("store.link", { defaultValue: "Store Link" })}>
 									<IconButton
 										sx={{
 											gap: 1,
@@ -469,13 +489,13 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 									</IconButton>
 								</Tooltip>
 							) : (
-								<Tooltip title="Create Store">
+								<Tooltip title={t("store.create", { defaultValue: "Create Store" })}>
 									<NewReleasesIcon sx={{ color: "custom.white" }} />
 								</Tooltip>
 							)}
 						</Box>
 						<Box sx={{ flexGrow: 0 }}>
-							<Tooltip title="Open settings">
+							<Tooltip title={t("app.more", { defaultValue: "More" })}>
 								<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
 									<Avatar
 										alt="Remy Sharp"
