@@ -4,10 +4,47 @@ const {
 	disableEsLint,
 	addBundleVisualizer,
 	addWebpackAlias,
-	adjustWorkbox,
 	useEslintRc,
 } = require("customize-cra");
+const { InjectManifest } = require("workbox-webpack-plugin");
 const path = require("path");
+
+const addWorkboxInjectManifest = () => (config, env) => {
+	// env might be undefined, so check NODE_ENV directly
+	const isProduction = process.env.NODE_ENV === "production";
+
+	if (isProduction) {
+		// Remove any existing workbox plugins
+		config.plugins = config.plugins.filter(
+			(plugin) =>
+				plugin.constructor.name !== "GenerateSW" && plugin.constructor.name !== "InjectManifest",
+		);
+
+		const swSrcPath = path.resolve(__dirname, "src/src-sw.js");
+
+		// Check if file exists
+		const fs = require("fs");
+		if (!fs.existsSync(swSrcPath)) {
+			return config;
+		} else {
+			console.log("Found src-sw.js");
+		}
+
+		// Add InjectManifest plugin
+		const workboxPlugin = new InjectManifest({
+			swSrc: swSrcPath,
+			swDest: "service-worker.js",
+			exclude: [/\.map$/, /asset-manifest\.json$/, /LICENSE/],
+			maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
+		});
+
+		config.plugins.push(workboxPlugin);
+	} else {
+		console.log("Not in production mode, skipping Workbox");
+	}
+
+	return config;
+};
 
 module.exports = override(
 	// enable legacy decorators babel plugin
@@ -31,11 +68,5 @@ module.exports = override(
 		["@store"]: path.resolve(__dirname, "src/store"),
 	}),
 
-	// adjust the underlying workbox
-	adjustWorkbox((wb) =>
-		Object.assign(wb, {
-			skipWaiting: true,
-			exclude: (wb.exclude || []).concat("index.html"),
-		}),
-	),
+	addWorkboxInjectManifest(),
 );

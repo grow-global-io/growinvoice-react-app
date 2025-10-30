@@ -98,7 +98,9 @@
     "orval": "^7.0.1",
     "prettier": "^3.3.3",
     "react-app-rewired": "^2.2.1",
-    "simple-zustand-devtools": "^1.1.0"
+    "simple-zustand-devtools": "^1.1.0",
+    "workbox-cli": "^7.3.0",
+    "workbox-webpack-plugin": "^7.3.0"
   },
   "resolutions": {
     "eslint-plugin-react": "7.35.0"
