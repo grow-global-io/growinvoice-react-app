@@ -24,7 +24,7 @@ const detectAndSetLanguage = async () => {
 		if (!res.ok) throw new Error("ipapi request failed");
 		const data = await res.json();
 		const countryName = (data?.country_name as string) || "";
-		const detectedLang = countryName.toLowerCase() === "spain" ? "fi" : "en";
+		const detectedLang = countryName.toLowerCase() === "finland" ? "fi" : "en";
 
 		// Only change if different from current language
 		if (i18n.language !== detectedLang) {
