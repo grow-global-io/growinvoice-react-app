@@ -56,6 +56,7 @@ import { convertToReadableText, formatDateToIso } from "@shared/formatter";
 import SubtotalFooter from "@shared/components/SubtotalFooter";
 import { useInvoicesettingsControllerFindFirst } from "@api/services/invoicesettings";
 import { useCurrencyControllerFindAll } from "@api/services/currency";
+import { useTranslation } from "react-i18next";
 
 export type OmitCreateInvoiceProductsExtended = Omit<
 	OmitCreateInvoiceProductsDto,
@@ -69,6 +70,7 @@ export type OmitCreateInvoiceProductsExtended = Omit<
 };
 
 const CreateInvoice = ({ id }: { id?: string }) => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const [rows, setRows] = useState<GridRowsProp<OmitCreateInvoiceProductsExtended>>([]);
@@ -150,17 +152,17 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 	const formikRef = useRef<FormikProps<typeof initialValues>>(null);
 
 	const schema = yup.object().shape({
-		currency_id: yup.string().required("Currency is required"),
-		customer_id: yup.string().required("Customer is required"),
-		invoice_number: yup.string().required("Invoice number is required"),
+		currency_id: yup.string().required(t("invoiceForm.validation.currencyRequired")),
+		customer_id: yup.string().required(t("invoiceForm.validation.customerRequired")),
+		invoice_number: yup.string().required(t("invoiceForm.validation.invoiceNumberRequired")),
 		reference_number: yup.string(),
-		date: yup.string().required("Invoice date is required"),
+		date: yup.string().required(t("invoiceForm.validation.invoiceDateRequired")),
 		due_date: yup
 			.string()
-			.required("Due date is required")
+			.required(t("invoiceForm.validation.dueDateRequired"))
 			.test({
 				name: "due_date",
-				message: "Due date should be greater than invoice date",
+				message: t("invoiceForm.validation.dueDateAfterInvoice"),
 				test: (value) => {
 					if (formikRef.current?.values.date) {
 						return moment(value).isAfter(moment(formikRef.current?.values.date));
@@ -168,27 +170,30 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 					return true;
 				},
 			}),
-		is_recurring: yup.boolean().required("Is recurring is required"),
+		is_recurring: yup.boolean().required(t("invoiceForm.validation.isRecurringRequired")),
 		notes: yup.string(),
-		paymentId: yup.string().required("Payment details is required"),
-		sub_total: yup.number().required("Subtotal is required"),
+		paymentId: yup.string().required(t("invoiceForm.validation.paymentDetailsRequired")),
+		sub_total: yup.number().required(t("invoiceForm.validation.subtotalRequired")),
 		tax_id: yup.string(),
-		total: yup.number().required("Total is required"),
-		discountPercentage: yup.number().min(0, "discount must be greater than 0").max(100),
+		total: yup.number().required(t("invoiceForm.validation.totalRequired")),
+		discountPercentage: yup.number().min(0, t("invoiceForm.validation.discountMin")).max(100),
 		recurring: yup
 			.string()
-			.oneOf(Object.values(CreateInvoiceWithProductsRecurring), "Invalid Type"),
+			.oneOf(
+				Object.values(CreateInvoiceWithProductsRecurring),
+				t("invoiceForm.validation.invalidType"),
+			),
 		product: yup.array().of(
 			yup.object({
-				product_id: yup.string().required("Product is required"),
-				quantity: yup.number().required("Quantity is required"),
-				price: yup.number().required("Price is required"),
-				total: yup.number().required("Total is required"),
+				product_id: yup.string().required(t("invoiceForm.validation.productRequired")),
+				quantity: yup.number().required(t("invoiceForm.validation.quantityRequired")),
+				price: yup.number().required(t("invoiceForm.validation.priceRequired")),
+				total: yup.number().required(t("invoiceForm.validation.totalRequired")),
 				taxes: yup.array().of(yup.string()).nullable().optional(),
 			}),
 		),
-		user_id: yup.string().required("User is required"),
-		template_id: yup.string().required("Template is required"),
+		user_id: yup.string().required(t("invoiceForm.validation.userRequired")),
+		template_id: yup.string().required(t("invoiceForm.validation.templateRequired")),
 	});
 
 	const handleSubmit = async (
@@ -196,10 +201,10 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 		actions: FormikHelpers<typeof initialValues>,
 	) => {
 		if (rows?.length === 0) {
-			setProductErrorText("At least one product is required");
+			setProductErrorText(t("invoiceForm.validation.atLeastOneProduct"));
 			return;
 		} else if (rows?.find((row) => row.product_id === "")) {
-			setProductErrorText("Fullfill all the product details");
+			setProductErrorText(t("invoiceForm.validation.fillAllProductDetails"));
 			return;
 		}
 
@@ -294,7 +299,8 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 				}}
 				textTransform={"capitalize"}
 			>
-				<img src={Constants.customImages.invoiceIcon} alt="Invoice Icon" /> New Invoices
+				<img src={Constants.customImages.invoiceIcon} alt={t("invoiceForm.invoiceIconAlt")} />{" "}
+				{t("invoiceForm.title")}
 			</Typography>
 			<Divider
 				sx={{
@@ -315,7 +321,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 									<Grid item xs={12} sm={4}>
 										<Field
 											name="customer_id"
-											label="Customer Name"
+											label={t("invoiceForm.customerName")}
 											component={AutocompleteField}
 											options={customerData?.data?.map((customer) => ({
 												value: customer.id,
@@ -333,19 +339,24 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 												setOpenCustomerForm(true);
 											}}
 										>
-											Add Customer
+											{t("invoiceForm.addCustomer")}
 										</Button>
 									</Grid>
 									<Grid item xs={12} sm={4}>
 										<Field
 											name="currency_id"
-											label="Currency"
+											label={t("invoiceForm.currency")}
 											component={AutocompleteField}
 											loading={currencyList.isLoading || currencyList.isFetching}
-											options={currencyList?.data?.map((currency) => ({
-												value: currency.id,
-												label: `${currency.short_code} - ${currency.name}`,
-											}))}
+											options={currencyList?.data
+												?.filter(
+													(currency) =>
+														currency.short_code === "EUR" || currency.short_code === "INR",
+												)
+												?.map((currency) => ({
+													value: currency.id,
+													label: `${currency.short_code} - ${currency.name}`,
+												}))}
 											isRequired={true}
 										/>
 									</Grid>
@@ -356,11 +367,13 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 										<Field
 											name="invoice_number"
 											component={TextFormField}
-											label="Invoice Number"
+											label={t("invoiceForm.invoiceNumber")}
 											InputProps={{
 												startAdornment: (
 													<InputAdornment position="start">
-														{invoiceSettings?.data?.invoicePrefix ?? "INV"} -
+														{invoiceSettings?.data?.invoicePrefix ??
+															t("invoiceForm.invoicePrefixFallback")}
+														{"INV"}-
 													</InputAdornment>
 												),
 											}}
@@ -371,14 +384,14 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 										<Field
 											name="reference_number"
 											component={TextFormField}
-											label="Reference Number"
+											label={t("invoiceForm.referenceNumber")}
 										/>
 									</Grid>
 									<Grid item xs={12} sm={4}>
 										<Field
 											name="date"
 											component={DateFormField}
-											label="Invoice Date"
+											label={t("invoiceForm.invoiceDate")}
 											// minDate={new Date()}
 											isRequired={true}
 										/>
@@ -387,7 +400,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 										<Field
 											name="due_date"
 											component={DateFormField}
-											label="Invoice Due Date"
+											label={t("invoiceForm.invoiceDueDate")}
 											minDate={moment(formik?.values.date).add(1, "days").toDate()}
 											isRequired={true}
 										/>
@@ -395,7 +408,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 									<Grid item xs={12} sm={4} display={"flex"} alignItems={"center"}>
 										<Field
 											name="is_recurring"
-											label="Is Recurring"
+											label={t("invoiceForm.isRecurring")}
 											component={CheckBoxFormField}
 											isRequired={true}
 										/>
@@ -404,7 +417,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 										<Grid item xs={12} sm={4}>
 											<Field
 												name="recurring"
-												label="Recurring"
+												label={t("invoiceForm.recurring")}
 												component={AutocompleteField}
 												options={Object.keys(CreateInvoiceWithProductsRecurring).map(
 													stringToListDto,
@@ -443,13 +456,13 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 										<Field
 											name="notes"
 											component={TextFormField}
-											label="Notes"
+											label={t("invoiceForm.notes")}
 											multiline
 											rows={5}
 										/>
 										<Field
 											name="paymentId"
-											label="Payment Details"
+											label={t("invoiceForm.paymentDetails")}
 											component={AutocompleteField}
 											options={paymentData?.data?.map((payment) => ({
 												value: payment.id,
@@ -463,7 +476,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 										/>
 										<Box>
 											<Button variant="text" startIcon={<AddIcon />} onClick={handleClickOpen}>
-												Add Payment
+												{t("invoiceForm.addPayment")}
 											</Button>
 										</Box>
 										{formik?.values.paymentId ? (
@@ -490,10 +503,10 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 															{payment.paymentType === "IndianBanks" && (
 																<>
 																	<Typography variant="subtitle1">
-																		Account Number: <b>{payment.account_no}</b>
+																		{t("invoiceForm.accountNumber")}: <b>{payment.account_no}</b>
 																	</Typography>
 																	<Typography variant="subtitle1">
-																		IFSC Code: <b>{payment.ifscCode}</b>
+																		{t("invoiceForm.ifscCode")}: <b>{payment.ifscCode}</b>
 																	</Typography>
 																</>
 															)}
@@ -505,10 +518,10 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 															{payment.paymentType === "EuropeanBank" && (
 																<>
 																	<Typography variant="subtitle1">
-																		BIC Number: <b>{payment.bicNumber}</b>
+																		{t("invoiceForm.bicNumber")}: <b>{payment.bicNumber}</b>
 																	</Typography>
 																	<Typography variant="subtitle1">
-																		IBAN Number: <b>{payment.ibanNumber}</b>
+																		{t("invoiceForm.ibanNumber")}: <b>{payment.ibanNumber}</b>
 																	</Typography>
 																</>
 															)}
@@ -534,7 +547,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 															)}
 															{payment.paymentType === "SwiftCode" && (
 																<Typography variant="subtitle1">
-																	Swift Code: <b>{payment.swiftCode}</b>
+																	{t("invoiceForm.swiftCode")}: <b>{payment.swiftCode}</b>
 																</Typography>
 															)}
 														</Box>
@@ -550,7 +563,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 									<Grid item xs={12} sm={3.5}>
 										<Field
 											name="template_id"
-											label="Invoice Template"
+											label={t("invoiceForm.invoiceTemplate")}
 											component={AutocompleteField}
 											options={invoiceTemplateFindAll?.data?.map((template) => ({
 												value: template.id,
@@ -592,12 +605,12 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 											}}
 											disabled={formik.isValid === false || rows?.length === 0}
 										>
-											Preview
+											{t("invoiceForm.preview")}
 										</Button>
 									</Grid>
 									<Grid item xs={12} textAlign={"center"}>
 										<Button variant="contained" type="submit">
-											Save Invoice
+											{t("invoiceForm.saveInvoice")}
 										</Button>
 									</Grid>
 								</Grid>
@@ -608,7 +621,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 			</Box>
 
 			<Dialog open={openInvoicePreview} onClose={handleClosePreview} fullWidth maxWidth="md">
-				<AppDialogHeader title="Invoice Preview" handleClose={handleClosePreview} />
+				<AppDialogHeader title={t("invoiceForm.invoicePreview")} handleClose={handleClosePreview} />
 				<DialogContent>
 					<Box
 						component="iframe"

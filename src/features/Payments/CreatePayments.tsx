@@ -2,6 +2,7 @@ import { Button, Drawer } from "@mui/material";
 import PaymentForm from "./PaymentForm";
 import { useCreatePaymentStore } from "@store/createPaymentStore";
 import AddIcon from "@mui/icons-material/Add";
+import { useTranslation } from "react-i18next";
 
 export const PaymentDrawer = ({
 	open,
@@ -16,6 +17,7 @@ export const PaymentDrawer = ({
 );
 
 const CreatePayments = () => {
+	const { t } = useTranslation();
 	const { setOpenPaymentForm } = useCreatePaymentStore.getState();
 	return (
 		<Button
@@ -25,7 +27,7 @@ const CreatePayments = () => {
 			}}
 			startIcon={<AddIcon />}
 		>
-			Create New Payment
+			{t("payment.createNew", { defaultValue: "Create New Payment" })}
 		</Button>
 	);
 };

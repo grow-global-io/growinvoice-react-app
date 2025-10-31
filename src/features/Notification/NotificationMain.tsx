@@ -10,9 +10,11 @@ import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import NoDataFound from "@shared/components/NoDataFound";
 import NotificationListItem from "./NotificationItem";
 import { NotificationDto } from "@api/services/models";
+import { useTranslation } from "react-i18next";
 
 const NotificationMain = () => {
 	const queryClient = useQueryClient();
+	const { t } = useTranslation();
 	const { handleClickOpen, handleClose, open } = useDialog();
 	const observer = useRef<IntersectionObserver | null>(null); // Add type annotation for the observer ref
 	const markasRead = useNotificationsControllerMarkAsRead();
@@ -118,7 +120,7 @@ const NotificationMain = () => {
 									fontSize: 16,
 								}}
 							>
-								NOTIFICATIONS
+								{t("notification.title", { defaultValue: "Notifications" })}
 							</Typography>
 						</Stack>
 						<Box sx={{ pt: 0.1 }}>
@@ -129,7 +131,7 @@ const NotificationMain = () => {
 								color="primary"
 								onClick={handleMarkAsRead}
 							>
-								Mark all as read
+								{t("notification.markAllAsRead", { defaultValue: "Mark all as read" })}
 							</Button>
 						</Box>
 					</Box>
@@ -152,9 +154,9 @@ const NotificationMain = () => {
 							),
 						)
 					) : (
-						<NoDataFound message="No  Notifications..." />
+						<NoDataFound message={t("notification.none", { defaultValue: "No notifications" })} />
 					)}
-					{isFetchingNextPage && <>Loading..............</>}
+					{isFetchingNextPage && <>{t("common.loading", { defaultValue: "Loading..." })}</>}
 				</Paper>
 			</Drawer>
 		</>

@@ -21,6 +21,8 @@ import { formatCurrency } from "@shared/formatter";
 import React, { useMemo } from "react";
 import { environment } from "@enviroment";
 import { useInvoiceHook } from "@features/Invoices/invoiceHooks/useInvoiceHook";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
 
 const style = {
 	color: "secondary.dark",
@@ -29,17 +31,26 @@ const style = {
 
 function formatPlansPriceUnit(days: number) {
 	if (days % 30 === 0) {
-		if (days === 30) return "Monthly";
-		else return `${days / 30} months`;
+		if (days === 30) return i18n.t("plans.priceUnit.monthly", { defaultValue: "Monthly" });
+		else
+			return i18n.t("plans.priceUnit.months", {
+				defaultValue: "{{count}} months",
+				count: days / 30,
+			});
 	}
 	if (days % 365 === 0) {
-		if (days === 365) return "Yearly";
-		else return `${days / 365} years`;
+		if (days === 365) return i18n.t("plans.priceUnit.yearly", { defaultValue: "Yearly" });
+		else
+			return i18n.t("plans.priceUnit.years", {
+				defaultValue: "{{count}} years",
+				count: days / 365,
+			});
 	}
-	return `${days} days`;
+	return i18n.t("plans.priceUnit.days", { defaultValue: "{{count}} days", count: days });
 }
 
 const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
+	const { t } = useTranslation();
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
 
@@ -58,7 +69,12 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 	};
 
 	const [selectedIndex, setSelectedIndex] = React.useState(0);
-	const options = ["Select Payment Method", "Stripe", "Growlimitless", "Razorpay"];
+	const options = [
+		t("plans.payment.selectMethod", { defaultValue: "Select Payment Method" }),
+		t("plans.payment.stripe", { defaultValue: "Stripe" }),
+		t("plans.payment.growlimitless", { defaultValue: "Growlimitless" }),
+		t("plans.payment.razorpay", { defaultValue: "Razorpay" }),
+	];
 
 	const { user } = useAuthStore();
 	const createPlan = usePaymentsControllerGrowlimitlessPyamentsForPlans();
@@ -115,7 +131,10 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 			<Grid container sx={style}>
 				<Grid item xs={12} textAlign={"center"}>
 					<Typography variant="h4" p={3}>
-						{item?.name} {checkIsSubscribe ? "(Current Plan)" : ""}
+						{item?.name}{" "}
+						{checkIsSubscribe
+							? t("plans.currentPlanSuffix", { defaultValue: "(Current Plan)" })
+							: ""}
 					</Typography>
 				</Grid>
 				<Grid item xs={12} display={"flex"} justifyContent={"center"} alignItems={"center"}>
@@ -132,7 +151,10 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 								<ListItemText
 									primary={
 										<Typography variant="h5" color={"secondary.dark"} fontWeight={500} ml={0}>
-											{item?.price === 0 ? "Unlimited" : plan?.count} {plan?.feature}
+											{item?.price === 0
+												? t("plans.unlimited", { defaultValue: "Unlimited" })
+												: plan?.count}{" "}
+											{plan?.feature}
 										</Typography>
 									}
 								/>
@@ -148,7 +170,9 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 						onClick={handleClickListItem}
 						aria-controls="lock-menu"
 					>
-						{item?.price === 0 ? "Start Your Free Trial" : "Upgrade"}
+						{item?.price === 0
+							? t("plans.startTrial", { defaultValue: "Start Your Free Trial" })
+							: t("plans.upgrade", { defaultValue: "Upgrade" })}
 					</Button>
 					<Menu
 						id="lock-menu"

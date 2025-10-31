@@ -2,6 +2,7 @@ import { Drawer, Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import CustomerForm from "./CustomerForm";
 import { useCreateCustomerStore } from "@store/createCustomerStore";
+import { useTranslation } from "react-i18next";
 // import { useDialog } from "@shared/hooks/useDialog";
 
 export const CustomerDrawer = ({
@@ -18,11 +19,12 @@ export const CustomerDrawer = ({
 
 export default function CreateCustomer() {
 	const { setOpenCustomerForm } = useCreateCustomerStore.getState();
+	const { t } = useTranslation();
 
 	return (
 		<>
 			<Button variant="contained" startIcon={<AddIcon />} onClick={() => setOpenCustomerForm(true)}>
-				Create New Customer
+				{t("customerForm.createNew")}
 			</Button>
 		</>
 	);

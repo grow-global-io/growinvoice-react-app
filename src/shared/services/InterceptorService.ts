@@ -2,6 +2,7 @@ import { AxiosInstance } from "axios";
 import { AlertService } from "./AlertService";
 import { LoaderService } from "./LoaderService";
 import { toastWithButton } from "./toastWithButton";
+import i18next from "i18next";
 // import { RsaService } from "./RsaService";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -18,6 +19,9 @@ export class InterceptorService {
 				if (authToken) {
 					config.headers["Authorization"] = `Bearer ${authToken}`;
 				}
+
+				// Attach preferred language for server-side localization (e.g., invoice templates)
+				config.headers["Accept-Language"] = i18next.language || "en";
 
 				return config;
 			},

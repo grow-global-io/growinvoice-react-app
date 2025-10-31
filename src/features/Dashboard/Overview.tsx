@@ -15,9 +15,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import ReportViewCard from "./ReportViewCard";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { getOpenaiControllerDashboardDataGetQueryKey } from "@api/services/openai";
+import { useTranslation } from "react-i18next";
 // import GetStartedErrorComp from "@shared/components/GetStartedErrorComp";
 
 const Overview = () => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
 	const queryClient = useQueryClient();
@@ -37,14 +39,14 @@ const Overview = () => {
 	return (
 		<>
 			<Typography variant="h3" textTransform={"capitalize"} mb={"10px"}>
-				Overview
+				{t("nav.dashboard")}
 			</Typography>
 			<ExpensesSummary />
 			<Grid container spacing={2} mt={1}>
 				<Grid item xs={12} textAlign={"right"}>
 					<Box display={"flex"} justifyContent={"flex-end"} mb={2}>
 						<Button variant="contained" color="secondary" onClick={() => navigate("/ai-store")}>
-							Roll UP AI Store
+							{t("dashboard.rollUpAiStore", { defaultValue: "Roll UP AI Store" })}
 						</Button>
 						<Button
 							variant="contained"
@@ -53,13 +55,17 @@ const Overview = () => {
 								navigate("/dashboard");
 							}}
 						>
-							AI Assistant
+							{t("dashboard.aiAssistant", { defaultValue: "AI Assistant" })}
 						</Button>
 					</Box>
 				</Grid>
 				{dashbaordAll?.data?.length == 0 && (
 					<Grid item xs={12}>
-						<LottieNoDataFound message="No Dashboard Widgets Found" />
+						<LottieNoDataFound
+							message={t("dashboard.noWidgetsFound", {
+								defaultValue: "No Dashboard Widgets Found",
+							})}
+						/>
 					</Grid>
 				)}
 			</Grid>
@@ -90,15 +96,17 @@ const Overview = () => {
 											iconColor="error"
 											onClick={async () => {
 												handleOpen({
-													title: "Delete Data",
-													message: "Are you sure you want to delete this data?",
+													title: t("dashboard.deleteData", { defaultValue: "Delete Data" }),
+													message: t("dashboard.deleteConfirm", {
+														defaultValue: "Are you sure you want to delete this data?",
+													}),
 													onConfirm: async () => {
 														await handleDelete(dashboard?.id);
 													},
 													onCancel: () => {
 														cleanUp();
 													},
-													confirmButtonText: "Delete",
+													confirmButtonText: t("app.delete"),
 												});
 											}}
 										/>

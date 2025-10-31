@@ -1,10 +1,15 @@
 import { toast } from "react-toastify";
+import i18next from "i18next";
 
 export const toastWithButton = () => {
 	return toast.error(
 		({ closeToast }) => (
 			<div>
-				<div>Limit exceeded. Please upgrade your plan to add more features.</div>
+				<div>
+					{i18next.t("plans.limitExceeded", {
+						defaultValue: "Limit exceeded. Please upgrade your plan to add more features.",
+					})}
+				</div>
 
 				<button
 					onClick={() => {
@@ -21,7 +26,7 @@ export const toastWithButton = () => {
 						borderRadius: "5px",
 					}}
 				>
-					Click here to upgrade
+					{i18next.t("plans.upgradeCta", { defaultValue: "Click here to upgrade" })}
 				</button>
 			</div>
 		),

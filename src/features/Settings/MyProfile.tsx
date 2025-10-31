@@ -126,10 +126,14 @@ const MyProfile = () => {
 									label="Currency"
 									loading={currencyList.isLoading || currencyList.isFetching}
 									component={AutocompleteField}
-									options={currencyList?.data?.map((currency) => ({
-										value: currency.id,
-										label: `${currency.short_code} - ${currency.name}`,
-									}))}
+									options={currencyList?.data
+										?.filter(
+											(currency) => currency.short_code === "EUR" || currency.short_code === "INR",
+										)
+										?.map((currency) => ({
+											value: currency.id,
+											label: `${currency.short_code} - ${currency.name}`,
+										}))}
 								/>
 							</Grid>
 							<Grid item xs={12} sm={12}>

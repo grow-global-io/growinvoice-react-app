@@ -4,7 +4,6 @@ const {
 	disableEsLint,
 	addBundleVisualizer,
 	addWebpackAlias,
-	useEslintRc,
 } = require("customize-cra");
 const { InjectManifest } = require("workbox-webpack-plugin");
 const path = require("path");

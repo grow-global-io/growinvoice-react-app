@@ -8,8 +8,10 @@ import { currencyFormatter } from "@shared/formatter";
 import { useAuthStore } from "@store/auth";
 import { useInvoiceHook } from "@features/Invoices/invoiceHooks/useInvoiceHook";
 import { CustomToolbar } from "@shared/components/CustomToolbar";
+import { useTranslation } from "react-i18next";
 
 const ProfitLossTableList = ({ fromDate, toDate }: { fromDate: string; toDate: string }) => {
+	const { t } = useTranslation();
 	const { user } = useAuthStore();
 	const { handleView } = useInvoiceHook();
 	const profitLossReportData = useReportsControllerGetProfitLossReports(
@@ -62,7 +64,7 @@ const ProfitLossTableList = ({ fromDate, toDate }: { fromDate: string; toDate: s
 	const columns: GridColDef[] = [
 		{
 			field: "type",
-			headerName: "Type",
+			headerName: t("report.pl.type", { defaultValue: "Type" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -81,7 +83,7 @@ const ProfitLossTableList = ({ fromDate, toDate }: { fromDate: string; toDate: s
 		},
 		{
 			field: "id",
-			headerName: "Expense ID",
+			headerName: t("report.pl.expenseId", { defaultValue: "Expense ID" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -90,7 +92,7 @@ const ProfitLossTableList = ({ fromDate, toDate }: { fromDate: string; toDate: s
 		},
 		{
 			field: "number",
-			headerName: "Invoice Number",
+			headerName: t("report.pl.invoiceNumber", { defaultValue: "Invoice Number" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -110,7 +112,7 @@ const ProfitLossTableList = ({ fromDate, toDate }: { fromDate: string; toDate: s
 		},
 		{
 			field: "category",
-			headerName: "Category",
+			headerName: t("report.pl.category", { defaultValue: "Category" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -119,7 +121,7 @@ const ProfitLossTableList = ({ fromDate, toDate }: { fromDate: string; toDate: s
 		},
 		{
 			field: "amount",
-			headerName: "Amount",
+			headerName: t("report.pl.amount", { defaultValue: "Amount" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -137,7 +139,7 @@ const ProfitLossTableList = ({ fromDate, toDate }: { fromDate: string; toDate: s
 
 		{
 			field: "referenceNumber",
-			headerName: "Reference Number",
+			headerName: t("report.pl.referenceNumber", { defaultValue: "Reference Number" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {

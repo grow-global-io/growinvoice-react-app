@@ -6,6 +6,7 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Typography from "@mui/material/Typography";
 import "react-phone-number-input/style.css";
+import { useTranslation } from "react-i18next";
 
 const phoneInput = (props: TextFieldProps, ref: React.Ref<HTMLInputElement>) => {
 	return <TextField {...props} inputRef={ref} sx={{ mt: 2 }} />;
@@ -20,6 +21,7 @@ export const PhoneInputFormField: React.FC<
 		defaultCountry?: Country;
 	}
 > = ({ field, form, label, defaultCountry, ...props }) => {
+	const { t } = useTranslation();
 	const errorText = getIn(form.touched, field.name) && getIn(form.errors, field.name);
 
 	return (
@@ -39,7 +41,11 @@ export const PhoneInputFormField: React.FC<
 				fullWidth
 				id={field.name}
 				error={!!errorText}
-				placeholder={label ? `Enter ${label?.toLowerCase()}` : undefined}
+				placeholder={
+					label
+						? t("common.enter", { label: label?.toLowerCase(), defaultValue: "Enter {{label}}" })
+						: undefined
+				}
 				helperText={errorText}
 				label={undefined}
 				InputLabelProps={{

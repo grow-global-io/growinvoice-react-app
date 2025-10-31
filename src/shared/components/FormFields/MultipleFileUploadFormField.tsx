@@ -12,6 +12,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../firebase";
 import { AlertService } from "@shared/services/AlertService";
+import { useTranslation } from "react-i18next";
 
 type UploadFileResponse = {
 	filename: string;
@@ -27,6 +28,7 @@ const MultipleFileUploadFormField: React.FC<
 		accept?: string;
 	}
 > = ({ field, form, label, accept = "image/*" }) => {
+	const { t } = useTranslation();
 	const [name, setName] = React.useState<string>("");
 	const [uploadProgress, setUploadProgress] = React.useState<Record<string, number>>({});
 	const errorText = getIn(form.touched, field.name) && getIn(form.errors, field.name);
@@ -63,7 +65,11 @@ const MultipleFileUploadFormField: React.FC<
 					},
 					(error) => {
 						console.error("[useFileUpload] uploadFile error:", error);
-						AlertService.instance.errorMessage("File upload failed. Please try again.");
+						AlertService.instance.errorMessage(
+							t("common.fileUploadFailed", {
+								defaultValue: "File upload failed. Please try again.",
+							}),
+						);
 						reject(error);
 					},
 					async () => {
@@ -72,7 +78,7 @@ const MultipleFileUploadFormField: React.FC<
 							filename: file.name,
 							fileurl: url,
 							gcsPath: uploadTask.snapshot.ref.fullPath,
-							message: "File uploaded successfully",
+							message: t("common.fileUploaded", { defaultValue: "File uploaded successfully" }),
 						});
 
 						// if (!props.hideSuccessAlert) {
@@ -102,7 +108,10 @@ const MultipleFileUploadFormField: React.FC<
 				error={!!errorText}
 				value={name}
 				onChange={(event) => setName(event.target.value)}
-				placeholder={`Upload ${label?.toLowerCase() ?? "file"}`}
+				placeholder={t("common.uploadPlaceholder", {
+					label: label?.toLowerCase() ?? "file",
+					defaultValue: "Upload {{label}}",
+				})}
 				helperText={errorText}
 				label={undefined}
 				InputLabelProps={{
@@ -143,12 +152,12 @@ const MultipleFileUploadFormField: React.FC<
 			/>
 			{fileSizeError && (
 				<Typography variant="caption" color="error">
-					Maximum file size is 5MB
+					{t("common.maxFileSize", { defaultValue: "Maximum file size is 5MB" })}
 				</Typography>
 			)}
 			{docTypeError && (
 				<Typography variant="caption" color="error">
-					Only PDF files are allowed
+					{t("common.onlyPdfAllowed", { defaultValue: "Only PDF files are allowed" })}
 				</Typography>
 			)}
 			{isPending && <CircularProgress size={20} color="secondary" />}

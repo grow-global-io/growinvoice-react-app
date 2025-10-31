@@ -6,6 +6,7 @@ import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { Button, Menu, MenuItem } from "@mui/material";
 import { GridToolbarContainer } from "@mui/x-data-grid";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 export function CustomToolbar({
 	rows,
@@ -13,6 +14,7 @@ export function CustomToolbar({
 	// eslint-disable-next-line
 	rows: any;
 }) {
+	const { t } = useTranslation();
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -35,11 +37,11 @@ export function CustomToolbar({
 	};
 	const menuLists = [
 		{
-			name: "Download as CSV",
+			name: t("report.export.csv", { defaultValue: "Download as CSV" }),
 			func: handleCreatCsvFile,
 		},
 		{
-			name: "Download as Excel",
+			name: t("report.export.excel", { defaultValue: "Download as Excel" }),
 			func: handleCreatExcelFile,
 		},
 	];
@@ -49,7 +51,7 @@ export function CustomToolbar({
 			<GridToolbarContainer>
 				<Button onClick={handleClick}>
 					<FileDownloadOutlinedIcon />
-					Export
+					{t("report.export.title", { defaultValue: "Export" })}
 				</Button>
 			</GridToolbarContainer>
 			<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>

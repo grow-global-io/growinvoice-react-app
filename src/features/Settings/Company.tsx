@@ -16,8 +16,10 @@ import AvatarFormField from "@shared/components/FormFields/AvatarFormField";
 import Loader from "@shared/components/Loader";
 import { useQueryClient } from "@tanstack/react-query";
 import { getAuthControllerStatusQueryKey } from "@api/services/auth";
+import { useTranslation } from "react-i18next";
 
 const Company = () => {
+	const { t } = useTranslation();
 	const queryClient = useQueryClient();
 	const { user, refecthUser } = useAuthStore();
 	const countryFindAll = useCurrencyControllerFindCountries();
@@ -37,16 +39,32 @@ const Company = () => {
 		user_id: user?.id ?? "",
 	};
 	const schema = yup.object().shape({
-		name: yup.string().required("Company name is required"),
-		phone: yup.number().required("Phone Number is required"),
+		name: yup
+			.string()
+			.required(t("settings.company.nameRequired", { defaultValue: "Company name is required" })),
+		phone: yup
+			.number()
+			.required(t("settings.company.phoneRequired", { defaultValue: "Phone Number is required" })),
 		vat: yup.string(),
-		country_id: yup.string().required("Select Country"),
-		state_id: yup.string().required("Select state"),
-		city: yup.string().required("Select city"),
-		zip: yup.string().required("Postal Code is required"),
-		address: yup.string().required("Address is required"),
+		country_id: yup
+			.string()
+			.required(t("settings.company.countryRequired", { defaultValue: "Select Country" })),
+		state_id: yup
+			.string()
+			.required(t("settings.company.stateRequired", { defaultValue: "Select state" })),
+		city: yup
+			.string()
+			.required(t("settings.company.cityRequired", { defaultValue: "Select city" })),
+		zip: yup
+			.string()
+			.required(t("settings.company.zipRequired", { defaultValue: "Postal Code is required" })),
+		address: yup
+			.string()
+			.required(t("settings.company.addressRequired", { defaultValue: "Address is required" })),
 		logo: yup.string(),
-		user_id: yup.string().required("user Id is required"),
+		user_id: yup
+			.string()
+			.required(t("settings.company.userIdRequired", { defaultValue: "user Id is required" })),
 	});
 	const handleSubmit = async (
 		values: typeof initialValues,
@@ -78,21 +96,28 @@ const Company = () => {
 							<Form>
 								<Grid container spacing={2}>
 									<Grid item xs={12}>
-										<Field name="logo" label="Logo" component={AvatarFormField} isRequired={true} />
+										<Field
+											name="logo"
+											label={t("settings.company.logo", { defaultValue: "Logo" })}
+											component={AvatarFormField}
+											isRequired={true}
+										/>
 									</Grid>
 									<Grid item xs={12} sm={6}>
 										<Field
 											name="name"
-											label="Company Name"
+											label={t("settings.company.name", { defaultValue: "Company Name" })}
 											component={TextFormField}
 											isRequired={true}
-											placeholder={"Enter company name"}
+											placeholder={t("settings.company.namePlaceholder", {
+												defaultValue: "Enter company name",
+											})}
 										/>
 									</Grid>
 									<Grid item xs={12} sm={6}>
 										<Field
 											name="phone"
-											label="Phone"
+											label={t("settings.company.phone", { defaultValue: "Phone" })}
 											component={PhoneInputFormField}
 											isRequired={true}
 											placeholder={"Enter mobile nuber"}

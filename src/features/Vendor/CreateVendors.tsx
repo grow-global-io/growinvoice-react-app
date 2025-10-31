@@ -2,6 +2,7 @@ import { Button, Drawer } from "@mui/material";
 import VendorsForm from "./VendorsForm";
 import { useCreateVendorsStore } from "@store/createVendorsStore";
 import AddIcon from "@mui/icons-material/Add";
+import { useTranslation } from "react-i18next";
 
 export const VendorsDrawer = ({
 	open,
@@ -16,6 +17,7 @@ export const VendorsDrawer = ({
 );
 
 const CreateVendors = () => {
+	const { t } = useTranslation();
 	const { setOpenVendorsForm } = useCreateVendorsStore.getState();
 	return (
 		<Button
@@ -25,7 +27,7 @@ const CreateVendors = () => {
 			}}
 			startIcon={<AddIcon />}
 		>
-			Create New
+			{t("vendor.createNew", { defaultValue: "Create New" })}
 		</Button>
 	);
 };

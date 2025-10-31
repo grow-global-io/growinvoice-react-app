@@ -7,6 +7,7 @@ import { CustomIconButton } from "../../shared/components/CustomIconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import { useTranslation } from "react-i18next";
 
 const CheckoutProductCard = ({
 	product,
@@ -18,6 +19,7 @@ const CheckoutProductCard = ({
 	};
 	quantity: number;
 }) => {
+	const { t } = useTranslation();
 	const { currencyCode, removeProductFromCheckout, changeQuantity } = useProductCheckoutStore();
 	const priceBook = useMemo(() => {
 		if (!product) return null;
@@ -50,14 +52,15 @@ const CheckoutProductCard = ({
 								{product.name}
 							</Typography>
 							<Typography variant="body2" color="text.secondary">
-								{product.description || "No description available."}
+								{product.description ||
+									t("store.product.noDescription", { defaultValue: "No description available." })}
 							</Typography>
 							<Typography variant="h6" color="primary" sx={{ marginTop: 1 }}>
-								Price:{" "}
+								{t("store.product.price", { defaultValue: "Price:" })}{" "}
 								{formatCurrency(priceBook?.price || 0, priceBook?.currency?.short_code || "INR")}
 							</Typography>
 							<Typography variant="body2" color="text.secondary">
-								Tax ({taxPercentage}%):{" "}
+								{t("store.cart.tax", { defaultValue: "Tax" })} ({taxPercentage}%):{" "}
 								{formatCurrency(taxAmount, priceBook?.currency?.short_code || "INR")}
 							</Typography>
 						</Box>
@@ -73,7 +76,9 @@ const CheckoutProductCard = ({
 							>
 								<RemoveIcon />
 							</IconButton>
-							<Typography variant="body2">Quantity: {quantity}</Typography>
+							<Typography variant="body2">
+								{t("store.cart.quantity", { defaultValue: "Quantity:" })} {quantity}
+							</Typography>
 							<IconButton
 								onClick={() => {
 									changeQuantity(product.id, quantity + 1);
@@ -86,7 +91,7 @@ const CheckoutProductCard = ({
 					<Grid item xs={12} sm={2}>
 						<Box>
 							<Typography variant="body2">
-								Total:{" "}
+								{t("store.cart.total", { defaultValue: "Total:" })}{" "}
 								<strong>
 									{formatCurrency(product?.totalPrice, priceBook?.currency?.short_code || "INR")}
 								</strong>

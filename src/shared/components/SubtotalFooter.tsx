@@ -6,6 +6,7 @@ import { TextFormField } from "./FormFields/TextFormField";
 import AddIcon from "@mui/icons-material/Add";
 import { useTaxcodeControllerFindAll } from "@api/services/tax-code";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const SubtotalFooter = ({
 	formik,
@@ -14,6 +15,7 @@ const SubtotalFooter = ({
 	formik: FormikProps<any>;
 }) => {
 	const taxCodes = useTaxcodeControllerFindAll();
+	const { t } = useTranslation();
 	const [taxesCreateopen, setTaxesCreateOpen] = useState(false);
 
 	useEffect(() => {
@@ -44,7 +46,8 @@ const SubtotalFooter = ({
 		}
 	}, [formik?.values?.discountPercentage, formik?.values.tax_id]);
 
-	if (taxCodes.isLoading || taxCodes.isFetching) return <Typography>Loading...</Typography>;
+	if (taxCodes.isLoading || taxCodes.isFetching)
+		return <Typography>{t("common.loading", { defaultValue: "Loading..." })}</Typography>;
 
 	return (
 		<Card>
@@ -59,7 +62,9 @@ const SubtotalFooter = ({
 					sx={{ background: "custom.transparentWhite" }}
 				>
 					<Grid item xs={12} sm={6}>
-						<Typography variant="h5">Subtotal</Typography>
+						<Typography variant="h5">
+							{t("common.subtotal", { defaultValue: "Subtotal" })}
+						</Typography>
 					</Grid>
 					<Grid item xs={12} sm={6} textAlign={"right"}>
 						<Field
@@ -71,13 +76,17 @@ const SubtotalFooter = ({
 						/>
 					</Grid>
 					<Grid item xs={12} sm={6}>
-						<Typography variant="h5">Discount in %</Typography>
+						<Typography variant="h5">
+							{t("common.discountPercent", { defaultValue: "Discount in %" })}
+						</Typography>
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<Field name="discountPercentage" component={TextFormField} type="number" />
 					</Grid>
 					<Grid item xs={12} sm={6}>
-						<Typography variant="h5">Taxes (Extra)</Typography>
+						<Typography variant="h5">
+							{t("common.taxesExtra", { defaultValue: "Taxes (Extra)" })}
+						</Typography>
 					</Grid>
 					<Grid item xs={12} sm={6} textAlign={"right"}>
 						<Field
@@ -92,7 +101,7 @@ const SubtotalFooter = ({
 							})}
 						/>
 						<Button variant="text" startIcon={<AddIcon />} onClick={() => setTaxesCreateOpen(true)}>
-							Add Taxes
+							{t("productForm.addTaxes", { defaultValue: "Add Taxes" })}
 						</Button>
 					</Grid>
 					{taxesCreateopen && (
@@ -104,7 +113,7 @@ const SubtotalFooter = ({
 						<Divider />
 					</Grid>
 					<Grid item xs={12} sm={6}>
-						<Typography variant="h5">Total</Typography>
+						<Typography variant="h5">{t("common.total", { defaultValue: "Total" })}</Typography>
 					</Grid>
 					<Grid item xs={12} sm={6} textAlign={"right"}>
 						<Field

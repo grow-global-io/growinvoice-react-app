@@ -4,8 +4,10 @@ import * as yup from "yup";
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { Constants } from "@shared/constants";
 import SettingFormHeading from "./SettingFormHeading";
+import { useTranslation } from "react-i18next";
 
 const Preferences = () => {
+	const { t } = useTranslation();
 	const initialValues = {
 		language: "",
 		timezone: "",
@@ -38,25 +40,25 @@ const Preferences = () => {
 						<Form>
 							<Grid container spacing={2}>
 								<SettingFormHeading
-									heading="Financial Year"
+									heading={t("settings.financialYear", { defaultValue: "Financial Year" })}
 									icon={Constants.customImages.FinancialIcon}
 								/>
 								<Grid item xs={12} sm={6}>
 									<Field
 										name="month_starts"
-										label="Month Starts"
+										label={t("settings.monthStarts", { defaultValue: "Month Starts" })}
 										component={AutocompleteField}
 										options={options}
-										placeholder={"Select"}
+										placeholder={t("app.select", { defaultValue: "Select" })}
 									/>
 								</Grid>
 								<Grid item xs={12} sm={6}>
 									<Field
 										name="month_ends"
-										label="Month Ends"
+										label={t("settings.monthEnds", { defaultValue: "Month Ends" })}
 										component={AutocompleteField}
 										options={options}
-										placeholder={"Select"}
+										placeholder={t("app.select", { defaultValue: "Select" })}
 									/>
 								</Grid>
 
@@ -65,24 +67,26 @@ const Preferences = () => {
 								</Grid>
 
 								<SettingFormHeading
-									heading="Discount Type"
+									heading={t("settings.discountType", { defaultValue: "Discount Type" })}
 									icon={Constants.customImages.PencilEditIcon}
-									text="Choose how to apply discount on invoices/estimates"
+									text={t("settings.discountTypeHelp", {
+										defaultValue: "Choose how to apply discount on invoices/estimates",
+									})}
 								/>
 
 								<Grid item xs={12} sm={12}>
 									<Field
 										name="discount_month_starts"
-										label="Month Starts"
+										label={t("settings.monthStarts", { defaultValue: "Month Starts" })}
 										component={AutocompleteField}
 										options={options}
-										placeholder={"Select"}
+										placeholder={t("app.select", { defaultValue: "Select" })}
 									/>
 								</Grid>
 
 								<Grid item xs={12} textAlign={"center"} my={2}>
 									<Button variant="contained" type="submit">
-										Update
+										{t("app.update")}
 									</Button>
 								</Grid>
 							</Grid>

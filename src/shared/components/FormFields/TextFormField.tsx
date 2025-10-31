@@ -8,6 +8,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
+import { useTranslation } from "react-i18next";
 
 export const TextFormField: React.FC<
 	FieldProps & {
@@ -19,6 +20,7 @@ export const TextFormField: React.FC<
 		marginWholeTop?: number;
 	}
 > = ({ field, form, label, backgroundColor, isRequired, marginWholeTop, ...props }) => {
+	const { t } = useTranslation();
 	const errorText = getIn(form.touched, field.name) && getIn(form.errors, field.name);
 	const [hidePassword, setHidePassword] = useState(true);
 	const handleClickHidePassword = () => setHidePassword((hide) => !hide);
@@ -49,7 +51,11 @@ export const TextFormField: React.FC<
 				fullWidth
 				id={field.name}
 				error={!!errorText}
-				placeholder={label ? `Enter ${label?.toLowerCase()}` : undefined}
+				placeholder={
+					label
+						? t("common.enter", { label: label?.toLowerCase(), defaultValue: "Enter {{label}}" })
+						: undefined
+				}
 				InputProps={{
 					endAdornment: props.type === "password" && (
 						<InputAdornment position="end">

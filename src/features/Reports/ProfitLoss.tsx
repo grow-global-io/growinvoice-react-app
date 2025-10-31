@@ -11,8 +11,10 @@ import { useAuthStore } from "@store/auth";
 import { FaArrowUpLong } from "react-icons/fa6";
 import { FaArrowDownLong } from "react-icons/fa6";
 import ReportsHooks from "./reportHooks/ReportsHooks";
+import { useTranslation } from "react-i18next";
 
 const ProfitLoss = () => {
+	const { t } = useTranslation();
 	const { user } = useAuthStore();
 	const { fromDate, toDate, dateRange, dayRange, setDayRange } = ReportsHooks();
 	const profitLossData = useReportsControllerGetProfitLossCount({
@@ -22,7 +24,7 @@ const ProfitLoss = () => {
 	const data = [
 		{
 			amount: currencyFormatter(profitLossData?.data?.totalIncome ?? 0, user?.currency?.short_code),
-			text: "Total Income",
+			text: t("report.totalIncome", { defaultValue: "Total Income" }),
 			icon: <FiFileText style={{ color: "rgba(25, 32, 56, 1)", fontSize: "30px" }} />,
 		},
 		{
@@ -30,7 +32,7 @@ const ProfitLoss = () => {
 				profitLossData?.data?.totalExpenses ?? 0,
 				user?.currency?.short_code,
 			),
-			text: "Total Expenses",
+			text: t("report.totalExpenses", { defaultValue: "Total Expenses" }),
 			icon: <FiFileText style={{ color: "rgba(246, 146, 22, 1)", fontSize: "30px" }} />,
 		},
 		// {
@@ -43,7 +45,10 @@ const ProfitLoss = () => {
 				profitLossData?.data?.profitOrLoss ?? 0,
 				user?.currency?.short_code,
 			),
-			text: (profitLossData?.data?.profitOrLoss ?? 0) > 0 ? "Profit" : "Loss",
+			text:
+				(profitLossData?.data?.profitOrLoss ?? 0) > 0
+					? t("report.profit", { defaultValue: "Profit" })
+					: t("report.loss", { defaultValue: "Loss" }),
 			icon:
 				(profitLossData?.data?.profitOrLoss ?? 0) > 0 ? (
 					<FaArrowUpLong style={{ color: "#0FBB00", fontSize: "30px" }} />
@@ -73,11 +78,11 @@ const ProfitLoss = () => {
 				mb={2}
 			>
 				<Typography variant="h3" fontWeight={"500"} textTransform={"capitalize"}>
-					Profit And Loss
+					{t("report.profitLoss", { defaultValue: "Profit And Loss" })}
 				</Typography>
 				<Box>
 					<Typography variant="h6" fontWeight={"500"} textTransform={"capitalize"}>
-						Select Date Range
+						{t("report.selectDateRange", { defaultValue: "Select Date Range" })}
 					</Typography>
 					<DateCalander dayRange={dayRange} setDayRange={setDayRange} />
 				</Box>

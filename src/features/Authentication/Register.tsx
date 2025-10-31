@@ -7,8 +7,10 @@ import { useUserControllerCreateUser } from "@api/services/users";
 import { PhoneInputFormField } from "@shared/components/FormFields/PhoneInputFormField";
 import { Constants } from "@shared/constants";
 import { isValidPhoneNumber } from "react-phone-number-input";
+import { useTranslation } from "react-i18next";
 
 const Register = () => {
+	const { t } = useTranslation();
 	const navigation = useNavigate();
 	const createUser = useUserControllerCreateUser({
 		mutation: {
@@ -28,21 +30,39 @@ const Register = () => {
 	};
 
 	const schema = yup.object().shape({
-		fullname: yup.string().required("Full Name is required"),
-		companyname: yup.string().required("Company Name is required"),
-		email: yup.string().email().required("Email is required"),
-		phone: yup.string().test("is-phone", "Phone number is not valid", function (value) {
-			if (!value) return false;
-			return isValidPhoneNumber(value);
-		}),
+		fullname: yup
+			.string()
+			.required(t("auth.fullNameRequired", { defaultValue: "Full Name is required" })),
+		companyname: yup
+			.string()
+			.required(t("auth.companyNameRequired", { defaultValue: "Company Name is required" })),
+		email: yup
+			.string()
+			.email()
+			.required(t("auth.emailRequired", { defaultValue: "Email is required" })),
+		phone: yup
+			.string()
+			.test(
+				"is-phone",
+				t("auth.phoneInvalid", { defaultValue: "Phone number is not valid" }),
+				function (value) {
+					if (!value) return false;
+					return isValidPhoneNumber(value);
+				},
+			),
 		password: yup
 			.string()
-			.min(7, "Password is at least 7 characters")
-			.required("Password is required"),
+			.min(7, t("auth.passwordMin", { defaultValue: "Password is at least 7 characters" }))
+			.required(t("auth.passwordRequired", { defaultValue: "Password is required" })),
 		conpassword: yup
 			.string()
-			.oneOf([yup.ref("password")], "Passwords must match")
-			.required("Confirm Password is required"),
+			.oneOf(
+				[yup.ref("password")],
+				t("auth.passwordsMatch", { defaultValue: "Passwords must match" }),
+			)
+			.required(
+				t("auth.confirmPasswordRequired", { defaultValue: "Confirm Password is required" }),
+			),
 	});
 
 	const handleSubmit = async (values: typeof initialValues) => {
@@ -105,7 +125,7 @@ const Register = () => {
 							}}
 						>
 							<Typography fontWeight="600" sx={{ mb: 2, fontSize: 26 }}>
-								Lets Start!
+								{t("auth.letsStart", { defaultValue: "Lets Start!" })}
 							</Typography>
 							<Typography
 								color="text.secondary"
@@ -113,7 +133,10 @@ const Register = () => {
 								variant="caption"
 								fontWeight="400"
 							>
-								Please create your account to continue with &nbsp;
+								{t("auth.createAccount", {
+									defaultValue: "Please create your account to continue with",
+								})}{" "}
+								&nbsp;
 								<Typography color="text.secondary" variant="caption" fontWeight="700">
 									GROWINVOICE
 								</Typography>
@@ -131,34 +154,39 @@ const Register = () => {
 											<Field
 												name="fullname"
 												component={TextFormField}
-												label="Full Name"
+												label={t("auth.fullName", { defaultValue: "Full Name" })}
 												required={true}
 											/>
 											<Field
 												name="companyname"
 												component={TextFormField}
-												label="Company Name"
+												label={t("auth.companyName", { defaultValue: "Company Name" })}
 												required={true}
 											/>
-											<Field name="email" component={TextFormField} label="Email" required={true} />
+											<Field
+												name="email"
+												component={TextFormField}
+												label={t("auth.email")}
+												required={true}
+											/>
 											<Field
 												name="phone"
 												component={PhoneInputFormField}
-												label="Phone"
+												label={t("auth.phone", { defaultValue: "Phone" })}
 												required={true}
 											/>
 											<Field
 												name="password"
 												type={"password"}
 												component={TextFormField}
-												label="Password"
+												label={t("auth.password")}
 												required={true}
 											/>
 											<Field
 												name="conpassword"
 												type={"password"}
 												component={TextFormField}
-												label="Confirm Password"
+												label={t("auth.confirmPassword", { defaultValue: "Confirm Password" })}
 												required={true}
 											/>
 											<Box
@@ -182,7 +210,7 @@ const Register = () => {
 														minWidth: 200,
 													}}
 												>
-													Register
+													{t("auth.register", { defaultValue: "Register" })}
 												</Button>
 												<Button
 													variant="outlined"
@@ -197,7 +225,7 @@ const Register = () => {
 														navigation("/login");
 													}}
 												>
-													login
+													{t("auth.login", { defaultValue: "Login" })}
 												</Button>
 											</Box>
 										</Form>
