@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { Typography } from "@mui/material";
 import { useReportsControllerGetExpenseReports } from "@api/services/reports";
 import Loader from "@shared/components/Loader";

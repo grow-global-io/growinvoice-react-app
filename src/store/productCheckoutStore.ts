@@ -2,7 +2,7 @@
 
 // 1. Change this import from 'zustand/vanilla' to 'zustand'
 import { create } from "zustand";
-import { ProductWithAllDataDto } from "../api/services/auth/models";
+import { type ProductWithAllDataDto } from "../api/services/auth/models";
 
 interface ProductCheckoutStore {
 	open: boolean;

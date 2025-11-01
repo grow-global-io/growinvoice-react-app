@@ -1,7 +1,7 @@
 import React, { forwardRef } from "react";
-import TextField, { TextFieldProps } from "@mui/material/TextField";
-import PhoneInput, { Country } from "react-phone-number-input";
-import { FieldProps, getIn } from "formik";
+import TextField, { type TextFieldProps } from "@mui/material/TextField";
+import PhoneInput, { type Country } from "react-phone-number-input";
+import { type FieldProps, getIn } from "formik";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Typography from "@mui/material/Typography";

@@ -1,8 +1,8 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { useCustomerCheckoutStore } from "../../store/customerCheckoutStore";
 import { Drawer, Box, Typography, Button } from "@mui/material";
 import * as Yup from "yup";
-import { Field, Form, Formik, FormikProps } from "formik";
+import { Field, Form, Formik, type FormikProps } from "formik";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { PhoneInputFormField } from "@shared/components/FormFields/PhoneInputFormField";
 import { Constants } from "@shared/constants";

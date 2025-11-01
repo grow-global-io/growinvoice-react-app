@@ -14,12 +14,12 @@ import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { PhoneInputFormField } from "@shared/components/FormFields/PhoneInputFormField";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { Constants } from "@shared/constants";
-import { Formik, Field, Form, FormikHelpers } from "formik";
+import { Formik, Field, Form, type FormikHelpers } from "formik";
 import * as yup from "yup";
 import CloseIcon from "@mui/icons-material/Close";
 import { useCreateCustomerStore } from "@store/createCustomerStore";
 import {
-	CreateCustomerWithAddressDto,
+	type CreateCustomerWithAddressDto,
 	CreateCustomerWithAddressDtoOption,
 } from "@api/services/models";
 import {

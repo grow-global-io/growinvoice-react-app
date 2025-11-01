@@ -1,4 +1,3 @@
-import React from "react";
 import StoreNavbar from "./StoreNavbar";
 import { useProductCheckoutStore } from "@store/productCheckoutStore";
 import { useStoreControllerSearchProducts } from "@api/services/store";
@@ -67,7 +66,7 @@ const StoreSearchPage = () => {
 							>
 								<CardMedia
 									component="img"
-									image={product.product?.[0]?.image || ""}
+									image={product.product?.[0]?.images?.[0] || ""}
 									alt={product.name || "Product Image"}
 									sx={{
 										height: 140,

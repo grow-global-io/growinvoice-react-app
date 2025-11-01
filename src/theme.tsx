@@ -1,7 +1,7 @@
 import * as React from "react";
-import { ThemeOptions, createTheme, alpha, Theme } from "@mui/material/styles";
+import { type ThemeOptions, createTheme, alpha, type Theme } from "@mui/material/styles";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-import { TransitionProps } from "@mui/material/transitions";
+import { type TransitionProps } from "@mui/material/transitions";
 import { Box, Slide } from "@mui/material";
 import type {} from "@mui/x-data-grid/themeAugmentation";
 import { GridToolbarQuickFilter } from "@mui/x-data-grid";

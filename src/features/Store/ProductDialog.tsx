@@ -1,4 +1,3 @@
-import React from "react";
 import {
 	Box,
 	Button,
@@ -7,7 +6,7 @@ import {
 	DialogContent,
 	Typography,
 } from "@mui/material";
-import { ProductWithAllDataDto } from "../../api/services/auth/models";
+import { type ProductWithAllDataDto } from "../../api/services/auth/models";
 import AppDialogHeader from "../../shared/components/Dialog/AppDialogHeader";
 import { useProductCheckoutStore } from "@store/productCheckoutStore";
 import { formatCurrency } from "@shared/formatter";

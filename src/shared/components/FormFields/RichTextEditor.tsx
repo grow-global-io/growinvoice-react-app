@@ -1,4 +1,4 @@
-import { FieldProps, getIn } from "formik";
+import { type FieldProps, getIn } from "formik";
 import * as React from "react";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -7,7 +7,7 @@ import FormHelperText from "@mui/material/FormHelperText";
 import SunEditor from "suneditor-react";
 import { styled } from "@mui/material";
 import i18n from "i18next";
-import { SunEditorOptions } from "suneditor/src/options";
+import type { SunEditorOptions } from "suneditor/src/options";
 
 const StyledSunEditor = styled(SunEditor)(({ theme }) => ({
 	mb: theme.spacing(1),

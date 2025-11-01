@@ -4,8 +4,8 @@ import {
 	useUserControllerGetUsersList,
 } from "../../../api/services/auth/users";
 import Loader from "../../../shared/components/Loader";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { AdminUsersListDto } from "../../../api/services/auth/models";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { type AdminUsersListDto } from "../../../api/services/auth/models";
 import { Box, Chip, Tooltip } from "@mui/material";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import BlockIcon from "@mui/icons-material/Block";

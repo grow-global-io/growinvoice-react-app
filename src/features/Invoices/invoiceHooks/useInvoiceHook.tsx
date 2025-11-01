@@ -27,7 +27,7 @@ import { LoaderService } from "@shared/services/LoaderService";
 import { useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
 import { useCallback } from "react";
-import useRazorpay, { RazorpayOptions } from "react-razorpay";
+import useRazorpay, { type RazorpayOptions } from "react-razorpay";
 import { useNavigate } from "react-router-dom";
 
 export const useInvoiceHook = () => {

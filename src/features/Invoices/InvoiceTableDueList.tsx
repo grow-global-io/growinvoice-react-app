@@ -1,8 +1,8 @@
 import Box from "@mui/material/Box";
 import {
 	DataGrid,
-	GridColDef,
-	GridRowSelectionModel,
+	type GridColDef,
+	type GridRowSelectionModel,
 	GridToolbarQuickFilter,
 } from "@mui/x-data-grid";
 import { Chip, Tooltip, Typography } from "@mui/material";
@@ -12,7 +12,7 @@ import {
 	useInvoiceControllerFindDueInvoices,
 } from "@api/services/invoice";
 import Loader from "@shared/components/Loader";
-import { InvoiceWithAllDataDto } from "@api/services/models";
+import { type InvoiceWithAllDataDto } from "@api/services/models";
 import { currencyFormatter, parseDateStringToFormat } from "@shared/formatter";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { CustomIconButton } from "@shared/components/CustomIconButton";

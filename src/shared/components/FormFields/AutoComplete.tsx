@@ -1,11 +1,11 @@
 import React from "react";
-import { FieldProps, getIn } from "formik";
+import { type FieldProps, getIn } from "formik";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { ListDto } from "../../models/ListDto";
+import { type ListDto } from "../../models/ListDto";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounceValue } from "usehooks-ts";
 import { http } from "@shared/axios";

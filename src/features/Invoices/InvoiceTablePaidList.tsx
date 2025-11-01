@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { Chip, Typography } from "@mui/material";
 import { Constants } from "@shared/constants";
 import { useInvoiceControllerFindPaidInvoices } from "@api/services/invoice";
@@ -8,7 +8,7 @@ import { currencyFormatter, parseDateStringToFormat } from "@shared/formatter";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import { useInvoiceHook } from "./invoiceHooks/useInvoiceHook";
-import { InvoiceWithAllDataDto } from "@api/services/models";
+import { type InvoiceWithAllDataDto } from "@api/services/models";
 import { useTranslation } from "react-i18next";
 
 const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) => {

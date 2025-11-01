@@ -1,6 +1,6 @@
 import { TextField } from "@mui/material";
 import React from "react";
-import DatePicker, { Calendar, DayRange } from "@hassanmojab/react-modern-calendar-datepicker";
+import DatePicker, { Calendar, type DayRange } from "@hassanmojab/react-modern-calendar-datepicker";
 import "@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css";
 
 export function DateCalander({

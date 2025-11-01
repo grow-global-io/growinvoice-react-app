@@ -4,10 +4,10 @@ import { useTranslation } from "react-i18next";
 import * as Yup from "yup";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import {
-	CreateCustomerWithAddressDto,
+	type CreateCustomerWithAddressDto,
 	CreateCustomerWithAddressDtoOption,
 } from "@api/services/models";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { useExcelReader } from "@shared/hooks/useExcelReader";
 import { useCurrencyControllerFindAll } from "@api/services/currency";
 import { useAuthStore } from "@store/auth";

@@ -1,4 +1,4 @@
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { Box, Tooltip, Typography } from "@mui/material";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import EditIcon from "@mui/icons-material/Edit";
@@ -13,7 +13,7 @@ import { useConfirmDialogStore } from "@store/confirmDialog";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCreateHsnCodeStore } from "@store/createHsnCodeStore";
 import { getTaxcodeControllerFindAllQueryKey } from "@api/services/tax-code";
-import { HSNCode } from "@api/services/models";
+import { type HSNCode } from "@api/services/models";
 import { useTranslation } from "react-i18next";
 
 const HsnCodeTableList = () => {

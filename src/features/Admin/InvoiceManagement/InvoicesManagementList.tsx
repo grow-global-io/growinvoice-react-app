@@ -1,12 +1,11 @@
 import { useInvoiceControllerFindAll } from "@api/services/invoice";
-import { Invoice } from "@api/services/models";
+import { type Invoice } from "@api/services/models";
 import { Box, Chip, Tooltip, Typography } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import Loader from "@shared/components/Loader";
 import { Constants } from "@shared/constants";
 import { currencyFormatter, parseDateStringToFormat } from "@shared/formatter";
-import React from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useInvoiceHook } from "@features/Invoices/invoiceHooks/useInvoiceHook";
 import { useTranslation } from "react-i18next";

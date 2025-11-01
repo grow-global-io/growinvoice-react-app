@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { Tooltip, Typography } from "@mui/material";
 import {
 	getProductControllerFindAllQueryKey,
@@ -14,7 +14,7 @@ import { useCreateProductStore } from "@store/createProductStore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useQueryClient } from "@tanstack/react-query";
 import { useConfirmDialogStore } from "@store/confirmDialog";
-import { ProductWithAllDataDto } from "@api/services/models";
+import { type ProductWithAllDataDto } from "@api/services/models";
 import { useTranslation } from "react-i18next";
 
 const ProductTableList = () => {

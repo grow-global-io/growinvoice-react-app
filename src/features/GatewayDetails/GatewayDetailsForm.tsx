@@ -1,5 +1,5 @@
 import { Box, DialogContent } from "@mui/material";
-import { Field, Form, Formik, FormikHelpers } from "formik";
+import { Field, Form, Formik, type FormikHelpers } from "formik";
 import AppDialogHeader from "@shared/components/Dialog/AppDialogHeader";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import AppDialogFooter from "@shared/components/Dialog/AppDialogFooter";
@@ -7,7 +7,7 @@ import * as yup from "yup";
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { CheckBoxFormField } from "@shared/components/FormFields/CheckBoxFormField";
 import { useAuthStore } from "@store/auth";
-import { CreateGateWayDetailsDto, CreateGateWayDetailsDtoType } from "@api/services/models";
+import { type CreateGateWayDetailsDto, CreateGateWayDetailsDtoType } from "@api/services/models";
 import {
 	getGatewaydetailsControllerFindAllQueryKey,
 	getGatewaydetailsControllerFindOneQueryKey,

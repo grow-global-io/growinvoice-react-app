@@ -1,5 +1,5 @@
-import React from "react";
-import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+
+import { type CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { authControllerVerifyGoogleToken } from "@api/services/auth";
 import { useAuthStore } from "@store/auth";
 import { AlertService } from "@shared/services/AlertService";

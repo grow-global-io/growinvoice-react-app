@@ -7,7 +7,7 @@ import {
 	useCurrencyControllerFindStatesByCountry,
 } from "@api/services/currency";
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
-import { UpdateCurrencyCompanyDto } from "@api/services/models";
+import { type UpdateCurrencyCompanyDto } from "@api/services/models";
 import { FileUploadFormField } from "@shared/components/FormFields/FileUploadFormField";
 import { useTranslation } from "react-i18next";
 

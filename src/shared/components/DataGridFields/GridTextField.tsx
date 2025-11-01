@@ -1,5 +1,5 @@
 import { TextField } from "@mui/material";
-import { GridRenderEditCellParams, useGridApiContext } from "@mui/x-data-grid";
+import { type GridRenderEditCellParams, useGridApiContext } from "@mui/x-data-grid";
 import React from "react";
 
 const GridTextField = ({

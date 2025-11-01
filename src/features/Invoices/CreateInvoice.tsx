@@ -11,7 +11,7 @@ import {
 	FormControlLabel,
 	Checkbox,
 } from "@mui/material";
-import { Formik, Form, Field, FormikProps, FormikHelpers } from "formik";
+import { Formik, Form, Field, type FormikProps, type FormikHelpers } from "formik";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { DateFormField } from "@shared/components/FormFields/DateFormField";
 import * as yup from "yup";
@@ -28,10 +28,10 @@ import { useDialog } from "@shared/hooks/useDialog";
 import { usePaymentdetailsControllerFindAll } from "@api/services/paymentdetails";
 import {
 	CreateInvoiceWithProductsRecurring,
-	OmitCreateInvoiceProductsDto,
+	type OmitCreateInvoiceProductsDto,
 } from "@api/services/models";
 import { useEffect, useRef, useState } from "react";
-import { GridRowsProp } from "@mui/x-data-grid";
+import { type GridRowsProp } from "@mui/x-data-grid";
 import {
 	getInvoiceControllerFindAllQueryKey,
 	getInvoiceControllerFindDueInvoicesQueryKey,

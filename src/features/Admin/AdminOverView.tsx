@@ -4,7 +4,6 @@ import { useQuotationControllerCountTotal } from "@api/services/quotation";
 import { useUserControllerUserCount } from "@api/services/users";
 import { Grid, Typography } from "@mui/material";
 import DashbaordCard from "@shared/components/DashbaordCard";
-import React from "react";
 import { FaFileInvoiceDollar, FaFileInvoice } from "react-icons/fa";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";

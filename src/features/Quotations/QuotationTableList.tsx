@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { Chip, Tooltip, Typography } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -8,7 +8,7 @@ import { useQuotationControllerFindAll } from "@api/services/quotation";
 import { useAuthStore } from "@store/auth";
 import { useConfirmDialogStore } from "@store/confirmDialog";
 import { currencyFormatter, parseDateStringToFormat } from "@shared/formatter";
-import { Quotation } from "@api/services/models";
+import { type Quotation } from "@api/services/models";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import Loader from "@shared/components/Loader";
 import { useQuotationHook } from "./QuotationHooks/useQuotationHook";

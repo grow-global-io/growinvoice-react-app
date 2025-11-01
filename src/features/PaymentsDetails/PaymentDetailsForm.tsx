@@ -1,10 +1,10 @@
-import { CreatePaymentDetailsDto, CreatePaymentDetailsDtoPaymentType } from "@api/services/models";
+import { type CreatePaymentDetailsDto, CreatePaymentDetailsDtoPaymentType } from "@api/services/models";
 import { Box, Button, Grid } from "@mui/material";
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { useAuthStore } from "@store/auth";
 import * as yup from "yup";
-import { Field, Form, Formik, FormikHelpers } from "formik";
+import { Field, Form, Formik, type FormikHelpers } from "formik";
 import {
 	getPaymentdetailsControllerFindAllQueryKey,
 	usePaymentdetailsControllerCreate,

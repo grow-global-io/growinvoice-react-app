@@ -2,7 +2,7 @@ import LoginPage from "@pages/LoginPage";
 // import MainHomePage from "@pages/MainHomePage";
 import RegisterPage from "@pages/RegisterPage";
 import OveviewPage from "@pages/OveviewPage";
-import { Route } from "@shared/models/Route";
+import { type Route } from "@shared/models/Route";
 import ResetPassword from "@features/Authentication/ResetPassword";
 import ProductListPage from "@pages/ProductListPage";
 import CreateProductPage from "@pages/CreateProductPage";

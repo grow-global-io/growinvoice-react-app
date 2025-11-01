@@ -1,5 +1,5 @@
-import { Day } from "react-modern-calendar-datepicker";
-import moment, { Moment } from "moment";
+import { type Day } from "react-modern-calendar-datepicker";
+import moment, { type Moment } from "moment";
 import "moment-timezone";
 
 export const parseDateStringToFormat = (date: string | number, format?: string) => {

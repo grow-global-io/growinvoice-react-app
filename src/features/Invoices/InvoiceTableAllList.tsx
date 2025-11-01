@@ -1,10 +1,10 @@
 import Box from "@mui/material/Box";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { Chip, Tooltip, Typography } from "@mui/material";
 import { Constants } from "@shared/constants";
 import { useInvoiceControllerFindAll } from "@api/services/invoice";
 import Loader from "@shared/components/Loader";
-import { InvoiceWithAllDataDto } from "@api/services/models";
+import { type InvoiceWithAllDataDto } from "@api/services/models";
 import { currencyFormatter, parseDateStringToFormat } from "@shared/formatter";
 import { useAuthStore } from "@store/auth";
 import EditIcon from "@mui/icons-material/Edit";

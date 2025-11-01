@@ -6,7 +6,7 @@ import * as yup from "yup";
 import { Field, Form, Formik } from "formik";
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { useCurrencyControllerFindAll } from "@api/services/currency";
-import { ListDto } from "@shared/models/ListDto";
+import { type ListDto } from "@shared/models/ListDto";
 import { useNavigate } from "react-router-dom";
 import { Constants } from "@shared/constants";
 import { useTranslation } from "react-i18next";

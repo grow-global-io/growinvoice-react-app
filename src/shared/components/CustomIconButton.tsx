@@ -1,5 +1,5 @@
-import { Avatar, IconButton, SvgIconTypeMap } from "@mui/material";
-import { OverridableComponent } from "@mui/material/OverridableComponent";
+import { Avatar, IconButton, type SvgIconTypeMap } from "@mui/material";
+import type { OverridableComponent } from "@mui/material/OverridableComponent";
 
 export const CustomIconButton = ({
 	src,

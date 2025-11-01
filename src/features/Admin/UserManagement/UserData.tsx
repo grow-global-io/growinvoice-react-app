@@ -13,7 +13,7 @@ import {
 	Typography,
 } from "@mui/material";
 import AppDialogHeader from "../../../shared/components/Dialog/AppDialogHeader";
-import { AdminUsersListDto } from "../../../api/services/auth/models";
+import { type AdminUsersListDto } from "../../../api/services/auth/models";
 import { findLeftDate, parseDateStringToFormat, numberToOrdinal } from "@shared/formatter";
 import { AttachMoney, ShoppingCart, People, Store, Receipt } from "@mui/icons-material";
 import { useAuthControllerGetUserQuota } from "@api/services/auth";

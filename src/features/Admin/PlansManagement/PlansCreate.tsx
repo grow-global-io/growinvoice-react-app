@@ -1,4 +1,3 @@
-import React from "react";
 import * as Yup from "yup";
 import { Button, Dialog, DialogContent, Grid } from "@mui/material";
 import AppDialogHeader from "../../../shared/components/Dialog/AppDialogHeader";
@@ -10,7 +9,7 @@ import {
 	usePlansControllerCreate,
 	usePlansControllerUpdate,
 } from "@api/services/plans";
-import { PlanWithFeaturesDto } from "@api/services/models";
+import { type PlanWithFeaturesDto } from "@api/services/models";
 import { useQueryClient } from "@tanstack/react-query";
 
 const PlansCreate = ({

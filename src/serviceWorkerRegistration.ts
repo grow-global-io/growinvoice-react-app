@@ -1,7 +1,7 @@
 export function register(config: any) {
-	if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
+	if (import.meta.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
 		window.addEventListener("load", () => {
-			const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
+			const swUrl = `${import.meta.env.PUBLIC_URL}/service-worker.js`;
 
 			navigator.serviceWorker
 				.register(swUrl)
@@ -36,7 +36,7 @@ export function register(config: any) {
 					console.error("❌ Error during service worker registration:", error);
 				});
 		});
-	} else if (process.env.NODE_ENV === "development") {
+	} else if (import.meta.env.NODE_ENV === "development") {
 		console.log("🔧 Service worker is not registered in development mode.");
 	}
 }

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import lottie, { AnimationItem } from "lottie-web";
+import lottie, { type AnimationItem } from "lottie-web";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import nodataJson from "@assets/NodataFound.json";

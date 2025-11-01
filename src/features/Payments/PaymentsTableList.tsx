@@ -1,7 +1,7 @@
 import { usePaymentsControllerFindAll } from "@api/services/payments";
 import { useInvoiceHook } from "@features/Invoices/invoiceHooks/useInvoiceHook";
 import { Box, Chip, Typography } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import Loader from "@shared/components/Loader";
 import NoDataFound from "@shared/components/NoDataFound";
 import { currencyFormatter, parseDateStringToFormat } from "@shared/formatter";

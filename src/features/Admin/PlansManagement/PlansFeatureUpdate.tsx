@@ -1,8 +1,8 @@
 // import React from "react";
 import {
-	OmitCreatePlanFeatureDto,
+	type OmitCreatePlanFeatureDto,
 	OmitCreatePlanFeatureDtoFeature,
-	PlanWithFeaturesDto,
+	type PlanWithFeaturesDto,
 } from "../../../api/services/auth/models";
 import { Button, Dialog, DialogContent, Grid, Typography } from "@mui/material";
 import AppDialogHeader from "../../../shared/components/Dialog/AppDialogHeader";

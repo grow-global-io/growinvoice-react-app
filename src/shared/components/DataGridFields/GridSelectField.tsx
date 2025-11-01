@@ -1,6 +1,6 @@
-import { Autocomplete, Box, FormHelperText, SelectChangeEvent, TextField } from "@mui/material";
-import { GridRenderEditCellParams, useGridApiContext } from "@mui/x-data-grid";
-import { ListDto } from "@shared/models/ListDto";
+import { Autocomplete, Box, FormHelperText, type SelectChangeEvent, TextField } from "@mui/material";
+import { type GridRenderEditCellParams, useGridApiContext } from "@mui/x-data-grid";
+import { type ListDto } from "@shared/models/ListDto";
 
 const GridSelectField = ({
 	params,

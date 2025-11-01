@@ -1,4 +1,4 @@
-import { NotificationDto } from "@api/services/models";
+import { type NotificationDto } from "@api/services/models";
 import { ListItem, ListItemText, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";

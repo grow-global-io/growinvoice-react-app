@@ -1,6 +1,6 @@
 import CreateTaxes from "@features/ProductTaxes/CreateTaxes";
 import { Button, Card, CardContent, Divider, Grid, Typography } from "@mui/material";
-import { Field, FormikProps } from "formik";
+import { Field, type FormikProps } from "formik";
 import { AutocompleteField } from "./FormFields/AutoComplete";
 import { TextFormField } from "./FormFields/TextFormField";
 import AddIcon from "@mui/icons-material/Add";

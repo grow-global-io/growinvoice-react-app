@@ -1,6 +1,6 @@
 import "react-modern-calendar-datepicker/lib/DatePicker.css";
 import { useEffect, useMemo, useState } from "react";
-import { DayRange } from "react-modern-calendar-datepicker";
+import { type DayRange } from "react-modern-calendar-datepicker";
 import { useReportsControllerGetProfitLossRange } from "@api/services/reports";
 import { convertUtcToFormat, parseDateStringToFormat } from "@shared/formatter";
 

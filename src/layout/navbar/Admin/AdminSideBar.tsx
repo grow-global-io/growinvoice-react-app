@@ -255,7 +255,7 @@ const AdminSideBar = ({ children }: { children: React.ReactNode }) => {
 			</Box>
 			<Divider />
 			<List sx={{ px: "7%" }} component="nav">
-				{menuList.map((menu, index) => (
+				{menuList.map((menu: any, index) => (
 					<React.Fragment key={menu.path}>{renderListItems(menu, index)}</React.Fragment>
 				))}
 			</List>

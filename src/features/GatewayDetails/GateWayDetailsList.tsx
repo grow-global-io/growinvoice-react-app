@@ -4,7 +4,7 @@ import {
 	useGatewaydetailsControllerRemove,
 } from "@api/services/gatewaydetails";
 import { Box, Chip, Grid, Tooltip } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import Loader from "@shared/components/Loader";
 import DeleteIcon from "@mui/icons-material/Delete";

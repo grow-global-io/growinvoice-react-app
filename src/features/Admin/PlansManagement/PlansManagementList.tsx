@@ -1,7 +1,7 @@
-import { PlanWithFeaturesDto } from "@api/services/models";
+import { type PlanWithFeaturesDto } from "@api/services/models";
 import { usePlansControllerFindAll, usePlansControllerUpdate } from "@api/services/plans";
 import { Box, Button, Chip, Tooltip } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import Loader from "@shared/components/Loader";
 import { currencyFormatter } from "@shared/formatter";

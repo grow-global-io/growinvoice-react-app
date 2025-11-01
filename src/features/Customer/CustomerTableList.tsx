@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { Chip, Tooltip, Typography } from "@mui/material";
 import {
 	getCustomerControllerFindAllQueryKey,
@@ -19,7 +19,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { GetCustomerWithAddressDto } from "@api/services/models";
+import { type GetCustomerWithAddressDto } from "@api/services/models";
 
 const CustomerTableList = () => {
 	const { t } = useTranslation();

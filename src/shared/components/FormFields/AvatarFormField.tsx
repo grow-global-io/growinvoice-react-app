@@ -1,6 +1,6 @@
 import { useUploadControllerUploadFile } from "@api/services/upload";
 import { Box, Button, FormControl, InputLabel, Typography } from "@mui/material";
-import { FieldProps, getIn } from "formik";
+import { type FieldProps, getIn } from "formik";
 import React from "react";
 import { useTranslation } from "react-i18next";
 

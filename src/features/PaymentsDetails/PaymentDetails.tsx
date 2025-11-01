@@ -7,7 +7,7 @@ import {
 	usePaymentdetailsControllerRemove,
 } from "@api/services/paymentdetails";
 import Loader from "@shared/components/Loader";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useConfirmDialogStore } from "@store/confirmDialog";

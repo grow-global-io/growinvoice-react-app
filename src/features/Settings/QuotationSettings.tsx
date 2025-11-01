@@ -13,7 +13,7 @@ import { styled } from "@mui/system";
 import { Formik, Field, Form } from "formik";
 import * as yup from "yup";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
-import { AddressExpressions, Constants } from "@shared/constants";
+import {type  AddressExpressions, Constants } from "@shared/constants";
 import SettingFormHeading from "./SettingFormHeading";
 import { RichTextEditor } from "@shared/components/FormFields/RichTextEditor";
 import { CheckBoxFormField } from "@shared/components/FormFields/CheckBoxFormField";
@@ -22,7 +22,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@store/auth";
 import Loader from "@shared/components/Loader";
-import { CreateQuotationSettingsDto } from "@api/services/models";
+import { type CreateQuotationSettingsDto } from "@api/services/models";
 import { useQueryClient } from "@tanstack/react-query";
 import AddressExpressionsDialog from "@shared/components/AddressExpressionsDialog";
 import {

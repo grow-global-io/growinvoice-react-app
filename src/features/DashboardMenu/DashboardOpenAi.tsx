@@ -1,7 +1,7 @@
 import {
 	CreateAIDashboardDtoType,
-	OpenaiControllerCreate200Item,
-	OpenaiControllerCreateGraph200Item,
+	type OpenaiControllerCreate200Item,
+	type OpenaiControllerCreateGraph200Item,
 } from "@api/services/models";
 import { useOpenaiControllerCreate, useOpenaiControllerCreateGraph } from "@api/services/openai";
 import {
@@ -22,7 +22,7 @@ import {
 	MenuItem,
 	OutlinedInput,
 	Select,
-	SelectChangeEvent,
+	type SelectChangeEvent,
 	Tooltip,
 	ListItemIcon,
 	Radio,
@@ -31,7 +31,7 @@ import {
 import { DataGrid } from "@mui/x-data-grid";
 import Loader from "@shared/components/Loader";
 import { snakeToReadableText } from "@shared/formatter";
-import { Field, Form, Formik, FormikProps } from "formik";
+import { Field, Form, Formik, type FormikProps } from "formik";
 import React, { useRef, useState } from "react";
 import * as Yup from "yup";
 import BarChart from "./DashboardChart";
@@ -152,7 +152,7 @@ const DashboardOpenAi = () => {
 				const keysData = a as unknown as OpenaiControllerCreate200Item;
 				formikRef.current?.setFieldValue("prompt", keysData?.prompt);
 				formikRef.current?.setFieldValue("query", keysData?.query);
-				const keys = Object.keys(keysData?.result?.[0] ?? []);
+				const keys = Object.keys((keysData?.result as any)?.[0] ?? {});
 				const resultArray = (keysData?.result as unknown as OpenaiControllerCreate200Item[]) ?? [];
 				const rowsData = Array.isArray(resultArray)
 					? resultArray.map((item: OpenaiControllerCreate200Item, index: number) => {

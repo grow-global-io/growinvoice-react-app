@@ -1,5 +1,5 @@
 import { Dialog, Divider, DialogContent, Grid, FormControlLabel, Checkbox } from "@mui/material";
-import { AddressExpressions, Constants } from "@shared/constants";
+import { type AddressExpressions, Constants } from "@shared/constants";
 import AppDialogHeader from "./Dialog/AppDialogHeader";
 
 interface IAddressExpressionsDialogProps {

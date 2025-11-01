@@ -21,7 +21,7 @@
 		"@typescript-eslint/no-empty-function": "off",
 		"no-mixed-spaces-and-tabs": ["error", "smart-tabs"]
 	},
-	"ignorePatterns": ["node_modules", "dist", "src/api/**/*", "server/**/*", "public/**/*"],
+	"ignorePatterns": ["node_modules", "dist", "src/api/**/*", "server/**/*", "public/**/*","node_modules/**/*"],
 	"settings": {
 		"react": {
 			"version": "detect"

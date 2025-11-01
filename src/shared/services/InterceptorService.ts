@@ -1,4 +1,4 @@
-import { AxiosInstance } from "axios";
+import { type AxiosInstance } from "axios";
 import { AlertService } from "./AlertService";
 import { LoaderService } from "./LoaderService";
 import { toastWithButton } from "./toastWithButton";

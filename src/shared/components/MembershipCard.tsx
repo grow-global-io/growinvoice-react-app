@@ -16,7 +16,7 @@ import {
 	usePaymentsControllerGrowlimitlessPyamentsForPlans,
 	usePaymentsControllerStripePaymentForPlans,
 } from "@api/services/payments";
-import { PlanWithFeaturesDto } from "@api/services/models";
+import { type PlanWithFeaturesDto } from "@api/services/models";
 import { formatCurrency } from "@shared/formatter";
 import React, { useMemo } from "react";
 import { environment } from "@enviroment";

@@ -2,7 +2,7 @@ import { Box, Grid, Typography, IconButton, Button, Divider } from "@mui/materia
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { Constants } from "@shared/constants";
-import { Formik, Field, Form, FormikHelpers, FieldArray } from "formik";
+import { Formik, Field, Form, type FormikHelpers, FieldArray } from "formik";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import * as yup from "yup";
@@ -11,9 +11,9 @@ import CreateProductUnit from "../ProductUnit/CreateProductUnit";
 import CreateHSNCode from "../HSNCode/CreateHSNCode";
 import CreateTaxes from "../ProductTaxes/CreateTaxes";
 import { useCreateProductStore } from "@store/createProductStore";
-import { CreateProductWithTaxDto, CreateProductWithTaxDtoType } from "@api/services/models";
+import { type CreateProductWithTaxDto, CreateProductWithTaxDtoType } from "@api/services/models";
 import { useAuthStore } from "@store/auth";
-import { ListDto } from "@shared/models/ListDto";
+import { type ListDto } from "@shared/models/ListDto";
 import {
 	getProductControllerFindAllQueryKey,
 	useProductControllerCreate,

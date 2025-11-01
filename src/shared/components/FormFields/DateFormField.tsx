@@ -1,5 +1,5 @@
 import React from "react";
-import { FieldProps, getIn } from "formik";
+import { type FieldProps, getIn } from "formik";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DesktopDatePicker as DatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
