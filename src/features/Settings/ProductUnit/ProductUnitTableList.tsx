@@ -9,11 +9,13 @@ import {
 } from "@api/services/productunit";
 import Loader from "@shared/components/Loader";
 import { Box, Tooltip } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import { useConfirmDialogStore } from "@store/confirmDialog";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCreateProductUnitStore } from "@store/createProductUnitStore";
 
 const ProductUnitTableList = () => {
+	const { t } = useTranslation();
 	const queryClient = useQueryClient();
 	const allProductUnit = useProductunitControllerFindAll();
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
@@ -22,18 +24,21 @@ const ProductUnitTableList = () => {
 	const columns: GridColDef[] = [
 		{
 			field: "name",
-			headerName: "Name",
+			headerName: t("productUnit.table.name", { defaultValue: "Name" }),
 			flex: 1,
 			minWidth: 150,
 		},
 		{
 			field: "action",
-			headerName: "Action",
+			headerName: t("productUnit.table.action", { defaultValue: "Action" }),
 			flex: 1,
 			minWidth: 150,
 			type: "actions",
 			getActions: (params) => [
-				<Tooltip title="Edit Product Unit" key={params.row?.id}>
+				<Tooltip
+					title={t("productUnit.table.edit", { defaultValue: "Edit Product Unit" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							src={EditIcon}
@@ -43,7 +48,10 @@ const ProductUnitTableList = () => {
 						/>
 					</Box>
 				</Tooltip>,
-				<Tooltip title="Delete Product Unit" key={params.row?.id}>
+				<Tooltip
+					title={t("productUnit.table.delete", { defaultValue: "Delete Product Unit" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							key={params.row?.id}
@@ -52,8 +60,12 @@ const ProductUnitTableList = () => {
 							iconColor="error"
 							onClick={async () => {
 								handleOpen({
-									title: "Delete Product Unit",
-									message: "Are you sure you want to delete this Product Unit?",
+									title: t("productUnit.actions.deleteTitle", {
+										defaultValue: "Delete Product Unit",
+									}),
+									message: t("productUnit.actions.deleteConfirm", {
+										defaultValue: "Are you sure you want to delete this Product Unit?",
+									}),
 									onConfirm: async () => {
 										await removeProductUnit.mutateAsync({ id: params.row.id });
 
@@ -64,7 +76,7 @@ const ProductUnitTableList = () => {
 									onCancel: () => {
 										cleanUp();
 									},
-									confirmButtonText: "Delete",
+									confirmButtonText: t("app.delete", { defaultValue: "Delete" }),
 								});
 							}}
 						/>

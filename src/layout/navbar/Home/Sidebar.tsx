@@ -6,6 +6,7 @@ import {
 	Collapse,
 	Divider,
 	Drawer,
+	FormControlLabel,
 	IconButton,
 	List,
 	ListItemButton,
@@ -13,6 +14,7 @@ import {
 	ListItemText,
 	Menu,
 	MenuItem,
+	Switch,
 	Toolbar,
 	Tooltip,
 	Typography,
@@ -50,7 +52,7 @@ import { useTranslation } from "react-i18next";
 
 const drawerWidth = 240;
 function Sidebar({ children }: { children: React.ReactNode }) {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const { handleOpen } = useStoreLinkStore();
 	const { data: userData } = useAuthControllerStatus();
 	const { user } = useAuthStore();
@@ -64,6 +66,9 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 	const { isInstallable, isInstalled, installApp } = usePWAInstall();
 	const isMobile = useMobileDetection();
 	const [showIosInstructions, setShowIOSInstructions] = useState<boolean>(false);
+	const [hasManuallyChangedLanguage, setHasManuallyChangedLanguage] = React.useState(() => {
+		return localStorage.getItem("languageManuallyChanged") === "true";
+	});
 
 	const settingsWithFunc = [
 		{
@@ -455,13 +460,61 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 											const freePlan = user?.UserPlans?.find((plan) => plan?.plan?.price === 0);
 											if (freePlan?.end_date) {
 												const daysLeft = findLeftDate(freePlan.end_date);
-												return daysLeft > 0 ? `${daysLeft} days left` : "Trial expired";
+												return daysLeft > 0
+													? t("app.trial.daysLeft", {
+															defaultValue: "{{days}} days left",
+															days: daysLeft,
+														})
+													: t("app.trial.expired", { defaultValue: "Trial expired" });
 											}
-											return "Trial active";
+											return t("app.trial.active", { defaultValue: "Trial active" });
 										})()}
 									</Typography>
 								</Box>
 							)}
+						{/* Language Toggle - Show if language is not English OR if user has manually changed language */}
+						{(i18n.language !== "en" || hasManuallyChangedLanguage) && (
+							<FormControlLabel
+								control={
+									<Switch
+										checked={i18n.language === "fi"}
+										onChange={(e) => {
+											const newLang = e.target.checked ? "fi" : "en";
+											i18n.changeLanguage(newLang);
+											// Track that user has manually changed language
+											setHasManuallyChangedLanguage(true);
+											localStorage.setItem("languageManuallyChanged", "true");
+										}}
+										sx={{
+											"& .MuiSwitch-switchBase.Mui-checked": {
+												color: "custom.white",
+											},
+											"& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+												backgroundColor: "custom.white",
+											},
+										}}
+									/>
+								}
+								label={
+									<Typography
+										variant="body2"
+										sx={{
+											color: "custom.white",
+											fontSize: "0.75rem",
+											fontWeight: 500,
+										}}
+									>
+										{i18n.language === "fi" ? "FI" : "EN"}
+									</Typography>
+								}
+								sx={{
+									mr: 1,
+									"& .MuiFormControlLabel-label": {
+										marginLeft: 0.5,
+									},
+								}}
+							/>
+						)}
 						<NotificationMain />
 						<Box
 							mx={{ xs: 0, sm: 2 }}

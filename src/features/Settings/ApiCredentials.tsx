@@ -4,14 +4,18 @@ import { CustomIconButton } from "@shared/components/CustomIconButton";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { AlertService } from "@shared/services/AlertService";
 import { environment } from "@enviroment";
+import { useTranslation } from "react-i18next";
 
 const ApiCredentials = () => {
+	const { t } = useTranslation();
 	const token = localStorage?.getItem("authToken");
 
 	return (
 		<Grid container spacing={2}>
 			<Grid item sm={12}>
-				<Typography variant="h4">API Token</Typography>
+				<Typography variant="h4">
+					{t("apiCredentials.token", { defaultValue: "API Token" })}
+				</Typography>
 			</Grid>
 
 			<Grid item xs={12} sm={10}>
@@ -22,14 +26,18 @@ const ApiCredentials = () => {
 					src={ContentCopyIcon}
 					onClick={() => {
 						navigator.clipboard.writeText(token ?? "");
-						AlertService.instance.successMessage("Token copied to clipboard");
+						AlertService.instance.successMessage(
+							t("apiCredentials.copied", { defaultValue: "Token copied to clipboard" }),
+						);
 					}}
 				/>
 				<CustomIconButton src={RefreshIcon} buttonType="delete" iconColor="error" />
 			</Grid>
 			<Grid item sm={12} display={"flex"}>
 				<Typography variant="body1" mt={{ md: -2, xs: 1 }}>
-					To learn more, check the documentation:
+					{t("apiCredentials.learnMore", {
+						defaultValue: "To learn more, check the documentation:",
+					})}
 					<Typography
 						component="a"
 						href={environment.baseUrl + "/docs"}
@@ -37,7 +45,7 @@ const ApiCredentials = () => {
 						sx={{ ml: 1, wordBreak: "break-all" }}
 						target="_blank"
 					>
-						click here
+						{t("apiCredentials.clickHere", { defaultValue: "click here" })}
 					</Typography>
 				</Typography>
 			</Grid>

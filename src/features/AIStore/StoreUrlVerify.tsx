@@ -7,8 +7,11 @@ import { useAuthStore } from "@store/auth";
 import { useStoreLinkStore } from "@store/storeLinkStore";
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18s";
 
 const StoreUrlVerify = () => {
+	const { t } = useTranslation();
 	const create = useStoreControllerCreateUpdateStore();
 	const user = useAuthControllerStatus();
 	const { handleOpen } = useStoreLinkStore();
@@ -18,11 +21,15 @@ const StoreUrlVerify = () => {
 
 	const validationSchema = Yup.object().shape({
 		storeName: Yup.string()
-			.required("Store name is required")
-			.test("uniqueStoreName", "Store name must be unique", async (value) => {
-				if (!value) return true;
-				return /^[a-zA-Z][a-zA-Z0-9_]{2,30}$/.test(value);
-			}),
+			.required(() => i18n.t("store.validation.nameRequired"))
+			.test(
+				"uniqueStoreName",
+				() => i18n.t("store.validation.mustBeUnique"),
+				async (value) => {
+					if (!value) return true;
+					return /^[a-zA-Z][a-zA-Z0-9_]{2,30}$/.test(value);
+				},
+			),
 	});
 	const { refecthUser } = useAuthStore();
 
@@ -38,7 +45,7 @@ const StoreUrlVerify = () => {
 	};
 
 	const storeNameSuggestionsGenerator = (storeName: string) => {
-		const suggestions = [];
+		const suggestions: string[] = [];
 		for (let i = 1; i <= 5; i++) {
 			suggestions.push(`${storeName}${i}`);
 		}
@@ -53,9 +60,13 @@ const StoreUrlVerify = () => {
 		<Box>
 			<Grid container spacing={2}>
 				<Grid item xs={12}>
-					<Typography variant="h5">Store URL Verification</Typography>
+					<Typography variant="h5">
+						{t("store.verification.title", { defaultValue: "Store URL Verification" })}
+					</Typography>
 					<Typography variant="body1">
-						Please verify your store URL. You can use the following suggestions:
+						{t("store.verification.description", {
+							defaultValue: "Please verify your store URL. You can use the following suggestions:",
+						})}
 					</Typography>
 				</Grid>
 				<Grid item xs={12}>
@@ -66,11 +77,17 @@ const StoreUrlVerify = () => {
 					>
 						{({ values, setFieldValue }) => (
 							<Form>
-								<Field name="storeName" label="Store Name" component={TextFormField} />
+								<Field
+									name="storeName"
+									label={t("store.name", { defaultValue: "Store Name" })}
+									component={TextFormField}
+								/>
 								<Grid container spacing={2}>
 									<Grid item xs={12} sm={6}>
 										<Typography variant="body2" sx={{ mt: 2 }}>
-											Suggested Store Names (click to use):
+											{t("store.verification.suggestedNames", {
+												defaultValue: "Suggested Store Names (click to use):",
+											})}
 										</Typography>
 										<List>
 											{storeNameSuggestionsGenerator(values.storeName).length > 0 &&
@@ -89,7 +106,7 @@ const StoreUrlVerify = () => {
 									</Grid>
 								</Grid>
 								<Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
-									Update Store Name
+									{t("store.updateStoreName", { defaultValue: "Update Store Name" })}
 								</Button>
 							</Form>
 						)}

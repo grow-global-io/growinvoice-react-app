@@ -2,8 +2,10 @@ import { useAuthStore } from "@store/auth";
 import { Alert, AlertTitle, Button } from "@mui/material";
 import { useGetStartedDialogStore } from "@store/useGetStartedDialog";
 import GetStartedDialog from "../../features/Dashboard/GetStartedDialog";
+import { useTranslation } from "react-i18next";
 
 const GetStartedErrorComp = () => {
+	const { t } = useTranslation();
 	const { isGetStartedDialogOpen } = useAuthStore();
 	const { handleOpen } = useGetStartedDialogStore();
 	return (
@@ -21,7 +23,7 @@ const GetStartedErrorComp = () => {
 							size="small"
 							variant="contained"
 						>
-							Get Started
+							{t("getStarted.banner.cta", { defaultValue: "Get Started" })}
 						</Button>
 					}
 					sx={{
@@ -43,9 +45,11 @@ const GetStartedErrorComp = () => {
 							margin: 0,
 						}}
 					>
-						Action Required
+						{t("getStarted.banner.title", { defaultValue: "Action Required" })}
 					</AlertTitle>
-					You need to complete the get started process before using this feature.
+					{t("getStarted.banner.message", {
+						defaultValue: "You need to complete the get started process before using this feature.",
+					})}
 				</Alert>
 			)}
 		</>

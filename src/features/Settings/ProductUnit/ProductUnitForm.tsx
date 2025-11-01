@@ -4,8 +4,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import CreateProductUnit from "@features/ProductUnit/CreateProductUnit";
 import NoteOutlinedIcon from "@mui/icons-material/NoteOutlined";
 import { useCreateProductUnitStore } from "@store/createProductUnitStore";
+import { useTranslation } from "react-i18next";
 
 const ProductUnitForm = () => {
+	const { t } = useTranslation();
 	const { setOpenProductUnitForm } = useCreateProductUnitStore.getState();
 	return (
 		<Box sx={{ width: { sm: "400px" } }} role="presentation">
@@ -18,7 +20,7 @@ const ProductUnitForm = () => {
 						gap: 1,
 					}}
 				>
-					<NoteOutlinedIcon /> New Product Unit
+					<NoteOutlinedIcon /> {t("productUnit.new", { defaultValue: "New Product Unit" })}
 				</Typography>
 				<IconButton
 					sx={{

@@ -2,6 +2,7 @@ import { Button, Drawer } from "@mui/material";
 import ProductUnitForm from "./ProductUnitForm";
 import AddIcon from "@mui/icons-material/Add";
 import { useCreateProductUnitStore } from "@store/createProductUnitStore";
+import { useTranslation } from "react-i18next";
 
 export const ProductUnitDrawer = ({
 	open,
@@ -16,6 +17,7 @@ export const ProductUnitDrawer = ({
 );
 
 const CreateProductUnit = () => {
+	const { t } = useTranslation();
 	const { setOpenProductUnitForm } = useCreateProductUnitStore.getState();
 
 	return (
@@ -26,7 +28,7 @@ const CreateProductUnit = () => {
 			}}
 			startIcon={<AddIcon />}
 		>
-			Create New
+			{t("productUnit.createNew", { defaultValue: "Create New" })}
 		</Button>
 	);
 };

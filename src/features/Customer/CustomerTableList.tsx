@@ -201,6 +201,7 @@ const CustomerTableList = () => {
 				columns={columns}
 				localeText={{
 					toolbarQuickFilterPlaceholder: t("common.search", { defaultValue: "Search" }),
+					noRowsLabel: t("table.noRows", { defaultValue: "No rows" }),
 				}}
 			/>
 			{/* <CustomerView open={open} handleClose={handleClose} customerId={viewCustomerId ?? ""} /> */}

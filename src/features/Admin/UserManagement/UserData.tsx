@@ -14,9 +14,10 @@ import {
 } from "@mui/material";
 import AppDialogHeader from "../../../shared/components/Dialog/AppDialogHeader";
 import { AdminUsersListDto } from "../../../api/services/auth/models";
-import { findLeftDate, numberToOrdinal, parseDateStringToFormat } from "@shared/formatter";
+import { findLeftDate, parseDateStringToFormat, numberToOrdinal } from "@shared/formatter";
 import { AttachMoney, ShoppingCart, People, Store, Receipt } from "@mui/icons-material";
 import { useAuthControllerGetUserQuota } from "@api/services/auth";
+import { useTranslation } from "react-i18next";
 
 const iconMapping: Record<string, React.ElementType> = {
 	Invoice: Receipt,
@@ -47,6 +48,7 @@ const UserData = ({
 	handleClose: () => void;
 	userData: AdminUsersListDto;
 }) => {
+	const { t } = useTranslation();
 	const findQuota = useAuthControllerGetUserQuota(
 		{
 			userId: user?.id ?? "",
@@ -77,25 +79,46 @@ const UserData = ({
 									<Grid key={item.id} container>
 										<Grid item xs={12} sm={6}>
 											<Typography variant="h5" textTransform={"capitalize"}>
-												{numberToOrdinal(index + 1)} Plan
+												{t("plans.planTitle", {
+													defaultValue: "{{order}} Plan",
+													order: numberToOrdinal(index + 1),
+												})}
 											</Typography>
 											<Box display={"flex"} my={1}>
-												<Typography variant="h6">Plan :</Typography>
+												<Typography variant="h6">
+													{t("plans.planLabel", { defaultValue: "Plan" })} :
+												</Typography>
 												<Typography variant="h6" fontWeight={"500"}>
 													{" "}
-													{item?.plan?.name}
+													{t(
+														`plans.planNames.${item?.plan?.name?.toLowerCase().replace(/\s+/g, "")}`,
+														{
+															defaultValue: item?.plan?.name || "",
+														},
+													)}
 												</Typography>
 											</Box>
 											<Box display={"flex"} alignItems={"center"} my={1}>
-												<Typography variant="h6">Status :</Typography>
-												<Chip label={"Active"} variant="filled" color={"success"} sx={{ ml: 1 }} />
+												<Typography variant="h6">
+													{t("plans.status", { defaultValue: "Status" })} :
+												</Typography>
+												<Chip
+													label={t("common.active", { defaultValue: "Active" })}
+													variant="filled"
+													color={"success"}
+													sx={{ ml: 1 }}
+												/>
 											</Box>
 											<Box display={"flex"} my={1}>
-												<Typography variant="h6">Trial Ends :</Typography>
+												<Typography variant="h6">
+													{t("plans.trialEnds", { defaultValue: "Trial Ends" })} :
+												</Typography>
 												<Typography variant="h6" fontWeight={"500"}>
-													{" "}
-													{parseDateStringToFormat(item?.end_date ?? "")} (
-													{findLeftDate(item?.end_date ?? "")} days is left)
+													{t("plans.trialEndsText", {
+														defaultValue: "{{date}} ({{days}} days left)",
+														date: parseDateStringToFormat(item?.end_date ?? ""),
+														days: findLeftDate(item?.end_date ?? ""),
+													})}
 												</Typography>
 											</Box>
 										</Grid>
@@ -126,7 +149,7 @@ const UserData = ({
 												</Avatar>
 												<Box flexGrow={1}>
 													<Typography variant="h6" fontWeight={600}>
-														{feature}
+														{t(`plans.features.${feature}`, { defaultValue: feature })}
 													</Typography>
 													<Typography variant="body2" color="text.secondary">
 														{usedCount} / {quotaCount}

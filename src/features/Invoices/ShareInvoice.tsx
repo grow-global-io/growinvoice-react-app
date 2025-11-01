@@ -15,6 +15,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import EmailIcon from "@mui/icons-material/Email";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const ShareInvoice = ({
 	open,
@@ -25,6 +26,7 @@ const ShareInvoice = ({
 	handleClose: () => void;
 	invoiceId: string;
 }) => {
+	const { t } = useTranslation();
 	const url = `${window.location.origin}/invoice/invoicetemplate/${invoiceId}`;
 	const [copied, setCopied] = useState(false);
 
@@ -62,12 +64,14 @@ const ShareInvoice = ({
 							startIcon={<LinkIcon />}
 							disabled={copied}
 						>
-							{copied ? "Copied!" : "Copy Link"}
+							{copied
+								? t("invoice.share.copied", { defaultValue: "Copied!" })
+								: t("invoice.share.copyLink", { defaultValue: "Copy Link" })}
 						</Button>
 					</Grid>
 					<Grid item xs={12}>
 						<Typography variant="body2" color="textSecondary">
-							Share on social media:
+							{t("invoice.share.socialMedia", { defaultValue: "Share on social media:" })}
 						</Typography>
 					</Grid>
 					<Grid item xs={12} container spacing={1}>
@@ -97,7 +101,7 @@ const ShareInvoice = ({
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={handleClose} color="primary" variant="contained">
-					Close
+					{t("app.close", { defaultValue: "Close" })}
 				</Button>
 			</DialogActions>
 		</Dialog>

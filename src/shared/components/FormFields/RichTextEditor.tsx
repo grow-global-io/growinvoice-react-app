@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import FormHelperText from "@mui/material/FormHelperText";
 import SunEditor from "suneditor-react";
 import { styled } from "@mui/material";
+import i18n from "i18next";
 import { SunEditorOptions } from "suneditor/src/options";
 
 const StyledSunEditor = styled(SunEditor)(({ theme }) => ({
@@ -47,13 +48,13 @@ export const RichTextEditor: React.FC<
 				</InputLabel>
 			)}
 			<br />
-			<StyledSunEditor
+            <StyledSunEditor
 				// getSunEditorInstance={services.getSunEditorInstance}
 				name={field.name}
 				width="100%"
 				height="200px"
 				setContents={field.value}
-				placeholder="Please type here..."
+                placeholder={i18n.t("common.typeHere", { defaultValue: "Please type here..." })}
 				onChange={(data) => form.setFieldValue(field.name, data, true)}
 				onBlur={field.onBlur}
 				{...props}
