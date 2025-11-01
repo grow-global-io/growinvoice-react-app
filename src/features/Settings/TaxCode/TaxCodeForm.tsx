@@ -3,8 +3,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import CreateTaxes from "@features/ProductTaxes/CreateTaxes";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import { useCreateTaxCodeStore } from "@store/createTaxCodeStore";
+import { useTranslation } from "react-i18next";
 
 const TaxCodeForm = () => {
+	const { t } = useTranslation();
 	const { setOpenTaxCodeForm } = useCreateTaxCodeStore.getState();
 	return (
 		<Box sx={{ width: { sm: "400px" } }} role="presentation">
@@ -17,7 +19,7 @@ const TaxCodeForm = () => {
 						gap: 1,
 					}}
 				>
-					<DescriptionOutlinedIcon /> New Tax
+					<DescriptionOutlinedIcon /> {t("tax.form.title", { defaultValue: "New Tax" })}
 					{/* <img src={Constants.customImages.QuotationIcon} alt="Invoice Icon" /> New Quotation */}
 				</Typography>
 				<IconButton

@@ -49,6 +49,7 @@ import {
 } from "@api/services/dashboards";
 import { useAuthStore } from "@store/auth";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 import { CiBoxList } from "react-icons/ci";
 import PublishIcon from "@mui/icons-material/Publish";
@@ -67,6 +68,7 @@ const MenuProps = {
 };
 
 const DashboardOpenAi = () => {
+	const { t, i18n } = useTranslation();
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const openTypeMenu = Boolean(anchorEl);
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -113,15 +115,19 @@ const DashboardOpenAi = () => {
 	};
 
 	const validationSchema = Yup.object().shape({
-		prompt: Yup.string().required("Prompt is required"),
-		type: Yup.string().required("Type is required"),
+		prompt: Yup.string().required(() => i18n.t("aiAssistant.validation.promptRequired")),
+		type: Yup.string().required(() => i18n.t("aiAssistant.validation.typeRequired")),
 	});
 
 	const openAiApi = useOpenaiControllerCreate();
 	const openAiApiGraph = useOpenaiControllerCreateGraph({
 		mutation: {
 			onError: () => {
-				AlertService.instance?.errorMessage("Error occurred! please try again after 30 seconds");
+				AlertService.instance?.errorMessage(
+					t("aiAssistant.errors.retryAfter30", {
+						defaultValue: "Error occurred! please try again after 30 seconds",
+					}),
+				);
 				setIsError(true);
 			},
 		},
@@ -147,14 +153,15 @@ const DashboardOpenAi = () => {
 				formikRef.current?.setFieldValue("prompt", keysData?.prompt);
 				formikRef.current?.setFieldValue("query", keysData?.query);
 				const keys = Object.keys(keysData?.result?.[0] ?? []);
-				const rowsData = keysData?.result?.map(
-					(item: OpenaiControllerCreate200Item, index: number) => {
-						return {
-							id: item?.id ?? index + 1,
-							...item,
-						};
-					},
-				);
+				const resultArray = (keysData?.result as unknown as OpenaiControllerCreate200Item[]) ?? [];
+				const rowsData = Array.isArray(resultArray)
+					? resultArray.map((item: OpenaiControllerCreate200Item, index: number) => {
+							return {
+								id: item?.id ?? index + 1,
+								...item,
+							};
+						})
+					: [];
 
 				setRows(rowsData);
 
@@ -271,14 +278,20 @@ const DashboardOpenAi = () => {
 							>
 								<CardContent>
 									<FormControl sx={{ m: 1, width: 250 }}>
-										<InputLabel id="demo-multiple-checkbox-label">Column Filter</InputLabel>
+										<InputLabel id="demo-multiple-checkbox-label">
+											{t("aiAssistant.columnFilter", { defaultValue: "Column Filter" })}
+										</InputLabel>
 										<Select
 											labelId="demo-multiple-checkbox-label"
 											id="demo-multiple-checkbox"
 											multiple
 											value={columns?.filter((item) => item?.show)?.map((item) => item?.field)}
 											onChange={handleChange}
-											input={<OutlinedInput label="Column Filter" />}
+											input={
+												<OutlinedInput
+													label={t("aiAssistant.columnFilter", { defaultValue: "Column Filter" })}
+												/>
+											}
 											renderValue={(selected) => selected.join(", ")}
 											MenuProps={MenuProps}
 										>
@@ -312,10 +325,10 @@ const DashboardOpenAi = () => {
 						</Grid>
 						<Grid item sm={12} textAlign={"center"} gap={1}>
 							<Button variant="contained" onClick={handleClickOpen}>
-								Save
+								{t("app.save", { defaultValue: "Save" })}
 							</Button>
 							<Button variant="outlined" onClick={handleReset}>
-								Reset
+								{t("aiAssistant.reset", { defaultValue: "Reset" })}
 							</Button>
 						</Grid>
 					</>
@@ -327,10 +340,10 @@ const DashboardOpenAi = () => {
 						</Grid>
 						<Grid item sm={12} textAlign={"center"} gap={1}>
 							<Button variant="contained" onClick={handleClickOpen}>
-								Save
+								{t("app.save", { defaultValue: "Save" })}
 							</Button>
 							<Button variant="outlined" onClick={handleReset}>
-								Reset
+								{t("aiAssistant.reset", { defaultValue: "Reset" })}
 							</Button>
 						</Grid>
 					</>
@@ -348,7 +361,11 @@ const DashboardOpenAi = () => {
 				)}
 				{rows?.length === 0 && openAiApi?.isSuccess && graphData === undefined && (
 					<Grid item xs={12}>
-						<LottieNoDataFound message="Please request your widget again." />
+						<LottieNoDataFound
+							message={t("aiAssistant.requestWidgetAgain", {
+								defaultValue: "Please request your widget again.",
+							})}
+						/>
 					</Grid>
 				)}
 				{rows?.length === 0 &&
@@ -364,14 +381,18 @@ const DashboardOpenAi = () => {
 							sx={{ minHeight: "50vh" }}
 						>
 							<Typography variant="h3" textAlign="center" color="text.secondary">
-								Hey! How can I help you today?
+								{t("aiAssistant.greeting", { defaultValue: "Hey! How can I help you today?" })}
 							</Typography>
 						</Grid>
 					)}
 
 				{openAiApi?.isError && isError && (
 					<Grid item xs={12}>
-						<NoDataFound message="Error occurred! please try again after 30 seconds" />
+						<NoDataFound
+							message={t("aiAssistant.errors.retryAfter30", {
+								defaultValue: "Error occurred! please try again after 30 seconds",
+							})}
+						/>
 					</Grid>
 				)}
 
@@ -394,11 +415,13 @@ const DashboardOpenAi = () => {
 										<Grid item xs={12} md={8}>
 											<Field
 												name="prompt"
-												placeholder="Tell us what you want to see?"
+												placeholder={t("aiAssistant.promptPlaceholder", {
+													defaultValue: "Tell us what you want to see?",
+												})}
 												InputProps={{
 													startAdornment: (
 														<InputAdornment position="start">
-															<Tooltip title="Type">
+															<Tooltip title={t("aiAssistant.type", { defaultValue: "Type" })}>
 																<Box>
 																	<IconButton onClick={handleClick}>
 																		<CiBoxList />
@@ -429,7 +452,9 @@ const DashboardOpenAi = () => {
 														<ListItemIcon>
 															<Radio checked={formik.values.type === item} value={item} />
 														</ListItemIcon>
-														{item}
+														{t(`aiAssistant.types.${item.toLowerCase()}` as any, {
+															defaultValue: item,
+														})}
 													</MenuItem>
 												);
 											})}
@@ -446,18 +471,23 @@ const DashboardOpenAi = () => {
 						{(formik) => {
 							return (
 								<Form>
-									<AppDialogHeader title="save the Data" handleClose={handleClose} />
+									<AppDialogHeader
+										title={t("aiAssistant.saveDataTitle", { defaultValue: "Save the Data" })}
+										handleClose={handleClose}
+									/>
 									<DialogContent>
 										<Field
 											name="title"
-											label="Title"
+											label={t("aiAssistant.title", { defaultValue: "Title" })}
 											component={TextFormField}
-											placeholder="Enter Title"
+											placeholder={t("aiAssistant.titlePlaceholder", {
+												defaultValue: "Enter Title",
+											})}
 										/>
 									</DialogContent>
 									<AppDialogFooter
 										onClickCancel={handleClose}
-										saveButtonText="Submit"
+										saveButtonText={t("aiAssistant.submit", { defaultValue: "Submit" })}
 										saveButtonDisabled={!formik.isValid || formik.isSubmitting}
 									/>
 								</Form>

@@ -2,6 +2,7 @@ import { useUploadControllerUploadFile } from "@api/services/upload";
 import { Box, Button, FormControl, InputLabel, Typography } from "@mui/material";
 import { FieldProps, getIn } from "formik";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const AvatarFormField: React.FC<
 	FieldProps & {
@@ -12,6 +13,7 @@ const AvatarFormField: React.FC<
 		backgroundColor?: string; // New prop for background color
 	}
 > = ({ field, form, label, isRequired }) => {
+	const { t } = useTranslation();
 	const errorText = getIn(form.touched, field.name) && getIn(form.errors, field.name);
 	const [fileSizeError, setFileSizeError] = React.useState<boolean>(false);
 	const [docTypeError, setDocTypeError] = React.useState<boolean>(false);
@@ -61,11 +63,11 @@ const AvatarFormField: React.FC<
 			>
 				<img
 					src={field?.value}
-					alt="avatar"
+					alt={t("app.avatarAlt", { defaultValue: "avatar" })}
 					style={{ width: "100px", height: "100px", borderRadius: "50%", marginTop: "20px" }}
 				/>
 				<Button variant="outlined" component="label">
-					Upload File
+					{t("app.uploadFile", { defaultValue: "Upload File" })}
 					<input type="file" hidden onChange={handleUpload} />
 				</Button>
 				{field.value && (
@@ -76,18 +78,20 @@ const AvatarFormField: React.FC<
 							form.setFieldValue(field.name, "", true);
 						}}
 					>
-						Remove
+						{t("app.remove", { defaultValue: "Remove" })}
 					</Button>
 				)}
 			</Box>
 			{fileSizeError && (
 				<Typography variant="caption" color="error">
-					Maximum file size is 5MB
+					{t("upload.errors.maxSize", { defaultValue: "Maximum file size is 5MB" })}
 				</Typography>
 			)}
 			{docTypeError && (
 				<Typography variant="caption" color="error">
-					Only .png, .jpg, .jpeg files are allowed
+					{t("upload.errors.invalidType", {
+						defaultValue: "Only .png, .jpg, .jpeg files are allowed",
+					})}
 				</Typography>
 			)}
 		</FormControl>

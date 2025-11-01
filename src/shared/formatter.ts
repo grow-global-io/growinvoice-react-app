@@ -247,7 +247,10 @@ export const convertDayToDate = (date: Day) => {
 	return combinedDateTime.subtract(utcOffset, "minutes").format("YYYY-MM-DD");
 };
 
-export function timeAgo(isoString: string): string {
+export function timeAgo(
+	isoString: string,
+	t?: (key: string, options?: { defaultValue?: string }) => string,
+): string {
 	const currentDate = new Date();
 	const inputDate = new Date(isoString);
 	const timeDifference = currentDate.getTime() - inputDate.getTime();
@@ -255,14 +258,40 @@ export function timeAgo(isoString: string): string {
 	const hours = Math.floor(minutes / 60);
 
 	if (minutes < 1) {
-		return "Just now";
+		return t?.("time.justNow", { defaultValue: "Just now" }) || "Just now";
 	} else if (minutes < 60) {
-		return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ago`;
+		const minutesText =
+			minutes === 1
+				? (
+						t?.("time.minuteAgo", { defaultValue: "{{count}} minute ago" }) ||
+						"{{count}} minute ago"
+					).replace("{{count}}", minutes.toString())
+				: (
+						t?.("time.minutesAgo", { defaultValue: "{{count}} minutes ago" }) ||
+						"{{count}} minutes ago"
+					).replace("{{count}}", minutes.toString());
+		return minutesText;
 	} else if (hours < 24) {
-		return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+		const hoursText =
+			hours === 1
+				? (
+						t?.("time.hourAgo", { defaultValue: "{{count}} hour ago" }) || "{{count}} hour ago"
+					).replace("{{count}}", hours.toString())
+				: (
+						t?.("time.hoursAgo", { defaultValue: "{{count}} hours ago" }) || "{{count}} hours ago"
+					).replace("{{count}}", hours.toString());
+		return hoursText;
 	} else {
 		const days = Math.floor(hours / 24);
-		return `${days} ${days === 1 ? "day" : "days"} ago`;
+		const daysText =
+			days === 1
+				? (
+						t?.("time.dayAgo", { defaultValue: "{{count}} day ago" }) || "{{count}} day ago"
+					).replace("{{count}}", days.toString())
+				: (
+						t?.("time.daysAgo", { defaultValue: "{{count}} days ago" }) || "{{count}} days ago"
+					).replace("{{count}}", days.toString());
+		return daysText;
 	}
 }
 

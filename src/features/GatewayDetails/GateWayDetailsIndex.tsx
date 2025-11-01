@@ -3,6 +3,7 @@ import GateWayDetailsList from "./GateWayDetailsList";
 import AddIcon from "@mui/icons-material/Add";
 import GatewayDetailsForm from "./GatewayDetailsForm";
 import { useDialog } from "@shared/hooks/useDialog";
+import { useTranslation } from "react-i18next";
 
 export const GateWayDialog = ({
 	open,
@@ -18,13 +19,14 @@ export const GateWayDialog = ({
 	</Dialog>
 );
 const GateWayDetailsIndex = () => {
+	const { t } = useTranslation();
 	const { handleClickOpen, handleClose, open } = useDialog();
 	return (
 		<>
 			<Grid container spacing={2}>
 				<Grid item xs={6} display="flex" alignItems={"center"}>
 					<Typography variant="h4" mb={3}>
-						Gateway Details
+						{t("gatewayDetails.title", { defaultValue: "Gateway Details" })}
 					</Typography>
 				</Grid>
 				<Grid item xs={6} display="flex" justifyContent="flex-end" alignItems={"center"}>
@@ -35,7 +37,7 @@ const GateWayDetailsIndex = () => {
 						}}
 						sx={{ mr: 2 }}
 					>
-						Get Razorpay Key
+						{t("gatewayDetails.getRazorpayKey", { defaultValue: "Get Razorpay Key" })}
 					</Button>
 					<Button
 						variant="contained"
@@ -44,7 +46,7 @@ const GateWayDetailsIndex = () => {
 							handleClickOpen();
 						}}
 					>
-						Add Gateway Details
+						{t("gatewayDetails.add", { defaultValue: "Add Gateway Details" })}
 					</Button>
 				</Grid>
 				<Grid item xs={12}>

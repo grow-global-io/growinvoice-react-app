@@ -14,8 +14,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { GateWayDialog } from "./GateWayDetailsIndex";
 import { useDialog } from "@shared/hooks/useDialog";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const GateWayDetailsList = () => {
+	const { t } = useTranslation();
 	const queryClient = useQueryClient();
 	const gateWayList = useGatewaydetailsControllerFindAll();
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
@@ -25,19 +27,23 @@ const GateWayDetailsList = () => {
 	const columns: GridColDef[] = [
 		{
 			field: "type",
-			headerName: "Type",
+			headerName: t("gatewayDetails.table.type", { defaultValue: "Type" }),
 			minWidth: 150,
 			flex: 1,
 		},
 		{
 			field: "enabled",
-			headerName: "Status",
+			headerName: t("gatewayDetails.table.status", { defaultValue: "Status" }),
 			minWidth: 150,
 			flex: 1,
 			renderCell: (params) => {
 				return (
 					<Chip
-						label={params.value ? "Enabled" : "Disabled"}
+						label={
+							params.value
+								? t("gatewayDetails.enabled", { defaultValue: "Enabled" })
+								: t("gatewayDetails.disabled", { defaultValue: "Disabled" })
+						}
 						color={params.value ? "success" : "error"}
 					/>
 				);
@@ -45,11 +51,14 @@ const GateWayDetailsList = () => {
 		},
 		{
 			field: "action",
-			headerName: "Action",
+			headerName: t("gatewayDetails.table.action", { defaultValue: "Action" }),
 			flex: 1,
 			type: "actions",
 			getActions: (params) => [
-				<Tooltip title="Edit" key={params.row?.id}>
+				<Tooltip
+					title={t("gatewayDetails.table.edit", { defaultValue: "Edit" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							src={EditIcon}
@@ -61,7 +70,7 @@ const GateWayDetailsList = () => {
 					</Box>
 				</Tooltip>,
 
-				<Tooltip title="Delete" key={params.row?.id}>
+				<Tooltip title={t("app.delete", { defaultValue: "Delete" })} key={params.row?.id}>
 					<Box>
 						<CustomIconButton
 							key={params.row?.id}
@@ -70,8 +79,12 @@ const GateWayDetailsList = () => {
 							iconColor="error"
 							onClick={async () => {
 								handleOpen({
-									title: "Delete this Gateway Detail?",
-									message: "Are you sure you want to delete this Gateway Detail?",
+									title: t("gatewayDetails.actions.deleteTitle", {
+										defaultValue: "Delete this Gateway Detail?",
+									}),
+									message: t("gatewayDetails.actions.deleteConfirm", {
+										defaultValue: "Are you sure you want to delete this Gateway Detail?",
+									}),
 									onConfirm: async () => {
 										await removePayment.mutateAsync({ id: params.row.id });
 										queryClient.invalidateQueries({
@@ -81,7 +94,7 @@ const GateWayDetailsList = () => {
 									onCancel: () => {
 										cleanUp();
 									},
-									confirmButtonText: "Delete",
+									confirmButtonText: t("app.delete", { defaultValue: "Delete" }),
 								});
 							}}
 						/>

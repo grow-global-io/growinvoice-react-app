@@ -22,7 +22,6 @@ import {
 	CreateCustomerWithAddressDto,
 	CreateCustomerWithAddressDtoOption,
 } from "@api/services/models";
-import { stringToListDto } from "@shared/models/ListDto";
 import {
 	useCurrencyControllerFindAll,
 	useCurrencyControllerFindCountries,
@@ -374,9 +373,19 @@ const CustomerForm = () => {
 												name="option"
 												label={t("customerForm.customerType")}
 												component={AutocompleteField}
-												options={Object.values(CreateCustomerWithAddressDtoOption).map(
-													stringToListDto,
-												)}
+												options={Object.values(CreateCustomerWithAddressDtoOption).map((value) => ({
+													value,
+													label:
+														value === CreateCustomerWithAddressDtoOption.Freelancer
+															? t("customerForm.type.freelancer", { defaultValue: "Freelancer" })
+															: value === CreateCustomerWithAddressDtoOption.BusinessWithGST
+																? t("customerForm.type.businessWithGST", {
+																		defaultValue: "Business with GST",
+																	})
+																: t("customerForm.type.businessWithoutGST", {
+																		defaultValue: "Business without GST",
+																	}),
+												}))}
 												isRequired={true}
 											/>
 										</Grid>

@@ -8,6 +8,9 @@
     "delete": "Poista",
     "create": "Luo",
     "update": "Päivitä",
+    "uploadFile": "Lataa tiedosto",
+    "remove": "Poista",
+    "avatarAlt": "avatar",
     "install": "Asenna sovellus",
     "select": "Valitse",
     "close": "Sulje",
@@ -18,7 +21,28 @@
     "error": "Virhe",
     "actions": "Toiminnot",
     "search": "Haku",
-    "more": "Lisää"
+    "more": "Lisää",
+    "back": "Takaisin",
+    "skip": "Ohita",
+    "next": "Seuraava",
+    "finish": "Valmis",
+    "installed": "Sovellus asennettu!",
+    "installCancelled": "Asennus peruutettu",
+    "installUnavailable": "Asennus ei ole tällä hetkellä saatavilla",
+    "trial": {
+      "daysLeft": "{{days}} päivää jäljellä",
+      "expired": "Kokeilu päättynyt",
+      "active": "Kokeilu aktiivinen"
+    }
+  },
+  "dialog": {
+    "confirmTitle": "Oletko varma?"
+  },
+  "upload": {
+    "errors": {
+      "maxSize": "Suurin tiedostokoko on 5 Mt",
+      "invalidType": "Vain .png, .jpg, .jpeg ovat sallittuja"
+    }
   },
   "nav": {
     "home": "Etusivu",
@@ -30,7 +54,7 @@
     "reports": "Raportit",
     "settings": "Asetukset",
     "vendors": "Toimittajat",
-    "plans": "Paketit",
+    "plans": "tilausvaihtoehdot",
     "store": "Kauppa",
     "notifications": "Ilmoitukset",
     "profile": "Profiili",
@@ -51,21 +75,117 @@
       "dueAmount": "Erääntynyt summa"
     }
   },
+  "aiAssistant": {
+    "greeting": "Hei! Miten voin auttaa sinua tänään?",
+    "promptPlaceholder": "Kerro meille, mitä haluat nähdä?",
+    "type": "Tyyppi",
+    "columnFilter": "Sarake suodatin",
+    "reset": "Nollaa",
+    "requestWidgetAgain": "Pyydä vimpainta uudelleen.",
+    "saveDataTitle": "Tallenna tiedot",
+    "title": "Otsikko",
+    "titlePlaceholder": "Syötä otsikko",
+    "submit": "Lähetä",
+    "validation": {
+      "promptRequired": "Kehote on pakollinen",
+      "typeRequired": "Tyyppi on pakollinen"
+    },
+    "errors": {
+      "retryAfter30": "Virhe tapahtui! Yritä uudelleen 30 sekunnin kuluttua"
+    },
+    "types": {
+      "table": "Taulukko",
+      "graph": "Kaavio"
+    }
+  },
   "quotation": {
     "title": "Tarjoukset",
     "create": "Luo tarjous",
     "number": "Tarjouksen numero",
     "date": "Tarjouksen päiväys",
     "expiryDate": "Vanhentumispäivä",
-    "status": "Tila",
-    "total": "Yhteensä"
+    "total": "Yhteensä",
+    "table": {
+      "action": "Toiminto",
+      "status": "Tila",
+      "view": "Näytä tarjous",
+      "edit": "Muokkaa tarjousta",
+      "delete": "Poista tarjous"
+    },
+    "status": {
+      "draft": "Luonnos",
+      "due": "Erääntynyt",
+      "mailedtocustomer": "Lähetetty asiakkaalle",
+      "viewed": "Katsottu",
+      "paid": "Maksettu",
+      "accepted": "Hyväksytty",
+      "rejected": "Hylätty",
+      "converted": "Muunnettu"
+    },
+    "actions": {
+      "deleteTitle": "Poista tarjous",
+      "deleteConfirm": "Haluatko varmasti poistaa tämän tarjouksen?"
+    },
+    "quotationPrefix": "Tarjouksen etuliite",
+    "quotationPrefixPlaceholder": "Esim. \"QUO\"",
+    "autoArchive": "Automaattinen arkistointi",
+    "autoArchiveHelp": "Ota käyttöön, jos haluat arkistoida automaattisesti hyväksytyt tai hylätyt arviot 30 päivän jälkeen.",
+    "autoConvert": "Automaattinen muunnos",
+    "autoConvertHelp": "Muunna arviot automaattisesti laskuiksi, kun asiakas hyväksyy arvion.",
+    "footer": "Alatunniste",
+    "dueNotices": "Eräpäivämuistutukset",
+    "dueNoticesHelp": "Muistutukset lähetetään maksamattomista ja osittain maksetuista laskuista ennen eräpäivää.",
+    "dueNoticeInDays": "Eräpäivämuistutus (päiviä)",
+    "dueNoticePlaceholder": "x päivää ennen eräpäivää",
+    "overdueNotices": "Myöhästymismuistutukset",
+    "overdueNoticesHelp": "Muistutukset lähetetään eräpäivän jälkeen maksamattomista tai osittain maksetuista laskuista.",
+    "overdueNoticeInDays": "Myöhästymismuistutus (päiviä)",
+    "overdueNoticePlaceholder": "x päivää ennen eräpäivää",
+    "addresses": "Osoitteet",
+    "showTemplates": "Näytä mallit",
+    "companyAddressFormat": "Yrityksen osoitteen muoto",
+    "customerBillingAddressFormat": "Asiakkaan laskutusosoitteen muoto",
+    "customerShippingAddressFormat": "Asiakkaan toimitusosoitteen muoto",
+    "quotationTemplates": "Tarjouksen mallipohjat",
+    "saveSettings": "Tallenna asetukset",
+    "resetSettings": "Palauta asetukset",
+    "validation": {
+      "quotationPrefixRequired": "Tarjouksen etuliite on pakollinen",
+      "autoArchiveRequired": "Automaattinen arkistointi on pakollinen",
+      "dueNoticeRequired": "Eräpäivämuistutus on pakollinen",
+      "overdueNoticeRequired": "Myöhästymismuistutus on pakollinen",
+      "companyAddressRequired": "Yrityksen osoitteen muoto on pakollinen",
+      "customerBillingRequired": "Asiakkaan laskutusosoitteen muoto on pakollinen",
+      "customerShippingRequired": "Asiakkaan toimitusosoitteen muoto on pakollinen",
+      "userIdRequired": "Käyttäjätunnus on pakollinen",
+      "templateIdRequired": "Tarjouksen mallipohja on pakollinen"
+    }
   },
   "expenses": {
+    "title": "Kulut",
     "create": "Luo kulu",
     "vendorName": "Toimittajan nimi",
+    "amount": "Summa",
     "category": "Kategoria",
     "date": "Päiväys",
-    "notes": "Muistiinpanot"
+    "notes": "Muistiinpanot",
+    "table": {
+      "action": "Toiminto",
+      "edit": "Muokkaa kuluja",
+      "delete": "Poista kulu"
+    },
+    "actions": {
+      "deleteTitle": "Poista kulut",
+      "deleteConfirm": "Haluatko varmasti poistaa tämän kulun?"
+    },
+    "categoryTypes": {
+      "travel": "Matkakulut",
+      "food": "Ruoka",
+      "office": "Toimisto",
+      "rent": "Vuokra",
+      "salary": "Palkka",
+      "other": "Muu"
+    }
   },
   "expensesForm": {
     "title": "Uudet kulut",
@@ -117,7 +237,14 @@
     "companyNameRequired": "Yrityksen nimi on pakollinen",
     "phoneInvalid": "Puhelinnumero ei ole kelvollinen",
     "passwordsMatch": "Salasanojen täytyy täsmätä",
-    "confirmPasswordRequired": "Salasanan vahvistus on pakollinen"
+    "confirmPasswordRequired": "Salasanan vahvistus on pakollinen",
+    "notifications": {
+      "loginSuccess": "Kirjautuminen onnistui"
+    },
+    "errors": {
+      "invalidPassword": "Virheellinen salasana",
+      "userNotFound": "Käyttäjää ei löydy"
+    }
   },
   "customer": {
     "title": "Asiakkaat",
@@ -191,6 +318,11 @@
       "phoneInvalid": "Puhelinnumero ei ole kelvollinen",
       "websiteInvalid": "Verkkosivu ei ole kelvollinen",
       "currencyInvalid": "Valuutta ei ole kelvollinen"
+    },
+    "type": {
+      "freelancer": "Freelancer",
+      "businessWithGST": "Yritys GST:llä",
+      "businessWithoutGST": "Yritys ilman GST:tä"
     }
   },
   "invoice": {
@@ -200,7 +332,6 @@
     "number": "Laskun numero",
     "date": "Päiväys",
     "dueDate": "Eräpäivä",
-    "status": "Tila",
     "total": "Yhteensä",
     "download": "Lataa",
     "send": "Lähetä",
@@ -233,9 +364,32 @@
       "editInvoice": "Muokkaa laskua",
       "deleteInvoice": "Poista lasku"
     },
+    "source": {
+      "direct": "Suora",
+      "store": "Kauppa"
+    },
+    "status": {
+      "draft": "Luonnos",
+      "due": "Erääntynyt",
+      "mailedtocustomer": "Lähetetty asiakkaalle",
+      "viewed": "Katsottu",
+      "paid": "Maksettu",
+      "accepted": "Hyväksytty",
+      "rejected": "Hylätty"
+    },
+    "paymentStatus": {
+      "unpaid": "Maksamaton",
+      "paid": "Maksettu",
+      "partiallypaid": "Osittain maksettu"
+    },
     "actions": {
       "deleteTitle": "Poista lasku",
       "deleteConfirm": "Haluatko varmasti poistaa tämän laskun?"
+    },
+    "share": {
+      "copied": "Kopioitu!",
+      "copyLink": "Kopioi linkki",
+      "socialMedia": "Jaa sosiaalisessa mediassa:"
     },
     "detail": {
       "share": "Jaa",
@@ -266,6 +420,40 @@
       "dueToday": "Erääntyy tänään",
       "dueWithin30Days": "Erääntyy 30 päivän kuluessa",
       "overdueInvoice": "Myöhässä oleva lasku"
+    },
+    "template": {
+      "invoice": "LASKU",
+      "invoiceNo": "Laskunumero:",
+      "date": "Päiväys:",
+      "invoiceTo": "Lasku osoitteeseen:",
+      "payTo": "Maksetaan:",
+      "serialNo": "Nro",
+      "item": "Tuote",
+      "qty": "Määrä",
+      "hsn": "HSN",
+      "tax": "Vero(%)",
+      "price": "Hinta",
+      "total": "Yhteensä",
+      "subtotal": "Välisumma",
+      "discount": "Alennus (",
+      "dueAmount": "Erääntynyt summa",
+      "paidAmount": "Maksettu summa",
+      "grandTotal": "Loppusumma",
+      "company": "Yritys:",
+      "address": "Osoite:",
+      "vatNumber": "ALV-numero:",
+      "email": "Sähköposti:",
+      "tel": "Puhelin:",
+      "recipientsDetails": "Vastaanottajan tiedot:",
+      "nameAddress": "Nimi ja osoite:",
+      "payerNameAddress": "Maksajan nimi ja osoite:",
+      "refNo": "Viitenumero:",
+      "dueDate": "Eräpäivä:",
+      "note": "Huomautus:",
+      "recipientUpiDetails": "Vastaanottajan UPI-tiedot",
+      "termsConditions": "Ehdot ja palveluehdot:",
+      "termsClaim": "Kaikki väitteet, jotka liittyvät määrään tai toimitusvirheisiin, hylätään ostajalta, ellei niitä tehdä kirjallisesti myyjälle kolmenkymmenen (30) päivän kuluessa tavaroiden toimittamisesta ilmoitettuun osoitteeseen.",
+      "termsDelivery": "Toimituspäivät eivät ole taattuja, eikä myyjällä ole vastuuta vahingoista, jotka voivat syntyä tavaroiden lähetyksen viivästymisestä. Verot on jätetty pois, elleivät toisin mainita."
     }
   },
   "invoiceForm": {
@@ -284,6 +472,14 @@
     "invoiceDueDate": "Laskun eräpäivä",
     "isRecurring": "Toistuva",
     "recurring": "Toistotyyppi",
+    "recurringTypes": {
+      "Daily": "Päivittäin",
+      "Weekly": "Viikoittain",
+      "Monthly": "Kuukausittain",
+      "Quarterly": "Neljännesvuosittain",
+      "HalfYearly": "Puolivuosittain",
+      "Yearly": "Vuosittain"
+    },
     "notes": "Muistiinpanot",
     "paymentDetails": "Maksutiedot",
     "addPayment": "Lisää maksu",
@@ -322,6 +518,7 @@
     "title": "Tuotteet",
     "create": "Luo tuote",
     "createNew": "Luo uusi tuote",
+    "update": "Päivitä tuote",
     "edit": "Muokkaa tuotetta",
     "name": "Tuotteen nimi",
     "price": "Hinta",
@@ -340,6 +537,24 @@
     "actions": {
       "deleteTitle": "Poista tuote",
       "deleteConfirm": "Haluatko varmasti poistaa tämän tuotteen?"
+    },
+    "productType": "Tuotetyyppi",
+    "type": {
+      "goods": "Tavarat",
+      "services": "Palvelut",
+      "service": "Palvelu"
+    },
+    "units": {
+      "month": "Kuukausi",
+      "months": "Kuukautta",
+      "hour": "Tunti",
+      "hours": "Tuntia",
+      "day": "Päivä",
+      "days": "Päivää",
+      "week": "Viikko",
+      "weeks": "Viikkoa",
+      "year": "Vuosi",
+      "years": "Vuotta"
     }
   },
   "productForm": {
@@ -380,6 +595,119 @@
       "priceBookAtLeastOne": "Vähintään yksi hinnasto vaaditaan"
     }
   },
+  "productUnit": {
+    "title": "Tuoteyksikkö",
+    "createNew": "Luo uusi",
+    "new": "Uusi tuoteyksikkö",
+    "form": {
+      "name": "Yksikön nimi",
+      "create": "Luo"
+    },
+    "validation": {
+      "nameRequired": "Yksikön nimi on pakollinen",
+      "userRequired": "Käyttäjätunnus on pakollinen"
+    },
+    "table": {
+      "name": "Nimi",
+      "action": "Toiminnot",
+      "edit": "Muokkaa tuoteyksikköä",
+      "delete": "Poista tuoteyksikkö"
+    },
+    "actions": {
+      "deleteTitle": "Poista tuoteyksikkö",
+      "deleteConfirm": "Haluatko varmasti poistaa tämän tuoteyksikön?"
+    }
+  },
+  "paymentDetails": {
+    "title": "Maksutiedot",
+    "add": "Lisää maksutiedot",
+    "table": {
+      "paymentType": "Maksutapa",
+      "accountDetails": "Tilin tiedot",
+      "action": "Toiminnot",
+      "edit": "Muokkaa"
+    },
+    "labels": {
+      "accountNo": "Tilinumero",
+      "ifsc": "IFSC-koodi",
+      "bic": "BIC-numero",
+      "iban": "IBAN-numero",
+      "upiId": "UPI ID",
+      "swift": "Swift-koodi",
+      "paypal": "Paypal ID",
+      "stripe": "Stripe ID",
+      "razorpay": "Razorpay ID",
+      "mollie": "Mollie ID"
+    },
+    "actions": {
+      "deleteTitle": "Poista tiedot",
+      "deleteConfirm": "Haluatko varmasti poistaa tämän maksun?"
+    },
+    "form": {
+      "paymentType": "Maksutapa",
+      "accountNumber": "Tilinumero",
+      "bicOptional": "BIC-numero (valinnainen)",
+      "ibanNumber": "IBAN-numero"
+    },
+    "placeholders": {
+      "accountNumber": "Syötä tilinumero",
+      "ifsc": "Syötä IFSC-koodi",
+      "bic": "Syötä BIC-numero (valinnainen)",
+      "iban": "Syötä IBAN-numero",
+      "mollie": "Syötä Mollie ID",
+      "paypal": "Syötä Paypal ID",
+      "razorpay": "Syötä Razorpay ID",
+      "stripe": "Syötä Stripe ID",
+      "swift": "Syötä Swift-koodi",
+      "upi": "Syötä UPI ID"
+    },
+    "validation": {
+      "paymentTypeRequired": "Maksutapa on pakollinen",
+      "accountNumberRequired": "Tilinumero on pakollinen",
+      "ibanRequired": "IBAN-numero on pakollinen",
+      "ifscRequired": "IFSC-koodi on pakollinen",
+      "mollieRequired": "Mollie ID on pakollinen",
+      "paypalRequired": "Paypal ID on pakollinen",
+      "razorpayRequired": "Razorpay ID on pakollinen",
+      "stripeRequired": "Stripe ID on pakollinen",
+      "swiftRequired": "Swift-koodi on pakollinen",
+      "upiRequired": "UPI ID on pakollinen",
+      "userRequired": "Käyttäjä on pakollinen"
+    }
+  },
+  "gatewayDetails": {
+    "title": "Maksuyhteyden tiedot",
+    "add": "Lisää maksuyhteyden tiedot",
+    "getRazorpayKey": "Hae Razorpay-avain",
+    "enabled": "Käytössä",
+    "disabled": "Poistettu käytöstä",
+    "table": {
+      "type": "Tyyppi",
+      "status": "Tila",
+      "action": "Toiminnot",
+      "edit": "Muokkaa"
+    },
+    "actions": {
+      "deleteTitle": "Poista tämä maksuyhteyden tieto?",
+      "deleteConfirm": "Haluatko varmasti poistaa tämän maksuyhteyden tiedon?"
+    },
+    "form": {
+      "title": "Lisää maksuyhteyden tiedot",
+      "type": "Tyyppi",
+      "key": "Avain",
+      "keyPlaceholder": "Syötä avain",
+      "secret": "Salainen tunnus",
+      "secretPlaceholder": "Syötä salainen tunnus",
+      "submit": "Lähetä"
+    },
+    "validation": {
+      "typeRequired": "Tyyppi on pakollinen",
+      "keyRequired": "Avain on pakollinen",
+      "keyInvalid": "Avaimen on oltava kelvollinen",
+      "secretInvalid": "Salaisen tunnuksen on oltava kelvollinen",
+      "userIdRequired": "Käyttäjätunnus on pakollinen"
+    }
+  },
   "payment": {
     "title": "Maksut",
     "create": "Luo maksu",
@@ -390,6 +718,74 @@
     "date": "Maksupäivä",
     "createNew": "Luo uusi maksu",
     "noPaymentsFound": "Maksuja ei löytynyt"
+  },
+  "hsn": {
+    "title": "HSN-koodi",
+    "createNew": "Luo uusi",
+    "table": {
+      "code": "Koodi",
+      "percentage": "Prosentti",
+      "action": "Toiminnot",
+      "edit": "Muokkaa HSN-koodia",
+      "delete": "Poista HSN-koodi"
+    },
+    "actions": {
+      "deleteTitle": "Poista HSN-koodi",
+      "deleteConfirm": "Haluatko varmasti poistaa tämän HSN-koodin?"
+    },
+    "form": {
+      "title": "Uusi HSN-koodi",
+      "code": "HSN-koodi",
+      "codeShort": "HSN-koodi",
+      "tax": "Vero (prosentteina)",
+      "create": "Luo"
+    },
+    "placeholders": {
+      "code": "Syötä HSN-koodi",
+      "tax": "Syötä prosentti"
+    },
+    "validation": {
+      "codeRequired": "HSN-koodi on pakollinen",
+      "codeInvalid": "Virheellinen HSN-koodi",
+      "taxRequired": "Vero on pakollinen",
+      "taxMin": "Veron tulee olla suurempi kuin 0",
+      "taxMax": "Veron tulee olla alle 100",
+      "userRequired": "Käyttäjätunnus on pakollinen"
+    }
+  },
+  "tax": {
+    "title": "Verotyyppi",
+    "createNew": "Luo uusi",
+    "table": {
+      "name": "Veron nimi",
+      "percentage": "Prosentti",
+      "action": "Toiminnot",
+      "edit": "Muokkaa verotyyppiä",
+      "delete": "Poista verotyyppi"
+    },
+    "actions": {
+      "deleteTitle": "Poista verotyyppi",
+      "deleteConfirm": "Haluatko varmasti poistaa tämän verotyypin?"
+    },
+    "form": {
+      "title": "Uusi vero",
+      "titleShort": "Vero",
+      "name": "Veron nimi",
+      "percentage": "Prosentti",
+      "description": "Kuvaus",
+      "create": "Luo"
+    },
+    "placeholders": {
+      "name": "Veron nimi",
+      "description": "Kuvaus"
+    },
+    "validation": {
+      "nameRequired": "Veron nimi on pakollinen",
+      "percentageRequired": "Prosentti on pakollinen",
+      "percentageMin": "Prosentin tulee olla suurempi kuin 0",
+      "percentageMax": "Prosentin tulee olla alle 100",
+      "userRequired": "Käyttäjätunnus on pakollinen"
+    }
   },
   "paymentForm": {
     "title": "Uusi maksu",
@@ -454,7 +850,31 @@
   },
   "settings": {
     "title": "Asetukset",
-    "company": "Yritys",
+    "myProfile": {
+      "fullName": "Koko nimi",
+      "fullNamePlaceholder": "Syötä koko nimi",
+      "email": "Sähköposti",
+      "emailPlaceholder": "Syötä sähköpostiosoite",
+      "phone": "Puhelin",
+      "phonePlaceholder": "Syötä puhelinnumero",
+      "currency": "Valuutta",
+      "updatePassword": "Päivitä salasana",
+      "updatePasswordInfo": "Jos haluat päivittää salasanasi, täytä alla oleva tieto.",
+      "oldPassword": "Vanha salasana",
+      "oldPasswordPlaceholder": "Syötä vanha salasana",
+      "newPassword": "Uusi salasana",
+      "newPasswordPlaceholder": "Syötä uusi salasana",
+      "confirmEmailChangeTitle": "Sähköpostin vaihto",
+      "confirmEmailChangeMessage": "Haluatko varmasti vaihtaa sähköpostiosoitteesi?",
+      "validation": {
+        "nameRequired": "Nimi on pakollinen",
+        "emailRequired": "Sähköposti on pakollinen",
+        "emailInvalid": "Sähköposti ei ole kelvollinen",
+        "phoneRequired": "Puhelinnumero on pakollinen",
+        "currencyRequired": "Valitse valuutta",
+        "passwordMin": "Salasanassa vähintään 7 merkkiä"
+      }
+    },
     "preferences": "Mieltymykset",
     "financialYear": "Tilikausi",
     "monthStarts": "Kuukausi alkaa",
@@ -466,24 +886,50 @@
     "productUnits": "Tuoteyksiköt",
     "apiCredentials": "API-tunnukset",
     "gateway": "Maksuyhteys",
-    "quotation": "Tarjousasetukset",
+    "menu": {
+      "myProfile": "Profiilini",
+      "membership": "Jäsenyys",
+      "company": "Yritys",
+      "invoices": "Laskut",
+      "quotation": "Tarjous",
+      "productUnit": "Tuoteyksikkö",
+      "paymentDetails": "Maksutiedot",
+      "gatewayDetails": "Maksuyhteys",
+      "hsnCode": "HSN-koodi",
+      "taxTypes": "Verotyypit",
+      "apiCredentials": "API-tunnukset"
+    },
     "company": {
       "logo": "Logo",
       "name": "Yrityksen nimi",
       "namePlaceholder": "Syötä yrityksen nimi",
       "nameRequired": "Yrityksen nimi on pakollinen",
       "phone": "Puhelin",
+      "phonePlaceholder": "Syötä matkapuhelinnumero",
       "phoneRequired": "Puhelinnumero on pakollinen",
+      "vat": "ALV/GSTIN",
+      "vatPlaceholder": "ALV-numero",
+      "country": "Maa",
       "countryRequired": "Valitse maa",
+      "state": "Osavaltio",
       "stateRequired": "Valitse osavaltio",
+      "city": "Kaupunki",
       "cityRequired": "Valitse kaupunki",
+      "zip": "Postinumero",
+      "zipPlaceholder": "Syötä postinumero",
       "zipRequired": "Postinumero on pakollinen",
+      "address": "Osoite",
+      "addressPlaceholder": "Lisää osoite",
       "addressRequired": "Osoite on pakollinen",
       "userIdRequired": "Käyttäjätunnus on pakollinen"
     },
     "invoice": {
       "invoiceHeadingType": "Laskun otsikon tyyppi",
-      "invoicePrefix": "Laskun etuliite",
+        "invoicePrefix": "Laskun etuliite",
+        "headingTypes": {
+          "COMPANY_NAME": "Yrityksen nimi",
+          "COMPANY_LOGO": "Yrityksen logo"
+        },
       "invoicePrefixPlaceholder": "Esim. “INV”",
       "autoArchive": "Automaattinen arkistointi",
       "autoArchiveHelp": "Ota käyttöön, jos haluat arkistoida automaattisesti hyväksytyt tai hylätyt arviot 30 päivän jälkeen.",
@@ -494,6 +940,7 @@
       "overdueNotices": "Myöhästymismuistutukset",
       "overdueNoticesHelp": "Muistutukset lähetetään eräpäivän jälkeen maksamattomista tai osittain maksetuista laskuista.",
       "overdueNoticeInDays": "Myöhästymismuistutus (päiviä)",
+      "daysBeforeDue": "x päivää ennen eräpäivää",
       "addresses": "Osoitteet",
       "showTemplates": "Näytä mallit",
       "companyAddressFormat": "Yrityksen osoitteen muoto",
@@ -517,6 +964,18 @@
         "pleaseAcceptTerms": "Jatkaaksesi laskun lähettämistä asiakkaalle, hyväksy käyttöehdot alla."
       }
     }
+  },
+  "apiCredentials": {
+    "token": "API-avaimen tunnus",
+    "copied": "Tunnus kopioitu leikepöydälle",
+    "learnMore": "Lisätietoja löydät dokumentaatiosta:",
+    "clickHere": "klikkaa tästä"
+  },
+  "apiCredentials": {
+    "token": "API-avaimen tunnus",
+    "copied": "Tunnus kopioitu leikepöydälle",
+    "learnMore": "Lisätietoja löydät dokumentaatiosta:",
+    "clickHere": "klikkaa tästä"
   },
   "quotationForm": {
     "title": "Uusi tarjous",
@@ -551,9 +1010,25 @@
       "templateRequired": "Pohja on pakollinen"
     }
   },
+  "aiStore": {
+    "title": "LUO AI-KAUPPA",
+    "subtitle": "Luo ja hallinnoi AI-kauppaasi helposti.",
+    "companyName": "Yrityksen nimi",
+    "lineOfBusiness": "Liiketoiminta-ala",
+    "lineOfBusinessPlaceholder": "Syötä liiketoiminta-ala",
+    "shortDescription": "Lyhyt kuvaus",
+    "shortDescriptionPlaceholder": "Syötä lyhyt kuvaus",
+    "submitButton": "Luodaan AI-kauppa",
+    "validation": {
+      "companyNameRequired": "Yrityksen nimi on pakollinen",
+      "lineOfBusinessRequired": "Liiketoiminta-ala on pakollinen",
+      "shortDescriptionRequired": "Lyhyt kuvaus on pakollinen"
+    }
+  },
   "store": {
     "link": "Kauppalinkki",
     "create": "Luo kauppa",
+    "updateStoreName": "Päivitä kaupan nimi",
     "welcome": "Tervetuloa kauppaan!",
     "invoiceSent": "Lasku lähetetty sähköpostiisi",
     "invoiceDetails": "Laskun tiedot",
@@ -563,12 +1038,32 @@
     "currencyRequired": "Valuutta on pakollinen",
     "addToCart": "Lisää koriin",
     "removeFromCart": "Poista korista",
+    "name": "Kaupan nimi",
+    "namePlaceholder": "Syötä kaupan nimi",
+    "qrCodeAlt": "QR-koodi",
+    "copyLink": "Kopioi linkki",
+    "copied": "Kopioitu!",
+    "uploadProducts": "Lataa tuotteet kauppaan",
+    "shareOnSocialMedia": "Jaa sosiaalisessa mediassa:",
+    "facebook": "Facebook",
+    "twitter": "Twitter",
+    "email": "Sähköposti",
+    "verification": {
+      "title": "Kaupan URL-verifiointi",
+      "description": "Vahvista kaupan URL-osoitteesi. Voit käyttää seuraavia ehdotuksia:",
+      "suggestedNames": "Ehdotetut kaupan nimet (klikkaa käyttääksesi):"
+    },
+    "validation": {
+      "nameRequired": "Kaupan nimi on pakollinen",
+      "mustBeUnique": "Kaupan nimen on oltava yksilöllinen"
+    },
     "checkout": {
       "title": "Kassan tuotteet",
       "empty": "Ostoskorisi on tyhjä.",
       "total": "Yhteensä:",
       "next": "Jatka seuraavaan vaiheeseen"
     },
+    "quotation": "Tarjousasetukset",
     "customer": {
       "title": "Asiakastiedot",
       "iconAlt": "Osoitekuvake",
@@ -597,6 +1092,19 @@
       }
     }
   },
+  "table": {
+    "noRows": "Ei rivejä",
+    "rowsPerPage": "Rivejä per sivu:"
+  },
+  "time": {
+    "justNow": "Juuri nyt",
+    "minuteAgo": "{{count}} minuutti sitten",
+    "minutesAgo": "{{count}} minuuttia sitten",
+    "hourAgo": "{{count}} tunti sitten",
+    "hoursAgo": "{{count}} tuntia sitten",
+    "dayAgo": "{{count}} päivä sitten",
+    "daysAgo": "{{count}} päivää sitten"
+  },
   "store.cart": {
     "tax": "Vero",
     "quantity": "Määrä:",
@@ -615,7 +1123,18 @@
     "create": "Luo toimittaja",
     "edit": "Muokkaa toimittajaa",
     "displayName": "Näyttönimi",
-    "createNew": "Luo uusi"
+    "createNew": "Luo uusi",
+    "table": {
+      "createdAt": "Luotu",
+      "action": "Toiminto",
+      "viewVendor": "Näytä toimittaja",
+      "editVendor": "Muokkaa toimittajaa",
+      "deleteVendor": "Poista toimittaja"
+    },
+    "actions": {
+      "deleteTitle": "Poista toimittaja",
+      "deleteConfirm": "Haluatko varmasti poistaa tämän toimittajan?"
+    }
   },
   "vendorForm": {
     "iconAlt": "Toimittajakuva",
@@ -657,6 +1176,7 @@
   },
   "common": {
     "loading": "Ladataan...",
+    "typeHere": "Kirjoita tähän...",
     "save": "Tallenna",
     "cancel": "Peruuta",
     "delete": "Poista",
@@ -676,6 +1196,8 @@
     "yes": "Kyllä",
     "no": "Ei",
     "ok": "OK",
+    "active": "Aktiivinen",
+    "actions": "Toiminnot",
     "enter": "Syötä {{label}}",
     "subtotal": "Välisumma",
     "discountPercent": "Alennus %",
@@ -695,12 +1217,81 @@
     "choosePlan": "Valitse paketti",
     "subscribe": "Tilaa"
   },
+  "getStarted": {
+    "company": {
+      "title": "Kerro yrityksestäsi",
+      "subtitle": "Anna perusyritystiedot aloittaaksesi.",
+      "companyName": "Yrityksen nimi",
+      "phoneNumber": "Puhelinnumero",
+      "country": "Maa",
+      "state": "Osavaltio",
+      "city": "Kaupunki",
+      "zipCode": "Postinumero",
+      "address": "Osoite",
+      "vat": "ALV/GSTIN",
+      "logo": "Logo",
+      "companyNameRequired": "Yrityksen nimi on pakollinen",
+      "phoneInvalid": "Puhelinnumero ei ole kelvollinen",
+      "countryRequired": "Maa on pakollinen",
+      "stateRequired": "Osavaltio on pakollinen",
+      "cityRequired": "Kaupunki on pakollinen",
+      "addressRequired": "Osoite on pakollinen",
+      "zipCodeRequired": "Postinumero on pakollinen"
+    },
+    "initial": {
+      "title": "Melkein valmis! Vain muutama tieto",
+      "subtitle": "Syötä muutama tieto, kuten valuutta ja yrityksen tiedot, niin pääset nopeasti luomaan laskuja!"
+    },
+    "currency": {
+      "title": "Valitse valuutta",
+      "help": "Meidän on vahvistettava sähköpostiosoitteesi varmistaaksemme pääsyn sovellukseen.",
+      "label": "Valuutta",
+      "required": "Valuutta on pakollinen"
+    },
+    "banner": {
+      "title": "Toimenpide vaaditaan",
+      "message": "Sinun on suoritettava aloitusprosessi ennen tämän ominaisuuden käyttöä.",
+      "cta": "Aloita"
+    },
+    "steps": {
+      "step1": "Henkilötiedot",
+      "step2": "Vahvistus",
+      "step3": "Vakuutus",
+      "step4": "Maksu"
+    }
+  },
   "plans": {
-    "title": "Paketit",
+    "title": "tilausvaihtoehdot",
     "currentPlanSuffix": "(Nykyinen paketti)",
     "unlimited": "Rajoittamaton",
     "startTrial": "Aloita ilmainen kokeilu",
     "upgrade": "Päivitä",
+    "upgradeHint": "päivitä pakettisi saadaksesi lisää ominaisuuksia.",
+    "planTitle": "{{order}} paketti",
+    "planLabel": "Paketti",
+    "planNames": {
+      "normalplan": "Normaali paketti",
+      "freeplan": "Ilmainen paketti",
+      "basicplan": "Peruspaketti",
+      "premiumplan": "Premium-paketti",
+      "enterpriseplan": "Yrityspaketti"
+    },
+    "features": {
+      "Quotation": "Tarjous",
+      "Customer": "Asiakas",
+      "Product": "Tuote",
+      "Tax": "Vero",
+      "HSNCode": "HSN-koodi",
+      "ProductUnit": "Tuoteyksikkö",
+      "PaymentDetails": "Maksutiedot",
+      "InvoiceSettings": "Laskuasetukset",
+      "QuotationSettings": "Tarjousasetukset",
+      "Payments": "Maksut",
+      "Invoice": "Lasku"
+    },
+    "status": "Tila",
+    "trialEnds": "Kokeilu päättyy",
+    "trialEndsText": "{{date}} ({{days}} päivää jäljellä)",
     "payment": {
       "selectMethod": "Valitse maksutapa",
       "stripe": "Stripe",
@@ -715,18 +1306,18 @@
       "days": "{{count}} päivää"
     },
     "limitExceeded": "Raja ylittyi. Päivitä paketti saadaksesi lisää ominaisuuksia.",
-    "upgradeCta": "Päivitä tästä"
-  },
-  "app": {
-    "installed": "Sovellus asennettu!",
-    "installCancelled": "Asennus peruutettu",
-    "installUnavailable": "Asennus ei ole tällä hetkellä saatavilla"
+    "upgradeCta": "Päivitä tästä",
+    "updateFeatures": "Päivitä ominaisuudet"
   },
   "notification": {
     "newMessage": "Uusi viesti",
     "title": "Ilmoitukset",
     "markAllAsRead": "Merkitse kaikki luetuiksi",
-    "none": "Ei ilmoituksia"
+    "none": "Ei ilmoituksia",
+    "payment": {
+      "success": "Maksu onnistui",
+      "successMessage": "Maksu paketille {{plan}} onnistui",
+      "successMessageGeneric": "Maksusi on suoritettu onnistuneesti"
+    }
   }
 }
-

@@ -52,13 +52,10 @@ const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => 
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
-				return (
-					<Chip
-						label={params.row.fromStore ? "Store" : "Direct"}
-						variant="filled"
-						color="primary"
-					/>
-				);
+				const sourceLabel = params.row.fromStore
+					? t("invoice.source.store", { defaultValue: "Store" })
+					: t("invoice.source.direct", { defaultValue: "Direct" });
+				return <Chip label={sourceLabel} variant="filled" color="primary" />;
 			},
 		},
 		{
@@ -76,9 +73,13 @@ const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => 
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
+				const statusKey = params.value?.toLowerCase().replace(/\s+/g, "") || "";
+				const translatedStatus = t(`invoice.status.${statusKey}`, {
+					defaultValue: params.value || "",
+				});
 				return (
 					<Chip
-						label={params.value}
+						label={translatedStatus}
 						color={Constants?.invoiceStatusColorEnums[params.value] ?? "default"}
 						variant="filled"
 					/>
@@ -118,9 +119,13 @@ const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => 
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
+				const paymentStatusKey = params.value?.toLowerCase().replace(/\s+/g, "") || "";
+				const translatedPaymentStatus = t(`invoice.paymentStatus.${paymentStatusKey}`, {
+					defaultValue: params.value || "",
+				});
 				return (
 					<Chip
-						label={params.value}
+						label={translatedPaymentStatus}
 						color={Constants?.invoiceStatusColorEnums[params.value] ?? "default"}
 						variant="filled"
 					/>

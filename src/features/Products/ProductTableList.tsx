@@ -46,7 +46,11 @@ const ProductTableList = () => {
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
-				return <Typography textTransform={"capitalize"}>{params?.row?.unit?.name}</Typography>;
+				const unitName = params?.row?.unit?.name;
+				const translatedUnit = unitName
+					? t(`product.units.${unitName.toLowerCase()}`, { defaultValue: unitName })
+					: unitName;
+				return <Typography textTransform={"capitalize"}>{translatedUnit}</Typography>;
 			},
 		},
 		{
@@ -55,7 +59,11 @@ const ProductTableList = () => {
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
-				return <Typography>{params.row.type}</Typography>;
+				const productType = params.row.type;
+				const translatedType = productType
+					? t(`product.type.${productType.toLowerCase()}`, { defaultValue: productType })
+					: productType;
+				return <Typography>{translatedType}</Typography>;
 			},
 		},
 		{
@@ -64,7 +72,7 @@ const ProductTableList = () => {
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
-				return <Typography>{timeAgo(params.value)}</Typography>;
+				return <Typography>{timeAgo(params.value, t)}</Typography>;
 			},
 		},
 		{

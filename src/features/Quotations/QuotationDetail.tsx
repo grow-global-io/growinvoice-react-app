@@ -28,6 +28,7 @@ import {
 	useQuotationControllerTest,
 } from "@api/services/quotation";
 import { useConfirmDialogStore } from "@store/confirmDialog";
+import { useTranslation } from "react-i18next";
 import { useQuotationHook } from "./QuotationHooks/useQuotationHook";
 import { Constants } from "@shared/constants";
 import QuotationTemplateCard from "./QuotationTemplateCard";
@@ -57,6 +58,7 @@ const QuotationDetail = ({
 	quotationId: string;
 	IsPublic?: boolean;
 }) => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const [moreAnchorEl, setMoreAnchorEl] = useState<null | HTMLElement>(null);
 	const [menuIconAnchorEl, setMenuIconAnchorEl] = useState<null | HTMLElement>(null);
@@ -127,7 +129,7 @@ const QuotationDetail = ({
 			onCancel: () => {
 				cleanUp();
 			},
-			confirmButtonText: "Delete",
+			confirmButtonText: t("app.delete", { defaultValue: "Delete" }),
 		});
 	};
 

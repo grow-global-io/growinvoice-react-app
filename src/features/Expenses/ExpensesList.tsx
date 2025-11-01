@@ -1,11 +1,14 @@
 import { Box, Typography } from "@mui/material";
 import ExpensesTable from "./ExpensesTable";
 
+import { useTranslation } from "react-i18next";
+
 const ExpensesList = () => {
+	const { t } = useTranslation();
 	return (
 		<Box>
 			<Typography variant="h3" textTransform={"capitalize"} mb={"10px"}>
-				Expenses
+				{t("expenses.title", { defaultValue: "Expenses" })}
 			</Typography>
 			<ExpensesTable />
 		</Box>

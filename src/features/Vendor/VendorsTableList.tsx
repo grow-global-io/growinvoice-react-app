@@ -55,7 +55,7 @@ const VendorsTableList = () => {
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
-				return <Typography>{timeAgo(params.value)}</Typography>;
+				return <Typography>{timeAgo(params.value, t)}</Typography>;
 			},
 		},
 		{
