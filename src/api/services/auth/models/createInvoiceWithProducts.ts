@@ -11,7 +11,7 @@ import type { CreateInvoiceWithProductsRecurring } from "./createInvoiceWithProd
 export interface CreateInvoiceWithProducts {
 	/** @nullable */
 	currency_id?: string | null;
-	customer_id: string;
+	customer_ids?: string[];
 	date: string;
 	/** @nullable */
 	discountPercentage?: number | null;
@@ -39,6 +39,7 @@ export interface CreateInvoiceWithProducts {
 	template_id?: string | null;
 	/** @nullable */
 	template_url?: string | null;
+	termsAccepted?: boolean;
 	total: number;
 	user_id: string;
 }

@@ -9,7 +9,6 @@ interface BeforeInstallPromptEvent extends Event {
 	prompt(): Promise<void>;
 }
 
-
 interface PWAInstallState {
 	isInstallable: boolean;
 	isInstalled: boolean;

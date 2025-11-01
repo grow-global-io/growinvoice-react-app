@@ -64,7 +64,7 @@ const CustomerForm = () => {
 	const initialValues: CustomerFormProps = {
 		currencies_id: editValues?.currencies_id ?? user?.currency_id ?? "",
 		name: editValues?.name ?? "",
-		option: editValues?.option ?? CreateCustomerWithAddressDtoOption.Freelancer,
+		option: editValues?.option ?? CreateCustomerWithAddressDtoOption.Individual,
 		gstIn: editValues?.gstIn ?? "",
 		user_id: user?.id ?? "",
 		billingDetails: {

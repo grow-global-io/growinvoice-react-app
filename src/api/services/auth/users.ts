@@ -21,6 +21,7 @@ import type {
 import type {
 	AdminUsersListDto,
 	CreateUserCompany,
+	DashboardCount,
 	ErrorMessageDto,
 	ForgotPasswordDto,
 	LoginSuccessDto,
@@ -683,3 +684,96 @@ export const useUserControllerBlockUser = <
 
 	return useMutation(mutationOptions);
 };
+export const userControllerGetDashboardCount = (signal?: AbortSignal) => {
+	return authInstance<DashboardCount>({ url: `/api/user/dashboard-count`, method: "GET", signal });
+};
+
+export const getUserControllerGetDashboardCountQueryKey = () => {
+	return [`/api/user/dashboard-count`] as const;
+};
+
+export const getUserControllerGetDashboardCountQueryOptions = <
+	TData = Awaited<ReturnType<typeof userControllerGetDashboardCount>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof userControllerGetDashboardCount>>, TError, TData>
+	>;
+}) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getUserControllerGetDashboardCountQueryKey();
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof userControllerGetDashboardCount>>> = ({
+		signal,
+	}) => userControllerGetDashboardCount(signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof userControllerGetDashboardCount>>,
+		TError,
+		TData
+	> & { queryKey: QueryKey };
+};
+
+export type UserControllerGetDashboardCountQueryResult = NonNullable<
+	Awaited<ReturnType<typeof userControllerGetDashboardCount>>
+>;
+export type UserControllerGetDashboardCountQueryError = ErrorType<unknown>;
+
+export function useUserControllerGetDashboardCount<
+	TData = Awaited<ReturnType<typeof userControllerGetDashboardCount>>,
+	TError = ErrorType<unknown>,
+>(options: {
+	query: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof userControllerGetDashboardCount>>, TError, TData>
+	> &
+		Pick<
+			DefinedInitialDataOptions<
+				Awaited<ReturnType<typeof userControllerGetDashboardCount>>,
+				TError,
+				TData
+			>,
+			"initialData"
+		>;
+}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useUserControllerGetDashboardCount<
+	TData = Awaited<ReturnType<typeof userControllerGetDashboardCount>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof userControllerGetDashboardCount>>, TError, TData>
+	> &
+		Pick<
+			UndefinedInitialDataOptions<
+				Awaited<ReturnType<typeof userControllerGetDashboardCount>>,
+				TError,
+				TData
+			>,
+			"initialData"
+		>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useUserControllerGetDashboardCount<
+	TData = Awaited<ReturnType<typeof userControllerGetDashboardCount>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof userControllerGetDashboardCount>>, TError, TData>
+	>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+export function useUserControllerGetDashboardCount<
+	TData = Awaited<ReturnType<typeof userControllerGetDashboardCount>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof userControllerGetDashboardCount>>, TError, TData>
+	>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+	const queryOptions = getUserControllerGetDashboardCountQueryOptions(options);
+
+	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}

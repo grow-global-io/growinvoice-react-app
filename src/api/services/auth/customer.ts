@@ -19,8 +19,10 @@ import type {
 	UseQueryResult,
 } from "@tanstack/react-query";
 import type {
+	BulkCustomerDto,
 	CreateCustomerWithAddressDto,
 	CustomerControllerCreate201,
+	CustomerControllerCreateBulk201,
 	CustomerControllerUpdate200,
 	GetCustomerWithAddressDto,
 	SuccessResponseDto,
@@ -194,6 +196,71 @@ export function useCustomerControllerFindAll<
 	return query;
 }
 
+export const customerControllerCreateBulk = (bulkCustomerDto: BulkCustomerDto) => {
+	return authInstance<CustomerControllerCreateBulk201>({
+		url: `/api/customer/bulk`,
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		data: bulkCustomerDto,
+	});
+};
+
+export const getCustomerControllerCreateBulkMutationOptions = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof customerControllerCreateBulk>>,
+		TError,
+		{ data: BulkCustomerDto },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof customerControllerCreateBulk>>,
+	TError,
+	{ data: BulkCustomerDto },
+	TContext
+> => {
+	const { mutation: mutationOptions } = options ?? {};
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof customerControllerCreateBulk>>,
+		{ data: BulkCustomerDto }
+	> = (props) => {
+		const { data } = props ?? {};
+
+		return customerControllerCreateBulk(data);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type CustomerControllerCreateBulkMutationResult = NonNullable<
+	Awaited<ReturnType<typeof customerControllerCreateBulk>>
+>;
+export type CustomerControllerCreateBulkMutationBody = BulkCustomerDto;
+export type CustomerControllerCreateBulkMutationError = ErrorType<unknown>;
+
+export const useCustomerControllerCreateBulk = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof customerControllerCreateBulk>>,
+		TError,
+		{ data: BulkCustomerDto },
+		TContext
+	>;
+}): UseMutationResult<
+	Awaited<ReturnType<typeof customerControllerCreateBulk>>,
+	TError,
+	{ data: BulkCustomerDto },
+	TContext
+> => {
+	const mutationOptions = getCustomerControllerCreateBulkMutationOptions(options);
+
+	return useMutation(mutationOptions);
+};
 export const customerControllerCustomerCount = (signal?: AbortSignal) => {
 	return authInstance<number>({ url: `/api/customer/customerCount`, method: "GET", signal });
 };

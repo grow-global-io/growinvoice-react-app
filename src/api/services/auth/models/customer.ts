@@ -31,7 +31,8 @@ export interface Customer {
 	isExist: boolean;
 	name: string;
 	option: CustomerOption;
-	phone: string;
+	/** @nullable */
+	phone: string | null;
 	/** @nullable */
 	shippingAddress?: CustomerShippingAddress;
 	/** @nullable */

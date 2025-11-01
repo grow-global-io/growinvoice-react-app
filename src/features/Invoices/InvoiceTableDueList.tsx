@@ -1,8 +1,16 @@
 import Box from "@mui/material/Box";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import {
+	DataGrid,
+	GridColDef,
+	GridRowSelectionModel,
+	GridToolbarQuickFilter,
+} from "@mui/x-data-grid";
 import { Chip, Tooltip, Typography } from "@mui/material";
 import { Constants } from "@shared/constants";
-import { useInvoiceControllerFindDueInvoices } from "@api/services/invoice";
+import {
+	useInvoiceControllerBulkInvoiceSentToMail,
+	useInvoiceControllerFindDueInvoices,
+} from "@api/services/invoice";
 import Loader from "@shared/components/Loader";
 import { InvoiceWithAllDataDto } from "@api/services/models";
 import { currencyFormatter, parseDateStringToFormat } from "@shared/formatter";
@@ -13,8 +21,50 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useConfirmDialogStore } from "@store/confirmDialog";
 import { useInvoiceHook } from "./invoiceHooks/useInvoiceHook";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import EmailIcon from "@mui/icons-material/Email";
+
+function QuickSearchToolbar({ selectedIds }: { selectedIds: GridRowSelectionModel }) {
+	const { t } = useTranslation();
+
+	const sendMail = useInvoiceControllerBulkInvoiceSentToMail();
+
+	const handleSendMail = async () => {
+		if (selectedIds.length === 0) return;
+		await sendMail.mutateAsync({
+			params: {
+				ids: selectedIds as string[],
+			},
+		});
+	};
+
+	return (
+		<Box
+			sx={{
+				px: 1,
+				pb: 0,
+				float: "left",
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "space-between",
+			}}
+		>
+			<GridToolbarQuickFilter
+				variant="outlined"
+				quickFilterParser={(input) => input.split(/\s+/).filter(Boolean)}
+				placeholder={t("common.search", { defaultValue: "Search" }) as string}
+			/>
+			<Box sx={{ display: "flex", alignItems: "center" }}>
+				{selectedIds && selectedIds.length > 0 && (
+					<CustomIconButton src={EmailIcon} onClick={handleSendMail} />
+				)}
+			</Box>
+		</Box>
+	);
+}
 
 const InvoiceTableDueList = ({ customerId }: { customerId?: string | null }) => {
+	const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
 	const { t } = useTranslation();
 	const invoiceData = useInvoiceControllerFindDueInvoices({
 		customerId: customerId ?? undefined,
@@ -192,7 +242,19 @@ const InvoiceTableDueList = ({ customerId }: { customerId?: string | null }) => 
 
 	return (
 		<Box>
-			<DataGrid autoHeight rows={invoiceData?.data ?? []} columns={columns} />
+			<DataGrid
+				autoHeight
+				rows={invoiceData?.data ?? []}
+				columns={columns}
+				checkboxSelection
+				onRowSelectionModelChange={(newRowSelectionModel) => {
+					setRowSelectionModel(newRowSelectionModel);
+				}}
+				rowSelectionModel={rowSelectionModel}
+				slots={{
+					toolbar: () => <QuickSearchToolbar selectedIds={rowSelectionModel} />,
+				}}
+			/>
 		</Box>
 	);
 };

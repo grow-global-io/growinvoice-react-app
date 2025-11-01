@@ -20,7 +20,8 @@ export interface UpdateCustomerDto {
 	gstIn?: string | null;
 	name?: string;
 	option?: UpdateCustomerDtoOption;
-	phone?: string;
+	/** @nullable */
+	phone?: string | null;
 	/** @nullable */
 	shippingAddress_id?: string | null;
 	user_id?: string;

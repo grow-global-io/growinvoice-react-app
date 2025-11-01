@@ -42,6 +42,7 @@ export interface InvoiceDto {
 	template_id: string | null;
 	/** @nullable */
 	template_url: string | null;
+	termsAccepted: boolean;
 	total: number;
 	/** @nullable */
 	updatedAt: string | null;

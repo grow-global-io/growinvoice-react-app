@@ -29,7 +29,8 @@ export interface GetCustomerWithAddressDto {
 	isExist: boolean;
 	name: string;
 	option: GetCustomerWithAddressDtoOption;
-	phone: string;
+	/** @nullable */
+	phone: string | null;
 	shippingAddress?: ShippingAddressDto;
 	/** @nullable */
 	shippingAddress_id: string | null;

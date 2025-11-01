@@ -49,6 +49,7 @@ import AdminOverView from "@features/Admin/AdminOverView";
 import UserManagementList from "@features/Admin/UserManagement/UserManagementList";
 import InvoicesManagementList from "@features/Admin/InvoiceManagement/InvoicesManagementList";
 import PlansManagementList from "@features/Admin/PlansManagement/PlansManagementList";
+import BulkUploadCustomer from "@features/Customer/BulkUploadCustomer";
 
 export const unProtectedRoutes: Route[] = [
 	{
@@ -117,6 +118,10 @@ export const protectedRoutes: Route[] = [
 	{
 		path: "/customer/createcustomer",
 		Component: CreateCustomerPage,
+	},
+	{
+		path: "/customer/bulk-upload",
+		Component: BulkUploadCustomer,
 	},
 	{
 		path: "/invoice/customer/:customerId",

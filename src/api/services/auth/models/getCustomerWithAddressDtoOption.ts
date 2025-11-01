@@ -14,4 +14,7 @@ export const GetCustomerWithAddressDtoOption = {
 	Freelancer: "Freelancer",
 	BusinessWithGST: "BusinessWithGST",
 	BusinessWithoutGST: "BusinessWithoutGST",
+	Individual: "Individual",
+	BusinessWithVAT: "BusinessWithVAT",
+	BusinessWithoutVAT: "BusinessWithoutVAT",
 } as const;

@@ -7,6 +7,9 @@ import {
 	InputAdornment,
 	Dialog,
 	DialogContent,
+	FormControl,
+	FormControlLabel,
+	Checkbox,
 } from "@mui/material";
 import { Formik, Form, Field, FormikProps, FormikHelpers } from "formik";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
@@ -124,7 +127,7 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 
 	const initialValues = {
 		currency_id: invoiceFindOne?.data?.currency_id ?? user?.currency_id ?? "",
-		customer_id: invoiceFindOne?.data?.customer_id ?? "",
+		customer_ids: [],
 		user_id: user?.id ?? "",
 		invoice_number: invoiceFindOne?.data?.invoice_number ?? new Date().getTime().toString(),
 		reference_number: invoiceFindOne?.data?.reference_number ?? "",
@@ -149,11 +152,18 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 			invoiceFindOne?.data?.template_id ?? invoiceSettings?.data?.invoiceTemplateId ?? "",
 	};
 
-	const formikRef = useRef<FormikProps<typeof initialValues>>(null);
+	const updateInitialValues = {
+		...initialValues,
+		customer_ids: undefined,
+		customer_id: invoiceFindOne?.data?.customer_id ?? "",
+	};
+
+	const formikRef = useRef<FormikProps<typeof initialValues | typeof updateInitialValues>>(null);
 
 	const schema = yup.object().shape({
 		currency_id: yup.string().required(t("invoiceForm.validation.currencyRequired")),
-		customer_id: yup.string().required(t("invoiceForm.validation.customerRequired")),
+		// customer_id: yup.string().required(t("invoiceForm.validation.customerRequired")),
+		customer_ids: yup.array().of(yup.string()).min(1, t("invoiceForm.validation.customerRequired")),
 		invoice_number: yup.string().required(t("invoiceForm.validation.invoiceNumberRequired")),
 		reference_number: yup.string(),
 		date: yup.string().required(t("invoiceForm.validation.invoiceDateRequired")),
@@ -196,9 +206,14 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 		template_id: yup.string().required(t("invoiceForm.validation.templateRequired")),
 	});
 
+	const updateSchema = schema.shape({
+		customer_ids: yup.array().of(yup.string()).optional().nullable(),
+		customer_id: yup.string().required(t("invoiceForm.validation.customerRequired")),
+	});
+
 	const handleSubmit = async (
-		values: typeof initialValues,
-		actions: FormikHelpers<typeof initialValues>,
+		values: typeof initialValues | typeof updateInitialValues,
+		actions: FormikHelpers<typeof initialValues | typeof updateInitialValues>,
 	) => {
 		if (rows?.length === 0) {
 			setProductErrorText(t("invoiceForm.validation.atLeastOneProduct"));
@@ -309,8 +324,8 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 			/>
 			<Box sx={{ mb: 2, mt: 2 }}>
 				<Formik
-					initialValues={initialValues}
-					validationSchema={schema}
+					initialValues={id ? updateInitialValues : initialValues}
+					validationSchema={id ? updateSchema : schema}
 					onSubmit={handleSubmit}
 					innerRef={formikRef}
 				>
@@ -318,20 +333,66 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 						return (
 							<Form>
 								<Grid container spacing={2}>
-									<Grid item xs={12} sm={4}>
-										<Field
-											name="customer_id"
-											label={t("invoiceForm.customerName")}
-											component={AutocompleteField}
-											options={customerData?.data?.map((customer) => ({
-												value: customer.id,
-												label: customer.display_name,
-											}))}
-											loading={customerData.isLoading}
-											isRequired={true}
-										/>
-									</Grid>
+									{id ? (
+										<Grid item xs={12} sm={4}>
+											<Field
+												name="customer_id"
+												label={t("invoiceForm.customerName")}
+												component={AutocompleteField}
+												options={customerData?.data?.map((customer) => ({
+													value: customer.id,
+													label: customer.display_name,
+												}))}
+												loading={customerData.isLoading}
+												isRequired={true}
+											/>
+										</Grid>
+									) : (
+										<Grid item xs={12} sm={4}>
+											<Field
+												name="customer_ids"
+												label={t("invoiceForm.customerName")}
+												component={AutocompleteField}
+												options={customerData?.data?.map((customer) => ({
+													value: customer.id,
+													label: customer.display_name,
+												}))}
+												loading={customerData.isLoading}
+												isRequired={true}
+												multiple
+												limitTags={2}
+											/>
+										</Grid>
+									)}
 									<Grid item xs={12} sm={4} alignItems={"center"} display={"flex"}>
+										{id ? null : (
+											<FormControl>
+												<FormControlLabel
+													value="end"
+													control={
+														<Checkbox
+															checked={
+																formik.values.customer_ids?.length === customerData?.data?.length
+															}
+															onChange={(e) => {
+																if (e.target.checked) {
+																	formik.setFieldValue(
+																		"customer_ids",
+																		customerData?.data?.map((customer) => customer.id),
+																	);
+																} else {
+																	formik.setFieldValue("customer_ids", []);
+																}
+															}}
+														/>
+													}
+													label={t("invoiceForm.selectAllCustomers", {
+														defaultValue: "Select all customers",
+													})}
+													labelPlacement="end"
+												/>
+											</FormControl>
+										)}
 										<Button
 											variant="text"
 											startIcon={<AddIcon />}
@@ -363,30 +424,36 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 									<Grid item xs={12} mb={3}>
 										<Divider />
 									</Grid>
-									<Grid item xs={12} sm={4}>
-										<Field
-											name="invoice_number"
-											component={TextFormField}
-											label={t("invoiceForm.invoiceNumber")}
-											InputProps={{
-												startAdornment: (
-													<InputAdornment position="start">
-														{invoiceSettings?.data?.invoicePrefix ??
-															t("invoiceForm.invoicePrefixFallback")}
-														{"INV"}-
-													</InputAdornment>
-												),
-											}}
-											isRequired={true}
-										/>
-									</Grid>
-									<Grid item xs={12} sm={4}>
-										<Field
-											name="reference_number"
-											component={TextFormField}
-											label={t("invoiceForm.referenceNumber")}
-										/>
-									</Grid>
+									{id && (
+										<>
+											<Grid item xs={12} sm={4}>
+												<Field
+													name="invoice_number"
+													component={TextFormField}
+													label={t("invoiceForm.invoiceNumber")}
+													InputProps={{
+														startAdornment: (
+															<InputAdornment position="start">
+																{invoiceSettings?.data?.invoicePrefix ??
+																	t("invoiceForm.invoicePrefixFallback", {
+																		defaultPrefix: "INV",
+																	})}
+																-
+															</InputAdornment>
+														),
+													}}
+													isRequired={true}
+												/>
+											</Grid>
+											<Grid item xs={12} sm={4}>
+												<Field
+													name="reference_number"
+													component={TextFormField}
+													label={t("invoiceForm.referenceNumber")}
+												/>
+											</Grid>
+										</>
+									)}
 									<Grid item xs={12} sm={4}>
 										<Field
 											name="date"
@@ -593,6 +660,9 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 												const data = await invoicePreview.mutateAsync({
 													data: {
 														...formik.values,
+														customer_id: id
+															? (formik.values as any).customer_id
+															: formik.values.customer_ids?.[0],
 														recurring: formik.values
 															.recurring as CreateInvoiceWithProductsRecurring,
 														tax_id: formik.values.tax_id === "" ? null : formik.values.tax_id,

@@ -64,6 +64,7 @@ const styles = {
 };
 
 const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: boolean }) => {
+	// const [termsAccepted, setTermsAccepted] = useState(false);
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const [shareInvoiceId, setShareInvoiceId] = useState<string | null>(null);
@@ -365,6 +366,7 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 					},
 				]),
 	];
+	// const termsAccept = useInvoiceControllerTermsAcceptedByUser();
 	if (
 		getHtmlText.isLoading ||
 		getInvoiceData?.isLoading ||
@@ -387,6 +389,77 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 				p: IsPublic ? 2 : 0,
 			}}
 		>
+			{/* <Dialog open={getInvoiceData?.data?.termsAccepted === false} maxWidth="md" fullWidth>
+				<DialogTitle>
+					<Typography variant="h4">
+						{t("invoice.detail.termsNotAccepted", {
+							defaultValue: "Attention Required: Please Accept Terms and Conditions",
+						})}
+					</Typography>
+				</DialogTitle>
+				<DialogContent sx={{ p: 3 }}>
+					<Typography variant="body1">
+						{t("invoice.detail.pleaseAcceptTerms", {
+							defaultValue: `By viewing this invoice, you acknowledge that the data displayed is processed by 
+							${(getInvoiceData?.data?.user as any)?.company?.[0]?.name}
+							on behalf of ${getInvoiceData?.data?.customer?.name} for the purpose of billing and
+						record-keeping in accordance with applicable data protection laws (GDPR).`,
+						})}
+					</Typography>
+					<Divider sx={{ my: 2 }} />
+					<Box>
+						<FormControl
+							sx={{
+								display: "flex",
+								alignItems: "start",
+							}}
+						>
+							<FormControlLabel
+								sx={{
+									display: "flex",
+									alignItems: "start",
+								}}
+								control={
+									<Checkbox
+										checked={termsAccepted}
+										onChange={(e) => setTermsAccepted(e.target.checked)}
+										sx={{
+											mt: "-5px",
+										}}
+									/>
+								}
+								label={t("invoice.detail.pleaseAcceptTerms", {
+									defaultValue: `I agree that my name, email, and interaction data (such as invoice open time) may be stored by [GrowInvoice.com] for invoicing and notification purposes in accordance with GDPR and your privacy policy.`,
+								})}
+							/>
+						</FormControl>
+					</Box>
+				</DialogContent>
+				<DialogActions>
+					<Button
+						variant="contained"
+						disabled={!termsAccepted}
+						onClick={async () => {
+							if (!termsAccepted) {
+								return;
+							}
+							try {
+								await termsAccept.mutateAsync({
+									params: {
+										id: invoiceId,
+									},
+								});
+								getInvoiceData.refetch();
+								window.location.reload();
+							} catch (e) {
+								console.error("Error accepting terms", e);
+							}
+						}}
+					>
+						{t("common.accept", { defaultValue: "Accept" })}
+					</Button>
+				</DialogActions>
+			</Dialog> */}
 			<Box
 				sx={{
 					display: "flex",

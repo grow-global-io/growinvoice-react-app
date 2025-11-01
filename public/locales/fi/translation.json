@@ -147,6 +147,11 @@
     }
   },
   "customerForm": {
+    
+    "readyToOnboard": "Valmis ottamaan asiakkaasi käyttöön?",
+    "downloadTemplate": "Lataa malli",
+    "bulkUploadTitle": "Massalatausasiakkaat",
+    "bulkUpload": "Massalataus",
     "createNew": "Luo uusi asiakas",
     "iconAlt": "Asiakasikoni",
     "addNew": "Lisää uusi asiakas",
@@ -184,7 +189,8 @@
       "emailInvalid": "Sähköposti ei ole kelvollinen",
       "phoneRequired": "Puhelinnumero on pakollinen",
       "phoneInvalid": "Puhelinnumero ei ole kelvollinen",
-      "websiteInvalid": "Verkkosivu ei ole kelvollinen"
+      "websiteInvalid": "Verkkosivu ei ole kelvollinen",
+      "currencyInvalid": "Valuutta ei ole kelvollinen"
     }
   },
   "invoice": {
@@ -263,6 +269,7 @@
     }
   },
   "invoiceForm": {
+    "selectAllCustomers": "Valitse kaikki asiakkaat",
     "addProducts": "Lisää tuotteita:",
     "addRecord": "Lisää rivi",
     "title": "Uusi lasku",
@@ -504,6 +511,10 @@
         "templateIdRequired": "Laskupohja on pakollinen",
         "invalidHeadingType": "Virheellinen otsikon tyyppi",
         "invoiceHeadingTypeRequired": "Otsikon tyyppi on pakollinen"
+      },
+      "detail":{
+        "termsNotAccepted": "Huomio vaaditaan: Hyväksy käyttöehdot",
+        "pleaseAcceptTerms": "Jatkaaksesi laskun lähettämistä asiakkaalle, hyväksy käyttöehdot alla."
       }
     }
   },
@@ -677,7 +688,8 @@
     "onlyPdfAllowed": "Vain PDF-tiedostot sallittu",
     "notFound": "Sivua ei löytynyt",
     "internalServerError": "Palvelinvirhe",
-    "tryAgain": "Yritä uudelleen"
+    "tryAgain": "Yritä uudelleen",
+    "accept": "Hyväksy"
   },
   "plan": {
     "choosePlan": "Valitse paketti",

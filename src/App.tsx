@@ -270,7 +270,6 @@ function App() {
 		};
 	}, []);
 
-	
 	return (
 		<>
 			<AppContainer />

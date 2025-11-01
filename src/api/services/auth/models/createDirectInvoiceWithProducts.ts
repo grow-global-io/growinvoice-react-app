@@ -6,33 +6,33 @@
  * OpenAPI spec version: 1.0
  */
 import type { OmitCreateInvoiceProductsDto } from "./omitCreateInvoiceProductsDto";
-import type { UpdateInvoiceWithProductsRecurring } from "./updateInvoiceWithProductsRecurring";
+import type { CreateDirectInvoiceWithProductsRecurring } from "./createDirectInvoiceWithProductsRecurring";
 
-export interface UpdateInvoiceWithProducts {
+export interface CreateDirectInvoiceWithProducts {
 	/** @nullable */
 	currency_id?: string | null;
-	customer_id?: string;
-	date?: string;
+	customer_id: string;
+	date: string;
 	/** @nullable */
 	discountPercentage?: number | null;
-	due_amount?: number;
-	due_date?: string;
+	due_amount: number;
+	due_date: string;
 	fromStore?: boolean;
-	invoice_number?: string;
-	is_recurring?: boolean;
+	invoice_number: string;
+	is_recurring: boolean;
 	/** @nullable */
 	notes?: string | null;
-	paid_amount?: number;
+	paid_amount: number;
 	/** @nullable */
 	paymentId?: string | null;
 	product: OmitCreateInvoiceProductsDto[];
 	/** @nullable */
-	recurring?: UpdateInvoiceWithProductsRecurring;
+	recurring?: CreateDirectInvoiceWithProductsRecurring;
 	/** @nullable */
 	reference_number?: string | null;
 	/** @nullable */
 	status?: string | null;
-	sub_total?: number;
+	sub_total: number;
 	/** @nullable */
 	tax_id?: string | null;
 	/** @nullable */
@@ -40,6 +40,6 @@ export interface UpdateInvoiceWithProducts {
 	/** @nullable */
 	template_url?: string | null;
 	termsAccepted?: boolean;
-	total?: number;
-	user_id?: string;
+	total: number;
+	user_id: string;
 }
