@@ -43,7 +43,13 @@ const ExpensesReportTable = ({ fromDate, toDate }: { fromDate: string; toDate: s
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
-				return <Typography>{params.value}</Typography>;
+				return (
+					<Typography>
+						{t(`expenses.categoryTypes.${params.value?.toLowerCase()}`, {
+							defaultValue: params.value,
+						})}
+					</Typography>
+				);
 			},
 		},
 		{

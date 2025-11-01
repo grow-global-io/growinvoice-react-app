@@ -14,8 +14,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useCreateHsnCodeStore } from "@store/createHsnCodeStore";
 import { getTaxcodeControllerFindAllQueryKey } from "@api/services/tax-code";
 import { HSNCode } from "@api/services/models";
+import { useTranslation } from "react-i18next";
 
 const HsnCodeTableList = () => {
+	const { t } = useTranslation();
 	const queryClient = useQueryClient();
 	const allHsnCode = useHsncodeControllerFindAll();
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
@@ -25,7 +27,7 @@ const HsnCodeTableList = () => {
 	const columns: GridColDef<HSNCode>[] = [
 		{
 			field: "code",
-			headerName: "Code",
+			headerName: t("hsn.table.code", { defaultValue: "Code" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -34,7 +36,7 @@ const HsnCodeTableList = () => {
 		},
 		{
 			field: "percentage",
-			headerName: "Percentage",
+			headerName: t("hsn.table.percentage", { defaultValue: "Percentage" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -43,12 +45,15 @@ const HsnCodeTableList = () => {
 		},
 		{
 			field: "action",
-			headerName: "Action",
+			headerName: t("hsn.table.action", { defaultValue: "Action" }),
 			flex: 1,
 			minWidth: 150,
 			type: "actions",
 			getActions: (params) => [
-				<Tooltip title="Edit HSN Code" key={params.row?.id}>
+				<Tooltip
+					title={t("hsn.table.edit", { defaultValue: "Edit HSN Code" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							src={EditIcon}
@@ -58,7 +63,10 @@ const HsnCodeTableList = () => {
 						/>
 					</Box>
 				</Tooltip>,
-				<Tooltip title="Delete HSN Code" key={params.row?.id}>
+				<Tooltip
+					title={t("hsn.table.delete", { defaultValue: "Delete HSN Code" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							key={params.row?.id}
@@ -67,8 +75,10 @@ const HsnCodeTableList = () => {
 							iconColor="error"
 							onClick={async () => {
 								handleOpen({
-									title: "Delete HSN Code",
-									message: "Are you sure you want to delete this HSN Code?",
+									title: t("hsn.actions.deleteTitle", { defaultValue: "Delete HSN Code" }),
+									message: t("hsn.actions.deleteConfirm", {
+										defaultValue: "Are you sure you want to delete this HSN Code?",
+									}),
 									onConfirm: async () => {
 										await removeHsnCode.mutateAsync({ id: params.row.id });
 
@@ -82,7 +92,7 @@ const HsnCodeTableList = () => {
 									onCancel: () => {
 										cleanUp();
 									},
-									confirmButtonText: "Delete",
+									confirmButtonText: t("app.delete", { defaultValue: "Delete" }),
 								});
 							}}
 						/>

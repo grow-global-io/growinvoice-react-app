@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import i18n from "../i18s";
 
 interface ConfirmDialogStore {
 	open: boolean;
@@ -28,17 +29,17 @@ interface ConfirmDialogStore {
 
 export const useConfirmDialogStore = create<ConfirmDialogStore>((set) => ({
 	open: false,
-	title: "Are you sure?",
+	title: i18n.t("dialog.confirmTitle", { defaultValue: "Are you sure?" }),
 	message: "",
-	confirmButtonText: "Confirm",
-	cancelButtonText: "Cancel",
+	confirmButtonText: i18n.t("app.confirm", { defaultValue: "Confirm" }),
+	cancelButtonText: i18n.t("app.cancel", { defaultValue: "Cancel" }),
 	handleOpen: ({
 		title,
 		message,
 		onConfirm,
 		onCancel,
-		confirmButtonText = "Confirm",
-		cancelButtonText = "Cancel",
+		confirmButtonText = i18n.t("app.confirm", { defaultValue: "Confirm" }),
+		cancelButtonText = i18n.t("app.cancel", { defaultValue: "Cancel" }),
 	}: {
 		title: string;
 		message: string;
@@ -59,7 +60,7 @@ export const useConfirmDialogStore = create<ConfirmDialogStore>((set) => ({
 	},
 	cleanUp() {
 		set({
-			title: "Are you sure?",
+			title: i18n.t("dialog.confirmTitle", { defaultValue: "Are you sure?" }),
 			open: false,
 			message: "",
 			onConfirm: undefined,

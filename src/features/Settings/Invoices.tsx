@@ -74,9 +74,9 @@ const Invoices = () => {
 		footer: yup.string().nullable(),
 		dueNotice: yup.number().required(t("settings.invoice.validation.dueNoticeRequired")),
 		overDueNotice: yup.number().required(t("settings.invoice.validation.overdueNoticeRequired")),
-		companyAddressTemplate: yup.string(),
-		customerBillingAddressTemplate: yup.string(),
-		customerShippingAddressTemplate: yup.string(),
+		companyAddressTemplate: yup.string().required(),
+		customerBillingAddressTemplate: yup.string().required(),
+		customerShippingAddressTemplate: yup.string().required(),
 		user_id: yup.string().required(t("settings.invoice.validation.userIdRequired")),
 		invoiceTemplateId: yup.string().required(t("settings.invoice.validation.templateIdRequired")),
 		invoiceHeadingType: yup
@@ -130,13 +130,12 @@ const Invoices = () => {
 										name="invoiceHeadingType"
 										label={t("settings.invoice.invoiceHeadingType")}
 										component={AutocompleteField}
-										options={Object.values(InvoiceSettingsDtoInvoiceHeadingType).map((type) => {
-											const label = type.replace(/_/g, " ");
-											return {
-												label: label,
-												value: type,
-											};
-										})}
+										options={Object.values(InvoiceSettingsDtoInvoiceHeadingType).map((type) => ({
+											label: t(`settings.invoice.headingTypes.${type}`, {
+												defaultValue: type.replace(/_/g, " "),
+											}),
+											value: type,
+										}))}
 									/>
 								</Grid>
 								<Grid item xs={12} sm={6} display={"flex"} alignItems={"center"}>

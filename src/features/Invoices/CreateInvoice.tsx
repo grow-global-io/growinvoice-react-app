@@ -18,7 +18,6 @@ import FullFeaturedCrudGrid from "../../shared/components/EditableProductListTab
 import { useAuthStore } from "@store/auth";
 import { useCustomerControllerFindAll } from "@api/services/customer";
 import { CheckBoxFormField } from "@shared/components/FormFields/CheckBoxFormField";
-import { stringToListDto } from "@shared/models/ListDto";
 import moment from "moment";
 import AddIcon from "@mui/icons-material/Add";
 import PaymentDetailsDrawer from "../PaymentsDetails/PaymentDetailsDrawer";
@@ -57,6 +56,7 @@ import SubtotalFooter from "@shared/components/SubtotalFooter";
 import { useInvoicesettingsControllerFindFirst } from "@api/services/invoicesettings";
 import { useCurrencyControllerFindAll } from "@api/services/currency";
 import { useTranslation } from "react-i18next";
+import { translateInvoiceHtml } from "@shared/utils/invoiceTemplateTranslator";
 
 export type OmitCreateInvoiceProductsExtended = Omit<
 	OmitCreateInvoiceProductsDto,
@@ -419,9 +419,12 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 												name="recurring"
 												label={t("invoiceForm.recurring")}
 												component={AutocompleteField}
-												options={Object.keys(CreateInvoiceWithProductsRecurring).map(
-													stringToListDto,
-												)}
+												options={Object.keys(CreateInvoiceWithProductsRecurring).map((key) => ({
+													value: key,
+													label: t(`invoiceForm.recurringTypes.${key}`, {
+														defaultValue: key,
+													}),
+												}))}
 											/>
 										</Grid>
 									)}
@@ -600,7 +603,9 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 														paid_amount: 0,
 													},
 												});
-												setPreviewString(data as string);
+												// Translate the invoice HTML content before setting it
+												const translatedHtml = translateInvoiceHtml(data as string, t);
+												setPreviewString(translatedHtml);
 												handleClickOpenInvoicePreview();
 											}}
 											disabled={formik.isValid === false || rows?.length === 0}

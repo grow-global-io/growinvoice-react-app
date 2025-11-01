@@ -13,7 +13,7 @@ import CreateTaxes from "../ProductTaxes/CreateTaxes";
 import { useCreateProductStore } from "@store/createProductStore";
 import { CreateProductWithTaxDto, CreateProductWithTaxDtoType } from "@api/services/models";
 import { useAuthStore } from "@store/auth";
-import { ListDto, stringToListDto } from "@shared/models/ListDto";
+import { ListDto } from "@shared/models/ListDto";
 import {
 	getProductControllerFindAllQueryKey,
 	useProductControllerCreate,
@@ -209,7 +209,13 @@ const ProductForm = () => {
 											name="type"
 											label={t("productForm.type")}
 											component={AutocompleteField}
-											options={Object.values(CreateProductWithTaxDtoType).map(stringToListDto)}
+											options={Object.values(CreateProductWithTaxDtoType).map((value) => ({
+												value,
+												label:
+													value === CreateProductWithTaxDtoType.Goods
+														? t("product.type.goods", { defaultValue: "Goods" })
+														: t("product.type.services", { defaultValue: "Services" }),
+											}))}
 											isRequired={true}
 										/>
 									</Grid>

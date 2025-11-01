@@ -2,6 +2,7 @@ import { Button, Drawer } from "@mui/material";
 import TaxCodeForm from "./TaxCodeForm";
 import AddIcon from "@mui/icons-material/Add";
 import { useCreateTaxCodeStore } from "@store/createTaxCodeStore";
+import { useTranslation } from "react-i18next";
 
 export const TaxCodeDrawer = ({
 	open,
@@ -16,6 +17,7 @@ export const TaxCodeDrawer = ({
 );
 
 const CreateTaxCode = () => {
+	const { t } = useTranslation();
 	const { setOpenTaxCodeForm } = useCreateTaxCodeStore.getState();
 	return (
 		<Button
@@ -25,7 +27,7 @@ const CreateTaxCode = () => {
 			}}
 			startIcon={<AddIcon />}
 		>
-			Create New
+			{t("tax.createNew", { defaultValue: "Create New" })}
 		</Button>
 	);
 };

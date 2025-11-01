@@ -76,6 +76,7 @@ export default function ForgotPassword() {
 								</DialogContent>
 								<AppDialogFooter
 									onClickCancel={handleClose}
+									cancelButtonText={t("app.cancel", { defaultValue: "Cancel" })}
 									saveButtonText={t("app.confirm", { defaultValue: "Confirm" })}
 									saveButtonDisabled={!formik.isValid || formik.isSubmitting}
 								/>

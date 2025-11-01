@@ -14,8 +14,10 @@ import PlansCreate from "./PlansCreate"; // Assuming PlansCreate is a component 
 import { useConfirmDialogStore } from "@store/confirmDialog";
 import PlansFeatureUpdate from "./PlansFeatureUpdate"; // Assuming PlansFeatureUpdate is a component for updating plan features
 import EditIcon from "@mui/icons-material/Edit";
+import { useTranslation } from "react-i18next";
 
 const PlansManagementList = () => {
+	const { t } = useTranslation();
 	const findAllPlans = usePlansControllerFindAll();
 	const { handleClickOpen, handleClose, open } = useDialog();
 	const plansUpdate = usePlansControllerUpdate();
@@ -162,7 +164,10 @@ const PlansManagementList = () => {
 							/>
 						</Box>
 					</Tooltip>,
-					<Tooltip title="Update Features" key={params.row?.id + "features"}>
+					<Tooltip
+						title={t("plans.updateFeatures", { defaultValue: "Update Features" })}
+						key={params.row?.id + "features"}
+					>
 						<Box>
 							<CustomIconButton
 								onClick={() => {

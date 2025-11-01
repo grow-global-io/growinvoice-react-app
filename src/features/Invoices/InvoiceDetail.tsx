@@ -46,6 +46,7 @@ import { currencyFormatter } from "@shared/formatter";
 import { environment } from "@enviroment";
 import { http } from "@shared/axios";
 import { useTranslation } from "react-i18next";
+import { translateInvoiceHtml } from "@shared/utils/invoiceTemplateTranslator";
 
 const styles = {
 	width: { xs: "100%", sm: "auto" },
@@ -109,9 +110,11 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 	useEffect(() => {
 		if (iframeRef.current && !getHtmlText.isLoading && getHtmlText.isSuccess) {
 			const iframe = iframeRef.current;
-			iframe.srcdoc = getHtmlText?.data;
+			// Translate the invoice HTML content before setting it
+			const translatedHtml = translateInvoiceHtml(getHtmlText?.data ?? "", t);
+			iframe.srcdoc = translatedHtml;
 		}
-	}, [getHtmlText?.isSuccess, getHtmlText?.isRefetching, isMobile]);
+	}, [getHtmlText?.isSuccess, getHtmlText?.isRefetching, isMobile, t]);
 
 	const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
 		setMoreAnchorEl(event.currentTarget);

@@ -3,8 +3,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import CreateHSNCode from "@features/HSNCode/CreateHSNCode";
 import ContentPasteOutlinedIcon from "@mui/icons-material/ContentPasteOutlined";
 import { useCreateHsnCodeStore } from "@store/createHsnCodeStore";
+import { useTranslation } from "react-i18next";
 
 const HsnCodeForm = () => {
+	const { t } = useTranslation();
 	const { setOpenHsnCodeForm } = useCreateHsnCodeStore.getState();
 	return (
 		<Box sx={{ width: { sm: "400px" } }} role="presentation">
@@ -17,7 +19,7 @@ const HsnCodeForm = () => {
 						gap: 1,
 					}}
 				>
-					<ContentPasteOutlinedIcon /> New HSN Code
+					<ContentPasteOutlinedIcon /> {t("hsn.form.title", { defaultValue: "New HSN Code" })}
 					{/* <img src={Constants.customImages.QuotationIcon} alt="Invoice Icon" /> New Quotation */}
 				</Typography>
 				<IconButton

@@ -131,7 +131,9 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 			<Grid container sx={style}>
 				<Grid item xs={12} textAlign={"center"}>
 					<Typography variant="h4" p={3}>
-						{item?.name}{" "}
+						{t(`plans.planNames.${item?.name?.toLowerCase().replace(/\s+/g, "")}`, {
+							defaultValue: item?.name || "",
+						})}{" "}
 						{checkIsSubscribe
 							? t("plans.currentPlanSuffix", { defaultValue: "(Current Plan)" })
 							: ""}
@@ -154,7 +156,7 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 											{item?.price === 0
 												? t("plans.unlimited", { defaultValue: "Unlimited" })
 												: plan?.count}{" "}
-											{plan?.feature}
+											{t(`plans.features.${plan?.feature}`, { defaultValue: plan?.feature || "" })}
 										</Typography>
 									}
 								/>

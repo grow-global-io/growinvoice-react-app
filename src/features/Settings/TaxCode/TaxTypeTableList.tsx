@@ -14,8 +14,10 @@ import Loader from "@shared/components/Loader";
 import { useCreateTaxCodeStore } from "@store/createTaxCodeStore";
 import { getHsncodeControllerFindAllQueryKey } from "@api/services/hsncode";
 import { Constants } from "@shared/constants";
+import { useTranslation } from "react-i18next";
 
 const TaxTypeTableList = () => {
+	const { t } = useTranslation();
 	const queryClient = useQueryClient();
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
 	const allTaxCode = useTaxcodeControllerFindAll();
@@ -25,7 +27,7 @@ const TaxTypeTableList = () => {
 	const columns: GridColDef[] = [
 		{
 			field: "name",
-			headerName: "Tax Name",
+			headerName: t("tax.table.name", { defaultValue: "Tax Name" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -34,7 +36,7 @@ const TaxTypeTableList = () => {
 		},
 		{
 			field: "percentage",
-			headerName: "Percentage",
+			headerName: t("tax.table.percentage", { defaultValue: "Percentage" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -43,12 +45,15 @@ const TaxTypeTableList = () => {
 		},
 		{
 			field: "action",
-			headerName: "Action",
+			headerName: t("tax.table.action", { defaultValue: "Action" }),
 			flex: 1,
 			minWidth: 150,
 			type: "actions",
 			getActions: (params) => [
-				<Tooltip title="Edit Tax Type" key={params.row?.id}>
+				<Tooltip
+					title={t("tax.table.edit", { defaultValue: "Edit Tax Type" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							src={EditIcon}
@@ -58,7 +63,10 @@ const TaxTypeTableList = () => {
 						/>
 					</Box>
 				</Tooltip>,
-				<Tooltip title="Delete Tax Type" key={params.row?.id}>
+				<Tooltip
+					title={t("tax.table.delete", { defaultValue: "Delete Tax Type" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							key={params.row?.id}
@@ -67,8 +75,10 @@ const TaxTypeTableList = () => {
 							iconColor="error"
 							onClick={async () => {
 								handleOpen({
-									title: "Delete Tax Type",
-									message: "Are you sure you want to delete this Tax Type?",
+									title: t("tax.actions.deleteTitle", { defaultValue: "Delete Tax Type" }),
+									message: t("tax.actions.deleteConfirm", {
+										defaultValue: "Are you sure you want to delete this Tax Type?",
+									}),
 									onConfirm: async () => {
 										await removeTaxCode.mutateAsync({ id: params.row.id });
 										await queryClient.refetchQueries({
@@ -81,7 +91,7 @@ const TaxTypeTableList = () => {
 									onCancel: () => {
 										cleanUp();
 									},
-									confirmButtonText: "Delete",
+									confirmButtonText: t("app.delete", { defaultValue: "Delete" }),
 								});
 							}}
 						/>

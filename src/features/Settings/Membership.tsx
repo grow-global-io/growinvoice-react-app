@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 
 import { AttachMoney, ShoppingCart, People, Store, Receipt } from "@mui/icons-material";
 import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 const iconMapping: Record<string, React.ElementType> = {
 	Invoice: Receipt,
@@ -51,6 +52,7 @@ const getProgressColor = (percentage: number) => {
 };
 
 const Membership = () => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const { user } = useAuthStore();
 	const findAllPlans = usePlansControllerFindAll();
@@ -84,7 +86,9 @@ const Membership = () => {
 				<Grid container spacing={2} display={"flex"} justifyContent={"center"}>
 					<Grid item xs={12} sm={12} textAlign={"center"}>
 						<Typography variant="h5" fontWeight={400} lineHeight={1.2}>
-							upgrade your plan to generate more other features.
+							{t("plans.upgradeHint", {
+								defaultValue: "upgrade your plan to generate more other features.",
+							})}
 							<Button
 								variant="text"
 								color="primary"
@@ -96,7 +100,7 @@ const Membership = () => {
 									navigate("/plan/planspage");
 								}}
 							>
-								Click here to upgrade
+								{t("plans.upgradeCta", { defaultValue: "Click here to upgrade" })}
 							</Button>
 						</Typography>
 					</Grid>
@@ -113,25 +117,46 @@ const Membership = () => {
 									<Grid key={item.id} container>
 										<Grid item xs={12} sm={6}>
 											<Typography variant="h5" textTransform={"capitalize"}>
-												{numberToOrdinal(index + 1)} Plan
+												{t("plans.planTitle", {
+													defaultValue: "{{order}} Plan",
+													order: numberToOrdinal(index + 1),
+												})}
 											</Typography>
 											<Box display={"flex"} my={1}>
-												<Typography variant="h6">Plan :</Typography>
+												<Typography variant="h6">
+													{t("plans.planLabel", { defaultValue: "Plan" })} :
+												</Typography>
 												<Typography variant="h6" fontWeight={"500"}>
 													{" "}
-													{item?.plan?.name}
+													{t(
+														`plans.planNames.${item?.plan?.name?.toLowerCase().replace(/\s+/g, "")}`,
+														{
+															defaultValue: item?.plan?.name || "",
+														},
+													)}
 												</Typography>
 											</Box>
 											<Box display={"flex"} alignItems={"center"} my={1}>
-												<Typography variant="h6">Status :</Typography>
-												<Chip label={"Active"} variant="filled" color={"success"} sx={{ ml: 1 }} />
+												<Typography variant="h6">
+													{t("plans.status", { defaultValue: "Status" })} :
+												</Typography>
+												<Chip
+													label={t("common.active", { defaultValue: "Active" })}
+													variant="filled"
+													color={"success"}
+													sx={{ ml: 1 }}
+												/>
 											</Box>
 											<Box display={"flex"} my={1}>
-												<Typography variant="h6">Trial Ends :</Typography>
+												<Typography variant="h6">
+													{t("plans.trialEnds", { defaultValue: "Trial Ends" })} :
+												</Typography>
 												<Typography variant="h6" fontWeight={"500"}>
-													{" "}
-													{parseDateStringToFormat(item?.end_date ?? "")} (
-													{findLeftDate(item?.end_date ?? "")} days is left)
+													{t("plans.trialEndsText", {
+														defaultValue: "{{date}} ({{days}} days left)",
+														date: parseDateStringToFormat(item?.end_date ?? ""),
+														days: findLeftDate(item?.end_date ?? ""),
+													})}
 												</Typography>
 											</Box>
 										</Grid>
@@ -162,7 +187,7 @@ const Membership = () => {
 												</Avatar>
 												<Box flexGrow={1}>
 													<Typography variant="h6" fontWeight={600}>
-														{feature}
+														{t(`plans.features.${feature}`, { defaultValue: feature })}
 													</Typography>
 													<Typography variant="body2" color="text.secondary">
 														{usedCount} / {quotaCount}
