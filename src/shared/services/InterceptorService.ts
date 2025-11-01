@@ -5,7 +5,6 @@ import { toastWithButton } from "./toastWithButton";
 import i18next from "i18next";
 // import { RsaService } from "./RsaService";
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 export class InterceptorService {
 	public constructor(private _axiosInstance: AxiosInstance) {}
 

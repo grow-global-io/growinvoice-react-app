@@ -48,13 +48,13 @@ export const RichTextEditor: React.FC<
 				</InputLabel>
 			)}
 			<br />
-            <StyledSunEditor
+			<StyledSunEditor
 				// getSunEditorInstance={services.getSunEditorInstance}
 				name={field.name}
 				width="100%"
 				height="200px"
 				setContents={field.value}
-                placeholder={i18n.t("common.typeHere", { defaultValue: "Please type here..." })}
+				placeholder={i18n.t("common.typeHere", { defaultValue: "Please type here..." })}
 				onChange={(data) => form.setFieldValue(field.name, data, true)}
 				onBlur={field.onBlur}
 				{...props}

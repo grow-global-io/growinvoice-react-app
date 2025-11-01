@@ -17,24 +17,19 @@
 
     /* Linting */
     "strict": true,
-    "noImplicitAny": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "esModuleInterop": false,
-    "baseUrl": "./",
     "paths": {
-      "@api/services/*": ["src/api/services/auth/*"],
-      "@assets/*": ["src/assets/*"],
-      "@enviroment": ["src/environment/index.ts"],
-      "@features/*": ["src/features/*"],
-      "@layout/*": ["src/layout/*"],
-      "@pages/*": ["src/pages/*"],
-      "@shared/*": ["src/shared/*"],
-      "@store/*": ["src/store/*"],
+      "@api/services/*": ["./src/api/services/auth/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@enviroment": ["./src/environment/index.ts"],
+      "@features/*": ["./src/features/*"],
+      "@layout/*": ["./src/layout/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@store/*": ["./src/store/*"],
     }
   },
-  "include": [
-    "./src/*"
-  ]
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -12,7 +12,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import InternalServerErrorPage from "@pages/InternalServerErrorPage";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import i18n from "./i18s"; // Initialize translations
-import * as serviceWorkerRegistration from "./serviceWorkerRegistration.js";
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -71,8 +71,7 @@ const RootApp = () => {
 	);
 };
 
-const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
-root.render(<RootApp />);
+ReactDOM.createRoot(document.getElementById("root")!).render(<RootApp />);
 
 // Register service worker
-serviceWorkerRegistration.register();
+serviceWorkerRegistration.register({});
