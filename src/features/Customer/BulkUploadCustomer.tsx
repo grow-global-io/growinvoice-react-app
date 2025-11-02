@@ -41,16 +41,7 @@ const BulkUploadCustomer = () => {
 			CustomerName: Yup.string()
 				.required(t("customerForm.validation.nameRequired"))
 				.matches(RegexExp.fullNameRegex, t("customerForm.validation.nameInvalid")),
-			PhoneNumber: Yup.string()
-				.optional()
-				.nullable()
-				.test("is-phone", t("customerForm.validation.phoneInvalid"), function (value) {
-					if (!value) return true;
-					const phoneValue = value.startsWith("+") ? value : `+${value}`;
-					return isValidPhoneNumber(phoneValue, {
-						defaultCountry: (user?.company?.[0]?.country?.code as Country) ?? undefined,
-					});
-				}),
+			PhoneNumber: Yup.string().optional().nullable(),
 			Email: Yup.string().email(t("customerForm.validation.emailInvalid")),
 			Currency: Yup.string()
 				.optional()
@@ -121,9 +112,9 @@ const BulkUploadCustomer = () => {
 			renderCell: (params) => (
 				<Tooltip title={params.value ?? ""}>
 					<span>
-						{formatPhoneNumber(
-							params.value && params.value.startsWith("+") ? params.value : `+${params.value}`,
-						)}
+						{params.value && isValidPhoneNumber(params.value as string)
+							? formatPhoneNumber(params.value as string)
+							: params.value}
 					</span>
 				</Tooltip>
 			),
