@@ -191,6 +191,7 @@ export default function FullFeaturedCrudGrid({
 			headerName: t("invoice.table.product", { defaultValue: "Product" }),
 			editable: true,
 			minWidth: 200,
+			flex: 1.5,
 			renderEditCell: (params) => {
 				const handleProductChange = (event: SelectChangeEvent, valuea?: string) => {
 					const value =
