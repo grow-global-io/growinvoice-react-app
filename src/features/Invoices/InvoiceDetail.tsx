@@ -273,7 +273,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 					);
 					return;
 				}
-				await handleSendMail(invoiceId, getInvoiceData?.data?.customer?.email ?? "");
+				await handleSendMail(invoiceId);
 				handleCloseAll();
 			},
 		},

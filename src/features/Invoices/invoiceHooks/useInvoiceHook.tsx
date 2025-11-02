@@ -9,7 +9,7 @@ import {
 	getInvoiceControllerOutstandingReceivableQueryKey,
 	getInvoiceControllerTestQueryKey,
 	getInvoiceControllerTotalDueQueryKey,
-	useInvoiceControllerInvoiceSentToMail,
+	useInvoiceControllerBulkInvoiceSentToMail,
 	useInvoiceControllerMarkedAsMailed,
 	useInvoiceControllerMarkedAsPaid,
 	useInvoiceControllerRemove,
@@ -36,7 +36,6 @@ export const useInvoiceHook = () => {
 	const removeInvoice = useInvoiceControllerRemove();
 	const currentDate = moment().format("YYYY-MM-DD");
 	const queryClient = useQueryClient();
-	const sendInvoiceToMail = useInvoiceControllerInvoiceSentToMail();
 	const markedPaid = useInvoiceControllerMarkedAsPaid();
 	const markedMailedSent = useInvoiceControllerMarkedAsMailed();
 	const createstripPaymentUrl = usePaymentsControllerStripePayment();
@@ -191,35 +190,11 @@ export const useInvoiceHook = () => {
 			}),
 		});
 	};
-
-	const handleSendMail = async (invoiceId: string, email: string) => {
-		const invoiceLink = `${window.location.origin}/invoice/invoicetemplate/${invoiceId}`;
-		const sendMailDto = {
-			email: email,
-			subject: "Invoice Details",
-			body: `
-                <p>Please find the attached invoice. You can also view the invoice online by clicking the button below:</p>
-                <a href="${invoiceLink}" style="text-decoration: none;">
-                    <button style="
-                        display: inline-block;
-                        padding: 10px 20px;
-                        font-size: 16px;
-                        color: white;
-                        background-color: #007BFF;
-                        border: none;
-                        border-radius: 5px;
-                        cursor: pointer;
-                    ">
-                        View Invoice
-                    </button>
-                </a>
-            `,
-		};
-
-		await sendInvoiceToMail.mutateAsync({
-			data: sendMailDto,
+	const sendMail = useInvoiceControllerBulkInvoiceSentToMail();
+	const handleSendMail = async (invoiceId: string) => {
+		await sendMail.mutateAsync({
 			params: {
-				id: invoiceId,
+				ids: [invoiceId],
 			},
 		});
 		queryClient.refetchQueries({
