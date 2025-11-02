@@ -27,8 +27,11 @@ export default function CreateProduct() {
 					setOpenProductForm(true);
 				}}
 				startIcon={<AddIcon />}
+				sx={{
+					fontSize: "10px",
+				}}
 			>
-				{t("product.createNew", { defaultValue: "Create New Product" })}
+				{t("product.createNew", { defaultValue: "New Product" })}
 			</Button>
 		</>
 	);

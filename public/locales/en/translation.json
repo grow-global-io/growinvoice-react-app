@@ -511,7 +511,7 @@
   "product": {
     "title": "Products",
     "create": "Create Product",
-    "createNew": "Create New Product",
+    "createNew": "New Product",
     "update": "Update Product",
     "edit": "Edit Product",
     "name": "Product Name",
