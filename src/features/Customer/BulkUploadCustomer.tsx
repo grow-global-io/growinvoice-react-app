@@ -2,7 +2,7 @@ import { Box, Button, Grid, Tooltip, Typography } from "@mui/material";
 import { RegexExp } from "@shared/regex";
 import { useTranslation } from "react-i18next";
 import * as Yup from "yup";
-import { formatPhoneNumber, isValidPhoneNumber, type Country } from "react-phone-number-input";
+import { formatPhoneNumber, isValidPhoneNumber } from "react-phone-number-input";
 import {
 	type CreateCustomerWithAddressDto,
 	CreateCustomerWithAddressDtoOption,
