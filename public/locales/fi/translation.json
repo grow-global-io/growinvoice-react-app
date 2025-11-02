@@ -459,6 +459,7 @@
   "invoiceForm": {
     "selectAllCustomers": "Valitse kaikki asiakkaat",
     "addProducts": "Lisää tuotteita:",
+    "addProductsSubtitle": "jokaiselle tuotteelle, napsauta tallenna, kun muutokset on tehty",
     "addRecord": "Lisää rivi",
     "title": "Uusi lasku",
     "invoiceIconAlt": "Laskuikoni",

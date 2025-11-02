@@ -191,6 +191,7 @@ export default function FullFeaturedCrudGrid({
 			headerName: t("invoice.table.product", { defaultValue: "Product" }),
 			flex: 1.0,
 			editable: true,
+			minWidth: 150,
 			renderEditCell: (params) => {
 				const handleProductChange = (event: SelectChangeEvent, valuea?: string) => {
 					const value =
@@ -275,6 +276,7 @@ export default function FullFeaturedCrudGrid({
 			headerName: t("invoice.table.qty", { defaultValue: "QTY" }),
 			flex: 0.3,
 			editable: true,
+			minWidth: 150,
 			preProcessEditCellProps: (params) => {
 				const hasError = params.props.value < 1;
 				return { ...params.props, error: hasError };
@@ -335,6 +337,7 @@ export default function FullFeaturedCrudGrid({
 			headerName: t("invoice.table.price", { defaultValue: "Price" }),
 			flex: 0.8,
 			editable: true,
+			minWidth: 150,
 			preProcessEditCellProps: (params) => {
 				const hasError = params.props.value < 0.00001;
 				return { ...params.props, error: hasError };
@@ -402,6 +405,7 @@ export default function FullFeaturedCrudGrid({
 			headerName: t("invoice.table.taxPercent", { defaultValue: "Tax/GST %" }),
 			flex: 1,
 			editable: true,
+			minWidth: 150,
 			renderEditCell: (params) => {
 				const handleTaxChange = (_: SelectChangeEvent, value?: string[]) => {
 					const taxIds = value ?? [];
@@ -463,6 +467,7 @@ export default function FullFeaturedCrudGrid({
 			headerName: t("invoice.table.hsnCode", { defaultValue: "HSN Code" }),
 			flex: 0.8,
 			editable: true,
+			minWidth: 150,
 			renderEditCell: (params) => (
 				<GridTextField
 					params={params}
@@ -485,6 +490,7 @@ export default function FullFeaturedCrudGrid({
 			headerName: t("invoice.table.amount", { defaultValue: "Amount" }),
 			flex: 0.8,
 			editable: true,
+			minWidth: 150,
 			renderEditCell: (params) => (
 				<GridTextField
 					params={params}
@@ -510,6 +516,7 @@ export default function FullFeaturedCrudGrid({
 			type: "actions",
 			headerName: t("common.actions", { defaultValue: "Actions" }),
 			flex: 0.7,
+			minWidth: 150,
 			cellClassName: "actions",
 			getActions: ({ id }) => {
 				const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
@@ -623,7 +630,16 @@ export default function FullFeaturedCrudGrid({
 								}}
 							>
 								<Typography variant="h5">
-									{t("invoiceForm.addProducts", { defaultValue: "Add Products:" })}
+									{t("invoiceForm.addProducts", {
+										defaultValue: "Add Products",
+									})}{" "}
+									<span style={{ fontWeight: "normal", fontSize: "14px" }}>
+										(
+										{t("invoiceForm.addProductsSubtitle", {
+											defaultValue: "for each product, click save once changes are made",
+										})}
+										):
+									</span>
 								</Typography>
 								<CreateProduct />
 							</Box>

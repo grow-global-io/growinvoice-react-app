@@ -451,7 +451,8 @@
     }
   },
   "invoiceForm": {
-    "addProducts": "Add Products:",
+    "addProducts": "Add Products",
+    "addProductsSubtitle": "for each product, click save once changes are made",
     "addRecord": "Add record",
     "title": "New Invoices",
     "invoiceIconAlt": "Invoice Icon",
