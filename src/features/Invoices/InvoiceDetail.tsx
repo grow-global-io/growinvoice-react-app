@@ -47,6 +47,8 @@ import { environment } from "@enviroment";
 import { http } from "@shared/axios";
 import { useTranslation } from "react-i18next";
 import { translateInvoiceHtml } from "@shared/utils/invoiceTemplateTranslator";
+// import filesaver from "file-saver";
+import { LoaderService } from "@shared/services/LoaderService";
 
 const styles = {
 	width: { xs: "100%", sm: "auto" },
@@ -139,12 +141,14 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 	};
 
 	const downloadPdf = async () => {
+		LoaderService.instance.showLoader();
 		try {
 			const invoiceNumber = getInvoiceData?.data?.invoice_number ?? invoiceId;
 			const fileName = `INV-${invoiceNumber}.pdf`;
 			const pdfUrl = environment?.baseUrl + getInvoiceControllerTestPDFGenQueryKey(invoiceId)[0];
 			const response = await http.get(pdfUrl, { responseType: "blob" });
 			const blob = new Blob([response.data], { type: "application/pdf" });
+			// await filesaver.saveAs(blob, fileName);
 			const blobUrl = window.URL.createObjectURL(blob);
 			const link = document.createElement("a");
 			link.href = blobUrl;
@@ -155,6 +159,8 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			window.URL.revokeObjectURL(blobUrl);
 		} catch (e) {
 			console.error("Failed to download invoice PDF", e);
+		} finally {
+			LoaderService.instance.hideLoader();
 		}
 	};
 
