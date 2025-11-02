@@ -391,8 +391,8 @@ const BulkUploadCustomer = () => {
 							variant="outlined"
 							onClick={() => {
 								const link = document.createElement("a");
-								link.href = "/Template.xlsx"; // URL to the bulk upload template file
-								link.download = "Template.xlsx";
+								link.href = "/Template.csv"; // URL to the bulk upload template file
+								link.download = "Template.csv";
 								document.body.appendChild(link);
 								link.click();
 								document.body.removeChild(link);
