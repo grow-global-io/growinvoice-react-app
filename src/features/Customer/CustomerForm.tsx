@@ -110,24 +110,6 @@ const CustomerForm = () => {
 		}),
 		isBillingAddressRequired: yup.boolean(),
 		user_id: yup.string().required(t("customerForm.validation.userRequired")),
-		// billingDetails: yup.object().when("isBillingAddressRequired", {
-		// 	// @ts-expect-error "true" is not assignable to type 'boolean'
-		// 	is: true, // ✅ boolean, not "true"
-		// 	then: yup.object().shape({
-		// 		address: yup.string().required("Address is required"),
-		// 		city: yup.string().required("City is required"),
-		// 		country_id: yup.string().required("Country is required"),
-		// 		state_id: yup.string().required("State is required"),
-		// 		zip: yup.string().required("Zip is required"),
-		// 	}),
-		// 	otherwise: yup.object().shape({
-		// 		address: yup.string().nullable(),
-		// 		city: yup.string().nullable(),
-		// 		country_id: yup.string().nullable(),
-		// 		state_id: yup.string().nullable(),
-		// 		zip: yup.string().nullable(),
-		// 	}),
-		// }),
 		billingDetails: yup.object().shape({
 			address: yup
 				.string()
@@ -251,7 +233,8 @@ const CustomerForm = () => {
 		email: yup.string().email(t("customerForm.validation.emailInvalid")),
 		phone: yup
 			.string()
-			.required(t("customerForm.validation.phoneRequired"))
+			.optional()
+			.nullable()
 			.test("is-phone", t("customerForm.validation.phoneInvalid"), function (value) {
 				if (!value) return true;
 				return isValidPhoneNumber(value);
@@ -334,8 +317,6 @@ const CustomerForm = () => {
 			<Box sx={{ mb: 2, mt: 2 }}>
 				<Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit}>
 					{({ errors, values, setFieldValue }) => {
-						console.log({ values, errors });
-
 						// Automatically set isBillingAddressRequired to true when any billing address field changes
 						useEffect(() => {
 							const billingFields = [
