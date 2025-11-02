@@ -2,7 +2,7 @@ import { Box, Button, Grid, Tooltip, Typography } from "@mui/material";
 import { RegexExp } from "@shared/regex";
 import { useTranslation } from "react-i18next";
 import * as Yup from "yup";
-import { isValidPhoneNumber } from "react-phone-number-input";
+import { formatPhoneNumber, isValidPhoneNumber, type Country } from "react-phone-number-input";
 import {
 	type CreateCustomerWithAddressDto,
 	CreateCustomerWithAddressDtoOption,
@@ -46,7 +46,10 @@ const BulkUploadCustomer = () => {
 				.nullable()
 				.test("is-phone", t("customerForm.validation.phoneInvalid"), function (value) {
 					if (!value) return true;
-					return isValidPhoneNumber(value);
+					const phoneValue = value.startsWith("+") ? value : `+${value}`;
+					return isValidPhoneNumber(phoneValue, {
+						defaultCountry: (user?.company?.[0]?.country?.code as Country) ?? undefined,
+					});
 				}),
 			Email: Yup.string().email(t("customerForm.validation.emailInvalid")),
 			Currency: Yup.string()
@@ -117,7 +120,11 @@ const BulkUploadCustomer = () => {
 			minWidth: 100,
 			renderCell: (params) => (
 				<Tooltip title={params.value ?? ""}>
-					<span>{params.value}</span>
+					<span>
+						{formatPhoneNumber(
+							params.value && params.value.startsWith("+") ? params.value : `+${params.value}`,
+						)}
+					</span>
 				</Tooltip>
 			),
 		},
