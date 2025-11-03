@@ -149,6 +149,13 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 			menuName: t("product.title"),
 			menuItems: [],
 		},
+		// New My Orders menu (shown above Invoices)
+		{
+			path: "/orders",
+			icon: <ReceiptIcon />,
+			menuName: t("orders.title", { defaultValue: "My Orders" }),
+			menuItems: [],
+		},
 		{
 			path: "/customer/customerlist",
 			icon: <PeopleIcon />,

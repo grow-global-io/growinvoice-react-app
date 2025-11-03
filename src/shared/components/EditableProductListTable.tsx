@@ -48,7 +48,7 @@ export default function FullFeaturedCrudGrid({
 	// eslint-disable-next-line
 	formik: FormikProps<any>;
 }) {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const currency_id = formik?.values?.currency_id;
 	const taxCodes = useTaxcodeControllerFindAll();
 	const hsnCodes = useHsncodeControllerFindAll();
@@ -400,7 +400,9 @@ export default function FullFeaturedCrudGrid({
 		},
 		{
 			field: "taxes",
-			headerName: t("invoice.table.taxPercent", { defaultValue: "Tax/GST %" }),
+			headerName: (i18n.language || "en").toLowerCase().startsWith("fi")
+				? t("invoice.table.vatPercent", { defaultValue: "VAT %" })
+				: t("invoice.table.taxPercent", { defaultValue: "Tax/GST %" }),
 			minWidth: 150,
 			editable: true,
 			renderEditCell: (params) => {

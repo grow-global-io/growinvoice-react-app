@@ -337,6 +337,7 @@
       "qty": "QTY",
       "price": "Price",
       "taxPercent": "Tax/GST %",
+      "vatPercent": "VAT %",
       "hsnCode": "HSN Code",
       "amount": "Amount",
       "saveRecord": "Save Record",
@@ -667,6 +668,20 @@
       "swiftRequired": "Swift code is required",
       "upiRequired": "UPI ID is required",
       "userRequired": "User is required"
+    },
+    "types": {
+      "upi": "UPI",
+      "europeanbank": "European Bank",
+      "swiftcode": "Swift Code",
+      "paypal": "PayPal",
+      "stripe": "Stripe",
+      "razorpay": "Razorpay",
+      "mollie": "Mollie",
+      "manual": "Manual",
+      "cash": "Cash",
+      "cheque": "Cheque",
+      "growlimitless": "Grow Limitless",
+      "indianbanks": "Indian Banks"
     }
   },
   "gatewayDetails": {
@@ -1301,6 +1316,36 @@
       "successMessage": "Payment for plan {{plan}} is successful",
       "successMessageGeneric": "Your payment has been completed successfully"
     }
+  },
+  "orders": {
+    "title": "My Orders",
+    "table": {
+      "customerName": "Customer Name",
+      "customerEmail": "Customer Email",
+      "customerAddress": "Customer Address",
+      "invoiceNumber": "Invoice Number",
+      "invoiceStatus": "Invoice Status",
+      "orderStatus": "Order Status",
+      "shippingStatus": "Shipment Status",
+      "shippingStatus.shipped": "Shipped",
+      "shippingStatus.toBeShipped": "To be shipped",
+      "shippingRefNumber": "Shipping Reference Number",
+      "editShipping": "Edit Shipping Details",
+      "paymentStatus": "Payment Status",
+      "paymentMode": "Payment Mode",
+      "total": "Total"
+    },
+    "dialog": {
+      "editShipping": "Edit Shipping Details",
+      "shippingRefPlaceholder": "Enter shipping reference number"
+    },
+    "summary": {
+      "totalOrders": "Total Orders",
+      "totalPaidInvoices": "Total Paid",
+      "totalAmountPaid": "Total Amount Paid",
+      "totalDueAmount": "Total Due Amount"
+    },
+    "toBeFilled": "to be filled"
   }
 }
 
