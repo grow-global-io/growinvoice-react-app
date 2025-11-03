@@ -343,6 +343,7 @@
       "qty": "Määrä",
       "price": "Hinta",
       "taxPercent": "Vero %",
+      "vatPercent": "ALV %",
       "hsnCode": "HSN-koodi",
       "amount": "Summa",
       "saveRecord": "Tallenna rivi",
@@ -674,6 +675,20 @@
       "swiftRequired": "Swift-koodi on pakollinen",
       "upiRequired": "UPI ID on pakollinen",
       "userRequired": "Käyttäjä on pakollinen"
+    },
+    "types": {
+      "upi": "UPI",
+      "europeanbank": "Eurooppalainen pankki",
+      "swiftcode": "Swift-koodi",
+      "paypal": "PayPal",
+      "stripe": "Stripe",
+      "razorpay": "Razorpay",
+      "mollie": "Mollie",
+      "manual": "Manuaalinen",
+      "cash": "Käteinen",
+      "cheque": "Shekki",
+      "growlimitless": "Grow Limitless",
+      "indianbanks": "Intialaiset pankit"
     }
   },
   "gatewayDetails": {
@@ -1320,5 +1335,35 @@
       "successMessage": "Maksu paketille {{plan}} onnistui",
       "successMessageGeneric": "Maksusi on suoritettu onnistuneesti"
     }
+  },
+  "orders": {
+    "title": "Omat tilaukset",
+    "table": {
+      "customerName": "Asiakkaan nimi",
+      "customerEmail": "Asiakkaan sähköposti",
+      "customerAddress": "Asiakkaan osoite",
+      "invoiceNumber": "Laskunumero",
+      "invoiceStatus": "Laskun tila",
+      "orderStatus": "Tilauksen tila",
+      "shippingStatus": "Toimituksen tila",
+      "shippingStatus.shipped": "Lähetetty",
+      "shippingStatus.toBeShipped": "Lähetettävä",
+      "shippingRefNumber": "Toimitusviitenumero",
+      "editShipping": "Muokkaa toimitusyksityiskohtia",
+      "paymentStatus": "Maksun tila",
+      "paymentMode": "Maksutapa",
+      "total": "Yhteensä"
+    },
+    "dialog": {
+      "editShipping": "Muokkaa toimitusyksityiskohtia",
+      "shippingRefPlaceholder": "Syötä toimitusviitenumero"
+    },
+    "summary": {
+      "totalOrders": "Tilaukset yhteensä",
+      "totalPaidInvoices": "Maksetut yhteensä",
+      "totalAmountPaid": "Maksettu summa yhteensä",
+      "totalDueAmount": "Maksettava summa yhteensä"
+    },
+    "toBeFilled": "täydennettävä"
   }
 }
