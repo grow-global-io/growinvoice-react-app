@@ -38,9 +38,8 @@ const BulkUploadCustomer = () => {
 					Object.values(CreateCustomerWithAddressDtoOption),
 					t("customerForm.validation.invalidType"),
 				),
-			CustomerName: Yup.string()
-				.required(t("customerForm.validation.nameRequired"))
-				.matches(RegexExp.fullNameRegex, t("customerForm.validation.nameInvalid")),
+			CustomerName: Yup.string().required(t("customerForm.validation.nameRequired")),
+			// .matches(RegexExp.fullNameRegex, t("customerForm.validation.nameInvalid")),
 			PhoneNumber: Yup.string().optional().nullable(),
 			Email: Yup.string().email(t("customerForm.validation.emailInvalid")),
 			Currency: Yup.string()

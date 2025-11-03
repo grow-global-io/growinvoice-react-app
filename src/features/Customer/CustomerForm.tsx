@@ -91,8 +91,8 @@ const CustomerForm = () => {
 		currencies_id: yup.string(),
 		name: yup
 			.string()
-			.required(t("customerForm.validation.nameRequired"))
-			.matches(RegexExp.fullNameRegex, t("customerForm.validation.nameInvalid")),
+			.required(t("customerForm.validation.nameRequired")),
+			// .matches(RegexExp.fullNameRegex, t("customerForm.validation.nameInvalid")),
 		option: yup
 			.string()
 			.required(t("customerForm.validation.optionRequired"))
