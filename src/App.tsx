@@ -40,6 +40,7 @@ import StoreCheckoutDrawer from "@features/Store/StoreCheckoutDrawer";
 import StoreLinkDialog from "@shared/components/StoreLinkDialog";
 import AdminSideBar from "@layout/navbar/Admin/AdminSideBar";
 import i18n from "./i18s";
+import { useGeoPrefetchStore } from "@store/geoPrefetch";
 
 function AppContainer() {
 	const queryClient = useQueryClient();
@@ -51,6 +52,8 @@ function AppContainer() {
 		setIsLoading(true);
 		validateToken()
 			.then(() => {
+				// Preload geolocation data on login, before dialogs open
+				useGeoPrefetchStore.getState().prefetch();
 				setIsLoading(false);
 			})
 			.catch(() => {
