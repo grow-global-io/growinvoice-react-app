@@ -21,6 +21,7 @@ import ApiCredentialsPage from "@pages/ApiCredentialsPage";
 import InvoiceDetailPage from "@pages/InvoiceDetailPage";
 import QuotationDetailPage from "@pages/QuotationDetailPage";
 import InvoiceTemplatePage from "@pages/InvoiceTemplatePage";
+import OrdersPage from "@pages/OrdersPage";
 import DashboardPage from "@pages/DashboardPage";
 import QuotationSettingsPage from "@pages/QuotationSettingsPage";
 import QuotationTemplatePage from "@pages/QuotationTemplatePage";
@@ -90,6 +91,10 @@ export const protectedRoutes: Route[] = [
 	{
 		path: "/",
 		Component: OveviewPage,
+	},
+	{
+		path: "/orders",
+		Component: OrdersPage,
 	},
 	{
 		path: "/ai-store",
