@@ -1,0 +1,1366 @@
+{
+  "app": {
+    "name": "GrowInvoice",
+    "loading": "Laadimine...",
+    "save": "Salvesta",
+    "cancel": "Tühista",
+    "edit": "Muuda",
+    "delete": "Kustuta",
+    "create": "Loo",
+    "update": "Uuenda",
+    "uploadFile": "Laadi fail üles",
+    "remove": "Eemalda",
+    "avatarAlt": "avatar",
+    "install": "Paigalda rakendus",
+    "select": "Vali",
+    "close": "Sulge",
+    "confirm": "Kinnita",
+    "yes": "Jah",
+    "no": "Ei",
+    "success": "Edukas",
+    "error": "Viga",
+    "actions": "Toimingud",
+    "search": "Otsi",
+    "more": "Rohkem",
+    "back": "Tagasi",
+    "skip": "Jäta vahele",
+    "next": "Järgmine",
+    "finish": "Lõpeta",
+    "installed": "Rakendus on edukalt paigaldatud!",
+    "installCancelled": "Paigaldamine tühistatud",
+    "installUnavailable": "Paigaldamine pole hetkel saadaval",
+    "trial": {
+      "daysLeft": "{{days}} päeva jäänud",
+      "expired": "Prooviaeg on aegunud",
+      "active": "Prooviaeg on aktiivne"
+    }
+  },
+  "dialog": {
+    "confirmTitle": "Kas oled kindel?"
+  },
+  "upload": {
+    "errors": {
+      "maxSize": "Maksimaalne faili suurus on 5 MB",
+      "invalidType": "Ainult .png, .jpg, .jpeg failid on lubatud"
+    }
+  },
+  "nav": {
+    "home": "Avaleht",
+    "dashboard": "Töölaud",
+    "customers": "Kliendid",
+    "invoices": "Arved",
+    "products": "Tooted",
+    "payments": "Maksed",
+    "reports": "Aruanded",
+    "settings": "Seaded",
+    "vendors": "Tarnijad",
+    "plans": "Plaanid",
+    "store": "Pood",
+    "notifications": "Teavitused",
+    "profile": "Minu profiil",
+    "logout": "Logi välja",
+    "login": "Logi sisse",
+    "register": "Registreeru"
+  },
+  "dashboard": {
+    "rollUpAiStore": "Roll UP AI pood",
+    "aiAssistant": "AI Assistent",
+    "noWidgetsFound": "Ühtegi töölauda ei leitud",
+    "deleteData": "Kustuta andmed",
+    "deleteConfirm": "Kas oled kindel, et soovid need andmed kustutada?",
+    "summary": {
+      "customers": "Kliendid",
+      "invoices": "Arved",
+      "estimates": "Pakkumised",
+      "dueAmount": "Tasumata summa"
+    }
+  },
+  "aiAssistant": {
+    "greeting": "Tere! Kuidas saan täna aidata?",
+    "promptPlaceholder": "Räägi, mida soovid näha?",
+    "type": "Tüüp",
+    "columnFilter": "Veerufilter",
+    "reset": "Lähtesta",
+    "requestWidgetAgain": "Palun küsi oma vidinat uuesti.",
+    "saveDataTitle": "Salvesta andmed",
+    "title": "Pealkiri",
+    "titlePlaceholder": "Sisesta pealkiri",
+    "submit": "Saada",
+    "validation": {
+      "promptRequired": "Küsimus on kohustuslik",
+      "typeRequired": "Tüüp on kohustuslik"
+    },
+    "errors": {
+      "retryAfter30": "Tekkis viga! Palun proovi uuesti 30 sekundi pärast"
+    },
+    "types": {
+      "table": "Tabel",
+      "graph": "Graafik"
+    }
+  },
+  "quotation": {
+    "title": "Pakkumised",
+    "create": "Loo pakkumine",
+    "number": "Pakkumise number",
+    "date": "Pakkumise kuupäev",
+    "expiryDate": "Aegumiskuupäev",
+    "total": "Kokku",
+    "table": {
+      "action": "Toiming",
+      "status": "Olek",
+      "view": "Vaata pakkumist",
+      "edit": "Muuda pakkumist",
+      "delete": "Kustuta pakkumine"
+    },
+    "status": {
+      "draft": "Mustand",
+      "due": "Tähtajani",
+      "mailedtocustomer": "Kliendile saadetud",
+      "viewed": "Vaadatud",
+      "paid": "Makstud",
+      "accepted": "Heaks kiidetud",
+      "rejected": "Tagasi lükatud",
+      "converted": "Konverteeritud"
+    },
+    "actions": {
+      "deleteTitle": "Kustuta pakkumine",
+      "deleteConfirm": "Kas oled kindel, et soovid selle pakkumise kustutada?"
+    },
+    "quotationPrefix": "Pakkumise prefiks",
+    "quotationPrefixPlaceholder": "Nt \"QUO\"",
+    "autoArchive": "Automaatne arhiveerimine",
+    "autoArchiveHelp": "Luba see, kui soovid automaatselt arhiveerida heaks kiidetud või tagasi lükatud pakkumised 30 päeva pärast.",
+    "autoConvert": "Automaatne konverteerimine",
+    "autoConvertHelp": "Konverteeri pakkumised automaatselt arvete vastu, kui klient on need heaks kiitnud.",
+    "footer": "Jalus",
+    "dueNotices": "Tähtaja meeldetuletused",
+    "dueNoticesHelp": "Meeldetuletused saadetakse maksmata ja osaliselt makstud arvete kohta enne tähtaega.",
+    "dueNoticeInDays": "Meeldetuletuse päevade arv enne tähtaega",
+    "dueNoticePlaceholder": "x päeva enne tähtaega",
+    "overdueNotices": "Hilinenud teated",
+    "overdueNoticesHelp": "Teavitused saadetakse pärast tähtaega maksmata või osaliselt makstud arvete kohta.",
+    "overdueNoticeInDays": "Hilinenud teate päevade arv",
+    "overdueNoticePlaceholder": "x päeva pärast tähtaega",
+    "addresses": "Aadressid",
+    "showTemplates": "Näita malle",
+    "companyAddressFormat": "Ettevõtte aadressi vorming",
+    "customerBillingAddressFormat": "Kliendi arveaadressi vorming",
+    "customerShippingAddressFormat": "Kliendi tarneaadressi vorming",
+    "quotationTemplates": "Pakkumise mallid",
+    "saveSettings": "Salvesta seaded",
+    "resetSettings": "Lähtesta seaded",
+    "validation": {
+      "quotationPrefixRequired": "Pakkumise prefiks on kohustuslik",
+      "autoArchiveRequired": "Automaatne arhiveerimine on kohustuslik",
+      "dueNoticeRequired": "Meeldetuletuse päevade arv on kohustuslik",
+      "overdueNoticeRequired": "Hilinenud teate päevade arv on kohustuslik",
+      "companyAddressRequired": "Ettevõtte aadressimall on kohustuslik",
+      "customerBillingRequired": "Kliendi arveaadressi mall on kohustuslik",
+      "customerShippingRequired": "Kliendi tarneaadressi mall on kohustuslik",
+      "userIdRequired": "Kasutaja ID on kohustuslik",
+      "templateIdRequired": "Pakkumise malli ID on kohustuslik"
+    }
+  },
+  "expenses": {
+    "title": "Kulud",
+    "create": "Loo kulu",
+    "vendorName": "Tarnija nimi",
+    "amount": "Summa",
+    "category": "Kategooria",
+    "date": "Kuupäev",
+    "notes": "Märkmed",
+    "table": {
+      "action": "Toiming",
+      "edit": "Muuda kulu",
+      "delete": "Kustuta kulu"
+    },
+    "actions": {
+      "deleteTitle": "Kustuta kulu",
+      "deleteConfirm": "Kas oled kindel, et soovid selle kulu kustutada?"
+    },
+    "categoryTypes": {
+      "travel": "Reisimine",
+      "food": "Toit",
+      "office": "Kontor",
+      "rent": "Rendikulu",
+      "salary": "Palk",
+      "other": "Muu"
+    }
+  },
+  "expensesForm": {
+    "title": "Uus kulu",
+    "iconAlt": "Kulu ikoon",
+    "receipt": "Kviitung",
+    "category": "Kategooria",
+    "vendor": "Tarnija",
+    "addVendor": "Lisa tarnija",
+    "expenseDate": "Kulu kuupäev",
+    "amount": "Summa",
+    "currency": "Valuuta",
+    "notes": "Märkmed",
+    "save": "Salvesta",
+    "validation": {
+      "categoryRequired": "Kategooria on kohustuslik",
+      "invalidType": "Vigane tüüp",
+      "vendorRequired": "Tarnija on kohustuslik",
+      "userRequired": "Kasutaja on kohustuslik",
+      "expenseDateRequired": "Kulu kuupäev on kohustuslik",
+      "amountRequired": "Summa on kohustuslik",
+      "currencyRequired": "Valuuta on kohustuslik"
+    }
+  },
+  "auth": {
+    "email": "E-post",
+    "password": "Parool",
+    "rememberMe": "Jäta mind meelde",
+    "forgotPassword": "Unustasid parooli?",
+    "signIn": "Logi sisse",
+    "signInWithGoogle": "Logi sisse Google'iga",
+    "noAccount": "Pole kontot?",
+    "signUp": "Registreeru",
+    "welcome": "Tere tulemast tagasi",
+    "pleaseLogin": "Palun logi sisse, et jätkata GrowInvoice'i kasutamist",
+    "emailRequired": "E-post on kohustuslik",
+    "passwordMin": "Parool peab olema vähemalt 7 tähemärki",
+    "passwordRequired": "Parool on kohustuslik",
+    "forgotPasswordTitle": "Unustatud parool",
+    "forgotPasswordHelp": "Sisesta oma e-posti aadress ja me saadame sulle lingi parooli lähtestamiseks.",
+    "letsStart": "Alustame!",
+    "createAccount": "Palun loo konto, et jätkata kasutamist",
+    "fullName": "Täisnimi",
+    "companyName": "Ettevõtte nimi",
+    "phone": "Telefon",
+    "confirmPassword": "Kinnita parool",
+    "register": "Registreeru",
+    "login": "Logi sisse",
+    "fullNameRequired": "Täisnimi on kohustuslik",
+    "companyNameRequired": "Ettevõtte nimi on kohustuslik",
+    "phoneInvalid": "Telefoninumber pole kehtiv",
+    "passwordsMatch": "Paroolid peavad ühtima",
+    "confirmPasswordRequired": "Parooli kinnitus on kohustuslik",
+    "notifications": {
+      "loginSuccess": "Sisselogimine õnnestus"
+    },
+    "errors": {
+      "invalidPassword": "Vale parool",
+      "userNotFound": "Kasutajat ei leitud"
+    }
+  },
+  "customer": {
+    "title": "Kliendid",
+    "create": "Loo klient",
+    "edit": "Muuda klienti",
+    "createInvoice": "Loo arve",
+    "name": "Nimi",
+    "email": "E-post",
+    "phone": "Telefon",
+    "address": "Aadress",
+    "table": {
+      "fullName": "Täisnimi",
+      "source": "Allikas",
+      "store": "Pood",
+      "direct": "Otsene",
+      "contactEmail": "Kontakti e-post",
+      "contactNumber": "Kontakti number",
+      "invoiceCount": "Arvete arv",
+      "amountDue": "Tasumata summa",
+      "action": "Toiming",
+      "viewCustomer": "Vaata klienti",
+      "editCustomer": "Muuda klienti",
+      "deleteCustomer": "Kustuta klient"
+    },
+    "actions": {
+      "deleteTitle": "Kustuta klient",
+      "deleteConfirm": "Kas oled kindel, et soovid selle kliendi kustutada?"
+    }
+  },
+  "customerForm": {
+    "createNew": "Loo uus klient",
+    "iconAlt": "Kliendi ikoon",
+    "addNew": "Lisa uus klient",
+    "customerType": "Kliendi tüüp",
+    "customerName": "Kliendi nimi",
+    "displayName": "Kuvatav nimi",
+    "email": "E-post",
+    "phone": "Telefon",
+    "website": "Veebisait",
+    "currency": "Valuuta",
+    "gstNumber": "Käibemaksu number",
+    "billingAddress": "Arveaadress",
+    "addBillingAddressQuestion": "Kas soovid lisada arveaadressi?",
+    "country": "Riik",
+    "state": "Maakond",
+    "city": "Linn",
+    "zipCode": "Postiindeks",
+    "address": "Aadress",
+    "shippingAddress": "Tarneaadress",
+    "sameAsBilling": "Sama mis arveaadress",
+    "save": "Salvesta",
+    "validation": {
+      "nameRequired": "Nimi on kohustuslik",
+      "nameInvalid": "Nimi ei ole kehtiv",
+      "optionRequired": "Valik on kohustuslik",
+      "invalidType": "Vigane tüüp",
+      "gstInvalid": "Käibemaksu number ei ole kehtiv",
+      "userRequired": "Kasutaja on kohustuslik",
+      "addressRequired": "Aadress on kohustuslik",
+      "cityRequired": "Linn on kohustuslik",
+      "countryRequired": "Riik on kohustuslik",
+      "stateRequired": "Maakond on kohustuslik",
+      "zipRequired": "Postiindeks on kohustuslik",
+      "displayNameRequired": "Kuvatav nimi on kohustuslik",
+      "emailInvalid": "E-posti aadress on vigane",
+      "phoneRequired": "Telefoninumber on kohustuslik",
+      "phoneInvalid": "Telefoninumber ei ole kehtiv",
+      "websiteInvalid": "Veebiaadress ei ole kehtiv"
+    },
+    "type": {
+      "freelancer": "Vabakutseline",
+      "businessWithGST": "Ettevõte koos käibemaksuga",
+      "businessWithoutGST": "Ettevõte ilma käibemaksuta"
+    }
+  },
+  "invoice": {
+    "title": "Arved",
+    "create": "Loo arve",
+    "edit": "Muuda arvet",
+    "number": "Arve number",
+    "date": "Kuupäev",
+    "dueDate": "Maksetähtaeg",
+    "total": "Kokku",
+    "download": "Laadi alla",
+    "send": "Saada",
+    "dueInvoices": "Maksmata arved",
+    "paidInvoices": "Makstud arved",
+    "allInvoices": "Kõik arved",
+    "table": {
+      "product": "Toode",
+      "qty": "Kogus",
+      "price": "Hind",
+      "taxPercent": "Käibemaks %",
+      "vatPercent": "KM %",
+      "hsnCode": "HSN kood",
+      "amount": "Summa",
+      "saveRecord": "Salvesta kirje",
+      "cancelRecord": "Tühista kirje",
+      "editRecord": "Muuda kirjet",
+      "deleteRecord": "Kustuta kirje",
+      "invoiceNumber": "Arve number",
+      "source": "Allikas",
+      "dueDate": "Maksetähtaeg",
+      "status": "Staatus",
+      "dueAmount": "Tasumata summa",
+      "paidAmount": "Makstud summa",
+      "paidStatus": "Makse staatus",
+      "totalDueAmount": "Kokku tasumata summa",
+      "totalPaidAmount": "Kokku makstud summa",
+      "total": "Kokku",
+      "action": "Toiming",
+      "viewInvoice": "Vaata arvet",
+      "editInvoice": "Muuda arvet",
+      "deleteInvoice": "Kustuta arve"
+    },
+    "source": {
+      "direct": "Otsene",
+      "store": "Pood"
+    },
+    "status": {
+      "draft": "Mustand",
+      "due": "Tasumata",
+      "mailedtocustomer": "Saadetud kliendile",
+      "viewed": "Vaadatud",
+      "paid": "Makstud",
+      "accepted": "Aktsepteeritud",
+      "rejected": "Tagasi lükatud"
+    },
+    "paymentStatus": {
+      "unpaid": "Maksmata",
+      "paid": "Makstud",
+      "partiallypaid": "Osaliselt makstud"
+    },
+    "actions": {
+      "deleteTitle": "Kustuta arve",
+      "deleteConfirm": "Kas oled kindel, et soovid selle arve kustutada?"
+    },
+    "share": {
+      "copied": "Kopeeritud!",
+      "copyLink": "Kopeeri link",
+      "socialMedia": "Jaga sotsiaalmeedias:"
+    },
+    "detail": {
+      "share": "Jaga",
+      "markAsPaid": "Märgi makstuks",
+      "markSend": "Märgi saadetuks",
+      "download": "Laadi alla",
+      "eInvoice": "E-arve",
+      "print": "Prindi",
+      "sendMail": "Saada e-kiri",
+      "sendWhatsapp": "Saada WhatsAppis",
+      "customerEmailNotFound": "Kliendi e-posti ei leitud",
+      "dear": "Lugupeetud",
+      "thankYouPurchase": "Täname ostu eest summas",
+      "on": "kuupäeval",
+      "at": "kell",
+      "clickHereToView": "Klõpsa siin",
+      "toViewInvoice": "et vaadata arvet.",
+      "feedbackRequest": "Sinu tagasiside aitab meil oma teenuseid parandada. Palun jaga oma kogemust ülaloleval lingil.",
+      "status": "Staatus:",
+      "downloadUpiQr": "Laadi UPI QR alla",
+      "paymentWithStripe": "Makse Stripe'i kaudu",
+      "paymentWithGrowlimitless": "Makse Growlimitless kaudu",
+      "paymentWithRazorpay": "Makse Razorpay kaudu",
+      "noInvoiceFound": "Arveid ei leitud"
+    },
+    "summary": {
+      "outstandingReceivables": "Tasumata nõuded",
+      "dueToday": "Tähtaeg täna",
+      "dueWithin30Days": "Tähtaeg 30 päeva jooksul",
+      "overdueInvoice": "Üle tähtaja arve"
+    },
+    "template": {
+      "invoice": "ARVE",
+      "invoiceNo": "Arve nr:",
+      "date": "Kuupäev:",
+      "invoiceTo": "Arve saaja:",
+      "payTo": "Saaja:",
+      "serialNo": "Jrk nr",
+      "item": "Artikkel",
+      "qty": "Kogus",
+      "hsn": "HSN",
+      "tax": "Maks(%)",
+      "price": "Hind",
+      "total": "Kokku",
+      "subtotal": "Vahesumma",
+      "discount": "Allahindlus (",
+      "dueAmount": "Tasumata summa",
+      "paidAmount": "Makstud summa",
+      "grandTotal": "Lõplik summa",
+      "company": "Ettevõte:",
+      "address": "Aadress:",
+      "vatNumber": "KM number:",
+      "email": "E-post:",
+      "tel": "Telefon:",
+      "recipientsDetails": "Saaja andmed:",
+      "nameAddress": "Nimi ja aadress:",
+      "payerNameAddress": "Maksja nimi ja aadress:",
+      "refNo": "Viitenumber:",
+      "dueDate": "Maksetähtaeg:",
+      "note": "Märkus:",
+      "recipientUpiDetails": "Saaja UPI andmed",
+      "termsConditions": "Tingimused:",
+      "termsClaim": "Kõik tarnitud kaubaga seotud pretensioonid tuleb esitada 30 päeva jooksul kirjalikult.",
+      "termsDelivery": "Tarnekuupäevad ei ole garanteeritud ja müüja ei vastuta viivituste eest."
+    }
+  },
+  "invoiceForm": {
+    "addProducts": "Lisa tooteid",
+    "addProductsSubtitle": "iga toote puhul klõpsa muudatuste järel salvesta",
+    "addRecord": "Lisa kirje",
+    "title": "Uus arve",
+    "invoiceIconAlt": "Arve ikoon",
+    "customerName": "Kliendi nimi",
+    "addCustomer": "Lisa klient",
+    "currency": "Valuuta",
+    "invoiceNumber": "Arve number",
+    "invoicePrefixFallback": "INV",
+    "referenceNumber": "Viitenumber",
+    "invoiceDate": "Arve kuupäev",
+    "invoiceDueDate": "Maksetähtaeg",
+    "isRecurring": "Korduv arve",
+    "recurring": "Korduv",
+    "recurringTypes": {
+      "Daily": "Iga päev",
+      "Weekly": "Iganädalaselt",
+      "Monthly": "Igakuiselt",
+      "Quarterly": "Kvartaalselt",
+      "HalfYearly": "Poolaastaselt",
+      "Yearly": "Iga aasta"
+    },
+    "notes": "Märkused",
+    "defaultNote": "Täname ostu eest. Soovime teile head päeva!",
+    "paymentDetails": "Makse andmed",
+    "addPayment": "Lisa makse",
+    "accountNumber": "Konto number",
+    "ifscCode": "IFSC kood",
+    "bicNumber": "BIC number",
+    "ibanNumber": "IBAN number",
+    "swiftCode": "SWIFT kood",
+    "invoiceTemplate": "Arve mall",
+    "preview": "Eelvaade",
+    "saveInvoice": "Salvesta arve",
+    "invoicePreview": "Arve eelvaade",
+    "saveAndSendInvoice": "Salvesta ja saada arve",
+    "validation": {
+      "currencyRequired": "Valuuta on kohustuslik",
+      "customerRequired": "Klient on kohustuslik",
+      "invoiceNumberRequired": "Arve number on kohustuslik",
+      "invoiceDateRequired": "Arve kuupäev on kohustuslik",
+      "dueDateRequired": "Maksetähtaeg on kohustuslik",
+      "dueDateAfterInvoice": "Maksetähtaeg peab olema hilisem kui arve kuupäev",
+      "isRecurringRequired": "Korduvuse valik on kohustuslik",
+      "paymentDetailsRequired": "Makse andmed on kohustuslikud",
+      "subtotalRequired": "Vahesumma on kohustuslik",
+      "totalRequired": "Kogusumma on kohustuslik",
+      "discountMin": "Allahindlus peab olema suurem kui 0",
+      "invalidType": "Vigane tüüp",
+      "productRequired": "Toode on kohustuslik",
+      "quantityRequired": "Kogus on kohustuslik",
+      "priceRequired": "Hind on kohustuslik",
+      "userRequired": "Kasutaja on kohustuslik",
+      "templateRequired": "Mall on kohustuslik",
+      "atLeastOneProduct": "Vähemalt üks toode on kohustuslik",
+      "fillAllProductDetails": "Täida kõik toote üksikasjad"
+    },
+    "errors": {
+      "saveFailed": "Arve salvestamine ebaõnnestus",
+      "saveAndSendFailed": "Arve salvestamine ja saatmine ebaõnnestus"
+    },
+    "success": {
+      "saveAndSend": "Arve on edukalt salvestatud ja saadetud!"
+    }
+  },
+  "product": {
+    "title": "Tooted",
+    "create": "Loo toode",
+    "createNew": "Uus toode",
+    "update": "Uuenda toodet",
+    "edit": "Muuda toodet",
+    "name": "Toote nimi",
+    "price": "Hind",
+    "quantity": "Kogus",
+    "tax": "Maks",
+    "unit": "Ühik",
+    "table": {
+      "product": "Toode",
+      "unit": "Ühik",
+      "productType": "Toote tüüp",
+      "createdAt": "Loodud",
+      "action": "Toiming",
+      "editProduct": "Muuda toodet",
+      "deleteProduct": "Kustuta toode"
+    },
+    "actions": {
+      "deleteTitle": "Kustuta toode",
+      "deleteConfirm": "Kas oled kindel, et soovid selle toote kustutada?"
+    },
+    "productType": "Toote tüüp",
+    "type": {
+      "goods": "Kaubad",
+      "services": "Teenused",
+      "service": "Teenus"
+    },
+    "units": {
+      "month": "Kuu",
+      "months": "Kuud",
+      "hour": "Tund",
+      "hours": "Tundi",
+      "day": "Päev",
+      "days": "Päeva",
+      "week": "Nädal",
+      "weeks": "Nädalat",
+      "year": "Aasta",
+      "years": "Aastat"
+    }
+  },
+  "productForm": {
+    "title": "Uus toode",
+    "iconAlt": "Toote ikoon",
+    "type": "Tüüp",
+    "productName": "Toote nimi",
+    "includeStore": "Lisa poe toodetesse",
+    "productImages": "Toote pildid",
+    "unit": "Ühik",
+    "addUnit": "Lisa ühik",
+    "hsnCodeIndia": "HSN kood (India)",
+    "addHsn": "Lisa HSN",
+    "taxes": "Maksud",
+    "addTaxes": "Lisa maks",
+    "priceBook": "Hinnakiri",
+    "currency": "Valuuta",
+    "price": "Hind",
+    "noPriceBook": "Hinnakirja kirjeid ei leitud. Palun lisa vähemalt üks.",
+    "addPrice": "Lisa hind",
+    "description": "Kirjeldus",
+    "save": "Salvesta",
+    "validation": {
+      "typeRequired": "Tüüp on kohustuslik",
+      "invalidType": "Vigane tüüp",
+      "nameRequired": "Nimi on kohustuslik",
+      "unitRequired": "Ühik on kohustuslik",
+      "imageUrl": "Iga pilt peab olema kehtiv URL",
+      "imageRequiredForStore": "Vähemalt üks pilt on vajalik, kui toode lisatakse poodi.",
+      "imagesRequired": "Pildid on kohustuslikud",
+      "userIdRequired": "Kasutaja ID on kohustuslik",
+      "taxRequired": "Maks on kohustuslik",
+      "currencyRequired": "Valuuta on kohustuslik",
+      "priceNumber": "Hind peab olema number",
+      "priceRequired": "Hind on kohustuslik",
+      "priceMin": "Hind peab olema suurem kui 0",
+      "priceBookRequired": "Hinnakiri on kohustuslik",
+      "priceBookAtLeastOne": "Vähemalt üks hinnakirja kirje on kohustuslik"
+    }
+  },
+  "productUnit": {
+    "title": "Toote ühik",
+    "createNew": "Loo uus",
+    "new": "Uus toote ühik",
+    "form": {
+      "name": "Ühiku nimi",
+      "create": "Loo"
+    },
+    "validation": {
+      "nameRequired": "Ühiku nimi on kohustuslik",
+      "userRequired": "Kasutaja ID on kohustuslik"
+    },
+    "table": {
+      "name": "Nimi",
+      "action": "Toiming",
+      "edit": "Muuda toote ühikut",
+      "delete": "Kustuta toote ühik"
+    },
+    "actions": {
+      "deleteTitle": "Kustuta toote ühik",
+      "deleteConfirm": "Kas oled kindel, et soovid selle toote ühiku kustutada?"
+    }
+  },
+  "paymentDetails": {
+    "title": "Makse andmed",
+    "add": "Lisa makse andmed",
+    "table": {
+      "paymentType": "Makse tüüp",
+      "accountDetails": "Konto andmed",
+      "action": "Toiming",
+      "edit": "Muuda"
+    },
+    "labels": {
+      "accountNo": "Konto nr",
+      "ifsc": "IFSC kood",
+      "bic": "BIC nr.",
+      "iban": "IBAN nr.",
+      "upiId": "UPI ID",
+      "swift": "Swift kood",
+      "paypal": "Paypal ID",
+      "stripe": "Stripe ID",
+      "razorpay": "Razorpay ID",
+      "mollie": "Mollie ID"
+    },
+    "actions": {
+      "deleteTitle": "Kustuta andmed",
+      "deleteConfirm": "Kas oled kindel, et soovid selle makse kustutada?"
+    },
+    "form": {
+      "paymentType": "Makse tüüp",
+      "accountNumber": "Konto number",
+      "bicOptional": "BIC number (valikuline)",
+      "ibanNumber": "IBAN number"
+    },
+    "placeholders": {
+      "accountNumber": "Sisesta konto number",
+      "ifsc": "Sisesta IFSC kood",
+      "bic": "Sisesta BIC number (valikuline)",
+      "iban": "Sisesta IBAN number",
+      "mollie": "Sisesta Mollie ID",
+      "paypal": "Sisesta Paypal ID",
+      "razorpay": "Sisesta Razorpay ID",
+      "stripe": "Sisesta Stripe ID",
+      "swift": "Sisesta Swift kood",
+      "upi": "Sisesta UPI ID"
+    },
+    "validation": {
+      "paymentTypeRequired": "Makse tüüp on kohustuslik",
+      "accountNumberRequired": "Konto number on kohustuslik",
+      "ibanRequired": "IBAN number on kohustuslik",
+      "ifscRequired": "IFSC kood on kohustuslik",
+      "mollieRequired": "Mollie ID on kohustuslik",
+      "paypalRequired": "Paypal ID on kohustuslik",
+      "razorpayRequired": "Razorpay ID on kohustuslik",
+      "stripeRequired": "Stripe ID on kohustuslik",
+      "swiftRequired": "Swift kood on kohustuslik",
+      "upiRequired": "UPI ID on kohustuslik",
+      "userRequired": "Kasutaja on kohustuslik"
+    },
+    "types": {
+      "upi": "UPI",
+      "europeanbank": "Euroopa pank",
+      "swiftcode": "Swift kood",
+      "paypal": "PayPal",
+      "stripe": "Stripe",
+      "razorpay": "Razorpay",
+      "mollie": "Mollie",
+      "manual": "Käsitsi",
+      "cash": "Sularaha",
+      "cheque": "Tšekk",
+      "growlimitless": "Grow Limitless",
+      "indianbanks": "India pangad"
+    }
+  },
+  "gatewayDetails": {
+    "title": "Makseviisi andmed",
+    "add": "Lisa makseviisi andmed",
+    "getRazorpayKey": "Hangi Razorpay võti",
+    "enabled": "Lubatud",
+    "disabled": "Keelatud",
+    "table": {
+      "type": "Tüüp",
+      "status": "Olek",
+      "action": "Toiming",
+      "edit": "Muuda"
+    },
+    "actions": {
+      "deleteTitle": "Kustuta see makseviisi andmed?",
+      "deleteConfirm": "Kas oled kindel, et soovid selle makseviisi andmed kustutada?"
+    },
+    "form": {
+      "title": "Lisa makseviisi andmed",
+      "type": "Tüüp",
+      "key": "Võti",
+      "keyPlaceholder": "Sisesta võti",
+      "secret": "Salajane ID",
+      "secretPlaceholder": "Sisesta salajane ID",
+      "submit": "Saada"
+    },
+    "validation": {
+      "typeRequired": "Tüüp on kohustuslik",
+      "keyRequired": "Võti on kohustuslik",
+      "keyInvalid": "Võti peab olema kehtiv",
+      "secretInvalid": "Salajane väärtus peab olema kehtiv",
+      "userIdRequired": "Kasutaja ID on kohustuslik"
+    }
+  },
+  "payment": {
+    "title": "Maksed",
+    "create": "Loo makse",
+    "edit": "Muuda makset",
+    "amount": "Summa",
+    "method": "Meetod",
+    "status": "Olek",
+    "date": "Makse kuupäev",
+    "createNew": "Loo uus makse",
+    "noPaymentsFound": "Makesi ei leitud"
+  },
+  "hsn": {
+    "title": "HSN kood",
+    "createNew": "Loo uus",
+    "table": {
+      "code": "Kood",
+      "percentage": "Protsent",
+      "action": "Toiming",
+      "edit": "Muuda HSN koodi",
+      "delete": "Kustuta HSN kood"
+    },
+    "actions": {
+      "deleteTitle": "Kustuta HSN kood",
+      "deleteConfirm": "Kas oled kindel, et soovid selle HSN koodi kustutada?"
+    },
+    "form": {
+      "title": "Uus HSN kood",
+      "code": "HSN kood",
+      "codeShort": "HSN kood",
+      "tax": "Maks (protsentides)",
+      "create": "Loo"
+    },
+    "placeholders": {
+      "code": "Sisesta HSN kood",
+      "tax": "Sisesta protsent"
+    },
+    "validation": {
+      "codeRequired": "HSN kood on kohustuslik",
+      "codeInvalid": "Vigane HSN kood",
+      "taxRequired": "Maks on kohustuslik",
+      "taxMin": "Maks peab olema suurem kui 0",
+      "taxMax": "Maks peab olema väiksem kui 100",
+      "userRequired": "Kasutaja ID on kohustuslik"
+    }
+  },
+  "tax": {
+    "title": "Maksu tüüp",
+    "createNew": "Loo uus",
+    "table": {
+      "name": "Maksu nimi",
+      "percentage": "Protsent",
+      "action": "Toiming",
+      "edit": "Muuda maksu tüüpi",
+      "delete": "Kustuta maksu tüüp"
+    },
+    "actions": {
+      "deleteTitle": "Kustuta maksu tüüp",
+      "deleteConfirm": "Kas oled kindel, et soovid selle maksu tüübi kustutada?"
+    },
+    "form": {
+      "title": "Uus maks",
+      "titleShort": "Maks",
+      "name": "Maksu nimi",
+      "percentage": "Protsent",
+      "description": "Kirjeldus",
+      "create": "Loo"
+    },
+    "placeholders": {
+      "name": "Maksu nimi",
+      "description": "Kirjeldus"
+    },
+    "validation": {
+      "nameRequired": "Maksu nimi on kohustuslik",
+      "percentageRequired": "Protsent on kohustuslik",
+      "percentageMin": "Protsent peab olema suurem kui 0",
+      "percentageMax": "Protsent peab olema väiksem kui 100",
+      "userRequired": "Kasutaja ID on kohustuslik"
+    }
+  },
+  "paymentForm": {
+    "title": "Uus makse",
+    "iconAlt": "Makse ikoon",
+    "referenceNumber": "Viitenumber",
+    "invoice": "Arve",
+    "amount": "Summa",
+    "paymentDetails": "Makse andmed",
+    "addPayment": "Lisa makse",
+    "notes": "Märkmed",
+    "privateNotes": "Privaatsed märkmed",
+    "save": "Salvesta",
+    "validation": {
+      "amountRequired": "Summa on kohustuslik",
+      "amountLteInvoice": "Summa peab olema väiksem või võrdne arve kogusummaga",
+      "amountMin": "Summa peab olema suurem kui 1",
+      "invoiceRequired": "Arve on kohustuslik",
+      "paymentDetailsRequired": "Makse andmed on kohustuslikud",
+      "userRequired": "Kasutaja on kohustuslik",
+      "paymentDateRequired": "Makse kuupäev on kohustuslik"
+    }
+  },
+  "report": {
+    "title": "Aruanded",
+    "profitLoss": "Kasum ja kahjum",
+    "sales": "Müük",
+    "expensesLabel": "Kulud",
+    "totalIncome": "Kogutulu",
+    "totalExpenses": "Kogukulud",
+    "profit": "Kasum",
+    "loss": "Kahjum",
+    "selectDateRange": "Vali kuupäevavahemik",
+    "export": {
+      "title": "Eksport",
+      "csv": "Lae alla CSV-na",
+      "excel": "Lae alla Excelina"
+    },
+    "product": {
+      "title": "Toote aruanne",
+      "productName": "Toote nimi",
+      "invoiceDate": "Arve kuupäev",
+      "invoiceNumber": "Arve number",
+      "invoiceAmount": "Arve summa"
+    },
+    "customer": {
+      "title": "Kliendi aruanne",
+      "customerName": "Kliendi nimi",
+      "invoiceDate": "Arve kuupäev",
+      "invoiceNumber": "Arve number",
+      "invoiceAmount": "Arve summa"
+    },
+    "customerData": {
+      "title": "Kliendi andmed",
+      "customerName": "Kliendi nimi",
+      "invoiceDate": "Arve kuupäev",
+      "invoiceNumber": "Arve number",
+      "invoiceAmount": "Arve summa"
+    },
+    "expenses": {
+      "title": "Kulude aruanne",
+      "category": "Kulu kategooria",
+      "date": "Kulu kuupäev",
+      "amount": "Kulu summa"
+    },
+    "pl": {
+      "type": "Tüüp",
+      "expenseId": "Kulu ID",
+      "invoiceNumber": "Arve number",
+      "category": "Kategooria",
+      "amount": "Summa",
+      "referenceNumber": "Viitenumber"
+    }
+  },
+  "settings": {
+    "title": "Seaded",
+    "myProfile": {
+      "fullName": "Täisnimi",
+      "fullNamePlaceholder": "Sisesta täisnimi",
+      "email": "E-post",
+      "emailPlaceholder": "Sisesta e-posti aadress",
+      "phone": "Telefon",
+      "phonePlaceholder": "Sisesta mobiilinumber",
+      "currency": "Valuuta",
+      "updatePassword": "Uuenda parooli",
+      "updatePasswordInfo": "Kui soovid oma parooli uuendada, palun täida allolev teave.",
+      "oldPassword": "Vana parool",
+      "oldPasswordPlaceholder": "Sisesta vana parool",
+      "newPassword": "Uus parool",
+      "newPasswordPlaceholder": "Sisesta uus parool",
+      "confirmEmailChangeTitle": "E-posti muutmine",
+      "confirmEmailChangeMessage": "Kas oled kindel, et soovid oma e-posti muuta?",
+      "validation": {
+        "nameRequired": "Nimi on kohustuslik",
+        "emailRequired": "E-post on kohustuslik",
+        "emailInvalid": "E-posti aadress on vigane",
+        "phoneRequired": "Telefoninumber on kohustuslik",
+        "currencyRequired": "Valuuta valik on kohustuslik",
+        "passwordMin": "Parool peab olema vähemalt 7 tähemärki"
+      }
+    },
+    "preferences": "Eelistused",
+    "financialYear": "Rahandusaasta",
+    "monthStarts": "Kuu algus",
+    "monthEnds": "Kuu lõpp",
+    "discountType": "Allahindluse tüüp",
+    "discountTypeHelp": "Vali, kuidas rakendada allahindlust arvetel/pakkumistel",
+    "taxCodes": "Maksukoodid",
+    "hsnCodes": "HSN koodid",
+    "productUnits": "Toote ühikud",
+    "apiCredentials": "API mandaadid",
+    "menu": {
+      "myProfile": "Minu profiil",
+      "membership": "Liikmelisus",
+      "company": "Ettevõte",
+      "invoices": "Arved",
+      "quotation": "Pakkumine",
+      "productUnit": "Toote ühik",
+      "paymentDetails": "Makse andmed",
+      "gatewayDetails": "Makseviisi andmed",
+      "hsnCode": "HSN kood",
+      "taxTypes": "Maksu tüübid",
+      "apiCredentials": "API mandaadid"
+    },
+    "gateway": "Makseviisi andmed",
+    "company": {
+      "logo": "Logo",
+      "name": "Ettevõtte nimi",
+      "namePlaceholder": "Sisesta ettevõtte nimi",
+      "nameRequired": "Ettevõtte nimi on kohustuslik",
+      "phone": "Telefon",
+      "phonePlaceholder": "Sisesta mobiilinumber",
+      "phoneRequired": "Telefoninumber on kohustuslik",
+      "vat": "KM/GSTIN",
+      "vatPlaceholder": "KM number",
+      "country": "Riik",
+      "countryRequired": "Vali riik",
+      "state": "Maakond",
+      "stateRequired": "Vali maakond",
+      "city": "Linn",
+      "cityRequired": "Vali linn",
+      "zip": "Postiindeks",
+      "zipPlaceholder": "Sisesta postiindeks",
+      "zipRequired": "Postiindeks on kohustuslik",
+      "address": "Aadress",
+      "addressPlaceholder": "Lisa aadress",
+      "addressRequired": "Aadress on kohustuslik",
+      "userIdRequired": "Kasutaja ID on kohustuslik"
+    },
+    "invoice": {
+      "invoiceHeadingType": "Arve päise tüüp",
+      "invoicePrefix": "Arve prefiks",
+      "headingTypes": {
+        "COMPANY_NAME": "Ettevõtte nimi",
+        "COMPANY_LOGO": "Ettevõtte logo"
+      },
+      "invoicePrefixPlaceholder": "Nt \"INV\"",
+      "autoArchive": "Automaatne arhiveerimine",
+      "autoArchiveHelp": "Luba see, kui soovid automaatselt arhiveerida heaks kiidetud või tagasi lükatud pakkumised 30 päeva pärast.",
+      "footer": "Jalus",
+      "dueNotices": "Tähtaja meeldetuletused",
+      "dueNoticesHelp": "Meeldetuletused saadetakse maksmata ja osaliselt makstud arvete kohta enne tähtaega.",
+      "dueNoticeInDays": "Meeldetuletuse päevade arv enne tähtaega",
+      "overdueNotices": "Hilinenud teated",
+      "overdueNoticesHelp": "Teavitused saadetakse pärast tähtaega maksmata või osaliselt makstud arvete kohta.",
+      "overdueNoticeInDays": "Hilinenud teate päevade arv",
+      "daysBeforeDue": "x päeva enne tähtaega",
+      "addresses": "Aadressid",
+      "showTemplates": "Näita malle",
+      "companyAddressFormat": "Ettevõtte aadressi vorming",
+      "customerBillingAddressFormat": "Kliendi arveaadressi vorming",
+      "customerShippingAddressFormat": "Kliendi tarneaadressi vorming",
+      "invoiceTemplates": "Arve mallid",
+      "saveSettings": "Salvesta seaded",
+      "resetSettings": "Lähtesta seaded",
+      "validation": {
+        "invoicePrefixRequired": "Arve prefiks on kohustuslik",
+        "autoArchiveRequired": "Automaatne arhiveerimine on kohustuslik",
+        "dueNoticeRequired": "Meeldetuletus on kohustuslik",
+        "overdueNoticeRequired": "Hilinenud teade on kohustuslik",
+        "userIdRequired": "Kasutaja ID on kohustuslik",
+        "templateIdRequired": "Arve malli ID on kohustuslik",
+        "invalidHeadingType": "Vigane arve päise tüüp",
+        "invoiceHeadingTypeRequired": "Arve päise tüüp on kohustuslik"
+      }
+    }
+  },
+  "apiCredentials": {
+    "token": "API token",
+    "copied": "Token kopeeritud lõikelauale",
+    "learnMore": "Et rohkem teada saada, vaata dokumentatsiooni:",
+    "clickHere": "klõpsa siia"
+  },
+  "quotationForm": {
+    "title": "Uus pakkumine",
+    "iconAlt": "Pakkumise ikoon",
+    "customerName": "Kliendi nimi",
+    "addCustomer": "Lisa klient",
+    "currency": "Valuuta",
+    "number": "Pakkumise number",
+    "referenceNumber": "Viitenumber",
+    "date": "Pakkumise kuupäev",
+    "expiryDate": "Aegumiskuupäev",
+    "notes": "Lisa märkused",
+    "privateNotes": "Privaatsed märkmed",
+    "template": "Pakkumise mall",
+    "preview": "Eelvaade",
+    "save": "Salvesta pakkumine",
+    "previewTitle": "Pakkumise eelvaade",
+    "validation": {
+      "customerRequired": "Klient on kohustuslik",
+      "currencyRequired": "Valuuta on kohustuslik",
+      "userRequired": "Kasutaja on kohustuslik",
+      "numberRequired": "Pakkumise number on kohustuslik",
+      "dateRequired": "Pakkumise kuupäev on kohustuslik",
+      "expiryRequired": "Tähtaeg on kohustuslik",
+      "expiryAfterDate": "Aegumiskuupäev peab olema hilisem kui pakkumise kuupäev",
+      "subtotalRequired": "Vahesumma on kohustuslik",
+      "totalRequired": "Kogusumma on kohustuslik",
+      "productRequired": "Toode on kohustuslik",
+      "quantityRequired": "Kogus on kohustuslik",
+      "priceRequired": "Hind on kohustuslik",
+      "atLeastOneProduct": "Vähemalt üks toode on kohustuslik",
+      "templateRequired": "Mall on kohustuslik"
+    }
+  },
+  "aiStore": {
+    "title": "ROLL UP AI POOD",
+    "subtitle": "Loo ja halda oma AI poodi lihtsalt.",
+    "companyName": "Ettevõtte nimi",
+    "lineOfBusiness": "Tegevusala",
+    "lineOfBusinessPlaceholder": "Sisesta tegevusala",
+    "shortDescription": "Lühikirjeldus",
+    "shortDescriptionPlaceholder": "Sisesta lühikirjeldus",
+    "submitButton": "Läki Roll Up AI pood"
+  },
+  "store": {
+    "link": "Poe link",
+    "create": "Loo pood",
+    "updateStoreName": "Uuenda poe nime",
+    "welcome": "Tere tulemast poodi!",
+    "invoiceSent": "Arve saadetud teie e-postile",
+    "invoiceDetails": "Arve andmed",
+    "loadingAiStore": "Laen teie AI poodi... Palun oota.",
+    "title": "Pood",
+    "searchPlaceholder": "Otsi tooteid/ettevõtteid",
+    "currencyRequired": "Valuuta on kohustuslik",
+    "addToCart": "Lisa ostukorvi",
+    "removeFromCart": "Eemalda ostukorvist",
+    "name": "Poe nimi",
+    "namePlaceholder": "Sisesta oma poe nimi",
+    "qrCodeAlt": "QR kood",
+    "copyLink": "Kopeeri link",
+    "copied": "Kopeeritud!",
+    "uploadProducts": "Laadi tooted poodi",
+    "shareOnSocialMedia": "Jaga sotsiaalmeedias:",
+    "facebook": "Facebook",
+    "twitter": "Twitter",
+    "email": "E-post",
+    "verification": {
+      "title": "Poe URL-i kinnitamine",
+      "description": "Palun kinnita oma poe URL. Võid kasutada järgmisi soovitusi:",
+      "suggestedNames": "Soovitatud poe nimed (klõpsa kasutamiseks):"
+    },
+    "validation": {
+      "nameRequired": "Poe nimi on kohustuslik",
+      "mustBeUnique": "Poe nimi peab olema unikaalne"
+    },
+    "checkout": {
+      "title": "Tellimuse esemed",
+      "empty": "Teie ostukorv on tühi.",
+      "total": "Kokku:",
+      "next": "Järgmise sammu juurde"
+    },
+    "customer": {
+      "title": "Kliendi andmed",
+      "iconAlt": "Aadressi ikoon",
+      "name": "Nimi",
+      "email": "E-post",
+      "phone": "Telefon",
+      "shippingAddress": "Tarneaadress",
+      "country": "Riik",
+      "state": "Maakond",
+      "city": "Linn",
+      "zip": "Postiindeks",
+      "address": "Aadress",
+      "review": "Palun vaata oma andmed üle enne maksele minekut.",
+      "proceedToPayment": "Mine maksele",
+      "back": "Tagasi",
+      "validation": {
+        "nameRequired": "Nimi on kohustuslik",
+        "emailInvalid": "Vigane e-posti aadress",
+        "emailRequired": "E-post on kohustuslik",
+        "phoneRequired": "Telefoninumber on kohustuslik",
+        "addressRequired": "Aadress on kohustuslik",
+        "cityRequired": "Linn on kohustuslik",
+        "countryRequired": "Riik on kohustuslik",
+        "stateRequired": "Maakond on kohustuslik",
+        "zipRequired": "Postiindeks on kohustuslik"
+      }
+    }
+  },
+  "table": {
+    "noRows": "Ridu pole",
+    "rowsPerPage": "Ridu lehe kohta:"
+  },
+  "time": {
+    "justNow": "just nüüd",
+    "minuteAgo": "{{count}} minut tagasi",
+    "minutesAgo": "{{count}} minutit tagasi",
+    "hourAgo": "{{count}} tund tagasi",
+    "hoursAgo": "{{count}} tundi tagasi",
+    "dayAgo": "{{count}} päev tagasi",
+    "daysAgo": "{{count}} päeva tagasi"
+  },
+  "store.cart": {
+    "tax": "Maks",
+    "quantity": "Kogus:",
+    "total": "Kokku:"
+  },
+  "store.product": {
+    "details": "Toote andmed",
+    "noImages": "Pilte pole saadaval",
+    "name": "Toote nimi",
+    "description": "Toote kirjeldus",
+    "noDescription": "Kirjeldus pole saadaval.",
+    "price": "Hind:"
+  },
+  "vendor": {
+    "title": "Tarnijad",
+    "create": "Loo tarnija",
+    "edit": "Muuda tarnijat",
+    "displayName": "Kuvatav nimi",
+    "createNew": "Loo uus",
+    "table": {
+      "createdAt": "Loodud",
+      "action": "Toiming",
+      "viewVendor": "Vaata tarnijat",
+      "editVendor": "Muuda tarnijat",
+      "deleteVendor": "Kustuta tarnija"
+    },
+    "actions": {
+      "deleteTitle": "Kustuta tarnija",
+      "deleteConfirm": "Kas oled kindel, et soovid selle tarnija kustutada?"
+    }
+  },
+  "vendorForm": {
+    "iconAlt": "Tarnija ikoon",
+    "addNew": "Lisa uus tarnija",
+    "contactName": "Kontaktisiku nimi",
+    "displayName": "Kuvatav nimi",
+    "email": "E-post",
+    "phone": "Telefon",
+    "website": "Veebisait",
+    "billingAddress": "Arveaadress",
+    "country": "Riik",
+    "state": "Maakond",
+    "city": "Linn",
+    "pincode": "Postiindeks",
+    "address": "Aadress",
+    "save": "Salvesta",
+    "validation": {
+      "nameRequired": "Nimi on kohustuslik",
+      "nameInvalid": "Nimi ei ole kehtiv",
+      "displayNameRequired": "Kuvatav nimi on kohustuslik",
+      "emailRequired": "E-post on kohustuslik",
+      "emailInvalid": "E-posti aadress on vigane",
+      "phoneInvalid": "Telefoninumber ei ole kehtiv",
+      "websiteInvalid": "Veebiaadress ei ole kehtiv",
+      "userRequired": "Kasutaja on kohustuslik",
+      "addressRequired": "Aadress on kohustuslik",
+      "cityRequired": "Linn on kohustuslik",
+      "countryRequired": "Riik on kohustuslik",
+      "stateRequired": "Maakond on kohustuslik",
+      "zipRequired": "Postiindeks on kohustuslik"
+    }
+  },
+  "admin": {
+    "overview": "Ülevaade",
+    "customers": "Kliendid",
+    "invoices": "Arved",
+    "estimates": "Pakkumised",
+    "users": "Kasutajad"
+  },
+  "common": {
+    "loading": "Laadimine...",
+    "typeHere": "Palun kirjuta siia...",
+    "save": "Salvesta",
+    "cancel": "Tühista",
+    "delete": "Kustuta",
+    "edit": "Muuda",
+    "view": "Vaata",
+    "create": "Loo",
+    "update": "Uuenda",
+    "search": "Otsi",
+    "filter": "Filtreeri",
+    "clear": "Tühjenda",
+    "submit": "Saada",
+    "back": "Tagasi",
+    "next": "Järgmine",
+    "previous": "Eelmine",
+    "close": "Sulge",
+    "open": "Ava",
+    "yes": "Jah",
+    "no": "Ei",
+    "ok": "OK",
+    "active": "Aktiivne",
+    "actions": "Toimingud",
+    "enter": "Sisesta {{label}}",
+    "subtotal": "Vahesumma",
+    "discountPercent": "Allahindlus %",
+    "taxesExtra": "Maksud (Lisa)",
+    "total": "Kokku",
+    "fileUploadFailed": "Faili üleslaadimine ebaõnnestus. Palun proovi uuesti.",
+    "fileUploaded": "Fail edukalt üles laaditud",
+    "uploadPlaceholder": "Laadi üles {{label}}",
+    "maxFileSize": "Maksimaalne faili suurus on 5MB",
+    "onlyPdfAllowed": "Ainult PDF failid on lubatud",
+    "notFound": "Lehte ei leitud",
+    "internalServerError": "Serveri sisemine viga",
+    "tryAgain": "Proovi uuesti"
+  },
+  "plan": {
+    "choosePlan": "Vali plaan",
+    "subscribe": "Telli"
+  },
+  "getStarted": {
+    "company": {
+      "title": "Räägi meile oma ettevõttest",
+      "subtitle": "Esita mõned põhilised ettevõtte andmed alustamiseks.",
+      "companyName": "Ettevõtte nimi",
+      "phoneNumber": "Telefoninumber",
+      "country": "Riik",
+      "state": "Maakond",
+      "city": "Linn",
+      "zipCode": "Postiindeks",
+      "address": "Aadress",
+      "vat": "KM/GSTIN",
+      "logo": "Logo",
+      "companyNameRequired": "Ettevõtte nimi on kohustuslik",
+      "phoneInvalid": "Telefoninumber ei ole kehtiv",
+      "countryRequired": "Riik on kohustuslik",
+      "stateRequired": "Maakond on kohustuslik",
+      "cityRequired": "Linn on kohustuslik",
+      "addressRequired": "Aadress on kohustuslik",
+      "zipCodeRequired": "Postiindeks on kohustuslik"
+    },
+    "initial": {
+      "title": "Peaaegu valmis! Vaid mõned üksikasjad",
+      "subtitle": "Sisesta vaid mõned üksikasjad nagu valuuta ja ettevõtte teave, et hakata arveid looma kiiresti!"
+    },
+    "currency": {
+      "title": "Vali oma valuuta",
+      "help": "Peame kinnitama teie e-posti aadressi, et tagada teile ligipääs rakendusele.",
+      "label": "Valuuta",
+      "required": "Valuuta on kohustuslik"
+    },
+    "banner": {
+      "title": "Vajalik toiming",
+      "message": "Enne selle funktsiooni kasutamist peate lõpetama alustamisprotsessi.",
+      "cta": "Alusta"
+    },
+    "steps": {
+      "step1": "Isiklik info",
+      "step2": "Kinnitamine",
+      "step3": "Kindlustus",
+      "step4": "Makse"
+    }
+  },
+  "plans": {
+    "title": "Plaanid",
+    "currentPlanSuffix": "(Praegune plaan)",
+    "unlimited": "Piiramatu",
+    "startTrial": "Alusta oma tasuta prooviversiooni",
+    "upgrade": "Uuenda",
+    "upgradeHint": "uuenda oma plaani, et genereerida rohkem muid funktsioone.",
+    "planTitle": "{{order}} plaan",
+    "planLabel": "Plaan",
+    "planNames": {
+      "normalplan": "Tavapaan",
+      "freeplan": "Tasuta plaan",
+      "basicplan": "Põhiplaan",
+      "premiumplan": "Premium plaan",
+      "enterpriseplan": "Ettevõtte plaan"
+    },
+    "features": {
+      "Quotation": "Pakkumine",
+      "Customer": "Klient",
+      "Product": "Toode",
+      "Tax": "Maks",
+      "HSNCode": "HSN kood",
+      "ProductUnit": "Toote ühik",
+      "PaymentDetails": "Makse andmed",
+      "InvoiceSettings": "Arve seaded",
+      "QuotationSettings": "Pakkumise seaded",
+      "Payments": "Maksed",
+      "Invoice": "Arve"
+    },
+    "status": "Olek",
+    "trialEnds": "Prooviaeg lõppeb",
+    "trialEndsText": "{{date}} ({{days}} päeva jäänud)",
+    "payment": {
+      "selectMethod": "Vali makseviis",
+      "stripe": "Stripe",
+      "growlimitless": "Growlimitless",
+      "razorpay": "Razorpay"
+    },
+    "priceUnit": {
+      "monthly": "Kuu",
+      "yearly": "Aasta",
+      "months": "{{count}} kuud",
+      "years": "{{count}} aastat",
+      "days": "{{count}} päeva"
+    },
+    "limitExceeded": "Limiit ületatud. Palun uuenda oma plaani, et lisada rohkem funktsioone.",
+    "upgradeCta": "Klõpsa siin uuendamiseks",
+    "updateFeatures": "Uuenda funktsioone"
+  },
+  "notification": {
+    "newMessage": "Uus sõnum",
+    "title": "Teavitused",
+    "markAllAsRead": "Märgi kõik loetuks",
+    "none": "Teatisi pole",
+    "payment": {
+      "success": "Makse õnnestus",
+      "successMessage": "Makse plaani {{plan}} eest on õnnestunud",
+      "successMessageGeneric": "Teie makse on edukalt tehtud"
+    }
+  },
+  "orders": {
+    "title": "Minu tellimused",
+    "table": {
+      "customerName": "Kliendi nimi",
+      "customerEmail": "Kliendi e-post",
+      "customerAddress": "Kliendi aadress",
+      "invoiceNumber": "Arve number",
+      "invoiceStatus": "Arve olek",
+      "orderStatus": "Tellimuse olek",
+      "shippingStatus": "Saadetise olek",
+      "shippingStatus.shipped": "Saadetud",
+      "shippingStatus.toBeShipped": "Saadetav",
+      "shippingRefNumber": "Saadetise viitenumber",
+      "editShipping": "Muuda saatmise andmeid",
+      "paymentStatus": "Makse olek",
+      "paymentMode": "Makseviis",
+      "total": "Kokku"
+    },
+    "dialog": {
+      "editShipping": "Muuda saatmise andmeid",
+      "shippingRefPlaceholder": "Sisesta saatmise viitenumber"
+    },
+    "summary": {
+      "totalOrders": "Kokku tellimusi",
+      "totalPaidInvoices": "Kokku makstud",
+      "totalAmountPaid": "Kokku makstud summa",
+      "totalDueAmount": "Kokku tasumata summa"
+    },
+    "toBeFilled": "täitmiseks"
+  }
+}

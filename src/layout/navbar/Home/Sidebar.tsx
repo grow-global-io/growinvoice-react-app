@@ -6,7 +6,6 @@ import {
 	Collapse,
 	Divider,
 	Drawer,
-	FormControlLabel,
 	IconButton,
 	List,
 	ListItemButton,
@@ -14,7 +13,7 @@ import {
 	ListItemText,
 	Menu,
 	MenuItem,
-	Switch,
+	Select,
 	Toolbar,
 	Tooltip,
 	Typography,
@@ -66,9 +65,6 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 	const { isInstallable, isInstalled, installApp } = usePWAInstall();
 	const isMobile = useMobileDetection();
 	const [showIosInstructions, setShowIOSInstructions] = useState<boolean>(false);
-	const [hasManuallyChangedLanguage, setHasManuallyChangedLanguage] = React.useState(() => {
-		return localStorage.getItem("languageManuallyChanged") === "true";
-	});
 
 	const settingsWithFunc = [
 		{
@@ -483,49 +479,51 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 									</Typography>
 								</Box>
 							)}
-						{/* Language Toggle - Show if language is not English OR if user has manually changed language */}
-						{(i18n.language !== "en" || hasManuallyChangedLanguage) && (
-							<FormControlLabel
-								control={
-									<Switch
-										checked={i18n.language === "fi"}
-										onChange={(e) => {
-											const newLang = e.target.checked ? "fi" : "en";
-											i18n.changeLanguage(newLang);
-											// Track that user has manually changed language
-											setHasManuallyChangedLanguage(true);
-											localStorage.setItem("languageManuallyChanged", "true");
-										}}
-										sx={{
-											"& .MuiSwitch-switchBase.Mui-checked": {
-												color: "custom.white",
-											},
-											"& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-												backgroundColor: "custom.white",
-											},
-										}}
-									/>
-								}
-								label={
-									<Typography
-										variant="body2"
-										sx={{
-											color: "custom.white",
-											fontSize: "0.75rem",
-											fontWeight: 500,
-										}}
-									>
-										{i18n.language === "fi" ? "FI" : "EN"}
-									</Typography>
-								}
-								sx={{
-									mr: 1,
-									"& .MuiFormControlLabel-label": {
-										marginLeft: 0.5,
+						{/* Language Selector Dropdown - Always visible */}
+						<Select
+							value={i18n.language}
+							onChange={(e) => {
+								const newLang = e.target.value;
+								i18n.changeLanguage(newLang);
+								// Track that user has manually changed language
+								localStorage.setItem("languageManuallyChanged", "true");
+							}}
+							sx={{
+								minWidth: 80,
+								height: 36,
+								mr: 1,
+								color: "custom.white",
+								"& .MuiOutlinedInput-notchedOutline": {
+									borderColor: "rgba(255, 255, 255, 0.3)",
+								},
+								"&:hover .MuiOutlinedInput-notchedOutline": {
+									borderColor: "rgba(255, 255, 255, 0.5)",
+								},
+								"&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+									borderColor: "custom.white",
+								},
+								"& .MuiSvgIcon-root": {
+									color: "custom.white",
+								},
+								"& .MuiSelect-select": {
+									padding: "8px 32px 8px 12px",
+									fontSize: "0.875rem",
+									fontWeight: 500,
+								},
+							}}
+							MenuProps={{
+								PaperProps: {
+									sx: {
+										bgcolor: "background.paper",
+										mt: 0.5,
 									},
-								}}
-							/>
-						)}
+								},
+							}}
+						>
+							<MenuItem value="en">ENG</MenuItem>
+							<MenuItem value="fi">FI</MenuItem>
+							<MenuItem value="est">EST</MenuItem>
+						</Select>
 						<NotificationMain />
 						<Box
 							mx={{ xs: 0, sm: 2 }}
