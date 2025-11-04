@@ -38,6 +38,7 @@ import TaxCodeListPage from "@pages/TaxCodeListPage";
 import ProductUnitListPage from "@pages/ProductUnitListPage";
 import ProductSalesPage from "@pages/ProductSalesPage";
 import CustomerSalesPage from "@pages/CustomerSalesPage";
+import CustomerDataPage from "@pages/CustomerDataPage";
 import ProfitLossPage from "@pages/ProfitLossPage";
 import ExpensesPage from "@pages/ExpensesPage";
 import VendorsPage from "@pages/VendorsPage";
@@ -259,6 +260,10 @@ export const protectedRoutes: Route[] = [
 	{
 		path: "/reports/customersales",
 		Component: CustomerSalesPage,
+	},
+	{
+		path: "/reports/customerdata",
+		Component: CustomerDataPage,
 	},
 	{
 		path: "/reports/profitloss",

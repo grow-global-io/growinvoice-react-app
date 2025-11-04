@@ -250,6 +250,7 @@
     "title": "Asiakkaat",
     "create": "Luo asiakas",
     "edit": "Muokkaa asiakasta",
+    "createInvoice": "Luo lasku",
     "name": "Nimi",
     "email": "Sähköposti",
     "phone": "Puhelin",
@@ -483,6 +484,7 @@
       "Yearly": "Vuosittain"
     },
     "notes": "Muistiinpanot",
+    "defaultNote": "Kiitos ostoksistasi. Mukavaa päivää!",
     "paymentDetails": "Maksutiedot",
     "addPayment": "Lisää maksu",
     "accountNumber": "Tilinumero",
@@ -494,6 +496,7 @@
     "preview": "Esikatselu",
     "saveInvoice": "Tallenna lasku",
     "invoicePreview": "Laskun esikatselu",
+    "saveAndSendInvoice": "Tallenna ja lähetä lasku",
     "validation": {
       "currencyRequired": "Valuutta on pakollinen",
       "customerRequired": "Asiakas on pakollinen",
@@ -514,6 +517,13 @@
       "templateRequired": "Pohja on pakollinen",
       "atLeastOneProduct": "Vähintään yksi tuote vaaditaan",
       "fillAllProductDetails": "Täytä kaikki tuotetiedot"
+    },
+    "errors": {
+      "saveFailed": "Laskun tallentaminen epäonnistui",
+      "saveAndSendFailed": "Laskun tallentaminen ja lähettäminen epäonnistui"
+    },
+    "success": {
+      "saveAndSend": "Lasku tallennettu ja lähetetty onnistuneesti!"
     }
   },
   "product": {
@@ -844,6 +854,13 @@
     },
     "customer": {
       "title": "Asiakasraportti",
+      "customerName": "Asiakkaan nimi",
+      "invoiceDate": "Laskun päiväys",
+      "invoiceNumber": "Laskunumero",
+      "invoiceAmount": "Laskun summa"
+    },
+    "customerData": {
+      "title": "Asiakastiedot",
       "customerName": "Asiakkaan nimi",
       "invoiceDate": "Laskun päiväys",
       "invoiceNumber": "Laskunumero",

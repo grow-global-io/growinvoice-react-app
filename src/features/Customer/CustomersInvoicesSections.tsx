@@ -1,5 +1,5 @@
 import { useCustomerControllerFindOne } from "@api/services/customer";
-import { Box, Divider, Grid, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Divider, Grid, Tab, Tabs, Typography, Button } from "@mui/material";
 import TabPanel from "@shared/components/TabPanel";
 import { useTabs } from "@shared/hooks/useTabs";
 import CustomerDetails from "./CustomerDetails";
@@ -7,14 +7,23 @@ import Loader from "@shared/components/Loader";
 import InvoiceTableDueList from "@features/Invoices/InvoiceTableDueList";
 import InvoiceTablePaidList from "@features/Invoices/InvoiceTablePaidList";
 import InvoiceTableAllList from "@features/Invoices/InvoiceTableAllList";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 const CustomersInvoicesSections = ({ customerId }: { customerId: string }) => {
+	const { t } = useTranslation();
+	const navigate = useNavigate();
 	const { data, isLoading } = useCustomerControllerFindOne(customerId, {
 		query: {
 			enabled: !!customerId && customerId !== "",
 		},
 	});
 	const { handleChange, tabValue } = useTabs("customerInvoiceTab");
+
+	const handleCreateInvoice = () => {
+		if (!customerId) return;
+		navigate(`/invoice/createinvoice?customerId=${customerId}`);
+	};
 	if (isLoading) {
 		return <Loader />;
 	}
@@ -38,27 +47,51 @@ const CustomersInvoicesSections = ({ customerId }: { customerId: string }) => {
 
 			<Grid container sx={{ width: { xs: "90vw", sm: "100%" } }} my={2}>
 				<Grid item xs={12}>
-					<Tabs
-						value={tabValue}
-						onChange={handleChange}
-						variant="standard"
-						textColor="primary"
-						indicatorColor="secondary"
-						scrollButtons="auto"
+					<Box
+						sx={{
+							display: "flex",
+							justifyContent: "space-between",
+							alignItems: "center",
+							mb: 2,
+							flexWrap: { xs: "wrap", sm: "nowrap" },
+							gap: { xs: 2, sm: 0 },
+						}}
 					>
-						<Tab
-							label="Due Invoices"
-							style={{ fontWeight: "bold", fontSize: 14, textTransform: "capitalize" }}
-						/>
-						<Tab
-							label="Paid Invoices"
-							style={{ fontWeight: "bold", fontSize: 14, textTransform: "capitalize" }}
-						/>
-						<Tab
-							label="All Invoices"
-							style={{ fontWeight: "bold", fontSize: 14, textTransform: "capitalize" }}
-						/>
-					</Tabs>
+						<Box sx={{ flex: { xs: "1 1 100%", sm: "1 1 auto" }, minWidth: 0 }}>
+							<Tabs
+								value={tabValue}
+								onChange={handleChange}
+								variant="standard"
+								textColor="primary"
+								indicatorColor="secondary"
+								scrollButtons="auto"
+							>
+								<Tab
+									label="Due Invoices"
+									style={{ fontWeight: "bold", fontSize: 14, textTransform: "capitalize" }}
+								/>
+								<Tab
+									label="Paid Invoices"
+									style={{ fontWeight: "bold", fontSize: 14, textTransform: "capitalize" }}
+								/>
+								<Tab
+									label="All Invoices"
+									style={{ fontWeight: "bold", fontSize: 14, textTransform: "capitalize" }}
+								/>
+							</Tabs>
+						</Box>
+						<Button
+							variant="contained"
+							color="primary"
+							onClick={handleCreateInvoice}
+							sx={{
+								ml: { xs: 0, sm: 2 },
+								flexShrink: 0,
+							}}
+						>
+							{t("customer.createInvoice", { defaultValue: "Create Invoice" })}
+						</Button>
+					</Box>
 				</Grid>
 				<Grid item xs={12}>
 					<TabPanel value={tabValue} index={0}>

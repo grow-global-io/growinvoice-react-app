@@ -250,6 +250,7 @@
     "title": "Customers",
     "create": "Create Customer",
     "edit": "Edit Customer",
+    "createInvoice": "Create Invoice",
     "name": "Name",
     "email": "Email",
     "phone": "Phone",
@@ -476,6 +477,7 @@
       "Yearly": "Yearly"
     },
     "notes": "Notes",
+    "defaultNote": "Thank you for shopping with us. Have a Great Day.",
     "paymentDetails": "Payment Details",
     "addPayment": "Add Payment",
     "accountNumber": "Account Number",
@@ -487,6 +489,7 @@
     "preview": "Preview",
     "saveInvoice": "Save Invoice",
     "invoicePreview": "Invoice Preview",
+    "saveAndSendInvoice": "Save and Send Invoice",
     "validation": {
       "currencyRequired": "Currency is required",
       "customerRequired": "Customer is required",
@@ -507,6 +510,13 @@
       "templateRequired": "Template is required",
       "atLeastOneProduct": "At least one product is required",
       "fillAllProductDetails": "Fullfill all the product details"
+    },
+    "errors": {
+      "saveFailed": "Failed to save invoice",
+      "saveAndSendFailed": "Failed to save and send invoice"
+    },
+    "success": {
+      "saveAndSend": "Invoice saved and sent successfully!"
     }
   },
   "product": {
@@ -837,6 +847,13 @@
     },
     "customer": {
       "title": "Customer Report",
+      "customerName": "Customer Name",
+      "invoiceDate": "Invoice Date",
+      "invoiceNumber": "Invoice Number",
+      "invoiceAmount": "Invoice Amount"
+    },
+    "customerData": {
+      "title": "Customer Data",
       "customerName": "Customer Name",
       "invoiceDate": "Invoice Date",
       "invoiceNumber": "Invoice Number",

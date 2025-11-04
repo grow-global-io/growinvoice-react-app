@@ -60,6 +60,7 @@ import { useInvoicesettingsControllerFindFirst } from "@api/services/invoicesett
 import { useCurrencyControllerFindAll } from "@api/services/currency";
 import { useTranslation } from "react-i18next";
 import { translateInvoiceHtml } from "@shared/utils/invoiceTemplateTranslator";
+import SaveAndSendInvoiceButton from "./components/SaveAndSendInvoiceButton";
 
 export type OmitCreateInvoiceProductsExtended = Omit<
 	OmitCreateInvoiceProductsDto,
@@ -72,7 +73,7 @@ export type OmitCreateInvoiceProductsExtended = Omit<
 	taxes?: string[];
 };
 
-const CreateInvoice = ({ id }: { id?: string }) => {
+const CreateInvoice = ({ id, customerId }: { id?: string; customerId?: string }) => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
@@ -125,16 +126,32 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 		}
 	}, [invoiceFindOne.isSuccess || invoiceFindOne?.isRefetching]);
 
+	// Pre-select customer when customerId is provided (only for new invoices)
+	const getInitialCustomerIds = () => {
+		if (id) return []; // Editing existing invoice
+		if (customerId && customerData?.data) {
+			const customerExists = customerData.data.some((c) => c.id === customerId);
+			return customerExists ? [customerId] : [];
+		}
+		return [];
+	};
+
 	const initialValues = {
 		currency_id: invoiceFindOne?.data?.currency_id ?? user?.currency_id ?? "",
-		customer_ids: [],
+		customer_ids: getInitialCustomerIds(),
 		user_id: user?.id ?? "",
 		invoice_number: invoiceFindOne?.data?.invoice_number ?? new Date().getTime().toString(),
 		reference_number: invoiceFindOne?.data?.reference_number ?? "",
-		date: invoiceFindOne?.data?.date ?? "",
+		date: invoiceFindOne?.data?.date ?? (id ? "" : currentDate),
 		due_date: invoiceFindOne?.data?.due_date ?? "",
 		is_recurring: invoiceFindOne?.data?.is_recurring ?? false,
-		notes: invoiceFindOne?.data?.notes ?? "",
+		notes:
+			invoiceFindOne?.data?.notes ??
+			(id
+				? ""
+				: t("invoiceForm.defaultNote", {
+						defaultValue: "Thank you for shopping with us. Have a Great Day.",
+					})),
 		paymentId: invoiceFindOne?.data?.paymentId ?? "",
 		sub_total: invoiceFindOne?.data?.sub_total ?? 0,
 		tax_id: invoiceFindOne?.data?.tax_id ?? "",
@@ -151,6 +168,23 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 		template_id:
 			invoiceFindOne?.data?.template_id ?? invoiceSettings?.data?.invoiceTemplateId ?? "",
 	};
+
+	// Set customer in form when customer data loads and customerId is provided
+	useEffect(() => {
+		if (!id && customerId && customerData?.data && formikRef.current) {
+			const customerExists = customerData.data.some((c) => c.id === customerId);
+			const currentValues = formikRef.current.values;
+			if (
+				customerExists &&
+				"customer_ids" in currentValues &&
+				Array.isArray(currentValues.customer_ids) &&
+				!currentValues.customer_ids.includes(customerId)
+			) {
+				formikRef.current.setFieldValue("customer_ids", [customerId]);
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [customerData?.data, customerId, id]);
 
 	const updateInitialValues = {
 		...initialValues,
@@ -683,10 +717,21 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 											{t("invoiceForm.preview")}
 										</Button>
 									</Grid>
-									<Grid item xs={12} textAlign={"center"}>
+									<Grid
+										item
+										xs={12}
+										textAlign={"center"}
+										sx={{ display: "flex", gap: 2, justifyContent: "center" }}
+									>
 										<Button variant="contained" type="submit">
 											{t("invoiceForm.saveInvoice")}
 										</Button>
+										<SaveAndSendInvoiceButton
+											formik={formik}
+											rows={rows}
+											invoiceId={id}
+											onValidationError={setProductErrorText}
+										/>
 									</Grid>
 								</Grid>
 							</Form>

@@ -229,6 +229,10 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 					path: "/reports/customersales",
 					label: t("customer.title") + " " + t("report.sales", { defaultValue: "Sales" }),
 				},
+				{
+					path: "/reports/customerdata",
+					label: t("report.customerData.title", { defaultValue: "Customer Data" }),
+				},
 				{ path: "/reports/profitloss", label: t("report.profitLoss") },
 				{
 					path: "/reports/Expenses",
