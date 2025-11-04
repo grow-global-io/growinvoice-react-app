@@ -7,7 +7,7 @@ i18n
 	.use(HttpApi)
 	.use(initReactI18next)
 	.init({
-		supportedLngs: ["en", "hi", "fi"],
+		supportedLngs: ["en", "hi", "fi", "est"],
 		fallbackLng: "en",
 		lng: "en", // Start with English as default
 		backend: {
@@ -24,7 +24,15 @@ const detectAndSetLanguage = async () => {
 		if (!res.ok) throw new Error("ipapi request failed");
 		const data = await res.json();
 		const countryName = (data?.country_name as string) || "";
-		const detectedLang = countryName.toLowerCase() === "finland" ? "fi" : "en";
+		const countryNameLower = countryName.toLowerCase();
+
+		// Determine language based on country
+		let detectedLang = "en"; // Default to English
+		if (countryNameLower === "estonia") {
+			detectedLang = "est";
+		} else if (countryNameLower === "finland") {
+			detectedLang = "fi";
+		}
 
 		// Only change if different from current language
 		if (i18n.language !== detectedLang) {
