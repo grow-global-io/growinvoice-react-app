@@ -15,7 +15,7 @@ jobs:
       # create .env file
       - name: 📄 Create .env File
         run: |
-          echo "VITE_APP_BASE_URL=https://api-prod.growinvoice.com" > .env
+          echo "VITE_APP_BASE_URL=https://api-dev.growinvoice.com" > .env
           echo "VITE_FIREBASE_PROJECT_ID=growinvoice-957bc" >> .env
           echo "VITE_FIREBASE_API_KEY=AIzaSyBQNfsPslDOa9at0zbCx3iFxCs66flfJVw" >> .env
           echo "VITE_FIREBASE_MESSAGING_SENDER_ID=1009012687487" >> .env
