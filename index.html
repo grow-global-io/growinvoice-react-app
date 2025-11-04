@@ -213,6 +213,20 @@
 	</head>
 	<body>
 		<div id="root"></div>
+		<script>
+			// Suppress Vite HMR update logs
+			const originalLog = console.log;
+			console.log = function (...args) {
+				if (
+					args.length > 0 &&
+					typeof args[0] === "string" &&
+					args[0].includes("[vite] hot updated:")
+				) {
+					return;
+				}
+				originalLog.apply(console, args);
+			};
+		</script>
 		<script type="module" src="/src/main.tsx"></script>
 	</body>
 </html>

@@ -1,9 +1,28 @@
-import { defineConfig } from "vite";
+import { defineConfig, type ViteDevServer } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
+import type { Plugin } from "vite";
+
+// Plugin to suppress HMR update logs
+const suppressHmrLogs = (): Plugin => {
+	return {
+		name: "suppress-hmr-logs",
+		configureServer(server: ViteDevServer) {
+			server.ws.on("connection", (socket) => {
+				socket.on("message", (payload: unknown) => {
+					if (typeof payload === "string" && payload.includes("update")) {
+						// Suppress HMR update messages
+						return;
+					}
+				});
+			});
+		},
+	};
+};
+
 // https://vitejs.dev/config/
 export default defineConfig({
-	plugins: [react()],
+	plugins: [react(), suppressHmrLogs()],
 	resolve: {
 		alias: {
 			// Alias @/ to /src
@@ -25,6 +44,9 @@ export default defineConfig({
 				secure: false,
 				rewrite: (path) => path,
 			},
+		},
+		hmr: {
+			overlay: false,
 		},
 	},
 	build: {

@@ -47,6 +47,11 @@ export class InterceptorService {
 				return response;
 			},
 			(error) => {
+				// Skip CanceledError - these are expected when React Query cancels requests
+				if (error.code === "ERR_CANCELED" || error.message === "canceled") {
+					return Promise.reject(error);
+				}
+
 				console.error("[InterceptorService] error", error);
 				// check the error status code
 				LoaderService.instance.hideLoader();
