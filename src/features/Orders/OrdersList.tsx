@@ -228,13 +228,18 @@ const OrdersList = () => {
 			headerName: t("orders.table.orderStatus", { defaultValue: "Order Status" }),
 			flex: 1,
 			minWidth: 160,
-			renderCell: (params) => (
-				<Typography>
-					{t(`invoice.status.${String(params.value ?? "").toLowerCase()}`, {
-						defaultValue: String(params.value ?? ""),
-					})}
-				</Typography>
-			),
+			renderCell: (params) => {
+				const statusValue = String(params.value ?? "");
+				const statusKey = statusValue.toLowerCase().replace(/\s+/g, "");
+				let translatedStatus = t(`invoice.status.${statusKey}`, {
+					defaultValue: statusValue,
+				});
+				// Explicitly map "Mailed to customer" to "Receipt Sent"
+				if (statusValue === "Mailed to customer") {
+					translatedStatus = t("invoice.status.mailedtocustomer", { defaultValue: "Receipt Sent" });
+				}
+				return <Typography>{translatedStatus}</Typography>;
+			},
 		},
 		{
 			field: "shipping_status",

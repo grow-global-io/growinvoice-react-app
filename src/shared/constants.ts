@@ -115,7 +115,8 @@ export class Constants {
 		[key: string]: "default" | "info" | "warning" | "success" | "secondary" | "primary" | "error";
 	} = {
 		Draft: "error",
-		"Mailed to customer": "info",
+		"Receipt Sent": "info",
+		"Mailed to customer": "info", // Keep for backward compatibility
 		Viewed: "warning",
 		Paid: "success",
 		PartiallyPaid: "warning",

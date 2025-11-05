@@ -115,7 +115,7 @@
     "status": {
       "draft": "Luonnos",
       "due": "Erääntynyt",
-      "mailedtocustomer": "Lähetetty asiakkaalle",
+      "mailedtocustomer": "Kuitti lähetetty",
       "viewed": "Katsottu",
       "paid": "Maksettu",
       "accepted": "Hyväksytty",
@@ -373,7 +373,7 @@
     "status": {
       "draft": "Luonnos",
       "due": "Erääntynyt",
-      "mailedtocustomer": "Lähetetty asiakkaalle",
+      "mailedtocustomer": "Kuitti lähetetty",
       "viewed": "Katsottu",
       "paid": "Maksettu",
       "accepted": "Hyväksytty",

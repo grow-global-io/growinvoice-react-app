@@ -493,10 +493,22 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 							{t("invoice.detail.status", { defaultValue: "Status:" })}
 						</Typography>
 						<Chip
-							label={getInvoiceData?.data?.status}
+							label={
+								getInvoiceData?.data?.status === "Mailed to customer"
+									? t("invoice.status.mailedtocustomer", { defaultValue: "Receipt Sent" })
+									: (() => {
+											const statusKey =
+												getInvoiceData?.data?.status?.toLowerCase().replace(/\s+/g, "") || "";
+											return t(`invoice.status.${statusKey}`, {
+												defaultValue: getInvoiceData?.data?.status || "",
+											});
+										})()
+							}
 							variant="filled"
 							color={
-								Constants?.invoiceStatusColorEnums[getInvoiceData?.data?.status ?? ""] ?? "default"
+								Constants?.invoiceStatusColorEnums[getInvoiceData?.data?.status ?? ""] ??
+								Constants?.invoiceStatusColorEnums["Receipt Sent"] ??
+								"default"
 							}
 						/>
 					</Box>

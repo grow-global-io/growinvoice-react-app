@@ -115,7 +115,7 @@
     "status": {
       "draft": "Draft",
       "due": "Due",
-      "mailedtocustomer": "Mailed to customer",
+      "mailedtocustomer": "Receipt Sent",
       "viewed": "Viewed",
       "paid": "Paid",
       "accepted": "Accepted",
@@ -367,7 +367,7 @@
     "status": {
       "draft": "Draft",
       "due": "Due",
-      "mailedtocustomer": "Mailed to customer",
+      "mailedtocustomer": "Receipt Sent",
       "viewed": "Viewed",
       "paid": "Paid",
       "accepted": "Accepted",

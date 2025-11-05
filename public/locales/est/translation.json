@@ -115,7 +115,7 @@
     "status": {
       "draft": "Mustand",
       "due": "Tähtajani",
-      "mailedtocustomer": "Kliendile saadetud",
+      "mailedtocustomer": "Kviitung saadetud",
       "viewed": "Vaadatud",
       "paid": "Makstud",
       "accepted": "Heaks kiidetud",
@@ -367,7 +367,7 @@
     "status": {
       "draft": "Mustand",
       "due": "Tasumata",
-      "mailedtocustomer": "Saadetud kliendile",
+      "mailedtocustomer": "Kviitung saadetud",
       "viewed": "Vaadatud",
       "paid": "Makstud",
       "accepted": "Aktsepteeritud",
