@@ -30,6 +30,7 @@ import { CheckBoxFormField } from "@shared/components/FormFields/CheckBoxFormFie
 import MultipleFileUploadFormField from "@shared/components/FormFields/MultipleFileUploadFormField";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
+import { useEffect, useRef, useMemo } from "react";
 
 const schema = yup.object({
 	type: yup
@@ -90,6 +91,62 @@ const schema = yup.object({
 		.min(1, () => i18n.t("productForm.validation.priceBookAtLeastOne")),
 });
 
+// Helper component to auto-select first tax when taxes load asynchronously
+const TaxPrefillHelper = ({
+	editValues,
+	taxCodes,
+	setFieldValue,
+	currentTaxValues,
+}: {
+	editValues: any;
+	taxCodes: any;
+	setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
+	currentTaxValues: string[] | null | undefined;
+}) => {
+	const taxPrefilledRef = useRef(false);
+	const previousEditValuesRef = useRef(editValues);
+
+	useEffect(() => {
+		// Reset prefilled flag when switching between edit and create modes
+		if (previousEditValuesRef.current !== editValues) {
+			taxPrefilledRef.current = false;
+			previousEditValuesRef.current = editValues;
+		}
+
+		// Don't prefill if we're in edit mode
+		if (editValues) {
+			return;
+		}
+
+		// Auto-select first tax when:
+		// 1. Not editing (editValues is null/undefined)
+		// 2. Tax codes are loaded and not loading
+		// 3. Haven't already prefilled
+		// 4. Tax field is currently empty
+		if (
+			taxCodes?.data &&
+			taxCodes.data.length > 0 &&
+			!taxCodes.isLoading &&
+			!taxCodes.isFetching &&
+			!taxPrefilledRef.current &&
+			(!currentTaxValues || currentTaxValues.length === 0)
+		) {
+			// Auto-select the first tax
+			setFieldValue("tax", [taxCodes.data[0].id], false);
+			taxPrefilledRef.current = true;
+		}
+	}, [
+		editValues,
+		taxCodes?.data,
+		taxCodes?.isLoading,
+		taxCodes?.isFetching,
+		setFieldValue,
+		currentTaxValues,
+	]);
+
+	return null;
+};
+
 const ProductForm = () => {
 	const { t } = useTranslation();
 	const queryClient = useQueryClient();
@@ -136,22 +193,40 @@ const ProductForm = () => {
 		action.setSubmitting(false);
 	};
 
-	const initialValues: CreateProductWithTaxDto = {
-		type: editValues?.type ?? "Goods",
-		name: editValues?.name ?? "",
-		unit_id: editValues?.unit_id ?? "",
-		hsnCode_id: editValues?.hsnCode_id ?? "",
-		tax: editValues?.tax?.map((tax) => tax.tax_id) ?? [],
-		description: editValues?.description ?? "",
-		user_id: user?.id ?? "",
-		priceBook:
-			editValues?.priceBook?.map((price) => ({
-				currency_id: price.currency_id,
-				price: price.price,
-			})) ?? [],
-		images: editValues?.images ?? [],
-		includeStore: editValues?.includeStore ?? false,
-	};
+	// Calculate initial tax values - auto-select first tax for all users when creating new product
+	const initialTaxValues = useMemo(() => {
+		// If editing, use existing taxes
+		if (editValues?.tax) {
+			return editValues.tax.map((tax) => tax.tax_id);
+		}
+
+		// If creating new product, auto-select the first tax
+		if (!editValues && taxCodes?.data && taxCodes.data.length > 0) {
+			return [taxCodes.data[0].id];
+		}
+
+		return [];
+	}, [editValues, taxCodes?.data]);
+
+	const initialValues: CreateProductWithTaxDto = useMemo(
+		() => ({
+			type: editValues?.type ?? "Goods",
+			name: editValues?.name ?? "",
+			unit_id: editValues?.unit_id ?? "",
+			hsnCode_id: editValues?.hsnCode_id ?? "",
+			tax: initialTaxValues,
+			description: editValues?.description ?? "",
+			user_id: user?.id ?? "",
+			priceBook:
+				editValues?.priceBook?.map((price) => ({
+					currency_id: price.currency_id,
+					price: price.price,
+				})) ?? [],
+			images: editValues?.images ?? [],
+			includeStore: editValues?.includeStore ?? false,
+		}),
+		[editValues, initialTaxValues, user?.id],
+	);
 
 	const {
 		handleClickOpen: handleProductUnitOpen,
@@ -197,11 +272,22 @@ const ProductForm = () => {
 			</Grid>
 
 			<Box sx={{ mb: 2, mt: 2 }}>
-				<Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit}>
+				<Formik
+					initialValues={initialValues}
+					validationSchema={schema}
+					onSubmit={handleSubmit}
+					enableReinitialize={true}
+				>
 					{({ values, setFieldValue, errors }) => {
 						console.log("errors", errors);
 						return (
 							<Form>
+								<TaxPrefillHelper
+									editValues={editValues}
+									taxCodes={taxCodes}
+									setFieldValue={setFieldValue}
+									currentTaxValues={values.tax}
+								/>
 								<Divider />
 								<Grid container my={1} padding={2}>
 									<Grid item xs={12}>
