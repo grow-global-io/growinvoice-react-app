@@ -161,6 +161,8 @@ export default function FullFeaturedCrudGrid({
 		setErrorText(undefined);
 		const randomInRange = Math.floor(Math.random() * (10000 - 1 + 1)) + 1;
 		const id: string = rows.length + 2 + randomInRange + "";
+		// Auto-select first tax if available
+		const defaultTaxes = taxCodes?.data && taxCodes.data.length > 0 ? [taxCodes.data[0].id] : [];
 		setRows((oldRows) => [
 			...oldRows,
 			{
@@ -170,7 +172,7 @@ export default function FullFeaturedCrudGrid({
 				price: 0,
 				total: 0,
 				hsnCode_id: "",
-				taxes: [],
+				taxes: defaultTaxes,
 				isNew: true,
 				isEditPosible: false,
 				isEditble: true,
