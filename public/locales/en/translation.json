@@ -853,7 +853,7 @@
       "invoiceAmount": "Invoice Amount"
     },
     "customerData": {
-      "title": "Customer Data",
+      "title": "All Customers Uploaded",
       "customerName": "Customer Name",
       "invoiceDate": "Invoice Date",
       "invoiceNumber": "Invoice Number",

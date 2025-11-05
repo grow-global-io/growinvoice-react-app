@@ -3,6 +3,8 @@ import {
 	getInvoiceControllerFindPaidInvoicesQueryKey,
 	getInvoiceControllerInvoicePublicFindOneQueryKey,
 	getInvoiceControllerTestQueryKey,
+	invoiceControllerInvoicePublicFindOne,
+	invoiceControllerInvoiceSentToMail,
 	useInvoiceControllerFindDueInvoices,
 } from "@api/services/invoice";
 import { type CreatePaymentsDto } from "@api/services/models";
@@ -80,21 +82,91 @@ const PaymentForm = () => {
 				reference_number: values?.reference_number?.toString() ?? null,
 			},
 		});
-		queryClient.refetchQueries({
+
+		// Refetch queries to get updated invoice status
+		await queryClient.refetchQueries({
 			queryKey: getPaymentsControllerFindAllQueryKey(),
 		});
-		queryClient.refetchQueries({
+		await queryClient.refetchQueries({
 			queryKey: getInvoiceControllerTestQueryKey(invoiceId ?? ""),
 		});
-		queryClient.refetchQueries({
+		await queryClient.refetchQueries({
 			queryKey: getInvoiceControllerInvoicePublicFindOneQueryKey(invoiceId ?? ""),
 		});
-		queryClient.resetQueries({
+		await queryClient.resetQueries({
 			queryKey: getInvoiceControllerFindDueInvoicesQueryKey(),
 		});
-		queryClient.refetchQueries({
+		await queryClient.refetchQueries({
 			queryKey: getInvoiceControllerFindPaidInvoicesQueryKey(),
 		});
+
+		// Auto-send receipt email if invoice is fully paid
+		if (invoiceId) {
+			try {
+				// Fetch updated invoice data to check if it's fully paid
+				const invoiceData = await invoiceControllerInvoicePublicFindOne(invoiceId);
+
+				// Check if invoice is fully paid (due_amount is 0 or paid_status is "Paid")
+				const isFullyPaid = invoiceData?.due_amount === 0 || invoiceData?.paid_status === "Paid";
+
+				if (isFullyPaid) {
+					const customerEmail = invoiceData?.customer?.email;
+					if (customerEmail) {
+						const invoiceLink = `${window.location.origin}/invoice/invoicetemplate/${invoiceId}`;
+						const receiptBody = `
+							<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+								<h2 style="color: #333; text-align: center;">Payment Receipt</h2>
+								<p style="font-size: 16px; color: #555; line-height: 1.6;">
+									Dear ${invoiceData?.customer?.name || "Customer"},
+								</p>
+								<p style="font-size: 16px; color: #555; line-height: 1.6;">
+									Thank you! Your invoice <strong>#${invoiceData?.invoice_number || invoiceId}</strong> has been successfully paid.
+								</p>
+								<p style="font-size: 16px; color: #555; line-height: 1.6;">
+									We appreciate your prompt payment and your business with us.
+								</p>
+								<div style="text-align: center; margin: 30px 0;">
+									<a href="${invoiceLink}" style="
+										display: inline-block;
+										padding: 12px 30px;
+										font-size: 16px;
+										color: white;
+										background-color: #3399cc;
+										text-decoration: none;
+										border-radius: 5px;
+										font-weight: bold;
+									">
+										View Invoice
+									</a>
+								</div>
+								<p style="font-size: 14px; color: #777; line-height: 1.6;">
+									If you have any questions or concerns, please don't hesitate to contact us.
+								</p>
+								<p style="font-size: 14px; color: #777; line-height: 1.6;">
+									Best regards,<br/>
+									Growinvoice Team
+								</p>
+							</div>
+						`;
+
+						await invoiceControllerInvoiceSentToMail(
+							{
+								email: customerEmail,
+								subject: `Payment Receipt - Invoice #${invoiceData?.invoice_number || invoiceId}`,
+								body: receiptBody,
+							},
+							{
+								id: invoiceId,
+							},
+						);
+					}
+				}
+			} catch (error) {
+				console.error("Error sending receipt email:", error);
+				// Don't show error to user as payment was successful
+			}
+		}
+
 		setOpenPaymentForm(false);
 		setSubmitting(false);
 	};
