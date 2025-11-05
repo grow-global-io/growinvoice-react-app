@@ -19,11 +19,11 @@ const CustomerDataTableList = ({ fromDate, toDate }: { fromDate: string; toDate:
 	const allCustomers = useCustomerControllerFindAll();
 
 	// Fetch ALL invoices to get all customers from invoice history (including deleted ones)
-	const allInvoices = useInvoiceControllerFindAll(undefined, {
-		query: {
-			enabled: true,
-		},
-	});
+	// const allInvoices = useInvoiceControllerFindAll(undefined, {
+	// 	query: {
+	// 		enabled: true,
+	// 	},
+	// });
 
 	// Fetch invoice data for the date range (for calculating stats)
 	const customerReportData = useReportsControllerGetCustomerReports(
