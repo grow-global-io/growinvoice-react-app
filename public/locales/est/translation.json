@@ -857,7 +857,7 @@
       "invoiceAmount": "Arve summa"
     },
     "customerData": {
-      "title": "Kliendi andmed",
+      "title": "Kõik Üles Laetud Kliendid",
       "customerName": "Kliendi nimi",
       "invoiceDate": "Arve kuupäev",
       "invoiceNumber": "Arve number",

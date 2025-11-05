@@ -227,7 +227,7 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 				},
 				{
 					path: "/reports/customerdata",
-					label: t("report.customerData.title", { defaultValue: "Customer Data" }),
+					label: t("report.customerData.title", { defaultValue: "All Customers Uploaded" }),
 				},
 				{ path: "/reports/profitloss", label: t("report.profitLoss") },
 				{

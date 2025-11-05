@@ -23,7 +23,7 @@ const CustomerData = () => {
 				mb={2}
 			>
 				<Typography variant="h3" fontWeight={"500"} textTransform={"capitalize"}>
-					{t("report.customerData.title", { defaultValue: "Customer Data" })}
+					{t("report.customerData.title", { defaultValue: "All Customers Uploaded" })}
 				</Typography>
 				<Box>
 					<Typography variant="h6" fontWeight={"500"} textTransform={"capitalize"}>

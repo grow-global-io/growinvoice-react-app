@@ -860,7 +860,7 @@
       "invoiceAmount": "Laskun summa"
     },
     "customerData": {
-      "title": "Asiakastiedot",
+      "title": "Kaikki Ladatut Asiakkaat",
       "customerName": "Asiakkaan nimi",
       "invoiceDate": "Laskun päiväys",
       "invoiceNumber": "Laskunumero",
