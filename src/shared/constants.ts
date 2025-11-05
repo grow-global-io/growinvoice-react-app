@@ -118,6 +118,7 @@ export class Constants {
 		"Mailed to customer": "info",
 		Viewed: "warning",
 		Paid: "success",
+		PartiallyPaid: "warning",
 		Unpaid: "warning",
 		Accepted: "success",
 		Rejected: "error",

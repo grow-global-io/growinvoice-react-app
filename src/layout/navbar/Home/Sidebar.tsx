@@ -220,10 +220,13 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 			icon: <SignalCellularAltOutlinedIcon />,
 			menuName: t("nav.reports"),
 			menuItems: [
-				{ path: "/reports/productsales", label: t("report.sales", { defaultValue: "Sales" }) },
+				{
+					path: "/reports/productsales",
+					label: t("report.sales", { defaultValue: "Products Sell" }),
+				},
 				{
 					path: "/reports/customersales",
-					label: t("customer.title") + " " + t("report.sales", { defaultValue: "Sales" }),
+					label: t("report.customer.title", { defaultValue: "All Invoice Report" }),
 				},
 				{
 					path: "/reports/customerdata",
