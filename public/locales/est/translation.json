@@ -830,7 +830,7 @@
   "report": {
     "title": "Aruanded",
     "profitLoss": "Kasum ja kahjum",
-    "sales": "Müük",
+    "sales": "Toodete Müük",
     "expensesLabel": "Kulud",
     "totalIncome": "Kogutulu",
     "totalExpenses": "Kogukulud",
@@ -850,7 +850,7 @@
       "invoiceAmount": "Arve summa"
     },
     "customer": {
-      "title": "Kliendi aruanne",
+      "title": "Kõik Arve Aruanne",
       "customerName": "Kliendi nimi",
       "invoiceDate": "Arve kuupäev",
       "invoiceNumber": "Arve number",

@@ -830,7 +830,7 @@
   "report": {
     "title": "Reports",
     "profitLoss": "Profit & Loss",
-    "sales": "Sales",
+    "sales": "Products Sell",
     "expensesLabel": "Expenses",
     "totalIncome": "Total Income",
     "totalExpenses": "Total Expenses",
@@ -846,7 +846,7 @@
       "invoiceAmount": "Invoice Amount"
     },
     "customer": {
-      "title": "Customer Report",
+      "title": "All Invoice Report",
       "customerName": "Customer Name",
       "invoiceDate": "Invoice Date",
       "invoiceNumber": "Invoice Number",

@@ -837,7 +837,7 @@
   "report": {
     "title": "Raportit",
     "profitLoss": "Tulos ja tappio",
-    "sales": "Myynti",
+    "sales": "Tuotteiden Myynti",
     "expensesLabel": "Kulut",
     "totalIncome": "Kokonaistulot",
     "totalExpenses": "Kokonaiskulut",
@@ -853,7 +853,7 @@
       "invoiceAmount": "Laskun summa"
     },
     "customer": {
-      "title": "Asiakasraportti",
+      "title": "Kaikki Laskuraportti",
       "customerName": "Asiakkaan nimi",
       "invoiceDate": "Laskun päiväys",
       "invoiceNumber": "Laskunumero",
