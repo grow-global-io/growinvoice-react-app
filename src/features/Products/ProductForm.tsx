@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, IconButton, Button, Divider } from "@mui/material";
+import { Box, Grid, Typography, IconButton, Button, Divider, TextField } from "@mui/material";
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { Constants } from "@shared/constants";
@@ -425,48 +425,76 @@ const ProductForm = () => {
 												render={(arrayHelpers) => (
 													<>
 														{values.priceBook && values.priceBook.length > 0 ? (
-															values.priceBook.map((_, index) => (
-																<Box key={index} sx={{ mb: 1 }}>
-																	<Grid container spacing={2} alignItems="center">
-																		<Grid item xs={5}>
-																			<Field
-																				name={`priceBook.${index}.currency_id`}
-																				label={t("productForm.currency")}
-																				component={AutocompleteField}
-																				options={currencyList?.data
-																					?.filter(
-																						(currency) =>
-																							currency.short_code === "EUR" ||
-																							currency.short_code === "INR",
-																					)
-																					?.map((currency) => ({
-																						value: currency.id,
-																						label: `${currency.short_code} - ${currency.name}`,
-																					}))}
-																				isRequired={true}
-																			/>
+															values.priceBook.map((_, index) => {
+																// Calculate tax percentage from selected taxes
+																const taxPercentage =
+																	taxCodes?.data
+																		?.filter((t) => values.tax?.includes(t.id))
+																		?.map((t) => t.percentage)
+																		?.reduce((acc, curr) => acc + curr, 0) ?? 0;
+
+																// Calculate sell price: Stock Price + (Stock Price * tax percentage / 100)
+																const stockPrice = values.priceBook[index]?.price || 0;
+																const sellPrice = stockPrice + (stockPrice * taxPercentage) / 100;
+
+																return (
+																	<Box key={index} sx={{ mb: 1 }}>
+																		<Grid container spacing={2} alignItems="center">
+																			<Grid item xs={4}>
+																				<Field
+																					name={`priceBook.${index}.currency_id`}
+																					label={t("productForm.currency")}
+																					component={AutocompleteField}
+																					options={currencyList?.data
+																						?.filter(
+																							(currency) =>
+																								currency.short_code === "EUR" ||
+																								currency.short_code === "INR",
+																						)
+																						?.map((currency) => ({
+																							value: currency.id,
+																							label: `${currency.short_code} - ${currency.name}`,
+																						}))}
+																					isRequired={true}
+																				/>
+																			</Grid>
+																			<Grid item xs={3}>
+																				<Field
+																					name={`priceBook.${index}.price`}
+																					component={TextFormField}
+																					label={t("productForm.stockPrice", {
+																						defaultValue: "Stock Price",
+																					})}
+																					type="number"
+																					isRequired={true}
+																					marginWholeTop={-0.1}
+																				/>
+																			</Grid>
+																			<Grid item xs={3}>
+																				<TextField
+																					fullWidth
+																					label={t("productForm.sellPrice", {
+																						defaultValue: "Selling Price",
+																					})?.toUpperCase()}
+																					type="number"
+																					value={sellPrice.toFixed(2)}
+																					disabled={true}
+																					variant="outlined"
+																					sx={{ mt: -0.1 }}
+																				/>
+																			</Grid>
+																			<Grid item xs={2}>
+																				<CustomIconButton
+																					src={CloseIcon}
+																					buttonType="delete"
+																					iconColor="error"
+																					onClick={() => arrayHelpers.remove(index)}
+																				/>
+																			</Grid>
 																		</Grid>
-																		<Grid item xs={5}>
-																			<Field
-																				name={`priceBook.${index}.price`}
-																				component={TextFormField}
-																				label={t("productForm.price")}
-																				type="number"
-																				isRequired={true}
-																				marginWholeTop={-0.1}
-																			/>
-																		</Grid>
-																		<Grid item xs={2}>
-																			<CustomIconButton
-																				src={CloseIcon}
-																				buttonType="delete"
-																				iconColor="error"
-																				onClick={() => arrayHelpers.remove(index)}
-																			/>
-																		</Grid>
-																	</Grid>
-																</Box>
-															))
+																	</Box>
+																);
+															})
 														) : (
 															<Typography variant="body2" color="error">
 																{t("productForm.noPriceBook")}

@@ -335,7 +335,7 @@ export default function FullFeaturedCrudGrid({
 		},
 		{
 			field: "price",
-			headerName: t("invoice.table.price", { defaultValue: "Price" }),
+			headerName: t("invoice.table.stockPrice", { defaultValue: "Stock Price" }),
 			minWidth: 150,
 			editable: true,
 			preProcessEditCellProps: (params) => {
@@ -487,7 +487,7 @@ export default function FullFeaturedCrudGrid({
 		},
 		{
 			field: "total",
-			headerName: t("invoice.table.amount", { defaultValue: "Amount" }),
+			headerName: t("invoice.table.sellingPrice", { defaultValue: "Selling Price" }),
 			minWidth: 150,
 			editable: true,
 			renderEditCell: (params) => (
