@@ -48,7 +48,7 @@ export default function FullFeaturedCrudGrid({
 	// eslint-disable-next-line
 	formik: FormikProps<any>;
 }) {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const currency_id = formik?.values?.currency_id;
 	const taxCodes = useTaxcodeControllerFindAll();
 	const hsnCodes = useHsncodeControllerFindAll();
@@ -161,6 +161,8 @@ export default function FullFeaturedCrudGrid({
 		setErrorText(undefined);
 		const randomInRange = Math.floor(Math.random() * (10000 - 1 + 1)) + 1;
 		const id: string = rows.length + 2 + randomInRange + "";
+		// Auto-select first tax if available
+		const defaultTaxes = taxCodes?.data && taxCodes.data.length > 0 ? [taxCodes.data[0].id] : [];
 		setRows((oldRows) => [
 			...oldRows,
 			{
@@ -170,7 +172,7 @@ export default function FullFeaturedCrudGrid({
 				price: 0,
 				total: 0,
 				hsnCode_id: "",
-				taxes: [],
+				taxes: defaultTaxes,
 				isNew: true,
 				isEditPosible: false,
 				isEditble: true,
@@ -333,7 +335,7 @@ export default function FullFeaturedCrudGrid({
 		},
 		{
 			field: "price",
-			headerName: t("invoice.table.price", { defaultValue: "Price" }),
+			headerName: t("invoice.table.stockPrice", { defaultValue: "Stock Price" }),
 			minWidth: 150,
 			editable: true,
 			preProcessEditCellProps: (params) => {
@@ -400,7 +402,9 @@ export default function FullFeaturedCrudGrid({
 		},
 		{
 			field: "taxes",
-			headerName: t("invoice.table.taxPercent", { defaultValue: "Tax/GST %" }),
+			headerName: (i18n.language || "en").toLowerCase().startsWith("fi")
+				? t("invoice.table.vatPercent", { defaultValue: "VAT %" })
+				: t("invoice.table.taxPercent", { defaultValue: "Tax/GST %" }),
 			minWidth: 150,
 			editable: true,
 			renderEditCell: (params) => {
@@ -483,7 +487,7 @@ export default function FullFeaturedCrudGrid({
 		},
 		{
 			field: "total",
-			headerName: t("invoice.table.amount", { defaultValue: "Amount" }),
+			headerName: t("invoice.table.sellingPrice", { defaultValue: "Selling Price" }),
 			minWidth: 150,
 			editable: true,
 			renderEditCell: (params) => (

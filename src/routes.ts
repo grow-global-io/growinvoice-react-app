@@ -21,6 +21,7 @@ import ApiCredentialsPage from "@pages/ApiCredentialsPage";
 import InvoiceDetailPage from "@pages/InvoiceDetailPage";
 import QuotationDetailPage from "@pages/QuotationDetailPage";
 import InvoiceTemplatePage from "@pages/InvoiceTemplatePage";
+import OrdersPage from "@pages/OrdersPage";
 import DashboardPage from "@pages/DashboardPage";
 import QuotationSettingsPage from "@pages/QuotationSettingsPage";
 import QuotationTemplatePage from "@pages/QuotationTemplatePage";
@@ -37,6 +38,7 @@ import TaxCodeListPage from "@pages/TaxCodeListPage";
 import ProductUnitListPage from "@pages/ProductUnitListPage";
 import ProductSalesPage from "@pages/ProductSalesPage";
 import CustomerSalesPage from "@pages/CustomerSalesPage";
+import CustomerDataPage from "@pages/CustomerDataPage";
 import ProfitLossPage from "@pages/ProfitLossPage";
 import ExpensesPage from "@pages/ExpensesPage";
 import VendorsPage from "@pages/VendorsPage";
@@ -90,6 +92,10 @@ export const protectedRoutes: Route[] = [
 	{
 		path: "/",
 		Component: OveviewPage,
+	},
+	{
+		path: "/orders",
+		Component: OrdersPage,
 	},
 	{
 		path: "/ai-store",
@@ -254,6 +260,10 @@ export const protectedRoutes: Route[] = [
 	{
 		path: "/reports/customersales",
 		Component: CustomerSalesPage,
+	},
+	{
+		path: "/reports/customerdata",
+		Component: CustomerDataPage,
 	},
 	{
 		path: "/reports/profitloss",

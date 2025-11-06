@@ -115,7 +115,7 @@
     "status": {
       "draft": "Draft",
       "due": "Due",
-      "mailedtocustomer": "Mailed to customer",
+      "mailedtocustomer": "Receipt Sent",
       "viewed": "Viewed",
       "paid": "Paid",
       "accepted": "Accepted",
@@ -250,6 +250,7 @@
     "title": "Customers",
     "create": "Create Customer",
     "edit": "Edit Customer",
+    "createInvoice": "Create Invoice",
     "name": "Name",
     "email": "Email",
     "phone": "Phone",
@@ -336,7 +337,10 @@
       "product": "Product",
       "qty": "QTY",
       "price": "Price",
+      "stockPrice": "Stock Price",
+      "sellingPrice": "Selling Price",
       "taxPercent": "Tax/GST %",
+      "vatPercent": "VAT %",
       "hsnCode": "HSN Code",
       "amount": "Amount",
       "saveRecord": "Save Record",
@@ -365,7 +369,7 @@
     "status": {
       "draft": "Draft",
       "due": "Due",
-      "mailedtocustomer": "Mailed to customer",
+      "mailedtocustomer": "Receipt Sent",
       "viewed": "Viewed",
       "paid": "Paid",
       "accepted": "Accepted",
@@ -475,6 +479,7 @@
       "Yearly": "Yearly"
     },
     "notes": "Notes",
+    "defaultNote": "Thank you for shopping with us. Have a Great Day.",
     "paymentDetails": "Payment Details",
     "addPayment": "Add Payment",
     "accountNumber": "Account Number",
@@ -486,6 +491,7 @@
     "preview": "Preview",
     "saveInvoice": "Save Invoice",
     "invoicePreview": "Invoice Preview",
+    "saveAndSendInvoice": "Save and Send Invoice",
     "validation": {
       "currencyRequired": "Currency is required",
       "customerRequired": "Customer is required",
@@ -506,6 +512,13 @@
       "templateRequired": "Template is required",
       "atLeastOneProduct": "At least one product is required",
       "fillAllProductDetails": "Fullfill all the product details"
+    },
+    "errors": {
+      "saveFailed": "Failed to save invoice",
+      "saveAndSendFailed": "Failed to save and send invoice"
+    },
+    "success": {
+      "saveAndSend": "Invoice saved and sent successfully!"
     }
   },
   "product": {
@@ -567,6 +580,8 @@
     "priceBook": "Price Book",
     "currency": "Currency",
     "price": "Price",
+    "stockPrice": "Stock Price",
+    "sellPrice": "Selling Price",
     "noPriceBook": "No price book entries found. Please add at least one.",
     "addPrice": "Add Price",
     "description": "Description",
@@ -667,6 +682,20 @@
       "swiftRequired": "Swift code is required",
       "upiRequired": "UPI ID is required",
       "userRequired": "User is required"
+    },
+    "types": {
+      "upi": "UPI",
+      "europeanbank": "European Bank",
+      "swiftcode": "Swift Code",
+      "paypal": "PayPal",
+      "stripe": "Stripe",
+      "razorpay": "Razorpay",
+      "mollie": "Mollie",
+      "manual": "Manual",
+      "cash": "Cash",
+      "cheque": "Cheque",
+      "growlimitless": "Grow Limitless",
+      "indianbanks": "Indian Banks"
     }
   },
   "gatewayDetails": {
@@ -805,7 +834,7 @@
   "report": {
     "title": "Reports",
     "profitLoss": "Profit & Loss",
-    "sales": "Sales",
+    "sales": "Products Sell",
     "expensesLabel": "Expenses",
     "totalIncome": "Total Income",
     "totalExpenses": "Total Expenses",
@@ -821,7 +850,14 @@
       "invoiceAmount": "Invoice Amount"
     },
     "customer": {
-      "title": "Customer Report",
+      "title": "All Invoice Report",
+      "customerName": "Customer Name",
+      "invoiceDate": "Invoice Date",
+      "invoiceNumber": "Invoice Number",
+      "invoiceAmount": "Invoice Amount"
+    },
+    "customerData": {
+      "title": "All Customers Uploaded",
       "customerName": "Customer Name",
       "invoiceDate": "Invoice Date",
       "invoiceNumber": "Invoice Number",
@@ -1301,6 +1337,36 @@
       "successMessage": "Payment for plan {{plan}} is successful",
       "successMessageGeneric": "Your payment has been completed successfully"
     }
+  },
+  "orders": {
+    "title": "My Orders",
+    "table": {
+      "customerName": "Customer Name",
+      "customerEmail": "Customer Email",
+      "customerAddress": "Customer Address",
+      "invoiceNumber": "Invoice Number",
+      "invoiceStatus": "Invoice Status",
+      "orderStatus": "Order Status",
+      "shippingStatus": "Shipment Status",
+      "shippingStatus.shipped": "Shipped",
+      "shippingStatus.toBeShipped": "To be shipped",
+      "shippingRefNumber": "Shipping Reference Number",
+      "editShipping": "Edit Shipping Details",
+      "paymentStatus": "Payment Status",
+      "paymentMode": "Payment Mode",
+      "total": "Total"
+    },
+    "dialog": {
+      "editShipping": "Edit Shipping Details",
+      "shippingRefPlaceholder": "Enter shipping reference number"
+    },
+    "summary": {
+      "totalOrders": "Total Orders",
+      "totalPaidInvoices": "Total Paid",
+      "totalAmountPaid": "Total Amount Paid",
+      "totalDueAmount": "Total Due Amount"
+    },
+    "toBeFilled": "to be filled"
   }
 }
 

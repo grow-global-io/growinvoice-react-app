@@ -1,12 +1,11 @@
 import { Box, Typography } from "@mui/material";
-import "react-modern-calendar-datepicker/lib/DatePicker.css";
-import CustomerReportTalbeList from "./CustomerReportTalbeList";
+import CustomerDataTableList from "./CustomerDataTableList";
 import { DateCalander } from "@shared/components/DateCalendar";
 import Loader from "@shared/components/Loader";
 import ReportsHooks from "./reportHooks/ReportsHooks";
 import { useTranslation } from "react-i18next";
 
-const CustomerSales = () => {
+const CustomerData = () => {
 	const { t } = useTranslation();
 	const { fromDate, toDate, dateRange, dayRange, setDayRange } = ReportsHooks();
 	if (dateRange?.isLoading || dateRange?.isRefetching) {
@@ -24,7 +23,7 @@ const CustomerSales = () => {
 				mb={2}
 			>
 				<Typography variant="h3" fontWeight={"500"} textTransform={"capitalize"}>
-					{t("report.customer.title", { defaultValue: "All Invoice Report" })}
+					{t("report.customerData.title", { defaultValue: "All Customers Uploaded" })}
 				</Typography>
 				<Box>
 					<Typography variant="h6" fontWeight={"500"} textTransform={"capitalize"}>
@@ -37,10 +36,10 @@ const CustomerSales = () => {
 				sx={{ width: { xs: "85vw", sm: "auto" }, overflowX: { xs: "scroll", sm: "visible" } }}
 				my={2}
 			>
-				<CustomerReportTalbeList fromDate={fromDate} toDate={toDate} />
+				<CustomerDataTableList fromDate={fromDate} toDate={toDate} />
 			</Box>
 		</>
 	);
 };
 
-export default CustomerSales;
+export default CustomerData;

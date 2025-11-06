@@ -59,13 +59,21 @@ const InvoicesManagementList = () => {
 			minWidth: 150,
 			renderCell: (params) => {
 				const statusKey = params.value?.toLowerCase().replace(/\s+/g, "") || "";
-				const translatedStatus = t(`invoice.status.${statusKey}`, {
+				let translatedStatus = t(`invoice.status.${statusKey}`, {
 					defaultValue: params.value || "",
 				});
+				// Explicitly map "Mailed to customer" to "Receipt Sent"
+				if (params.value === "Mailed to customer") {
+					translatedStatus = t("invoice.status.mailedtocustomer", { defaultValue: "Receipt Sent" });
+				}
 				return (
 					<Chip
 						label={translatedStatus}
-						color={Constants?.invoiceStatusColorEnums[params.value] ?? "default"}
+						color={
+							Constants?.invoiceStatusColorEnums[params.value] ??
+							Constants?.invoiceStatusColorEnums["Receipt Sent"] ??
+							"default"
+						}
 						variant="filled"
 					/>
 				);

@@ -9,6 +9,8 @@ import {
 	getInvoiceControllerOutstandingReceivableQueryKey,
 	getInvoiceControllerTestQueryKey,
 	getInvoiceControllerTotalDueQueryKey,
+	invoiceControllerInvoicePublicFindOne,
+	invoiceControllerInvoiceSentToMail,
 	useInvoiceControllerBulkInvoiceSentToMail,
 	useInvoiceControllerMarkedAsMailed,
 	useInvoiceControllerMarkedAsPaid,
@@ -240,6 +242,72 @@ export const useInvoiceHook = () => {
 		navigate(`/invoice/invoicetemplate/${invoiceId}`);
 	};
 
+	// Helper function to send receipt email
+	const sendReceiptEmail = async (invoiceId: string) => {
+		try {
+			// Fetch invoice data to get customer email
+			const invoiceData = await invoiceControllerInvoicePublicFindOne(invoiceId);
+
+			const customerEmail = invoiceData?.customer?.email;
+			if (!customerEmail) {
+				console.warn("Customer email not found, receipt not sent");
+				return;
+			}
+
+			// Send receipt email
+			const invoiceLink = `${window.location.origin}/invoice/invoicetemplate/${invoiceId}`;
+			const receiptBody = `
+				<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+					<h2 style="color: #333; text-align: center;">Payment Receipt</h2>
+					<p style="font-size: 16px; color: #555; line-height: 1.6;">
+						Dear ${invoiceData?.customer?.name || "Customer"},
+					</p>
+					<p style="font-size: 16px; color: #555; line-height: 1.6;">
+						Thank you! Your invoice <strong>#${invoiceData?.invoice_number || invoiceId}</strong> has been successfully paid.
+					</p>
+					<p style="font-size: 16px; color: #555; line-height: 1.6;">
+						We appreciate your prompt payment and your business with us.
+					</p>
+					<div style="text-align: center; margin: 30px 0;">
+						<a href="${invoiceLink}" style="
+							display: inline-block;
+							padding: 12px 30px;
+							font-size: 16px;
+							color: white;
+							background-color: #3399cc;
+							text-decoration: none;
+							border-radius: 5px;
+							font-weight: bold;
+						">
+							View Invoice
+						</a>
+					</div>
+					<p style="font-size: 14px; color: #777; line-height: 1.6;">
+						If you have any questions or concerns, please don't hesitate to contact us.
+					</p>
+					<p style="font-size: 14px; color: #777; line-height: 1.6;">
+						Best regards,<br/>
+						Growinvoice Team
+					</p>
+				</div>
+			`;
+
+			await invoiceControllerInvoiceSentToMail(
+				{
+					email: customerEmail,
+					subject: `Payment Receipt - Invoice #${invoiceData?.invoice_number || invoiceId}`,
+					body: receiptBody,
+				},
+				{
+					id: invoiceId,
+				},
+			);
+		} catch (error) {
+			console.error("Error sending receipt email:", error);
+			// Don't show error to user as payment was successful
+		}
+	};
+
 	const handlePaid = async (invoiceId: string) => {
 		await markedPaid.mutateAsync({
 			params: {
@@ -247,6 +315,9 @@ export const useInvoiceHook = () => {
 			},
 		});
 		refetchQueries(invoiceId);
+
+		// Auto-send receipt email to customer
+		await sendReceiptEmail(invoiceId);
 	};
 
 	const handleMailedSent = async (invoiceId: string) => {
@@ -270,5 +341,6 @@ export const useInvoiceHook = () => {
 		handleRazorPayPayment,
 		handleRedirectGllPayment,
 		handleRazorPayPaymentForPlans,
+		sendReceiptEmail,
 	};
 };

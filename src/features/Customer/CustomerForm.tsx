@@ -43,14 +43,14 @@ import { useAuthControllerStatus } from "@api/services/auth";
 import { AlertService } from "@shared/services/AlertService";
 // import { CheckBoxFormField } from "@shared/components/FormFields/CheckBoxFormField";
 import { useTranslation } from "react-i18next";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 type CustomerFormProps = CreateCustomerWithAddressDto & {
 	isBillingAddressRequired?: boolean;
 };
 
 const CustomerForm = () => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const queryClient = useQueryClient();
 	const countryFindAll = useCurrencyControllerFindCountries();
 	const createCustomer = useCustomerControllerCreate();
@@ -147,11 +147,14 @@ const CustomerForm = () => {
 			state_id: yup
 				.string()
 				.test("billing-state", t("customerForm.validation.stateRequired"), function (value) {
+					const countryId = (this.parent as any)?.country_id as string | undefined;
+					const country = countryFindAll?.data?.find((c) => c.id === countryId);
+					const isFinland = country?.code === "FI" || /finland/i.test(country?.name ?? "");
 					const { isBillingAddressRequired } = this.options.context as {
 						isBillingAddressRequired: boolean;
 					};
-					if (isBillingAddressRequired) {
-						return value !== undefined && value.trim() !== "";
+					if (isBillingAddressRequired && !isFinland) {
+						return value !== undefined && (value as string).trim() !== "";
 					}
 					return true;
 				}),
@@ -207,12 +210,15 @@ const CustomerForm = () => {
 			state_id: yup
 				.string()
 				.test("shipping-state", t("customerForm.validation.stateRequired"), function (value) {
+					const countryId = (this.parent as any)?.country_id as string | undefined;
+					const country = countryFindAll?.data?.find((c) => c.id === countryId);
+					const isFinland = country?.code === "FI" || /finland/i.test(country?.name ?? "");
 					const { isBillingAddressRequired } = this.options.context as {
 						isBillingAddressRequired: boolean;
 					};
-					if (isBillingAddressRequired) {
+					if (isBillingAddressRequired && !isFinland) {
 						// if billing address is required, shipping state is also required
-						return value !== undefined && value.trim() !== "";
+						return value !== undefined && (value as string).trim() !== "";
 					}
 					return true;
 				}),
@@ -317,6 +323,23 @@ const CustomerForm = () => {
 			<Box sx={{ mb: 2, mt: 2 }}>
 				<Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit}>
 					{({ errors, values, setFieldValue }) => {
+						// If Finnish locale, prefill country as Finland (Suomi) only when empty
+						const hasPresetCountryRef = useRef(false);
+						useEffect(() => {
+							if (hasPresetCountryRef.current) return; // only once
+							if (editValues) return; // don't override when editing
+							if (!i18n.language?.toLowerCase().startsWith("fi")) return;
+							const fiCountry = countryFindAll?.data?.find(
+								(c) => c.code === "FI" || /finland|suomi/i.test(c.name ?? ""),
+							);
+							if (!fiCountry) return;
+							// preset only if both empty
+							if (!values?.billingDetails?.country_id && !values?.shippingDetails?.country_id) {
+								setFieldValue("billingDetails.country_id", fiCountry.id, false);
+								setFieldValue("shippingDetails.country_id", fiCountry.id, false);
+								hasPresetCountryRef.current = true;
+							}
+						}, [i18n.language, countryFindAll?.data]);
 						// Automatically set isBillingAddressRequired to true when any billing address field changes
 						useEffect(() => {
 							const billingFields = [
@@ -479,7 +502,14 @@ const CustomerForm = () => {
 														countryFieldName="billingDetails.country_id"
 														stateFieldName="billingDetails.state_id"
 														stateLabel={t("customerForm.state")}
-														isRequired={true}
+														isRequired={(() => {
+															const country = countryFindAll?.data?.find(
+																(c) => c.id === values?.billingDetails?.country_id,
+															);
+															const isFinland =
+																country?.code === "FI" || /finland/i.test(country?.name ?? "");
+															return !isFinland; // not required for Finland
+														})()}
 													/>
 												</Grid>
 												<Grid item xs={12} sm={6}>
@@ -529,16 +559,26 @@ const CustomerForm = () => {
 										<Grid item xs={12} sm={6} textAlign={{ xs: "start", sm: "center" }}>
 											<FormControl>
 												<FormControlLabel
-													disabled={
-														(errors.billingDetails !== undefined &&
+													disabled={(() => {
+														const hasErrors =
+															errors.billingDetails !== undefined &&
 															errors.billingDetails !== null &&
-															Object.keys(errors.billingDetails).length > 0) ||
-														values?.billingDetails?.address === "" ||
-														values.billingDetails?.city === "" ||
-														values.billingDetails?.country_id === "" ||
-														values.billingDetails?.state_id === "" ||
-														values.billingDetails?.zip === ""
-													}
+															Object.keys(errors.billingDetails as any).length > 0;
+														const billing = values?.billingDetails ?? ({} as any);
+														const country = countryFindAll?.data?.find(
+															(c) => c.id === billing.country_id,
+														);
+														const isFinland =
+															country?.code === "FI" || /finland/i.test(country?.name ?? "");
+														const isStateMissing = isFinland ? false : billing.state_id === "";
+														const isAnyMandatoryMissing =
+															billing.address === "" ||
+															billing.city === "" ||
+															billing.country_id === "" ||
+															isStateMissing ||
+															billing.zip === "";
+														return hasErrors || isAnyMandatoryMissing;
+													})()}
 													control={<Checkbox />}
 													onClick={(e: React.MouseEvent<HTMLLabelElement, MouseEvent>) => {
 														const target = e.target as HTMLInputElement;
@@ -584,7 +624,14 @@ const CustomerForm = () => {
 													countryFieldName="shippingDetails.country_id"
 													stateFieldName="shippingDetails.state_id"
 													stateLabel={t("customerForm.state")}
-													isRequired={true}
+													isRequired={(() => {
+														const country = countryFindAll?.data?.find(
+															(c) => c.id === values?.shippingDetails?.country_id,
+														);
+														const isFinland =
+															country?.code === "FI" || /finland/i.test(country?.name ?? "");
+														return !isFinland;
+													})()}
 												/>
 											</Grid>
 											<Grid item xs={12} sm={6}>

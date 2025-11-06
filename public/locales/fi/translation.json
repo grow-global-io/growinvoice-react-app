@@ -115,7 +115,7 @@
     "status": {
       "draft": "Luonnos",
       "due": "Erääntynyt",
-      "mailedtocustomer": "Lähetetty asiakkaalle",
+      "mailedtocustomer": "Kuitti lähetetty",
       "viewed": "Katsottu",
       "paid": "Maksettu",
       "accepted": "Hyväksytty",
@@ -250,6 +250,7 @@
     "title": "Asiakkaat",
     "create": "Luo asiakas",
     "edit": "Muokkaa asiakasta",
+    "createInvoice": "Luo lasku",
     "name": "Nimi",
     "email": "Sähköposti",
     "phone": "Puhelin",
@@ -342,7 +343,10 @@
       "product": "Tuote",
       "qty": "Määrä",
       "price": "Hinta",
+      "stockPrice": "Varastohinta",
+      "sellingPrice": "Myyntihinta",
       "taxPercent": "Vero %",
+      "vatPercent": "ALV %",
       "hsnCode": "HSN-koodi",
       "amount": "Summa",
       "saveRecord": "Tallenna rivi",
@@ -371,7 +375,7 @@
     "status": {
       "draft": "Luonnos",
       "due": "Erääntynyt",
-      "mailedtocustomer": "Lähetetty asiakkaalle",
+      "mailedtocustomer": "Kuitti lähetetty",
       "viewed": "Katsottu",
       "paid": "Maksettu",
       "accepted": "Hyväksytty",
@@ -482,6 +486,7 @@
       "Yearly": "Vuosittain"
     },
     "notes": "Muistiinpanot",
+    "defaultNote": "Kiitos ostoksistasi. Mukavaa päivää!",
     "paymentDetails": "Maksutiedot",
     "addPayment": "Lisää maksu",
     "accountNumber": "Tilinumero",
@@ -493,6 +498,7 @@
     "preview": "Esikatselu",
     "saveInvoice": "Tallenna lasku",
     "invoicePreview": "Laskun esikatselu",
+    "saveAndSendInvoice": "Tallenna ja lähetä lasku",
     "validation": {
       "currencyRequired": "Valuutta on pakollinen",
       "customerRequired": "Asiakas on pakollinen",
@@ -513,6 +519,13 @@
       "templateRequired": "Pohja on pakollinen",
       "atLeastOneProduct": "Vähintään yksi tuote vaaditaan",
       "fillAllProductDetails": "Täytä kaikki tuotetiedot"
+    },
+    "errors": {
+      "saveFailed": "Laskun tallentaminen epäonnistui",
+      "saveAndSendFailed": "Laskun tallentaminen ja lähettäminen epäonnistui"
+    },
+    "success": {
+      "saveAndSend": "Lasku tallennettu ja lähetetty onnistuneesti!"
     }
   },
   "product": {
@@ -574,6 +587,8 @@
     "priceBook": "Hinnasto",
     "currency": "Valuutta",
     "price": "Hinta",
+    "stockPrice": "Varastohinta",
+    "sellPrice": "Myyntihinta",
     "noPriceBook": "Hinnastoja ei löytynyt. Lisää vähintään yksi.",
     "addPrice": "Lisää hinta",
     "description": "Kuvaus",
@@ -674,6 +689,20 @@
       "swiftRequired": "Swift-koodi on pakollinen",
       "upiRequired": "UPI ID on pakollinen",
       "userRequired": "Käyttäjä on pakollinen"
+    },
+    "types": {
+      "upi": "UPI",
+      "europeanbank": "Eurooppalainen pankki",
+      "swiftcode": "Swift-koodi",
+      "paypal": "PayPal",
+      "stripe": "Stripe",
+      "razorpay": "Razorpay",
+      "mollie": "Mollie",
+      "manual": "Manuaalinen",
+      "cash": "Käteinen",
+      "cheque": "Shekki",
+      "growlimitless": "Grow Limitless",
+      "indianbanks": "Intialaiset pankit"
     }
   },
   "gatewayDetails": {
@@ -812,7 +841,7 @@
   "report": {
     "title": "Raportit",
     "profitLoss": "Tulos ja tappio",
-    "sales": "Myynti",
+    "sales": "Tuotteiden Myynti",
     "expensesLabel": "Kulut",
     "totalIncome": "Kokonaistulot",
     "totalExpenses": "Kokonaiskulut",
@@ -828,7 +857,14 @@
       "invoiceAmount": "Laskun summa"
     },
     "customer": {
-      "title": "Asiakasraportti",
+      "title": "Kaikki Laskuraportti",
+      "customerName": "Asiakkaan nimi",
+      "invoiceDate": "Laskun päiväys",
+      "invoiceNumber": "Laskunumero",
+      "invoiceAmount": "Laskun summa"
+    },
+    "customerData": {
+      "title": "Kaikki Ladatut Asiakkaat",
       "customerName": "Asiakkaan nimi",
       "invoiceDate": "Laskun päiväys",
       "invoiceNumber": "Laskunumero",
@@ -1320,5 +1356,35 @@
       "successMessage": "Maksu paketille {{plan}} onnistui",
       "successMessageGeneric": "Maksusi on suoritettu onnistuneesti"
     }
+  },
+  "orders": {
+    "title": "Omat tilaukset",
+    "table": {
+      "customerName": "Asiakkaan nimi",
+      "customerEmail": "Asiakkaan sähköposti",
+      "customerAddress": "Asiakkaan osoite",
+      "invoiceNumber": "Laskunumero",
+      "invoiceStatus": "Laskun tila",
+      "orderStatus": "Tilauksen tila",
+      "shippingStatus": "Toimituksen tila",
+      "shippingStatus.shipped": "Lähetetty",
+      "shippingStatus.toBeShipped": "Lähetettävä",
+      "shippingRefNumber": "Toimitusviitenumero",
+      "editShipping": "Muokkaa toimitusyksityiskohtia",
+      "paymentStatus": "Maksun tila",
+      "paymentMode": "Maksutapa",
+      "total": "Yhteensä"
+    },
+    "dialog": {
+      "editShipping": "Muokkaa toimitusyksityiskohtia",
+      "shippingRefPlaceholder": "Syötä toimitusviitenumero"
+    },
+    "summary": {
+      "totalOrders": "Tilaukset yhteensä",
+      "totalPaidInvoices": "Maksetut yhteensä",
+      "totalAmountPaid": "Maksettu summa yhteensä",
+      "totalDueAmount": "Maksettava summa yhteensä"
+    },
+    "toBeFilled": "täydennettävä"
   }
 }
