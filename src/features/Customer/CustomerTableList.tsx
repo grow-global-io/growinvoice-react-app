@@ -20,6 +20,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { type GetCustomerWithAddressDto } from "@api/services/models";
+import { CustomToolbar } from "@shared/components/CustomToolbar";
 
 const CustomerTableList = () => {
 	const { t } = useTranslation();
@@ -202,6 +203,23 @@ const CustomerTableList = () => {
 				localeText={{
 					toolbarQuickFilterPlaceholder: t("common.search", { defaultValue: "Search" }),
 					noRowsLabel: t("table.noRows", { defaultValue: "No rows" }),
+				}}
+				slots={{
+					toolbar: () => {
+						return (
+							<CustomToolbar
+								rows={CustomerData?.data?.map((item) => ({
+									"Customer Name": item.name,
+									"Contact Email": item.email,
+									"Contact Number": item.phone,
+									"Total Invoices": item._count?.invoice,
+									"Total Amount Due's": item.totalDue,
+									"Customer Type": item.option,
+									"Phone Number": item.phone,
+								}))}
+							/>
+						);
+					},
 				}}
 			/>
 			{/* <CustomerView open={open} handleClose={handleClose} customerId={viewCustomerId ?? ""} /> */}
