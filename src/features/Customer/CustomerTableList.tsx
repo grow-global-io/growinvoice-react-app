@@ -194,6 +194,22 @@ const CustomerTableList = () => {
 		return <Loader />;
 	}
 
+	const QuickSearchToolbar = () => (
+		<Box
+			sx={{
+				px: 1,
+				pb: 0,
+				float: "left",
+			}}
+		>
+			<GridToolbarQuickFilter
+				variant="outlined"
+				quickFilterParser={(input) => input.split(/\s+/).filter(Boolean)}
+				placeholder={t("common.search", { defaultValue: "Search" }) as string}
+			/>
+		</Box>
+	);
+
 	return (
 		<Box>
 			<DataGrid
@@ -201,21 +217,7 @@ const CustomerTableList = () => {
 				rows={CustomerData?.data ?? []}
 				columns={columns}
 				slots={{
-					toolbar: () => (
-						<Box
-							sx={{
-								px: 1,
-								pb: 0,
-								float: "left",
-							}}
-						>
-							<GridToolbarQuickFilter
-								variant="outlined"
-								quickFilterParser={(input) => input.split(/\s+/).filter(Boolean)}
-								placeholder={t("common.search", { defaultValue: "Search" }) as string}
-							/>
-						</Box>
-					),
+					toolbar: QuickSearchToolbar,
 				}}
 				localeText={{
 					toolbarQuickFilterPlaceholder: t("common.search", { defaultValue: "Search" }),
