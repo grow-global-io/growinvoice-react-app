@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef, GridToolbarQuickFilter } from "@mui/x-data-grid";
 import { Chip, Tooltip, Typography } from "@mui/material";
 import {
 	getCustomerControllerFindAllQueryKey,
@@ -20,6 +20,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { type GetCustomerWithAddressDto } from "@api/services/models";
+import { useMemo } from "react";
 import { CustomToolbar } from "@shared/components/CustomToolbar";
 
 const CustomerTableList = () => {
@@ -194,12 +195,37 @@ const CustomerTableList = () => {
 		return <Loader />;
 	}
 
+	// QuickSearchToolbar component for customer list (search bar)
+	// Memoized to prevent unnecessary re-renders
+	const QuickSearchToolbar = useMemo(() => {
+		return () => {
+			return (
+				<Box
+					sx={{
+						px: 1,
+						pb: 0,
+						float: "left",
+					}}
+				>
+					<GridToolbarQuickFilter
+						variant="outlined"
+						quickFilterParser={(input) => input.split(/\s+/).filter(Boolean)}
+						placeholder={t("common.search", { defaultValue: "Search" }) as string}
+					/>
+				</Box>
+			);
+		};
+	}, [t]);
+
 	return (
 		<Box>
 			<DataGrid
 				autoHeight
 				rows={CustomerData?.data ?? []}
 				columns={columns}
+				slots={{
+					toolbar: QuickSearchToolbar,
+				}}
 				localeText={{
 					noRowsLabel: t("table.noRows", { defaultValue: "No rows" }),
 				}}
