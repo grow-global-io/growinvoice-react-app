@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, IconButton, Button, Divider, TextField } from "@mui/material";
+import { Box, Grid, Typography, IconButton, Button, Divider } from "@mui/material";
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { Constants } from "@shared/constants";
@@ -85,6 +85,11 @@ const schema = yup.object({
 					.typeError(() => i18n.t("productForm.validation.priceNumber"))
 					.required(() => i18n.t("productForm.validation.priceRequired"))
 					.min(0.0000000001, () => i18n.t("productForm.validation.priceMin")),
+				sellPrice: yup
+					.number()
+					.typeError(() => i18n.t("productForm.validation.priceNumber"))
+					.nullable()
+					.optional(),
 			}),
 		)
 		.required(() => i18n.t("productForm.validation.priceBookRequired"))
@@ -161,7 +166,9 @@ const ProductForm = () => {
 	const isIndia = user?.company?.[0]?.country?.name === "India";
 
 	const handleSubmit = async (
-		values: CreateProductWithTaxDto,
+		values: CreateProductWithTaxDto & {
+			priceBook: Array<{ currency_id: string; price: number; sellPrice?: number }>;
+		},
 		action: FormikHelpers<CreateProductWithTaxDto>,
 	) => {
 		if (isGetStartedDialogOpen()) {
@@ -171,9 +178,14 @@ const ProductForm = () => {
 			return;
 		}
 		action.setSubmitting(true);
+		// Remove sellPrice from priceBook before sending to API (API only accepts currency_id and price)
 		const transformedValues = {
 			...values,
 			hsnCode_id: values.hsnCode_id === "" ? null : values.hsnCode_id,
+			priceBook: values.priceBook.map(({ currency_id, price }) => ({
+				currency_id,
+				price,
+			})),
 		};
 		if (editValues) {
 			await updateProduct.mutateAsync({
@@ -218,14 +230,24 @@ const ProductForm = () => {
 			description: editValues?.description ?? "",
 			user_id: user?.id ?? "",
 			priceBook:
-				editValues?.priceBook?.map((price) => ({
-					currency_id: price.currency_id,
-					price: price.price,
-				})) ?? [],
+				editValues?.priceBook?.map((price) => {
+					// Calculate sellPrice from price and tax if editing
+					const taxPercentage =
+						taxCodes?.data
+							?.filter((t) => editValues?.tax?.map((tax: any) => tax.tax_id).includes(t.id))
+							?.map((t) => t.percentage)
+							?.reduce((acc, curr) => acc + curr, 0) ?? 0;
+					const calculatedSellPrice = price.price + (price.price * taxPercentage) / 100;
+					return {
+						currency_id: price.currency_id,
+						price: price.price,
+						sellPrice: calculatedSellPrice,
+					};
+				}) ?? [],
 			images: editValues?.images ?? [],
 			includeStore: editValues?.includeStore ?? false,
 		}),
-		[editValues, initialTaxValues, user?.id],
+		[editValues, initialTaxValues, user?.id, taxCodes?.data],
 	);
 
 	const {
@@ -433,9 +455,59 @@ const ProductForm = () => {
 																		?.map((t) => t.percentage)
 																		?.reduce((acc, curr) => acc + curr, 0) ?? 0;
 
-																// Calculate sell price: Stock Price + (Stock Price * tax percentage / 100)
-																const stockPrice = values.priceBook[index]?.price || 0;
-																const sellPrice = stockPrice + (stockPrice * taxPercentage) / 100;
+																// Recalculate sellPrice when tax changes (if stock price exists)
+																const currentStockPrice =
+																	typeof values.priceBook[index]?.price === "number"
+																		? values.priceBook[index]?.price
+																		: parseFloat(String(values.priceBook[index]?.price || 0)) || 0;
+																if (currentStockPrice > 0) {
+																	const calculatedSellPrice =
+																		taxPercentage > 0
+																			? Math.round(
+																					currentStockPrice * (1 + taxPercentage / 100) * 100,
+																				) / 100
+																			: Math.round(currentStockPrice * 100) / 100;
+																	// Only update if different to avoid infinite loops
+																	const priceBookItem = values.priceBook[index] as any;
+																	const currentSellPrice =
+																		parseFloat(String(priceBookItem?.sellPrice || 0)) || 0;
+																	if (Math.abs(calculatedSellPrice - currentSellPrice) > 0.01) {
+																		setFieldValue(
+																			`priceBook.${index}.sellPrice`,
+																			calculatedSellPrice,
+																		);
+																	}
+																}
+
+																// Handler for Stock Price change
+																const handleStockPriceChange = (value: string) => {
+																	const newStockPrice =
+																		Math.round((parseFloat(value) || 0) * 100) / 100; // Round to 2 decimal places
+																	// Calculate sell price: Stock Price * (1 + tax percentage / 100)
+																	const newSellPrice =
+																		taxPercentage > 0
+																			? Math.round(
+																					newStockPrice * (1 + taxPercentage / 100) * 100,
+																				) / 100
+																			: newStockPrice;
+																	setFieldValue(`priceBook.${index}.price`, newStockPrice);
+																	setFieldValue(`priceBook.${index}.sellPrice`, newSellPrice);
+																};
+
+																// Handler for Selling Price change
+																const handleSellPriceChange = (value: string) => {
+																	const newSellPrice =
+																		Math.round((parseFloat(value) || 0) * 100) / 100; // Round to 2 decimal places
+																	// Calculate stock price: Selling Price / (1 + tax percentage / 100)
+																	const newStockPrice =
+																		taxPercentage > 0
+																			? Math.round(
+																					(newSellPrice / (1 + taxPercentage / 100)) * 100,
+																				) / 100
+																			: newSellPrice;
+																	setFieldValue(`priceBook.${index}.sellPrice`, newSellPrice);
+																	setFieldValue(`priceBook.${index}.price`, newStockPrice);
+																};
 
 																return (
 																	<Box key={index} sx={{ mb: 1 }}>
@@ -466,21 +538,28 @@ const ProductForm = () => {
 																						defaultValue: "Stock Price",
 																					})}
 																					type="number"
+																					step="0.01"
 																					isRequired={true}
 																					marginWholeTop={-0.1}
+																					onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+																						handleStockPriceChange(e.target.value);
+																					}}
 																				/>
 																			</Grid>
 																			<Grid item xs={3}>
-																				<TextField
-																					fullWidth
+																				<Field
+																					name={`priceBook.${index}.sellPrice`}
+																					component={TextFormField}
 																					label={t("productForm.sellPrice", {
 																						defaultValue: "Selling Price",
-																					})?.toUpperCase()}
+																					})}
 																					type="number"
-																					value={sellPrice.toFixed(2)}
-																					disabled={true}
-																					variant="outlined"
-																					sx={{ mt: -0.1 }}
+																					step="0.01"
+																					isRequired={true}
+																					marginWholeTop={-0.1}
+																					onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+																						handleSellPriceChange(e.target.value);
+																					}}
 																				/>
 																			</Grid>
 																			<Grid item xs={2}>
@@ -503,7 +582,21 @@ const ProductForm = () => {
 														<Button
 															variant="outlined"
 															startIcon={<AddIcon />}
-															onClick={() => arrayHelpers.push({ currency_id: "", price: 0 })}
+															onClick={() => {
+																// Calculate initial sellPrice based on current tax
+																const taxPercentage =
+																	taxCodes?.data
+																		?.filter((t) => values.tax?.includes(t.id))
+																		?.map((t) => t.percentage)
+																		?.reduce((acc, curr) => acc + curr, 0) ?? 0;
+																const initialSellPrice =
+																	taxPercentage > 0 ? 0 * (1 + taxPercentage / 100) : 0;
+																arrayHelpers.push({
+																	currency_id: "",
+																	price: 0,
+																	sellPrice: initialSellPrice,
+																});
+															}}
 														>
 															{t("productForm.addPrice")}
 														</Button>
