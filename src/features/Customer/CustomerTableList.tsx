@@ -220,11 +220,9 @@ const CustomerTableList = () => {
 				autoHeight
 				rows={CustomerData?.data ?? []}
 				columns={columns}
-				slots={
-					{
-						toolbar: SearchToolbar,
-					} as any
-				}
+				slots={{
+					toolbar: () => <SearchToolbar />,
+				}}
 				localeText={{
 					toolbarQuickFilterPlaceholder: t("common.search", { defaultValue: "Search" }),
 					noRowsLabel: t("table.noRows", { defaultValue: "No rows" }),
