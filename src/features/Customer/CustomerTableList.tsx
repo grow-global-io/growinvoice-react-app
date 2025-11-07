@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { DataGrid, type GridColDef, GridToolbarQuickFilter } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { Chip, Tooltip, Typography } from "@mui/material";
 import {
 	getCustomerControllerFindAllQueryKey,
@@ -21,27 +21,6 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { type GetCustomerWithAddressDto } from "@api/services/models";
 import { CustomToolbar } from "@shared/components/CustomToolbar";
-
-// Custom toolbar component for search - defined outside to avoid conflicts
-const SearchToolbar = () => {
-	const { t } = useTranslation();
-	return (
-		<Box
-			sx={{
-				px: 1,
-				pb: 0,
-				display: "flex",
-				alignItems: "center",
-			}}
-		>
-			<GridToolbarQuickFilter
-				variant="outlined"
-				quickFilterParser={(input) => input.split(/\s+/).filter(Boolean)}
-				placeholder={t("common.search", { defaultValue: "Search" }) as string}
-			/>
-		</Box>
-	);
-};
 
 const CustomerTableList = () => {
 	const { t } = useTranslation();
@@ -221,12 +200,8 @@ const CustomerTableList = () => {
 				autoHeight
 				rows={CustomerData?.data ?? []}
 				columns={columns}
-				slots={{
-					toolbar: SearchToolbar,
-				}}
 				localeText={{
 					noRowsLabel: t("table.noRows", { defaultValue: "No rows" }),
-					toolbarQuickFilterPlaceholder: t("common.search", { defaultValue: "Search" }),
 				}}
 				slots={{
 					toolbar: () => {
