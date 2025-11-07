@@ -46,10 +46,7 @@ import { currencyFormatter } from "@shared/formatter";
 import { environment } from "@enviroment";
 import { http } from "@shared/axios";
 import { useTranslation } from "react-i18next";
-import {
-	translateInvoiceHtml,
-	removeHsnFromInvoiceHtml,
-} from "@shared/utils/invoiceTemplateTranslator";
+import { translateInvoiceHtml } from "@shared/utils/invoiceTemplateTranslator";
 import { useEuropeanCountryDetection } from "@shared/hooks/useEuropeanCountryDetection";
 // import filesaver from "file-saver";
 import { LoaderService } from "@shared/services/LoaderService";
@@ -120,12 +117,6 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 		if (iframeRef.current && !getHtmlText.isLoading && getHtmlText.isSuccess) {
 			const iframe = iframeRef.current;
 			let html = getHtmlText?.data ?? "";
-
-			// Remove HSN Code columns for European countries BEFORE translation
-			// This ensures we catch all variations, including translated versions
-			if (isEuropeanCountry === true) {
-				html = removeHsnFromInvoiceHtml(html);
-			}
 
 			// Translate the invoice HTML content after HSN removal
 			const translatedHtml = translateInvoiceHtml(html, t);
