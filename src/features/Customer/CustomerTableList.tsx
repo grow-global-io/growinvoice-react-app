@@ -221,11 +221,11 @@ const CustomerTableList = () => {
 				rows={CustomerData?.data ?? []}
 				columns={columns}
 				slots={{
-					toolbar: () => <SearchToolbar />,
+					toolbar: SearchToolbar,
 				}}
 				localeText={{
-					toolbarQuickFilterPlaceholder: t("common.search", { defaultValue: "Search" }),
 					noRowsLabel: t("table.noRows", { defaultValue: "No rows" }),
+					toolbarQuickFilterPlaceholder: t("common.search", { defaultValue: "Search" }),
 				}}
 			/>
 		</Box>
