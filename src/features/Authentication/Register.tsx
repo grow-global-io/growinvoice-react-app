@@ -8,14 +8,26 @@ import { PhoneInputFormField } from "@shared/components/FormFields/PhoneInputFor
 import { Constants } from "@shared/constants";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { useTranslation } from "react-i18next";
+import { useAuthStore } from "@store/auth";
 
 const Register = () => {
 	const { t } = useTranslation();
 	const navigation = useNavigate();
+	const { setToken } = useAuthStore();
 	const createUser = useUserControllerCreateUser({
 		mutation: {
-			onSuccess: () => {
-				navigation("/login");
+			onSuccess: (response) => {
+				// The API now returns { message: string, authToken: string }
+				// If user already exists, it logs them in and returns the token
+				const responseData = response as any; // Type assertion since API response changed
+				if (responseData?.authToken) {
+					setToken(responseData.authToken);
+					// Redirect to dashboard after successful registration/login
+					navigation("/");
+				} else {
+					// Fallback to login page if no token (shouldn't happen with new API)
+					navigation("/login");
+				}
 			},
 		},
 	});

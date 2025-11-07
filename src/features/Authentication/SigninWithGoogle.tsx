@@ -3,6 +3,7 @@ import { authControllerVerifyGoogleToken } from "@api/services/auth";
 import { useAuthStore } from "@store/auth";
 import { AlertService } from "@shared/services/AlertService";
 import { userControllerCreateUser } from "@api/services/users";
+import { useNavigate } from "react-router-dom";
 
 // Helper function to decode JWT token (Google credential is a JWT)
 const decodeJWT = (token: string): any => {
@@ -26,6 +27,7 @@ const decodeJWT = (token: string): any => {
 
 const SigninWithGoogle = () => {
 	const { setToken } = useAuthStore();
+	const navigate = useNavigate();
 	const handleSuccess = async (credentialResponse: CredentialResponse) => {
 		if (!credentialResponse.credential) return;
 		try {
@@ -35,6 +37,8 @@ const SigninWithGoogle = () => {
 			});
 			if (!a) throw new Error("No auth token");
 			setToken(a.authToken);
+			// Redirect to dashboard after successful login
+			navigate("/");
 		} catch (error: any) {
 			// If verification fails, try to create a new account
 			try {
@@ -56,7 +60,8 @@ const SigninWithGoogle = () => {
 					Math.random().toString(36).toUpperCase().slice(2) +
 					"@123";
 
-				// Create a new user account
+				// Create a new user account (or login if already exists)
+				// The API now returns { message: string, authToken: string } and logs in existing users
 				const createUserResponse = await userControllerCreateUser({
 					name: name,
 					companyName: name, // Use name as company name for Google sign-in users
@@ -65,17 +70,14 @@ const SigninWithGoogle = () => {
 					password: randomPassword, // Random password for Google sign-in users
 				});
 
-				// After creating the account, try to verify the token again to log them in
-				if (createUserResponse) {
-					const loginResponse = await authControllerVerifyGoogleToken({
-						token: credentialResponse.credential,
-					});
-					if (loginResponse?.authToken) {
-						setToken(loginResponse.authToken);
-						AlertService.instance.successMessage("Account created successfully!");
-					} else {
-						throw new Error("Failed to login after account creation");
-					}
+				// The API now returns authToken directly, so we can use it immediately
+				const response = createUserResponse as any; // Type assertion since API response changed
+				if (response?.authToken) {
+					setToken(response.authToken);
+					// User is now logged in, redirect to dashboard
+					navigate("/");
+				} else {
+					throw new Error("No auth token received from account creation");
 				}
 			} catch (createError: any) {
 				console.error("Failed to create account:", createError);
@@ -84,13 +86,15 @@ const SigninWithGoogle = () => {
 					createError?.response?.data?.message?.toLowerCase().includes("email") ||
 					createError?.response?.data?.message?.toLowerCase().includes("already")
 				) {
-					// Email already exists, try to verify again (maybe user was just created)
+					// Email already exists - the create endpoint should have logged them in
+					// Try to verify the token as fallback
 					try {
 						const retryResponse = await authControllerVerifyGoogleToken({
 							token: credentialResponse.credential,
 						});
 						if (retryResponse?.authToken) {
 							setToken(retryResponse.authToken);
+							navigate("/");
 							return;
 						}
 					} catch (retryError) {
