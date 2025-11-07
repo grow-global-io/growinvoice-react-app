@@ -53,9 +53,30 @@ const RootApp = () => {
 		};
 	}, []);
 
+	// Validate Google Client ID
+	const googleClientId = environment.clientId;
+	if (!googleClientId && !environment.production) {
+		console.warn(
+			"Google OAuth Client ID is missing. Please add VITE_GOOGLE_CLIENT_ID to your .env file.",
+		);
+	}
+
 	return (
 		<React.StrictMode>
-			<GoogleOAuthProvider clientId={environment.clientId ?? ""}>
+			{googleClientId ? (
+				<GoogleOAuthProvider clientId={googleClientId}>
+					<QueryClientProvider client={queryClient}>
+						<ThemeProvider theme={appTheme}>
+							<BrowserRouter>
+								<ErrorBoundary FallbackComponent={InternalServerErrorPage}>
+									<App />
+								</ErrorBoundary>
+							</BrowserRouter>
+						</ThemeProvider>
+						{!environment.production && <ReactQueryDevtools />}
+					</QueryClientProvider>
+				</GoogleOAuthProvider>
+			) : (
 				<QueryClientProvider client={queryClient}>
 					<ThemeProvider theme={appTheme}>
 						<BrowserRouter>
@@ -66,7 +87,7 @@ const RootApp = () => {
 					</ThemeProvider>
 					{!environment.production && <ReactQueryDevtools />}
 				</QueryClientProvider>
-			</GoogleOAuthProvider>
+			)}
 		</React.StrictMode>
 	);
 };

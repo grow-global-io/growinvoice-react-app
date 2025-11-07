@@ -84,10 +84,11 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 		const params = { user_id: user?.id ?? "", plan_id: item?.id ?? "" };
 		if (item.price === 0) {
 			// want to open in same tab
-			window.open(
-				`${environment.baseUrl}/api/payments/successGrowlimitlessPlans?plan_id=${item.id}&user_id=${user?.id}`,
-				"_self",
-			);
+			// Use full URL - construct from window.location.origin if baseUrl is not available
+			// This ensures we don't get "undefined" in the URL
+			const baseUrl = environment.baseUrl || window.location.origin;
+			const apiUrl = `${baseUrl}/api/payments/successGrowlimitlessPlans?plan_id=${item.id}&user_id=${user?.id}`;
+			window.open(apiUrl, "_self");
 			return;
 		}
 		if (type === "Stripe") {
