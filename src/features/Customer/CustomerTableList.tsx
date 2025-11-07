@@ -21,6 +21,27 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { type GetCustomerWithAddressDto } from "@api/services/models";
 
+// Custom toolbar component for search - defined outside to avoid conflicts
+const SearchToolbar = () => {
+	const { t } = useTranslation();
+	return (
+		<Box
+			sx={{
+				px: 1,
+				pb: 0,
+				display: "flex",
+				alignItems: "center",
+			}}
+		>
+			<GridToolbarQuickFilter
+				variant="outlined"
+				quickFilterParser={(input) => input.split(/\s+/).filter(Boolean)}
+				placeholder={t("common.search", { defaultValue: "Search" }) as string}
+			/>
+		</Box>
+	);
+};
+
 const CustomerTableList = () => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
@@ -200,22 +221,7 @@ const CustomerTableList = () => {
 				rows={CustomerData?.data ?? []}
 				columns={columns}
 				slots={{
-					toolbar: () => (
-						<Box
-							sx={{
-								px: 1,
-								pb: 0,
-								display: "flex",
-								alignItems: "center",
-							}}
-						>
-							<GridToolbarQuickFilter
-								variant="outlined"
-								quickFilterParser={(input) => input.split(/\s+/).filter(Boolean)}
-								placeholder={t("common.search", { defaultValue: "Search" }) as string}
-							/>
-						</Box>
-					),
+					toolbar: SearchToolbar,
 				}}
 				localeText={{
 					toolbarQuickFilterPlaceholder: t("common.search", { defaultValue: "Search" }),
