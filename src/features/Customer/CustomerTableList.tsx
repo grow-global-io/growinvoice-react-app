@@ -197,7 +197,7 @@ const CustomerTableList = () => {
 		<Box>
 			<DataGrid
 				autoHeight
-				rows={CustomerData?.data}
+				rows={CustomerData?.data ?? []}
 				columns={columns}
 				slots={{
 					toolbar: () => (
@@ -221,7 +221,6 @@ const CustomerTableList = () => {
 					noRowsLabel: t("table.noRows", { defaultValue: "No rows" }),
 				}}
 			/>
-			{/* <CustomerView open={open} handleClose={handleClose} customerId={viewCustomerId ?? ""} /> */}
 		</Box>
 	);
 };
