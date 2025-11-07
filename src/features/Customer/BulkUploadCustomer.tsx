@@ -1,5 +1,5 @@
 import { Box, Button, Grid, Tooltip, Typography } from "@mui/material";
-import { RegexExp } from "@shared/regex";
+// import { RegexExp } from "@shared/regex";
 import { useTranslation } from "react-i18next";
 import * as Yup from "yup";
 import { formatPhoneNumber, isValidPhoneNumber } from "react-phone-number-input";
@@ -38,9 +38,8 @@ const BulkUploadCustomer = () => {
 					Object.values(CreateCustomerWithAddressDtoOption),
 					t("customerForm.validation.invalidType"),
 				),
-			CustomerName: Yup.string()
-				.required(t("customerForm.validation.nameRequired"))
-				.matches(RegexExp.fullNameRegex, t("customerForm.validation.nameInvalid")),
+			CustomerName: Yup.string().required(t("customerForm.validation.nameRequired")),
+			// .matches(RegexExp.fullNameRegex, t("customerForm.validation.nameInvalid")),
 			PhoneNumber: Yup.string().optional().nullable(),
 			Email: Yup.string().email(t("customerForm.validation.emailInvalid")),
 			Currency: Yup.string()

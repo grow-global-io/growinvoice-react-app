@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { type GetCustomerWithAddressDto } from "@api/services/models";
 import { useMemo } from "react";
+import { CustomToolbar } from "@shared/components/CustomToolbar";
 
 const CustomerTableList = () => {
 	const { t } = useTranslation();
@@ -227,6 +228,23 @@ const CustomerTableList = () => {
 				}}
 				localeText={{
 					noRowsLabel: t("table.noRows", { defaultValue: "No rows" }),
+				}}
+				slots={{
+					toolbar: () => {
+						return (
+							<CustomToolbar
+								rows={CustomerData?.data?.map((item) => ({
+									"Customer Name": item.name,
+									"Contact Email": item.email,
+									"Contact Number": item.phone,
+									"Total Invoices": item._count?.invoice,
+									"Total Amount Due's": item.totalDue,
+									"Customer Type": item.option,
+									"Phone Number": item.phone,
+								}))}
+							/>
+						);
+					},
 				}}
 			/>
 		</Box>
