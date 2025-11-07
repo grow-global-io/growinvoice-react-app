@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef, GridToolbarQuickFilter } from "@mui/x-data-grid";
 import { Chip, Tooltip, Typography } from "@mui/material";
 import {
 	getCustomerControllerFindAllQueryKey,
@@ -199,6 +199,24 @@ const CustomerTableList = () => {
 				autoHeight
 				rows={CustomerData?.data ?? []}
 				columns={columns}
+				slots={{
+					toolbar: () => (
+						<Box
+							sx={{
+								px: 1,
+								pb: 0,
+								display: "flex",
+								alignItems: "center",
+							}}
+						>
+							<GridToolbarQuickFilter
+								variant="outlined"
+								quickFilterParser={(input) => input.split(/\s+/).filter(Boolean)}
+								placeholder={t("common.search", { defaultValue: "Search" }) as string}
+							/>
+						</Box>
+					),
+				}}
 				localeText={{
 					toolbarQuickFilterPlaceholder: t("common.search", { defaultValue: "Search" }),
 					noRowsLabel: t("table.noRows", { defaultValue: "No rows" }),
