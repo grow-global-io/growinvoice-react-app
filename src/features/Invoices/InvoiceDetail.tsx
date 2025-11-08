@@ -415,10 +415,12 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 				<DialogContent sx={{ p: 3 }}>
 					<Typography variant="body1">
 						{t("invoice.detail.pleaseAcceptTerms", {
+							companyName: (getInvoiceData?.data?.user as any)?.company?.[0]?.name || "",
+							customerName: getInvoiceData?.data?.customer?.name || "",
 							defaultValue: `By viewing this invoice, you acknowledge that the data displayed is processed by 
 							${(getInvoiceData?.data?.user as any)?.company?.[0]?.name}
 							on behalf of ${getInvoiceData?.data?.customer?.name} for the purpose of billing and
-						record-keeping in accordance with applicable data protection laws (GDPR).`,
+						record-keeping in accordance with applicable data protection laws (GDPR).`,
 						})}
 					</Typography>
 					<Divider sx={{ my: 2 }} />
@@ -443,8 +445,8 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 										}}
 									/>
 								}
-								label={t("invoice.detail.pleaseAcceptTerms", {
-									defaultValue: `I agree that my name, email, and interaction data (such as invoice open time) may be stored by [GrowInvoice.com] for invoicing and notification purposes in accordance with GDPR and your privacy policy.`,
+								label={t("invoice.template.gdprAgreement", {
+									defaultValue: `I agree that my name, email, and interaction data (such as invoice open time) may be stored by [GrowInvoice.com] for invoicing and notification purposes in accordance with GDPR and your privacy policy.`,
 								})}
 							/>
 						</FormControl>

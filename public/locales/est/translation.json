@@ -411,7 +411,8 @@
       "paymentWithStripe": "Makse Stripe'i kaudu",
       "paymentWithGrowlimitless": "Makse Growlimitless kaudu",
       "paymentWithRazorpay": "Makse Razorpay kaudu",
-      "noInvoiceFound": "Arveid ei leitud"
+      "noInvoiceFound": "Arveid ei leitud",
+      "pleaseAcceptTerms": "Selle arve vaatamisega kinnitate, et kuvatud andmeid töödeldakse {companyName} poolt {customerName} nimel arvelduse ja arvestuse eesmärgil kohaldatavate andmekaitse seaduste (GDPR) kohaselt."
     },
     "summary": {
       "outstandingReceivables": "Tasumata nõuded",
@@ -449,6 +450,15 @@
       "dueDate": "Maksetähtaeg:",
       "note": "Märkus:",
       "recipientUpiDetails": "Saaja UPI andmed",
+      "recipientCashDetails": "Saaja sularaha andmed",
+      "cash": "Sularaha",
+      "unit": "Ühik",
+      "unitPrice": "Ühiku hind",
+      "totalTaxesPercent": "Maksud kokku (%)",
+      "totalTaxesAmount": "Maksud kokku (Summa)",
+      "thankYouMessage": "Täname teid meiega ostlemise eest. Head päeva.",
+      "gdprDisclaimer": "Selle arve vaatamisega kinnitate, et kuvatud andmeid töödeldakse {companyName} poolt {customerName} nimel arvelduse ja arvestuse eesmärgil kohaldatavate andmekaitse seaduste (GDPR) kohaselt.",
+      "gdprAgreement": "Nõustun, et minu nimi, e-posti aadress ja interaktsiooni andmed (näiteks arve avamise aeg) võivad olla salvestatud [GrowInvoice.com] arvelduse ja teavitamise eesmärgil GDPR ja teie privaatsuspoliitika kohaselt.",
       "termsConditions": "Tingimused:",
       "termsClaim": "Kõik tarnitud kaubaga seotud pretensioonid tuleb esitada 30 päeva jooksul kirjalikult.",
       "termsDelivery": "Tarnekuupäevad ei ole garanteeritud ja müüja ei vastuta viivituste eest."

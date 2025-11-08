@@ -419,6 +419,9 @@
       "paymentWithRazorpay": "Maksu Razorpay:lla",
       "noInvoiceFound": "Laskua ei löytynyt"
     },
+    "detail": {
+      "pleaseAcceptTerms": "Katsomalla tämän laskun, hyväksyt, että näytetyt tiedot käsitellään {companyName} toimesta {customerName} puolesta laskutuksen ja kirjanpidon tarkoituksessa sovellettavien tietosuojalakien (GDPR) mukaisesti."
+    },
     "summary": {
       "outstandingReceivables": "Avoimet saatavat",
       "dueToday": "Erääntyy tänään",
@@ -455,6 +458,15 @@
       "dueDate": "Eräpäivä:",
       "note": "Huomautus:",
       "recipientUpiDetails": "Vastaanottajan UPI-tiedot",
+      "recipientCashDetails": "Vastaanottajan käteistiedot",
+      "cash": "Käteinen",
+      "unit": "Yksikkö",
+      "unitPrice": "Yksikköhinta",
+      "totalTaxesPercent": "Verot yhteensä (%)",
+      "totalTaxesAmount": "Verot yhteensä (Summa)",
+      "thankYouMessage": "Kiitos ostoksestasi. Hyvää päivänjatkoa.",
+      "gdprDisclaimer": "Katsomalla tämän laskun, hyväksyt, että näytetyt tiedot käsitellään {companyName} toimesta {customerName} puolesta laskutuksen ja kirjanpidon tarkoituksessa sovellettavien tietosuojalakien (GDPR) mukaisesti.",
+      "gdprAgreement": "Hyväksyn, että nimeni, sähköpostiosoitteeni ja vuorovaikutustietoni (kuten laskun avausaika) voidaan tallentaa [GrowInvoice.com]:iin laskutukseen ja ilmoitustarkoituksiin GDPR:n ja tietosuojakäytäntösi mukaisesti.",
       "termsConditions": "Ehdot ja palveluehdot:",
       "termsClaim": "Kaikki väitteet, jotka liittyvät määrään tai toimitusvirheisiin, hylätään ostajalta, ellei niitä tehdä kirjallisesti myyjälle kolmenkymmenen (30) päivän kuluessa tavaroiden toimittamisesta ilmoitettuun osoitteeseen.",
       "termsDelivery": "Toimituspäivät eivät ole taattuja, eikä myyjällä ole vastuuta vahingoista, jotka voivat syntyä tavaroiden lähetyksen viivästymisestä. Verot on jätetty pois, elleivät toisin mainita."
