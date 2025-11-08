@@ -145,13 +145,19 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 			minWidth: 150,
 			renderCell: (params) => (
 				<>
-					<Box display="flex" gap={1}>
-						<CustomIconButton
-							src={VisibilityIcon}
-							onClick={() => {
-								handleView(params?.row?.id);
-							}}
-						/>
+					<Box display="flex" gap={1} justifyContent={"center"} alignItems="center">
+						<Box>
+							<Tooltip title={"view invoice"}>
+								<span>
+									<CustomIconButton
+										src={VisibilityIcon}
+										onClick={() => {
+											handleView(params?.row?.id);
+										}}
+									/>
+								</span>
+							</Tooltip>
+						</Box>
 						<Box>
 							<Tooltip title={"send receipt"}>
 								<span>
