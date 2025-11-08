@@ -74,7 +74,7 @@ export type OmitCreateInvoiceProductsExtended = Omit<
 };
 
 const CreateInvoice = ({ id, customerId }: { id?: string; customerId?: string }) => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const [rows, setRows] = useState<GridRowsProp<OmitCreateInvoiceProductsExtended>>([]);
