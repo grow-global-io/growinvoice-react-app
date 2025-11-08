@@ -1,8 +1,11 @@
 import Box from "@mui/material/Box";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
-import { Chip, Typography } from "@mui/material";
+import { Chip, Tooltip, Typography } from "@mui/material";
 import { Constants } from "@shared/constants";
-import { useInvoiceControllerFindPaidInvoices } from "@api/services/invoice";
+import {
+	useInvoiceControllerFindPaidInvoices,
+	useInvoiceControllerSendInvoicePaymentReceiptManually,
+} from "@api/services/invoice";
 import Loader from "@shared/components/Loader";
 import { currencyFormatter, parseDateStringToFormat } from "@shared/formatter";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -10,8 +13,10 @@ import { CustomIconButton } from "@shared/components/CustomIconButton";
 import { useInvoiceHook } from "./invoiceHooks/useInvoiceHook";
 import { type InvoiceWithAllDataDto } from "@api/services/models";
 import { useTranslation } from "react-i18next";
+import EmailIcon from "@mui/icons-material/Email";
 
 const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) => {
+	const sendReceipt = useInvoiceControllerSendInvoicePaymentReceiptManually();
 	const { t } = useTranslation();
 	const invoiceData = useInvoiceControllerFindPaidInvoices({
 		customerId: customerId ?? undefined,
@@ -139,12 +144,33 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => (
-				<CustomIconButton
-					src={VisibilityIcon}
-					onClick={() => {
-						handleView(params?.row?.id);
-					}}
-				/>
+				<>
+					<Box display="flex" gap={1}>
+						<CustomIconButton
+							src={VisibilityIcon}
+							onClick={() => {
+								handleView(params?.row?.id);
+							}}
+						/>
+						<Box>
+							<Tooltip title={"send receipt"}>
+								<span>
+									<CustomIconButton
+										disabled={sendReceipt.isPending}
+										src={EmailIcon}
+										onClick={async () => {
+											await sendReceipt.mutateAsync({
+												params: {
+													id: params?.row?.id,
+												},
+											});
+										}}
+									/>
+								</span>
+							</Tooltip>
+						</Box>
+					</Box>
+				</>
 			),
 		},
 	];
