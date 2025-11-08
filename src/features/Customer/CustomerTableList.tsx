@@ -1,6 +1,11 @@
 import Box from "@mui/material/Box";
-import { DataGrid, type GridColDef } from "@mui/x-data-grid";
-import { Chip, Tooltip, Typography } from "@mui/material";
+import {
+	DataGrid,
+	type GridColDef,
+	GridToolbarQuickFilter,
+	GridToolbarContainer,
+} from "@mui/x-data-grid";
+import { Chip, Tooltip, Typography, Button, Menu, MenuItem } from "@mui/material";
 import {
 	getCustomerControllerFindAllQueryKey,
 	useCustomerControllerFindAll,
@@ -20,7 +25,13 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { type GetCustomerWithAddressDto } from "@api/services/models";
-import { CustomToolbar } from "@shared/components/CustomToolbar";
+import { useMemo, useState, useCallback } from "react";
+import React from "react";
+import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
+import {
+	useJson2excelControllerCreate,
+	useJson2excelControllerCreateCsv,
+} from "@api/services/json2excel";
 
 const CustomerTableList = () => {
 	const { t } = useTranslation();
@@ -30,13 +41,173 @@ const CustomerTableList = () => {
 	const { updateCustomer } = useCreateCustomerStore.getState();
 	const removeCustomer = useCustomerControllerRemove();
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
-	// const [viewCustomerId, setViewCustomerId] = React.useState<string | null>(null);
-	// const { handleClickOpen, handleClose, open } = useDialog();
 
-	// const openCustomerView = (id: string) => {
-	// 	setViewCustomerId(id);
-	// 	handleClickOpen();
-	// };
+	// All hooks must be called before any conditional returns
+	// Prepare export data
+	const exportData = useMemo(() => {
+		return (
+			CustomerData?.data?.map((item) => ({
+				"Customer Name": item.name,
+				"Contact Email": item.email,
+				"Contact Number": item.phone,
+				"Total Invoices": item._count?.invoice,
+				"Total Amount Due's": item.totalDue,
+				"Customer Type": item.option,
+			})) ?? []
+		);
+	}, [CustomerData?.data]);
+
+	// Export functionality hooks
+	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const open = Boolean(anchorEl);
+	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+		setAnchorEl(event.currentTarget);
+	};
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
+	const creatExcelFile = useJson2excelControllerCreate();
+	const creatCsvFile = useJson2excelControllerCreateCsv();
+
+	const handleCreatExcelFile = useCallback(async () => {
+		const response = await creatExcelFile.mutateAsync({ data: exportData as any });
+		window.open(response?.link);
+		handleClose();
+	}, [creatExcelFile, exportData, handleClose]);
+
+	const handleCreatCsvFile = useCallback(async () => {
+		const response = await creatCsvFile.mutateAsync({ data: exportData as any });
+		window.open(response?.link as string);
+		handleClose();
+	}, [creatCsvFile, exportData, handleClose]);
+
+	// Convert JSON data to XML format
+	const convertToXML = (data: any[]): string => {
+		if (!data || data.length === 0) {
+			return '<?xml version="1.0" encoding="UTF-8"?><data></data>';
+		}
+
+		const allKeys = new Set<string>();
+		data.forEach((item) => {
+			if (item && typeof item === "object") {
+				Object.keys(item).forEach((key) => allKeys.add(key));
+			}
+		});
+
+		const escapeXml = (str: any): string => {
+			if (str === null || str === undefined) {
+				return "";
+			}
+			const stringValue = String(str);
+			return stringValue
+				.replace(/&/g, "&amp;")
+				.replace(/</g, "&lt;")
+				.replace(/>/g, "&gt;")
+				.replace(/"/g, "&quot;")
+				.replace(/'/g, "&apos;");
+		};
+
+		const toXmlTagName = (key: string): string => {
+			return key
+				.replace(/[^a-zA-Z0-9_]/g, "_")
+				.replace(/^[0-9]/, "_$&")
+				.replace(/^$/, "item");
+		};
+
+		let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+		xml += "<data>\n";
+
+		data.forEach((item, index) => {
+			xml += `  <row id="${index + 1}">\n`;
+			if (item && typeof item === "object") {
+				Object.keys(item).forEach((key) => {
+					const tagName = toXmlTagName(key);
+					const value = item[key];
+					const xmlValue = escapeXml(value);
+					xml += `    <${tagName}>${xmlValue}</${tagName}>\n`;
+				});
+			}
+			xml += "  </row>\n";
+		});
+
+		xml += "</data>";
+		return xml;
+	};
+
+	const handleCreatXmlFile = useCallback(() => {
+		try {
+			const xmlContent = convertToXML(exportData);
+			const blob = new Blob([xmlContent], { type: "application/xml" });
+			const url = URL.createObjectURL(blob);
+			const link = document.createElement("a");
+			link.href = url;
+			link.download = `export_${new Date().getTime()}.xml`;
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+			URL.revokeObjectURL(url);
+			handleClose();
+		} catch (error) {
+			console.error("Error generating XML file:", error);
+			handleClose();
+		}
+	}, [exportData, handleClose]);
+
+	// Combined toolbar with search and export
+	const CombinedToolbar = useCallback(() => {
+		return (
+			<>
+				<GridToolbarContainer
+					sx={{
+						display: "flex",
+						justifyContent: "space-between",
+						alignItems: "center",
+						px: 1,
+						pb: 0,
+					}}
+				>
+					<Box
+						sx={{
+							display: "flex",
+							alignItems: "center",
+						}}
+					>
+						<GridToolbarQuickFilter
+							variant="outlined"
+							quickFilterParser={(input) => input.split(/\s+/).filter(Boolean)}
+							placeholder={t("common.search", { defaultValue: "Search" }) as string}
+						/>
+					</Box>
+					<Box>
+						<Button onClick={handleClick}>
+							<FileDownloadOutlinedIcon />
+							{t("report.export.title", { defaultValue: "Export" })}
+						</Button>
+					</Box>
+				</GridToolbarContainer>
+				<Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+					<MenuItem onClick={handleCreatCsvFile} sx={{ pr: 6 }}>
+						{t("report.export.csv", { defaultValue: "Download as CSV" })}
+					</MenuItem>
+					<MenuItem onClick={handleCreatExcelFile} sx={{ pr: 6 }}>
+						{t("report.export.excel", { defaultValue: "Download as Excel" })}
+					</MenuItem>
+					<MenuItem onClick={handleCreatXmlFile} sx={{ pr: 6 }}>
+						{t("report.export.xml", { defaultValue: "Download as XML" })}
+					</MenuItem>
+				</Menu>
+			</>
+		);
+	}, [
+		t,
+		anchorEl,
+		open,
+		handleClick,
+		handleClose,
+		handleCreatCsvFile,
+		handleCreatExcelFile,
+		handleCreatXmlFile,
+	]);
 
 	const columns: GridColDef<GetCustomerWithAddressDto>[] = [
 		{
@@ -114,11 +285,7 @@ const CustomerTableList = () => {
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
-				return (
-					<Typography>
-						<Chip label={params?.value} variant="filled" color={"error"} />
-					</Typography>
-				);
+				return <Chip label={params?.value} variant="filled" color={"error"} />;
 			},
 		},
 		{
@@ -198,31 +365,15 @@ const CustomerTableList = () => {
 		<Box>
 			<DataGrid
 				autoHeight
-				rows={CustomerData?.data}
+				rows={CustomerData?.data ?? []}
 				columns={columns}
+				slots={{
+					toolbar: CombinedToolbar,
+				}}
 				localeText={{
-					toolbarQuickFilterPlaceholder: t("common.search", { defaultValue: "Search" }),
 					noRowsLabel: t("table.noRows", { defaultValue: "No rows" }),
 				}}
-				slots={{
-					toolbar: () => {
-						return (
-							<CustomToolbar
-								rows={CustomerData?.data?.map((item) => ({
-									"Customer Name": item.name,
-									"Contact Email": item.email,
-									"Contact Number": item.phone,
-									"Total Invoices": item._count?.invoice,
-									"Total Amount Due's": item.totalDue,
-									"Customer Type": item.option,
-									"Phone Number": item.phone,
-								}))}
-							/>
-						);
-					},
-				}}
 			/>
-			{/* <CustomerView open={open} handleClose={handleClose} customerId={viewCustomerId ?? ""} /> */}
 		</Box>
 	);
 };
