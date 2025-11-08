@@ -8,9 +8,116 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 
 	let translatedHtml = html;
 
+	// First pass: Replace all translation keys that appear as literal strings
+	// This handles keys that the backend inserts directly into HTML
+	// Order matters: longer keys first to avoid partial matches
+	const translationKeyMap: Array<{ key: string; value: string }> = [
+		{
+			key: "invoice.template.invoice.template.cash",
+			value: t("invoice.template.cash"),
+		},
+		{
+			key: "invoice.template.recipientCashDetails",
+			value: t("invoice.template.recipientCashDetails"),
+		},
+		{
+			key: "invoice.template.totalTaxesAmount",
+			value: t("invoice.template.totalTaxesAmount"),
+		},
+		{
+			key: "invoice.template.totalTaxesPercent",
+			value: t("invoice.template.totalTaxesPercent"),
+		},
+		{
+			key: "invoice.template.thankYouMessage",
+			value: t("invoice.template.thankYouMessage"),
+		},
+		{
+			key: "invoice.template.gdprAgreement",
+			value: t("invoice.template.gdprAgreement"),
+		},
+		{
+			key: "invoice.template.gdprDisclaimer",
+			value: t("invoice.template.gdprDisclaimer")
+				.replace("{companyName}", "")
+				.replace("{customerName}", ""),
+		},
+		{
+			key: "invoice.template.unitPrice",
+			value: t("invoice.template.unitPrice"),
+		},
+		{
+			key: "invoice.template.cash",
+			value: t("invoice.template.cash"),
+		},
+		{
+			key: "invoice.template.unit",
+			value: t("invoice.template.unit"),
+		},
+	];
+
+	// Replace all translation keys with their translations
+	// Process in order (longest first) to avoid partial matches
+	translationKeyMap.forEach(({ key, value }) => {
+		// Simple string replacement - replace all occurrences
+		// This is more reliable than regex for exact key matching
+		// Use split/join for global replacement instead of while loop
+		translatedHtml = translatedHtml.split(key).join(value);
+	});
+
 	// Create a mapping of English text to translation keys
 	// Order matters - match longer strings first to avoid partial replacements
-	const translations: Array<{ english: RegExp; translation: string }> = [
+	const translations: Array<{
+		english: RegExp;
+		translation: string | ((match: string, ...args: string[]) => string);
+	}> = [
+		// First, handle translation keys that appear directly in HTML (from backend)
+		// These must come before other patterns to catch them first
+		// Match keys in various HTML contexts: inside tags, as text content, with whitespace, etc.
+		// Use word boundaries and flexible matching to catch keys anywhere
+		{
+			english: /invoice\.template\.invoice\.template\.cash/gi,
+			translation: t("invoice.template.cash"),
+		},
+		{
+			english: /invoice\.template\.recipientCashDetails/gi,
+			translation: t("invoice.template.recipientCashDetails"),
+		},
+		{
+			english: /invoice\.template\.cash/gi,
+			translation: t("invoice.template.cash"),
+		},
+		{
+			english: /invoice\.template\.unitPrice/gi,
+			translation: t("invoice.template.unitPrice"),
+		},
+		{
+			english: /invoice\.template\.unit/gi,
+			translation: t("invoice.template.unit"),
+		},
+		{
+			english: /invoice\.template\.totalTaxesAmount/gi,
+			translation: t("invoice.template.totalTaxesAmount"),
+		},
+		{
+			english: /invoice\.template\.totalTaxesPercent/gi,
+			translation: t("invoice.template.totalTaxesPercent"),
+		},
+		{
+			english: /invoice\.template\.thankYouMessage/gi,
+			translation: t("invoice.template.thankYouMessage"),
+		},
+		{
+			english: /invoice\.template\.gdprDisclaimer/gi,
+			translation: t("invoice.template.gdprDisclaimer")
+				.replace("{companyName}", "")
+				.replace("{customerName}", ""),
+		},
+		{
+			english: /invoice\.template\.gdprAgreement/gi,
+			translation: t("invoice.template.gdprAgreement"),
+		},
+
 		// Invoice header - match INVOICE in various contexts
 		{ english: />INVOICE</gi, translation: `>${t("invoice.template.invoice")}<` },
 		{ english: /INVOICE</gi, translation: `${t("invoice.template.invoice")}<` },
@@ -158,6 +265,58 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			english: /Recipient['\u2019]s\s+UPI\s+Details/gi,
 			translation: t("invoice.template.recipientUpiDetails"),
 		},
+		// Recipient's Cash Details - match in various HTML contexts
+		{
+			english: />Recipient['\u2019]s\s+Cash\s+Details</gi,
+			translation: `>${t("invoice.template.recipientCashDetails")}<`,
+		},
+		{
+			english: /Recipient['\u2019]s\s+Cash\s+Details/gi,
+			translation: t("invoice.template.recipientCashDetails"),
+		},
+		// Cash - match standalone
+		{ english: />Cash</gi, translation: `>${t("invoice.template.cash")}<` },
+		{ english: /\bCash\b/gi, translation: t("invoice.template.cash") },
+		// Unit and Unit Price
+		{ english: />Unit\s+Price</gi, translation: `>${t("invoice.template.unitPrice")}<` },
+		{ english: /Unit\s+Price/gi, translation: t("invoice.template.unitPrice") },
+		{ english: />Unit</gi, translation: `>${t("invoice.template.unit")}<` },
+		{ english: /\bUnit\b/gi, translation: t("invoice.template.unit") },
+		// Total Taxes
+		{
+			english: />Total\s+Taxes\s*\(%\s*\)</gi,
+			translation: `>${t("invoice.template.totalTaxesPercent")}<`,
+		},
+		{ english: /Total\s+Taxes\s*\(%\s*\)/gi, translation: t("invoice.template.totalTaxesPercent") },
+		{
+			english: />Total\s+Taxes\s*\(Amount\)</gi,
+			translation: `>${t("invoice.template.totalTaxesAmount")}<`,
+		},
+		{
+			english: /Total\s+Taxes\s*\(Amount\)/gi,
+			translation: t("invoice.template.totalTaxesAmount"),
+		},
+		// Thank you message
+		{
+			english: /Thank\s+you\s+for\s+shopping\s+with\s+us\.\s+Have\s+a\s+Great\s+Day\./gi,
+			translation: t("invoice.template.thankYouMessage"),
+		},
+		// GDPR Disclaimer - match with flexible whitespace and dynamic content
+		{
+			english:
+				/By\s+viewing\s+this\s+invoice,\s+you\s+acknowledge\s+that\s+the\s+data\s+displayed\s+is\s+processed\s+by\s+([^<]+?)\s+on\s+behalf\s+of\s+([^<]+?)\s+for\s+the\s+purpose\s+of\s+billing\s+and\s+record-keeping\s+in\s+accordance\s+with\s+applicable\s+data\s+protection\s+laws\s*\(\s*GDPR\s*\)\./gi,
+			translation: (_match: string, companyName: string, customerName: string) => {
+				return t("invoice.template.gdprDisclaimer")
+					.replace("{companyName}", companyName.trim())
+					.replace("{customerName}", customerName.trim());
+			},
+		},
+		// GDPR Agreement
+		{
+			english:
+				/I\s+agree\s+that\s+my\s+name,\s+email,\s+and\s+interaction\s+data\s*\(\s*such\s+as\s+invoice\s+open\s+time\s*\)\s+may\s+be\s+stored\s+by\s+\[GrowInvoice\.com\]\s+for\s+invoicing\s+and\s+notification\s+purposes\s+in\s+accordance\s+with\s+GDPR\s+and\s+your\s+privacy\s+policy\./gi,
+			translation: t("invoice.template.gdprAgreement"),
+		},
 		{ english: /Terms\s*&\s*Conditions:/gi, translation: t("invoice.template.termsConditions") },
 
 		// Terms and Conditions content - match text with flexible whitespace handling
@@ -176,7 +335,11 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 
 	// Apply all translations
 	translations.forEach(({ english, translation }) => {
-		translatedHtml = translatedHtml.replace(english, translation);
+		if (typeof translation === "function") {
+			translatedHtml = translatedHtml.replace(english, translation);
+		} else {
+			translatedHtml = translatedHtml.replace(english, translation);
+		}
 	});
 
 	return translatedHtml;
