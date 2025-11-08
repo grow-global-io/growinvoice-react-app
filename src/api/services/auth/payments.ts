@@ -44,10 +44,6 @@ import type {
 import { authInstance } from "../../instances/authInstance";
 import type { ErrorType } from "../../instances/authInstance";
 
-type AwaitedInput<T> = PromiseLike<T> | T;
-
-type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
-
 export const paymentsControllerSuccessGrowlimitlessPlans = (
 	params: PaymentsControllerSuccessGrowlimitlessPlansParams,
 	signal?: AbortSignal,
@@ -1617,3 +1613,517 @@ export const usePaymentsControllerRazorpayPayment = <
 
 	return useMutation(mutationOptions);
 };
+export const paymentsControllerPlanReceiptView = (userPlanId: string, signal?: AbortSignal) => {
+	return authInstance<string>({
+		url: `/api/payments/plan-receipt-view/${userPlanId}`,
+		method: "GET",
+		signal,
+	});
+};
+
+export const getPaymentsControllerPlanReceiptViewQueryKey = (userPlanId: string) => {
+	return [`/api/payments/plan-receipt-view/${userPlanId}`] as const;
+};
+
+export const getPaymentsControllerPlanReceiptViewQueryOptions = <
+	TData = Awaited<ReturnType<typeof paymentsControllerPlanReceiptView>>,
+	TError = ErrorType<unknown>,
+>(
+	userPlanId: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof paymentsControllerPlanReceiptView>>, TError, TData>
+		>;
+	},
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey =
+		queryOptions?.queryKey ?? getPaymentsControllerPlanReceiptViewQueryKey(userPlanId);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof paymentsControllerPlanReceiptView>>> = ({
+		signal,
+	}) => paymentsControllerPlanReceiptView(userPlanId, signal);
+
+	return { queryKey, queryFn, enabled: !!userPlanId, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof paymentsControllerPlanReceiptView>>,
+		TError,
+		TData
+	> & { queryKey: QueryKey };
+};
+
+export type PaymentsControllerPlanReceiptViewQueryResult = NonNullable<
+	Awaited<ReturnType<typeof paymentsControllerPlanReceiptView>>
+>;
+export type PaymentsControllerPlanReceiptViewQueryError = ErrorType<unknown>;
+
+export function usePaymentsControllerPlanReceiptView<
+	TData = Awaited<ReturnType<typeof paymentsControllerPlanReceiptView>>,
+	TError = ErrorType<unknown>,
+>(
+	userPlanId: string,
+	options: {
+		query: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof paymentsControllerPlanReceiptView>>, TError, TData>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof paymentsControllerPlanReceiptView>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function usePaymentsControllerPlanReceiptView<
+	TData = Awaited<ReturnType<typeof paymentsControllerPlanReceiptView>>,
+	TError = ErrorType<unknown>,
+>(
+	userPlanId: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof paymentsControllerPlanReceiptView>>, TError, TData>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof paymentsControllerPlanReceiptView>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function usePaymentsControllerPlanReceiptView<
+	TData = Awaited<ReturnType<typeof paymentsControllerPlanReceiptView>>,
+	TError = ErrorType<unknown>,
+>(
+	userPlanId: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof paymentsControllerPlanReceiptView>>, TError, TData>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+export function usePaymentsControllerPlanReceiptView<
+	TData = Awaited<ReturnType<typeof paymentsControllerPlanReceiptView>>,
+	TError = ErrorType<unknown>,
+>(
+	userPlanId: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof paymentsControllerPlanReceiptView>>, TError, TData>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+	const queryOptions = getPaymentsControllerPlanReceiptViewQueryOptions(userPlanId, options);
+
+	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const paymentsControllerPlanReceiptDownload = (userPlanId: string, signal?: AbortSignal) => {
+	return authInstance<string>({
+		url: `/api/payments/plan-receipt-download/${userPlanId}`,
+		method: "GET",
+		signal,
+	});
+};
+
+export const getPaymentsControllerPlanReceiptDownloadQueryKey = (userPlanId: string) => {
+	return [`/api/payments/plan-receipt-download/${userPlanId}`] as const;
+};
+
+export const getPaymentsControllerPlanReceiptDownloadQueryOptions = <
+	TData = Awaited<ReturnType<typeof paymentsControllerPlanReceiptDownload>>,
+	TError = ErrorType<unknown>,
+>(
+	userPlanId: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerPlanReceiptDownload>>,
+				TError,
+				TData
+			>
+		>;
+	},
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey =
+		queryOptions?.queryKey ?? getPaymentsControllerPlanReceiptDownloadQueryKey(userPlanId);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof paymentsControllerPlanReceiptDownload>>
+	> = ({ signal }) => paymentsControllerPlanReceiptDownload(userPlanId, signal);
+
+	return { queryKey, queryFn, enabled: !!userPlanId, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof paymentsControllerPlanReceiptDownload>>,
+		TError,
+		TData
+	> & { queryKey: QueryKey };
+};
+
+export type PaymentsControllerPlanReceiptDownloadQueryResult = NonNullable<
+	Awaited<ReturnType<typeof paymentsControllerPlanReceiptDownload>>
+>;
+export type PaymentsControllerPlanReceiptDownloadQueryError = ErrorType<unknown>;
+
+export function usePaymentsControllerPlanReceiptDownload<
+	TData = Awaited<ReturnType<typeof paymentsControllerPlanReceiptDownload>>,
+	TError = ErrorType<unknown>,
+>(
+	userPlanId: string,
+	options: {
+		query: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerPlanReceiptDownload>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof paymentsControllerPlanReceiptDownload>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function usePaymentsControllerPlanReceiptDownload<
+	TData = Awaited<ReturnType<typeof paymentsControllerPlanReceiptDownload>>,
+	TError = ErrorType<unknown>,
+>(
+	userPlanId: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerPlanReceiptDownload>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof paymentsControllerPlanReceiptDownload>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function usePaymentsControllerPlanReceiptDownload<
+	TData = Awaited<ReturnType<typeof paymentsControllerPlanReceiptDownload>>,
+	TError = ErrorType<unknown>,
+>(
+	userPlanId: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerPlanReceiptDownload>>,
+				TError,
+				TData
+			>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+export function usePaymentsControllerPlanReceiptDownload<
+	TData = Awaited<ReturnType<typeof paymentsControllerPlanReceiptDownload>>,
+	TError = ErrorType<unknown>,
+>(
+	userPlanId: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerPlanReceiptDownload>>,
+				TError,
+				TData
+			>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+	const queryOptions = getPaymentsControllerPlanReceiptDownloadQueryOptions(userPlanId, options);
+
+	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const paymentsControllerInvoiceReceiptView = (id: string, signal?: AbortSignal) => {
+	return authInstance<string>({
+		url: `/api/payments/invoice-receipt-view/${id}`,
+		method: "GET",
+		signal,
+	});
+};
+
+export const getPaymentsControllerInvoiceReceiptViewQueryKey = (id: string) => {
+	return [`/api/payments/invoice-receipt-view/${id}`] as const;
+};
+
+export const getPaymentsControllerInvoiceReceiptViewQueryOptions = <
+	TData = Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptView>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptView>>,
+				TError,
+				TData
+			>
+		>;
+	},
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getPaymentsControllerInvoiceReceiptViewQueryKey(id);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptView>>
+	> = ({ signal }) => paymentsControllerInvoiceReceiptView(id, signal);
+
+	return { queryKey, queryFn, enabled: !!id, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptView>>,
+		TError,
+		TData
+	> & { queryKey: QueryKey };
+};
+
+export type PaymentsControllerInvoiceReceiptViewQueryResult = NonNullable<
+	Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptView>>
+>;
+export type PaymentsControllerInvoiceReceiptViewQueryError = ErrorType<unknown>;
+
+export function usePaymentsControllerInvoiceReceiptView<
+	TData = Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptView>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options: {
+		query: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptView>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptView>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function usePaymentsControllerInvoiceReceiptView<
+	TData = Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptView>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptView>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptView>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function usePaymentsControllerInvoiceReceiptView<
+	TData = Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptView>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptView>>,
+				TError,
+				TData
+			>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+export function usePaymentsControllerInvoiceReceiptView<
+	TData = Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptView>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptView>>,
+				TError,
+				TData
+			>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+	const queryOptions = getPaymentsControllerInvoiceReceiptViewQueryOptions(id, options);
+
+	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+export const paymentsControllerInvoiceReceiptDownload = (id: string, signal?: AbortSignal) => {
+	return authInstance<string>({
+		url: `/api/payments/invoice-receipt-download/${id}`,
+		method: "GET",
+		signal,
+	});
+};
+
+export const getPaymentsControllerInvoiceReceiptDownloadQueryKey = (id: string) => {
+	return [`/api/payments/invoice-receipt-download/${id}`] as const;
+};
+
+export const getPaymentsControllerInvoiceReceiptDownloadQueryOptions = <
+	TData = Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptDownload>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptDownload>>,
+				TError,
+				TData
+			>
+		>;
+	},
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey =
+		queryOptions?.queryKey ?? getPaymentsControllerInvoiceReceiptDownloadQueryKey(id);
+
+	const queryFn: QueryFunction<
+		Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptDownload>>
+	> = ({ signal }) => paymentsControllerInvoiceReceiptDownload(id, signal);
+
+	return { queryKey, queryFn, enabled: !!id, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptDownload>>,
+		TError,
+		TData
+	> & { queryKey: QueryKey };
+};
+
+export type PaymentsControllerInvoiceReceiptDownloadQueryResult = NonNullable<
+	Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptDownload>>
+>;
+export type PaymentsControllerInvoiceReceiptDownloadQueryError = ErrorType<unknown>;
+
+export function usePaymentsControllerInvoiceReceiptDownload<
+	TData = Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptDownload>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options: {
+		query: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptDownload>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptDownload>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function usePaymentsControllerInvoiceReceiptDownload<
+	TData = Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptDownload>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptDownload>>,
+				TError,
+				TData
+			>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptDownload>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function usePaymentsControllerInvoiceReceiptDownload<
+	TData = Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptDownload>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptDownload>>,
+				TError,
+				TData
+			>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+export function usePaymentsControllerInvoiceReceiptDownload<
+	TData = Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptDownload>>,
+	TError = ErrorType<unknown>,
+>(
+	id: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<
+				Awaited<ReturnType<typeof paymentsControllerInvoiceReceiptDownload>>,
+				TError,
+				TData
+			>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+	const queryOptions = getPaymentsControllerInvoiceReceiptDownloadQueryOptions(id, options);
+
+	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}

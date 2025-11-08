@@ -24,6 +24,7 @@ import InvoiceTemplateCard from "./InvoiceTemplateCard";
 import {
 	getInvoiceControllerTestPDFGenQueryKey,
 	useInvoiceControllerInvoicePublicFindOne,
+	useInvoiceControllerSendInvoicePaymentReceiptManually,
 	useInvoiceControllerTest,
 } from "@api/services/invoice";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -67,6 +68,7 @@ const styles = {
 };
 
 const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: boolean }) => {
+	const sendInvoice = useInvoiceControllerSendInvoicePaymentReceiptManually();
 	// const [termsAccepted, setTermsAccepted] = useState(false);
 	const { t } = useTranslation();
 	const navigate = useNavigate();
@@ -490,7 +492,7 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 						}}
 					>
 						<Typography variant="body1" color={"secondary.dark"}>
-							{t("invoice.detail.status", { defaultValue: "Status:" })}
+							{t("invoice.detail.paid_status", { defaultValue: "Status:" })}
 						</Typography>
 						<Chip
 							label={
@@ -506,7 +508,7 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 							}
 							variant="filled"
 							color={
-								Constants?.invoiceStatusColorEnums[getInvoiceData?.data?.status ?? ""] ??
+								Constants?.invoiceStatusColorEnums[getInvoiceData?.data?.paid_status ?? ""] ??
 								Constants?.invoiceStatusColorEnums["Receipt Sent"] ??
 								"default"
 							}
@@ -543,23 +545,40 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 								downloadPdf();
 							}}
 						/>
-						{getInvoiceData?.data?.currency?.short_code === "INR" &&
-							getInvoiceData?.data?.payment?.paymentType === "UPI" && (
-								<Button
-									variant="contained"
-									onClick={() => {
-										handleQrOpen();
-									}}
-								>
-									{t("invoice.detail.downloadUpiQr", { defaultValue: "Download UPI QR" })}
-								</Button>
-							)}
-						<QRCodeDialog
-							open={openQr}
-							onClose={handleQrClose}
-							upidata={`upi://pay?pa=${getInvoiceData?.data?.payment?.upiId}&pn=${getInvoiceData?.data?.user?.name}&cu=INR&url=${window.location.origin}/invoice/invoicetemplate/${invoiceId}&am=${getInvoiceData?.data?.total?.toFixed(2)}`}
-						/>
-						{StripeObject && getInvoiceData?.data?.status !== "Paid" && (
+						<Button
+							variant="contained"
+							onClick={async () => {
+								console.log("Sending payment receipt for invoice ID:", invoiceId);
+								await sendInvoice.mutateAsync({
+									params: {
+										id: invoiceId,
+									},
+								});
+							}}
+						>
+							Send Payment Receipt
+						</Button>
+						{getInvoiceData?.data?.paid_status !== "Paid" && (
+							<>
+								{getInvoiceData?.data?.currency?.short_code === "INR" &&
+									getInvoiceData?.data?.payment?.paymentType === "UPI" && (
+										<Button
+											variant="contained"
+											onClick={() => {
+												handleQrOpen();
+											}}
+										>
+											{t("invoice.detail.downloadUpiQr", { defaultValue: "Download UPI QR" })}
+										</Button>
+									)}
+								<QRCodeDialog
+									open={openQr}
+									onClose={handleQrClose}
+									upidata={`upi://pay?pa=${getInvoiceData?.data?.payment?.upiId}&pn=${getInvoiceData?.data?.user?.name}&cu=INR&url=${window.location.origin}/invoice/invoicetemplate/${invoiceId}&am=${getInvoiceData?.data?.total?.toFixed(2)}`}
+								/>
+							</>
+						)}
+						{StripeObject && getInvoiceData?.data?.paid_status !== "Paid" && (
 							<Button
 								onClick={() => {
 									handleRedirectStripePayment(invoiceId, getInvoiceData?.data?.user_id ?? "");
@@ -569,7 +588,7 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 								{t("invoice.detail.paymentWithStripe", { defaultValue: "Payment With Stripe" })}
 							</Button>
 						)}
-						{gllObject && getInvoiceData?.data?.status !== "Paid" && (
+						{gllObject && getInvoiceData?.data?.paid_status !== "Paid" && (
 							<Button
 								onClick={() => {
 									handleRedirectGllPayment(invoiceId, getInvoiceData?.data?.user_id ?? "");
@@ -581,7 +600,7 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 								})}
 							</Button>
 						)}
-						{razorpayObject && getInvoiceData?.data?.status !== "Paid" && (
+						{razorpayObject && getInvoiceData?.data?.paid_status !== "Paid" && (
 							<Button
 								onClick={() => {
 									// handleRedirectStripePayment(invoiceId, getInvoiceData?.data?.user_id ?? "");

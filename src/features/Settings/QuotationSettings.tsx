@@ -13,7 +13,7 @@ import { styled } from "@mui/system";
 import { Formik, Field, Form } from "formik";
 import * as yup from "yup";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
-import {type  AddressExpressions, Constants } from "@shared/constants";
+import { type AddressExpressions, Constants } from "@shared/constants";
 import SettingFormHeading from "./SettingFormHeading";
 import { RichTextEditor } from "@shared/components/FormFields/RichTextEditor";
 import { CheckBoxFormField } from "@shared/components/FormFields/CheckBoxFormField";

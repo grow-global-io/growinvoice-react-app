@@ -28,10 +28,6 @@ import type {
 import { authInstance } from "../../instances/authInstance";
 import type { ErrorType } from "../../instances/authInstance";
 
-type AwaitedInput<T> = PromiseLike<T> | T;
-
-type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
-
 export const couponsControllerCreate = (createCouponsDto: CreateCouponsDto) => {
 	return authInstance<CouponsControllerCreate200 | void>({
 		url: `/api/coupons`,

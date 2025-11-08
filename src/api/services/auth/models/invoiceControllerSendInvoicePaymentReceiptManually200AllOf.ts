@@ -5,8 +5,8 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
-import type { User } from "./user";
+import type { InvoiceDto } from "./invoiceDto";
 
-export type UserControllerCreateUser201AllOf = {
-	result?: User;
+export type InvoiceControllerSendInvoicePaymentReceiptManually200AllOf = {
+	result?: InvoiceDto;
 };
