@@ -30,6 +30,12 @@ const SigninWithGoogle = () => {
 	const navigate = useNavigate();
 	const handleSuccess = async (credentialResponse: CredentialResponse) => {
 		if (!credentialResponse.credential) return;
+
+		// Decode the Google token early to get user info (needed for error logging)
+		const decodedToken = decodeJWT(credentialResponse.credential);
+		const email = decodedToken?.email;
+		const name = decodedToken?.name || decodedToken?.given_name || email?.split("@")[0];
+
 		try {
 			// Try to verify the token (login existing user)
 			const verifyResponse = await authControllerVerifyGoogleToken({
@@ -52,15 +58,9 @@ const SigninWithGoogle = () => {
 			}
 			// If verification fails, try to create a new account
 			try {
-				// Decode the Google token to get user info
-				const decodedToken = decodeJWT(credentialResponse.credential);
-				if (!decodedToken || !decodedToken.email) {
+				if (!decodedToken || !email) {
 					throw new Error("Failed to decode Google token");
 				}
-
-				// Extract user info from the token
-				const email = decodedToken.email;
-				const name = decodedToken.name || decodedToken.given_name || email.split("@")[0];
 
 				// Generate a random secure password for Google sign-in users
 				// They'll never need to use it since they authenticate via Google
@@ -98,7 +98,15 @@ const SigninWithGoogle = () => {
 					throw new Error("No auth token received from account creation");
 				}
 			} catch (createError: any) {
-				console.error("Failed to create account:", createError);
+				// Enhanced logging for production debugging
+				console.error("Failed to create account - Full error object:", {
+					error: createError,
+					response: createError?.response,
+					responseData: createError?.response?.data,
+					status: createError?.response?.status,
+					message: createError?.message,
+					responseMessage: createError?.response?.data?.message,
+				});
 
 				// Check all possible locations for authToken in error response
 				const errorResponse = createError?.response?.data;
@@ -107,9 +115,11 @@ const SigninWithGoogle = () => {
 					errorResponse?.data?.authToken ||
 					errorResponse?.token ||
 					createError?.authToken ||
-					createError?.data?.authToken;
+					createError?.data?.authToken ||
+					createError?.response?.authToken;
 
 				if (errorAuthToken) {
+					console.log("Found authToken in error response, logging in user");
 					setToken(errorAuthToken);
 					navigate("/");
 					return;
@@ -124,25 +134,40 @@ const SigninWithGoogle = () => {
 					createError?.response?.status === 409 || // Conflict status code
 					createError?.response?.status === 400; // Bad request might also indicate duplicate
 
+				console.log("Is duplicate email error?", isDuplicateEmail, {
+					errorMessage,
+					status: createError?.response?.status,
+				});
+
 				if (isDuplicateEmail) {
 					// Email already exists - the user should be logged in automatically
 					// Try multiple approaches to get the authToken and log them in
+					console.log("Duplicate email detected, attempting to log in user...");
 
 					// Approach 1: Try to verify the Google token (most reliable for existing Google users)
 					try {
+						console.log("Attempt 1: Verifying Google token...");
 						const retryResponse = await authControllerVerifyGoogleToken({
 							token: credentialResponse.credential,
 						});
+						console.log("Token verification response:", retryResponse);
 						if (retryResponse?.authToken) {
+							console.log("Success! Got authToken from token verification");
 							setToken(retryResponse.authToken);
 							navigate("/");
 							return;
 						}
 					} catch (retryError: any) {
-						console.log("Token verification retry failed:", retryError);
+						console.error("Token verification retry failed:", {
+							error: retryError,
+							response: retryError?.response,
+							responseData: retryError?.response?.data,
+							status: retryError?.response?.status,
+						});
 						// Check if retry error also has authToken
 						const retryAuthToken = retryError?.response?.data?.authToken || retryError?.authToken;
 						if (retryAuthToken) {
+							console.log("Found authToken in retry error response");
 							setToken(retryAuthToken);
 							navigate("/");
 							return;
@@ -151,20 +176,29 @@ const SigninWithGoogle = () => {
 
 					// Approach 2: Wait and retry verification (handles race conditions in production)
 					try {
+						console.log("Attempt 2: Retrying token verification after 1s delay...");
 						await new Promise((resolve) => setTimeout(resolve, 1000));
 						const finalRetry = await authControllerVerifyGoogleToken({
 							token: credentialResponse.credential,
 						});
+						console.log("Retry response:", finalRetry);
 						if (finalRetry?.authToken) {
+							console.log("Success! Got authToken from retry");
 							setToken(finalRetry.authToken);
 							navigate("/");
 							return;
 						}
 					} catch (finalError: any) {
-						console.log("Final token verification failed:", finalError);
+						console.error("Final token verification failed:", {
+							error: finalError,
+							response: finalError?.response,
+							responseData: finalError?.response?.data,
+							status: finalError?.response?.status,
+						});
 						// Check if final error has authToken
 						const finalAuthToken = finalError?.response?.data?.authToken || finalError?.authToken;
 						if (finalAuthToken) {
+							console.log("Found authToken in final error response");
 							setToken(finalAuthToken);
 							navigate("/");
 							return;
@@ -180,20 +214,37 @@ const SigninWithGoogle = () => {
 
 					// Last attempt: try verification one more time after a longer delay
 					try {
+						console.log("Attempt 3: Final retry after 2s delay...");
 						await new Promise((resolve) => setTimeout(resolve, 2000));
 						const lastRetry = await authControllerVerifyGoogleToken({
 							token: credentialResponse.credential,
 						});
+						console.log("Last retry response:", lastRetry);
 						if (lastRetry?.authToken) {
+							console.log("Success! Got authToken from last retry");
 							setToken(lastRetry.authToken);
 							navigate("/");
 							return;
 						}
-					} catch (lastError) {
+					} catch (lastError: any) {
 						// All attempts failed - user exists but can't be logged in with Google
 						// This might be a backend issue in production
-						console.error("All login attempts failed for existing user:", lastError);
+						console.error("All login attempts failed for existing user:", {
+							error: lastError,
+							response: lastError?.response,
+							responseData: lastError?.response?.data,
+							status: lastError?.response?.status,
+						});
 					}
+
+					// Log the full error structure for backend debugging
+					console.error("PRODUCTION ISSUE - Full error details for backend team:", {
+						createErrorFull: createError,
+						createErrorResponse: createError?.response,
+						createErrorResponseData: createError?.response?.data,
+						createErrorStatus: createError?.response?.status,
+						email: decodedToken?.email,
+					});
 
 					// Don't show error message - the backend should handle this
 					// But if we get here, something is wrong with the backend configuration
