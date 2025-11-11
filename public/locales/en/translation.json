@@ -424,6 +424,7 @@
     },
     "template": {
       "invoice": "INVOICE",
+      "receipt": "RECEIPT",
       "invoiceNo": "Invoice No:",
       "date": "Date:",
       "invoiceTo": "Invoice To:",

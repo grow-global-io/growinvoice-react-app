@@ -430,6 +430,7 @@
     },
     "template": {
       "invoice": "LASKU",
+      "receipt": "KUITTI",
       "invoiceNo": "Laskunumero:",
       "date": "Päiväys:",
       "invoiceTo": "Lasku osoitteeseen:",

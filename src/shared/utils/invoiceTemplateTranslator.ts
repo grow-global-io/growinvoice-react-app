@@ -54,6 +54,10 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			key: "invoice.template.unit",
 			value: t("invoice.template.unit"),
 		},
+		{
+			key: "invoice.template.receipt",
+			value: t("invoice.template.receipt"),
+		},
 	];
 
 	// Replace all translation keys with their translations
@@ -121,6 +125,11 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		// Invoice header - match INVOICE in various contexts
 		{ english: />INVOICE</gi, translation: `>${t("invoice.template.invoice")}<` },
 		{ english: /INVOICE</gi, translation: `${t("invoice.template.invoice")}<` },
+
+		// Receipt header - match RECEIPT in various contexts
+		{ english: />RECEIPT</gi, translation: `>${t("invoice.template.receipt")}<` },
+		{ english: /RECEIPT</gi, translation: `${t("invoice.template.receipt")}<` },
+		{ english: /RECEIPT/gi, translation: t("invoice.template.receipt") },
 
 		// Invoice number and date - be more flexible with spacing
 		{ english: /Invoice\s+No:/gi, translation: t("invoice.template.invoiceNo") },

@@ -422,6 +422,7 @@
     },
     "template": {
       "invoice": "ARVE",
+      "receipt": "KVIITUNG",
       "invoiceNo": "Arve nr:",
       "date": "Kuupäev:",
       "invoiceTo": "Arve saaja:",
