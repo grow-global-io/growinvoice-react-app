@@ -38,10 +38,23 @@ const SigninWithGoogle = () => {
 
 		try {
 			// Try to verify the token (login existing user)
+			console.log("=== INITIAL GOOGLE TOKEN VERIFICATION ===");
+			console.log("Email:", email);
+			console.log("Calling: POST /api/auth/verify-google-token");
+
 			const verifyResponse = await authControllerVerifyGoogleToken({
 				token: credentialResponse.credential,
 			});
+
+			console.log("✅ INITIAL VERIFY RESPONSE (SUCCESS):", {
+				fullResponse: verifyResponse,
+				authToken: verifyResponse?.authToken,
+				hasAuthToken: !!verifyResponse?.authToken,
+				responseKeys: verifyResponse ? Object.keys(verifyResponse) : [],
+			});
+
 			if (verifyResponse?.authToken) {
+				console.log("✅ Success! Logging in user with authToken from initial verification");
 				setToken(verifyResponse.authToken);
 				// Redirect to dashboard after successful login
 				navigate("/");
@@ -49,9 +62,21 @@ const SigninWithGoogle = () => {
 			}
 			throw new Error("No auth token from verification");
 		} catch (error: any) {
+			console.log("❌ INITIAL VERIFY RESPONSE (ERROR):", {
+				error: error,
+				errorMessage: error?.message,
+				response: error?.response,
+				responseData: error?.response?.data,
+				responseStatus: error?.response?.status,
+				responseStatusText: error?.response?.statusText,
+				responseHeaders: error?.response?.headers,
+				fullErrorObject: JSON.stringify(error, null, 2),
+			});
+
 			// Check if error response contains authToken (some APIs return it in error)
 			const errorAuthToken = error?.response?.data?.authToken;
 			if (errorAuthToken) {
+				console.log("✅ Found authToken in error response, logging in user");
 				setToken(errorAuthToken);
 				navigate("/");
 				return;
@@ -72,12 +97,36 @@ const SigninWithGoogle = () => {
 
 				// Create a new user account (or login if already exists)
 				// The API now returns { message: string, authToken: string } and logs in existing users
+				console.log("=== CREATE USER REQUEST ===");
+				console.log("Email:", email);
+				console.log("Name:", name);
+				console.log("Calling: POST /api/user/create");
+				console.log("Request payload:", {
+					name: name,
+					companyName: name,
+					email: email,
+					phone: "",
+					password: "***hidden***",
+				});
+
 				const createUserResponse = await userControllerCreateUser({
 					name: name,
 					companyName: name, // Use name as company name for Google sign-in users
 					email: email,
 					phone: "", // Google doesn't provide phone number
 					password: randomPassword, // Random password for Google sign-in users
+				});
+
+				console.log("✅ CREATE USER RESPONSE (SUCCESS):", {
+					fullResponse: createUserResponse,
+					responseType: typeof createUserResponse,
+					responseKeys: createUserResponse ? Object.keys(createUserResponse) : [],
+					authToken: (createUserResponse as any)?.authToken,
+					dataAuthToken: (createUserResponse as any)?.data?.authToken,
+					resultAuthToken: (createUserResponse as any)?.result?.authToken,
+					token: (createUserResponse as any)?.token,
+					hasAuthToken: !!(createUserResponse as any)?.authToken,
+					fullResponseStringified: JSON.stringify(createUserResponse, null, 2),
 				});
 
 				// The API now returns authToken directly, so we can use it immediately
@@ -90,22 +139,29 @@ const SigninWithGoogle = () => {
 					response?.token;
 
 				if (authToken) {
+					console.log("✅ Success! Logging in user with authToken from create user response");
 					setToken(authToken);
 					// User is now logged in, redirect to dashboard
 					navigate("/");
 					return;
 				} else {
+					console.warn("⚠️ No authToken found in create user response");
 					throw new Error("No auth token received from account creation");
 				}
 			} catch (createError: any) {
 				// Enhanced logging for production debugging
-				console.error("Failed to create account - Full error object:", {
+				console.error("❌ CREATE USER RESPONSE (ERROR):", {
 					error: createError,
+					errorMessage: createError?.message,
+					errorCode: createError?.code,
 					response: createError?.response,
 					responseData: createError?.response?.data,
-					status: createError?.response?.status,
+					responseStatus: createError?.response?.status,
+					responseStatusText: createError?.response?.statusText,
+					responseHeaders: createError?.response?.headers,
 					message: createError?.message,
 					responseMessage: createError?.response?.data?.message,
+					fullErrorStringified: JSON.stringify(createError, null, 2),
 				});
 
 				// Check all possible locations for authToken in error response
