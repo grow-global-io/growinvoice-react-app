@@ -397,6 +397,7 @@
       "eInvoice": "E-arve",
       "print": "Prindi",
       "sendMail": "Saada e-kiri",
+      "sendPaymentReceipt": "Saada maksekviitung",
       "sendWhatsapp": "Saada WhatsAppis",
       "customerEmailNotFound": "Kliendi e-posti ei leitud",
       "dear": "Lugupeetud",
@@ -407,11 +408,13 @@
       "toViewInvoice": "et vaadata arvet.",
       "feedbackRequest": "Sinu tagasiside aitab meil oma teenuseid parandada. Palun jaga oma kogemust ülaloleval lingil.",
       "status": "Staatus:",
-      "downloadUpiQr": "Laadi UPI QR alla",
       "paymentWithStripe": "Makse Stripe'i kaudu",
       "paymentWithGrowlimitless": "Makse Growlimitless kaudu",
       "paymentWithRazorpay": "Makse Razorpay kaudu",
-      "noInvoiceFound": "Arveid ei leitud",
+      "noInvoiceFound": "Arveid ei leitud"
+    },
+    "detail": {
+      "downloadUpiQr": "Laadi UPI QR alla",
       "pleaseAcceptTerms": "Selle arve vaatamisega kinnitate, et kuvatud andmeid töödeldakse {companyName} poolt {customerName} nimel arvelduse ja arvestuse eesmärgil kohaldatavate andmekaitse seaduste (GDPR) kohaselt."
     },
     "summary": {

@@ -397,6 +397,7 @@
       "eInvoice": "E-Invoice",
       "print": "Print",
       "sendMail": "Send Mail",
+      "sendPaymentReceipt": "Send Payment Receipt",
       "sendWhatsapp": "Send Whatsapp",
       "customerEmailNotFound": "Customer email not found",
       "dear": "Dear",
@@ -407,13 +408,13 @@
       "toViewInvoice": "to view Invoice.",
       "feedbackRequest": "Your feedback is essential in helping us improve our services and serve you better. Please share your shopping experience on the above link.",
       "status": "Status:",
-      "downloadUpiQr": "Download UPI QR",
       "paymentWithStripe": "Payment With Stripe",
       "paymentWithGrowlimitless": "Payment With Growlimitless",
       "paymentWithRazorpay": "Payment With Razorpay",
       "noInvoiceFound": "No Invoice Found"
     },
     "detail": {
+      "downloadUpiQr": "Download UPI QR",
       "pleaseAcceptTerms": "By viewing this invoice, you acknowledge that the data displayed is processed by {companyName} on behalf of {customerName} for the purpose of billing and record-keeping in accordance with applicable data protection laws (GDPR)."
     },
     "summary": {

@@ -122,14 +122,17 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			translation: t("invoice.template.gdprAgreement"),
 		},
 
+		// Receipt header - match RECEIPT in various contexts (must come before INVOICE to avoid conflicts)
+		{ english: />RECEIPT</gi, translation: `>${t("invoice.template.receipt")}<` },
+		{ english: /RECEIPT</gi, translation: `${t("invoice.template.receipt")}<` },
+		{ english: /\bRECEIPT\b/gi, translation: t("invoice.template.receipt") },
+		{ english: /RECEIPT/gi, translation: t("invoice.template.receipt") },
+
 		// Invoice header - match INVOICE in various contexts
 		{ english: />INVOICE</gi, translation: `>${t("invoice.template.invoice")}<` },
 		{ english: /INVOICE</gi, translation: `${t("invoice.template.invoice")}<` },
-
-		// Receipt header - match RECEIPT in various contexts
-		{ english: />RECEIPT</gi, translation: `>${t("invoice.template.receipt")}<` },
-		{ english: /RECEIPT</gi, translation: `${t("invoice.template.receipt")}<` },
-		{ english: /RECEIPT/gi, translation: t("invoice.template.receipt") },
+		{ english: /\bINVOICE\b/gi, translation: t("invoice.template.invoice") },
+		{ english: /INVOICE/gi, translation: t("invoice.template.invoice") },
 
 		// Invoice number and date - be more flexible with spacing
 		{ english: /Invoice\s+No:/gi, translation: t("invoice.template.invoiceNo") },
@@ -208,6 +211,11 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 
 		// Subtotal variations - handle with/without HTML tags and colons
 		// Match in various HTML tag contexts
+		// Also handle typo "Subtoal" that appears in some templates
+		{ english: />Subtoal:</gi, translation: `>${t("invoice.template.subtotal")}:<` },
+		{ english: />Subtoal</gi, translation: `>${t("invoice.template.subtotal")}<` },
+		{ english: /Subtoal:/gi, translation: `${t("invoice.template.subtotal").replace(":", "")}:` },
+		{ english: /Subtoal/gi, translation: t("invoice.template.subtotal") },
 		{ english: />Subtotal:</gi, translation: `>${t("invoice.template.subtotal")}:<` },
 		{ english: />Subtotal</gi, translation: `>${t("invoice.template.subtotal")}<` },
 		{ english: /Subtotal:/gi, translation: `${t("invoice.template.subtotal").replace(":", "")}:` },
