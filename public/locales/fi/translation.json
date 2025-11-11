@@ -403,6 +403,7 @@
       "eInvoice": "E-lasku",
       "print": "Tulosta",
       "sendMail": "Lähetä sähköposti",
+      "sendPaymentReceipt": "Lähetä maksukuitti",
       "sendWhatsapp": "Lähetä WhatsAppissa",
       "customerEmailNotFound": "Asiakkaan sähköpostia ei löytynyt",
       "dear": "Hyvä",
@@ -417,9 +418,7 @@
       "paymentWithStripe": "Maksu Stripe:lla",
       "paymentWithGrowlimitless": "Maksu Growlimitless:llä",
       "paymentWithRazorpay": "Maksu Razorpay:lla",
-      "noInvoiceFound": "Laskua ei löytynyt"
-    },
-    "detail": {
+      "noInvoiceFound": "Laskua ei löytynyt",
       "pleaseAcceptTerms": "Katsomalla tämän laskun, hyväksyt, että näytetyt tiedot käsitellään {companyName} toimesta {customerName} puolesta laskutuksen ja kirjanpidon tarkoituksessa sovellettavien tietosuojalakien (GDPR) mukaisesti."
     },
     "summary": {
