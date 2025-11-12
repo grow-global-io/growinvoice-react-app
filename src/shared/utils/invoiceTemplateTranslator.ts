@@ -66,6 +66,12 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			key: "invoice.template.paymentTerms",
 			value: t("invoice.template.paymentTerms"),
 		},
+		{
+			key: "invoice.template.gdprDisclaimerPersonalData",
+			value: t("invoice.template.gdprDisclaimerPersonalData")
+				.replace("{invoiceType}", "")
+				.replace("{companyName}", ""),
+		},
 	];
 
 	// Replace all translation keys with their translations
@@ -351,6 +357,25 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			english:
 				/I\s+agree\s+that\s+my\s+name,\s+email,\s+and\s+interaction\s+data\s*\(\s*such\s+as\s+invoice\s+open\s+time\s*\)\s+may\s+be\s+stored\s+by\s+\[GrowInvoice\.com\]\s+for\s+invoicing\s+and\s+notification\s+purposes\s+in\s+accordance\s+with\s+GDPR\s+and\s+your\s+privacy\s+policy\./gi,
 			translation: t("invoice.template.gdprAgreement"),
+		},
+		// GDPR Disclaimer Personal Data - match with flexible whitespace and dynamic content
+		// Handle "invoice", "LASKU" (Finnish), and "ARVE" (Estonian) for invoice type
+		{
+			english:
+				/The\s+personal\s+data\s+presented\s+in\s+this\s+(invoice|LASKU|ARVE|INVOICE)\s+is\s+processed\s+in\s+accordance\s+with\s+the\s+EU\s+GDPR\s+data\s+protection\s+laws\s+for\s+([^<]+?)(?:'s)?\s+customer\s+invoicing\s+and\s+accounting\s+purposes\./gi,
+			translation: (_match: string, invoiceType: string, companyName: string) => {
+				// Translate invoice type
+				const translatedInvoiceType =
+					invoiceType.toUpperCase() === "LASKU"
+						? t("invoice.template.invoice")
+						: invoiceType.toUpperCase() === "ARVE"
+							? t("invoice.template.invoice")
+							: t("invoice.template.invoice");
+
+				return t("invoice.template.gdprDisclaimerPersonalData")
+					.replace("{invoiceType}", translatedInvoiceType)
+					.replace("{companyName}", companyName.trim());
+			},
 		},
 		{ english: /Terms\s*&\s*Conditions:/gi, translation: t("invoice.template.termsConditions") },
 
