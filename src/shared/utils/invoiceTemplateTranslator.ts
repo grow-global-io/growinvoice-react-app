@@ -62,6 +62,10 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			key: "invoice.template.receipt",
 			value: t("invoice.template.receipt"),
 		},
+		{
+			key: "invoice.template.paymentTerms",
+			value: t("invoice.template.paymentTerms"),
+		},
 	];
 
 	// Replace all translation keys with their translations
@@ -361,6 +365,12 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			english:
 				/Delivery\s+dates\s+are\s+not\s+guaranteed\s+and\s+Seller\s+has\s+no\s+liability\s+for\s+damages\s+that\s+may\s+be\s+incurred\s+due\s+to\s+any\s+delay\s+in\s+shipment\s+of\s+goods\s+hereunder\.\s+Taxes\s+are\s+excluded\s+unless\s+otherwise\s+stated\./gi,
 			translation: t("invoice.template.termsDelivery"),
+		},
+		// Payment Terms - match with flexible whitespace handling
+		{
+			english:
+				/The\s+payment\s+will\s+be\s+cleared\s+for\s+the\s+recipient\s+in\s+accordance\s+with\s+the\s+General\s+items\s+for\s+payment\s+transmission\s+and\s+only\s+on\s+the\s+basis\s+of\s+the\s+account\s+number\s+given\s+by\s+the\s+payer\./gi,
+			translation: t("invoice.template.paymentTerms"),
 		},
 	];
 

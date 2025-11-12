@@ -470,7 +470,8 @@
       "gdprAgreement": "Hyväksyn, että nimeni, sähköpostiosoitteeni ja vuorovaikutustietoni (kuten laskun avausaika) voidaan tallentaa [GrowInvoice.com]:iin laskutukseen ja ilmoitustarkoituksiin GDPR:n ja tietosuojakäytäntösi mukaisesti.",
       "termsConditions": "Ehdot ja palveluehdot:",
       "termsClaim": "Kaikki väitteet, jotka liittyvät määrään tai toimitusvirheisiin, hylätään ostajalta, ellei niitä tehdä kirjallisesti myyjälle kolmenkymmenen (30) päivän kuluessa tavaroiden toimittamisesta ilmoitettuun osoitteeseen.",
-      "termsDelivery": "Toimituspäivät eivät ole taattuja, eikä myyjällä ole vastuuta vahingoista, jotka voivat syntyä tavaroiden lähetyksen viivästymisestä. Verot on jätetty pois, elleivät toisin mainita."
+      "termsDelivery": "Toimituspäivät eivät ole taattuja, eikä myyjällä ole vastuuta vahingoista, jotka voivat syntyä tavaroiden lähetyksen viivästymisestä. Verot on jätetty pois, elleivät toisin mainita.",
+      "paymentTerms": "Maksu selvitetään vastaanottajalle yleisten maksunsiirtosääntöjen mukaisesti ja vain maksajan antaman tilinumeron perusteella."
     }
   },
   "invoiceForm": {
