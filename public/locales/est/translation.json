@@ -467,7 +467,8 @@
       "termsConditions": "Tingimused:",
       "termsClaim": "Kõik tarnitud kaubaga seotud pretensioonid tuleb esitada 30 päeva jooksul kirjalikult.",
       "termsDelivery": "Tarnekuupäevad ei ole garanteeritud ja müüja ei vastuta viivituste eest.",
-      "paymentTerms": "Makse kinnitatakse saajale vastavalt üldistele makseülekande tingimustele ja ainult maksja poolt antud kontonumbri alusel."
+      "paymentTerms": "Makse kinnitatakse saajale vastavalt üldistele makseülekande tingimustele ja ainult maksja poolt antud kontonumbri alusel.",
+      "gdprDisclaimerPersonalData": "Selles {invoiceType} esitatud isikuandmeid töödeldakse vastavalt EL GDPR andmekaitse seadustele {companyName} kliendi arvelduse ja arvestuse eesmärgil."
     }
   },
   "invoiceForm": {
