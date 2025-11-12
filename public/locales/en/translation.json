@@ -466,7 +466,8 @@
       "gdprAgreement": "I agree that my name, email, and interaction data (such as invoice open time) may be stored by [GrowInvoice.com] for invoicing and notification purposes in accordance with GDPR and your privacy policy.",
       "termsConditions": "Terms & Conditions:",
       "termsClaim": "All claims relating to quantity or shipping errors shall be waived by Buyer unless made in writing to Seller within thirty (30) days after delivery of goods to the address stated.",
-      "termsDelivery": "Delivery dates are not guaranteed and Seller has no liability for damages that may be incurred due to any delay in shipment of goods hereunder. Taxes are excluded unless otherwise stated."
+      "termsDelivery": "Delivery dates are not guaranteed and Seller has no liability for damages that may be incurred due to any delay in shipment of goods hereunder. Taxes are excluded unless otherwise stated.",
+      "paymentTerms": "The payment will be cleared for the recipient in accordance with the General items for payment transmission and only on the basis of the account number given by the payer."
     }
   },
   "invoiceForm": {
