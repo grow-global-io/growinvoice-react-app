@@ -34,6 +34,7 @@ import { type OmitCreateInvoiceProductsExtended } from "@features/Invoices/Creat
 import GridMultiSelectField from "@shared/components/DataGridFields/GridMultiSelectField";
 import { useCurrencyControllerFindAll } from "@api/services/currency";
 import { useEuropeanCountryDetection } from "@shared/hooks/useEuropeanCountryDetection";
+import { AlertService } from "@shared/services/AlertService";
 
 export default function FullFeaturedCrudGrid({
 	rows,
@@ -428,6 +429,25 @@ export default function FullFeaturedCrudGrid({
 			renderEditCell: (params) => {
 				const handleTaxChange = (_: SelectChangeEvent, value?: string[]) => {
 					const taxIds = value ?? [];
+
+					// Check for duplicate taxes (same name and percentage)
+					const selectedTaxes = taxCodes?.data?.filter((tax) => taxIds.includes(tax.id)) || [];
+					const taxMap = new Map<string, number>();
+
+					for (const tax of selectedTaxes) {
+						const key = `${tax.name}-${tax.percentage}`;
+						if (taxMap.has(key)) {
+							// Duplicate found - show error and don't update
+							AlertService.instance.errorMessage(
+								t("productForm.duplicateTaxError", {
+									defaultValue: `Tax "${tax.name} - ${tax.percentage}%" is already added.`,
+								}),
+							);
+							return; // Don't update if duplicate
+						}
+						taxMap.set(key, 1);
+					}
+
 					const taxPercentage =
 						taxCodes?.data
 							?.filter((t) => taxIds.includes(t.id))
@@ -464,16 +484,59 @@ export default function FullFeaturedCrudGrid({
 				return (
 					<GridMultiSelectField
 						params={params}
-						valueOptions={
-							taxCodes?.data?.map((item) => {
-								return {
-									label: [item?.name, item?.percentage ? `${item?.percentage}%` : ""]
-										.filter(Boolean)
-										.join(" - "),
-									value: item?.id,
-								};
-							}) ?? []
-						}
+						valueOptions={(() => {
+							// Get currently selected tax IDs for this row
+							const selectedTaxIds = params.row.taxes || [];
+							// Get currently selected taxes data
+							const selectedTaxes =
+								taxCodes?.data?.filter((tax) => selectedTaxIds.includes(tax.id)) || [];
+
+							// First, deduplicate taxes by name+percentage (keep only one per unique combination)
+							const seenTaxes = new Map<string, string>(); // key: "name-percentage", value: taxId
+							const uniqueTaxes =
+								taxCodes?.data?.filter((item) => {
+									const percentage = item?.percentage ?? 0;
+									const key = `${item.name}-${percentage}`;
+									if (seenTaxes.has(key)) {
+										// If already seen, only keep it if it's already selected
+										return selectedTaxIds.includes(item.id);
+									}
+									seenTaxes.set(key, item.id);
+									return true;
+								}) || [];
+
+							// Map unique taxes to options
+							return (
+								uniqueTaxes
+									.map((item) => {
+										// Always show percentage, including 0%
+										const percentage = item?.percentage ?? 0;
+										return {
+											label: `${item?.name} - ${percentage}%`,
+											value: item?.id,
+										};
+									})
+									.filter((option) => {
+										// If this tax is already selected, keep it in options
+										if (selectedTaxIds.includes(option.value)) {
+											return true;
+										}
+										// Otherwise, check if it would be a duplicate of already selected
+										const taxItem = taxCodes?.data?.find((tax) => tax.id === option.value);
+										if (!taxItem) return false;
+
+										// Check if a tax with same name and percentage is already selected
+										const isDuplicate = selectedTaxes.some(
+											(selectedTax) =>
+												selectedTax.name === taxItem.name &&
+												selectedTax.percentage === taxItem.percentage,
+										);
+
+										// Filter out duplicates
+										return !isDuplicate;
+									}) ?? []
+							);
+						})()}
 						onChangeValue={handleTaxChange}
 					/>
 				);
@@ -485,7 +548,7 @@ export default function FullFeaturedCrudGrid({
 						?.map((t) => t.percentage)
 						.reduce((acc, curr) => acc + curr, 0) ?? 0;
 
-				return <Typography>{totalTaxPercentage ? `${totalTaxPercentage} %` : "--"}</Typography>;
+				return <Typography>{totalTaxPercentage > 0 ? `${totalTaxPercentage}%` : "0%"}</Typography>;
 			},
 		},
 		{
