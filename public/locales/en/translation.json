@@ -455,6 +455,7 @@
       "note": "Note:",
       "recipientUpiDetails": "Recipient's UPI Details",
       "recipientCashDetails": "Recipient's Cash Details",
+      "recipientEuropeanBankDetails": "Recipient's European Bank Details",
       "cash": "Cash",
       "unit": "Unit",
       "unitPrice": "Unit Price",

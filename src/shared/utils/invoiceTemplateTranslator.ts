@@ -21,6 +21,10 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			value: t("invoice.template.recipientCashDetails"),
 		},
 		{
+			key: "invoice.template.recipientEuropeanBankDetails",
+			value: t("invoice.template.recipientEuropeanBankDetails"),
+		},
+		{
 			key: "invoice.template.totalTaxesAmount",
 			value: t("invoice.template.totalTaxesAmount"),
 		},
@@ -291,6 +295,15 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			english: /Recipient['\u2019]s\s+Cash\s+Details/gi,
 			translation: t("invoice.template.recipientCashDetails"),
 		},
+		// Recipient's European Bank Details - match in various HTML contexts
+		{
+			english: />Recipient['\u2019]s\s+European\s+Bank\s+Details</gi,
+			translation: `>${t("invoice.template.recipientEuropeanBankDetails")}<`,
+		},
+		{
+			english: /Recipient['\u2019]s\s+European\s+Bank\s+Details/gi,
+			translation: t("invoice.template.recipientEuropeanBankDetails"),
+		},
 		// Cash - match standalone
 		{ english: />Cash</gi, translation: `>${t("invoice.template.cash")}<` },
 		{ english: /\bCash\b/gi, translation: t("invoice.template.cash") },
@@ -319,9 +332,10 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			translation: t("invoice.template.thankYouMessage"),
 		},
 		// GDPR Disclaimer - match with flexible whitespace and dynamic content
+		// Handle "invoice", "LASKU" (Finnish), and "ARVE" (Estonian)
 		{
 			english:
-				/By\s+viewing\s+this\s+invoice,\s+you\s+acknowledge\s+that\s+the\s+data\s+displayed\s+is\s+processed\s+by\s+([^<]+?)\s+on\s+behalf\s+of\s+([^<]+?)\s+for\s+the\s+purpose\s+of\s+billing\s+and\s+record-keeping\s+in\s+accordance\s+with\s+applicable\s+data\s+protection\s+laws\s*\(\s*GDPR\s*\)\./gi,
+				/By\s+viewing\s+this\s+(?:invoice|LASKU|ARVE),\s+you\s+acknowledge\s+that\s+the\s+data\s+displayed\s+is\s+processed\s+by\s+([^<]+?)\s+on\s+behalf\s+of\s+([^<]+?)\s+for\s+the\s+purpose\s+of\s+billing\s+and\s+record-keeping\s+in\s+accordance\s+with\s+applicable\s+data\s+protection\s+laws\s*\(\s*GDPR\s*\)\./gi,
 			translation: (_match: string, companyName: string, customerName: string) => {
 				return t("invoice.template.gdprDisclaimer")
 					.replace("{companyName}", companyName.trim())

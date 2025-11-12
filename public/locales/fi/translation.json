@@ -459,6 +459,7 @@
       "note": "Huomautus:",
       "recipientUpiDetails": "Vastaanottajan UPI-tiedot",
       "recipientCashDetails": "Vastaanottajan käteistiedot",
+      "recipientEuropeanBankDetails": "Vastaanottajan eurooppalaiset pankkitiedot",
       "cash": "Käteinen",
       "unit": "Yksikkö",
       "unitPrice": "Yksikköhinta",
