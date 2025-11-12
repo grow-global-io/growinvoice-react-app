@@ -1,13 +1,8 @@
 import InvoiceDetail from "@features/Invoices/InvoiceDetail";
-import NoDataFound from "@shared/components/NoDataFound";
-import { useAuthStore } from "@store/auth";
 import { useParams } from "react-router-dom";
 const InvoiceTemplatePage = () => {
 	const { id } = useParams<{ id?: string }>();
-	const { user } = useAuthStore();
-	if (user) {
-		return <NoDataFound message="Only customers can view this invoice." />;
-	}
+	// Allow everyone to view the invoice regardless of login status
 	return <InvoiceDetail invoiceId={id ?? ""} IsPublic={true} />;
 };
 
