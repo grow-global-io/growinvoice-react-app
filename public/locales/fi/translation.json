@@ -472,7 +472,7 @@
       "termsClaim": "Kaikki väitteet, jotka liittyvät määrään tai toimitusvirheisiin, hylätään ostajalta, ellei niitä tehdä kirjallisesti myyjälle kolmenkymmenen (30) päivän kuluessa tavaroiden toimittamisesta ilmoitettuun osoitteeseen.",
       "termsDelivery": "Toimituspäivät eivät ole taattuja, eikä myyjällä ole vastuuta vahingoista, jotka voivat syntyä tavaroiden lähetyksen viivästymisestä. Verot on jätetty pois, elleivät toisin mainita.",
       "paymentTerms": "Maksu selvitetään vastaanottajalle yleisten maksunsiirtosääntöjen mukaisesti ja vain maksajan antaman tilinumeron perusteella.",
-      "gdprDisclaimerPersonalData": "Tässä {invoiceType} esitetyt henkilötiedot käsitellään EU:n GDPR-tietosuojalakien mukaisesti {companyName} asiakaslaskutuksen ja kirjanpidon tarkoituksiin."
+      "gdprDisclaimerPersonalData": "Tässä {invoiceType} esitetyt henkilötiedot käsittelevät sovelletusti {companyName}'s asiakaslaskutuksen ja kirjanpitoa varten tarvittavia tietoja EU:n GDPR -tietosuojalakien mukaisesti."
     }
   },
   "invoiceForm": {
