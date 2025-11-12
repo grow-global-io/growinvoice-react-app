@@ -419,14 +419,91 @@ const ProductForm = () => {
 											multiple
 											component={AutocompleteField}
 											loading={taxCodes.isLoading || taxCodes.isFetching}
-											options={taxCodes?.data?.map((item) => {
-												return {
-													label: [item?.name, item?.percentage ? `${item?.percentage}%` : ""]
-														.filter(Boolean)
-														.join(" - "),
-													value: item?.id,
-												};
-											})}
+											options={(() => {
+												// Get currently selected tax IDs
+												const selectedTaxIds = values.tax || [];
+												// Get currently selected taxes data
+												const selectedTaxes =
+													taxCodes?.data?.filter((tax) => selectedTaxIds.includes(tax.id)) || [];
+
+												// First, deduplicate taxes by name+percentage (keep only one per unique combination)
+												const seenTaxes = new Map<string, string>(); // key: "name-percentage", value: taxId
+												const uniqueTaxes =
+													taxCodes?.data?.filter((item) => {
+														const percentage = item?.percentage ?? 0;
+														const key = `${item.name}-${percentage}`;
+														if (seenTaxes.has(key)) {
+															// If already seen, only keep it if it's already selected
+															return selectedTaxIds.includes(item.id);
+														}
+														seenTaxes.set(key, item.id);
+														return true;
+													}) || [];
+
+												// Map unique taxes to options
+												return (
+													uniqueTaxes
+														.map((item) => {
+															// Always show percentage, including 0%
+															const percentage = item?.percentage ?? 0;
+															return {
+																label: `${item?.name} - ${percentage}%`,
+																value: item?.id,
+															};
+														})
+														.filter((option) => {
+															// If this tax is already selected, keep it in options
+															if (selectedTaxIds.includes(option.value)) {
+																return true;
+															}
+															// Otherwise, check if it would be a duplicate of already selected
+															const taxItem = taxCodes?.data?.find(
+																(tax) => tax.id === option.value,
+															);
+															if (!taxItem) return false;
+
+															// Check if a tax with same name and percentage is already selected
+															const isDuplicate = selectedTaxes.some(
+																(selectedTax) =>
+																	selectedTax.name === taxItem.name &&
+																	selectedTax.percentage === taxItem.percentage,
+															);
+
+															// Filter out duplicates
+															return !isDuplicate;
+														}) || []
+												);
+											})()}
+											onValueChange={(value: ListDto) => {
+												if (!value) return;
+
+												// Get current selected tax IDs
+												const currentTaxIds = values.tax || [];
+												// Get the tax data for the newly selected tax
+												const newTax = taxCodes?.data?.find((tax) => tax.id === value.value);
+
+												if (newTax) {
+													// Check if a tax with same name and percentage already exists
+													const selectedTaxes =
+														taxCodes?.data?.filter((tax) => currentTaxIds.includes(tax.id)) || [];
+
+													const isDuplicate = selectedTaxes.some(
+														(selectedTax) =>
+															selectedTax.name === newTax.name &&
+															selectedTax.percentage === newTax.percentage &&
+															selectedTax.id !== newTax.id,
+													);
+
+													if (isDuplicate) {
+														AlertService.instance.errorMessage(
+															t("productForm.duplicateTaxError", {
+																defaultValue: `Tax "${newTax.name} - ${newTax.percentage}%" is already added.`,
+															}),
+														);
+														return; // Don't add the duplicate
+													}
+												}
+											}}
 										/>
 										{!openTaxesForm && (
 											<Button variant="text" onClick={handleTaxesOpen} startIcon={<AddIcon />}>
