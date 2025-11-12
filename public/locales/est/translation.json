@@ -455,6 +455,7 @@
       "note": "Märkus:",
       "recipientUpiDetails": "Saaja UPI andmed",
       "recipientCashDetails": "Saaja sularaha andmed",
+      "recipientEuropeanBankDetails": "Saaja Euroopa pangandmed",
       "cash": "Sularaha",
       "unit": "Ühik",
       "unitPrice": "Ühiku hind",
