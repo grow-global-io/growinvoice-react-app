@@ -168,6 +168,18 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 			],
 		},
 		{
+			path: "/receipt",
+			icon: <ReceiptIcon />,
+			menuName: t("receipt.title", { defaultValue: "Receipt" }),
+			menuItems: [
+				{ path: "/receipt/receiptlist", label: t("receipt.title", { defaultValue: "Receipt" }) },
+				{
+					path: "/receipt/createreceipt",
+					label: t("receipt.createReceipt", { defaultValue: "Create Receipt" }),
+				},
+			],
+		},
+		{
 			path: "/quotation",
 			icon: <FaFileInvoice fontSize={"20px"} />,
 			menuName: t("quotation.title", { defaultValue: "Quotation" }),

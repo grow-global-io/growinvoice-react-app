@@ -63,7 +63,7 @@
     "register": "Rekisteröidy"
   },
   "dashboard": {
-    "rollUpAiStore": "Kierrä AI-kauppa",
+    "rollUpAiStore": "Avaa AI verkkokauppa",
     "aiAssistant": "AI-avustaja",
     "noWidgetsFound": "Yhteenveto-työkaluja ei löytynyt",
     "deleteData": "Poista tiedot",
@@ -325,6 +325,12 @@
       "businessWithGST": "Yritys GST:llä",
       "businessWithoutGST": "Yritys ilman GST:tä"
     }
+  },
+  "receipt": {
+    "title": "Kuitit",
+    "saveReceipt": "Tallenna kuitti",
+    "createReceipt": "Luo kuitti",
+    "successfullyCreated": "Kuitti luotu onnistuneesti"
   },
   "invoice": {
     "title": "Laskut",
@@ -955,6 +961,8 @@
       "membership": "Jäsenyys",
       "company": "Yritys",
       "invoices": "Laskut",
+      "receipt": "Kuitti",
+      "createReceipt": "Luo kuitti",
       "quotation": "Tarjous",
       "productUnit": "Tuoteyksikkö",
       "paymentDetails": "Maksutiedot",

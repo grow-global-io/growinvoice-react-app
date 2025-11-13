@@ -61,6 +61,10 @@ import { useCurrencyControllerFindAll } from "@api/services/currency";
 import { useTranslation } from "react-i18next";
 import { translateInvoiceHtml } from "@shared/utils/invoiceTemplateTranslator";
 import SaveAndSendInvoiceButton from "./components/SaveAndSendInvoiceButton";
+import { useInvoiceHook } from "./invoiceHooks/useInvoiceHook";
+import { LoaderService } from "@shared/services/LoaderService";
+import { toast } from "react-toastify";
+import { setSuppressSuccessMessages } from "@shared/services/InterceptorService";
 
 export type OmitCreateInvoiceProductsExtended = Omit<
 	OmitCreateInvoiceProductsDto,
@@ -73,10 +77,19 @@ export type OmitCreateInvoiceProductsExtended = Omit<
 	taxes?: string[];
 };
 
-const CreateInvoice = ({ id, customerId }: { id?: string; customerId?: string }) => {
+const CreateInvoice = ({
+	id,
+	customerId,
+	isReceipt = false,
+}: {
+	id?: string;
+	customerId?: string;
+	isReceipt?: boolean;
+}) => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
+	const { handlePaid } = useInvoiceHook();
 	const [rows, setRows] = useState<GridRowsProp<OmitCreateInvoiceProductsExtended>>([]);
 	const [productErrorText, setProductErrorText] = useState<string | undefined>(undefined);
 	const { open, handleClickOpen, handleClose } = useDialog();
@@ -257,74 +270,118 @@ const CreateInvoice = ({ id, customerId }: { id?: string; customerId?: string })
 			return;
 		}
 
-		if (id) {
-			await invoiceUpdate.mutateAsync({
-				id,
-				data: {
-					...values,
-					recurring: values.recurring as CreateInvoiceWithProductsRecurring,
-					date: formatDateToIso(values.date),
-					due_date: formatDateToIso(values.due_date),
-					due_amount: values.total,
-					paid_amount: 0,
-					product: rows.map((row) => ({
-						...row,
-						taxes: row.taxes?.length ? row.taxes : undefined,
-					})),
-				},
-			});
-		} else {
-			await createInvoice.mutateAsync({
-				data: {
-					...values,
-					reference_number: values?.reference_number
-						? values?.reference_number
-						: values?.invoice_number,
-					recurring: values.recurring as CreateInvoiceWithProductsRecurring,
-					date: formatDateToIso(values.date),
-					due_date: formatDateToIso(values.due_date),
-					due_amount: values.total,
-					paid_amount: 0,
-					product: rows.map((row) => ({
-						...row,
-						taxes: row.taxes?.length ? row.taxes : undefined,
-					})),
-				},
-			});
+		// Show loading for receipt creation and suppress all messages
+		if (isReceipt) {
+			LoaderService.instance.showLoader();
+			// Suppress all success messages during receipt creation
+			setSuppressSuccessMessages(true);
 		}
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerFindOneQueryKey(id ?? ""),
-		});
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerFindAllQueryKey(),
-		});
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerFindDueInvoicesQueryKey(),
-		});
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerFindPaidInvoicesQueryKey(),
-		});
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerTestQueryKey(id ?? ""),
-		});
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerInvoiceCountQueryKey(),
-		});
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerTotalDueQueryKey(),
-		});
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerOutstandingReceivableQueryKey(),
-		});
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerFindDueTodayQueryKey({ date: formatDateToIso(currentDate) }),
-		});
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerFindDueMonthQueryKey({ date: formatDateToIso(currentDate) }),
-		});
-		actions.resetForm();
-		setRows([]);
-		navigate("/invoice/invoicelist");
+
+		try {
+			let savedInvoiceId = id;
+
+			if (id) {
+				await invoiceUpdate.mutateAsync({
+					id,
+					data: {
+						...values,
+						recurring: values.recurring as CreateInvoiceWithProductsRecurring,
+						date: formatDateToIso(values.date),
+						due_date: formatDateToIso(values.due_date),
+						due_amount: isReceipt ? 0 : values.total,
+						paid_amount: isReceipt ? values.total : 0,
+						product: rows.map((row) => ({
+							...row,
+							taxes: row.taxes?.length ? row.taxes : undefined,
+						})),
+					},
+				});
+			} else {
+				const createdInvoice = await createInvoice.mutateAsync({
+					data: {
+						...values,
+						reference_number: values?.reference_number
+							? values?.reference_number
+							: values?.invoice_number,
+						recurring: values.recurring as CreateInvoiceWithProductsRecurring,
+						date: formatDateToIso(values.date),
+						due_date: formatDateToIso(values.due_date),
+						due_amount: isReceipt ? 0 : values.total,
+						paid_amount: isReceipt ? values.total : 0,
+						product: rows.map((row) => ({
+							...row,
+							taxes: row.taxes?.length ? row.taxes : undefined,
+						})),
+					},
+				});
+				savedInvoiceId = createdInvoice?.result?.id;
+			}
+
+			// If this is a receipt, mark it as paid using the API endpoint
+			// This will properly update the paid_status and send the receipt email
+			if (isReceipt && savedInvoiceId) {
+				// Temporarily suppress success messages by storing a flag
+				// The InterceptorService will show messages, but we'll show our combined message after
+				await handlePaid(savedInvoiceId);
+			}
+
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerFindOneQueryKey(id ?? ""),
+			});
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerFindAllQueryKey(),
+			});
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerFindDueInvoicesQueryKey(),
+			});
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerFindPaidInvoicesQueryKey(),
+			});
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerTestQueryKey(id ?? ""),
+			});
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerInvoiceCountQueryKey(),
+			});
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerTotalDueQueryKey(),
+			});
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerOutstandingReceivableQueryKey(),
+			});
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerFindDueTodayQueryKey({ date: formatDateToIso(currentDate) }),
+			});
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerFindDueMonthQueryKey({ date: formatDateToIso(currentDate) }),
+			});
+
+			// For receipt creation, redirect and show message on receipt list page
+			if (isReceipt) {
+				LoaderService.instance.hideLoader();
+				// Re-enable success messages
+				setSuppressSuccessMessages(false);
+				// Dismiss any existing toasts
+				toast.dismiss();
+				actions.resetForm();
+				setRows([]);
+				// Navigate with state to indicate we should show success message
+				navigate("/receipt/receiptlist", {
+					state: { showSuccessMessage: true },
+				});
+			} else {
+				actions.resetForm();
+				setRows([]);
+				navigate("/invoice/invoicelist");
+			}
+		} catch (error) {
+			if (isReceipt) {
+				LoaderService.instance.hideLoader();
+				// Re-enable success messages even on error
+				setSuppressSuccessMessages(false);
+			}
+			throw error;
+		}
 	};
 
 	const currencyList = useCurrencyControllerFindAll();
@@ -724,14 +781,18 @@ const CreateInvoice = ({ id, customerId }: { id?: string; customerId?: string })
 										sx={{ display: "flex", gap: 2, justifyContent: "center" }}
 									>
 										<Button variant="contained" type="submit">
-											{t("invoiceForm.saveInvoice")}
+											{isReceipt
+												? t("receipt.saveReceipt", { defaultValue: "Save Receipt" })
+												: t("invoiceForm.saveInvoice")}
 										</Button>
-										<SaveAndSendInvoiceButton
-											formik={formik}
-											rows={rows}
-											invoiceId={id}
-											onValidationError={setProductErrorText}
-										/>
+										{!isReceipt && (
+											<SaveAndSendInvoiceButton
+												formik={formik}
+												rows={rows}
+												invoiceId={id}
+												onValidationError={setProductErrorText}
+											/>
+										)}
 									</Grid>
 								</Grid>
 							</Form>

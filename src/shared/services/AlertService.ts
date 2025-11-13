@@ -1,6 +1,13 @@
 import { toast } from "react-toastify";
 import i18next from "i18next";
 
+// Export toast for dismissing messages
+export { toast };
+
+// Track recently shown messages to prevent duplicates
+const recentMessages = new Map<string, number>();
+const DEDUPLICATION_WINDOW = 3000; // 3 seconds
+
 export class AlertService {
 	private static _instance: AlertService;
 
@@ -12,6 +19,29 @@ export class AlertService {
 	}
 
 	private constructor() {}
+
+	private shouldShowMessage(message: string): boolean {
+		const normalizedMessage = message.trim().toLowerCase();
+		const now = Date.now();
+		const lastShown = recentMessages.get(normalizedMessage);
+
+		// If message was shown recently, don't show it again
+		if (lastShown && now - lastShown < DEDUPLICATION_WINDOW) {
+			return false;
+		}
+
+		// Update the timestamp for this message
+		recentMessages.set(normalizedMessage, now);
+
+		// Clean up old entries (older than deduplication window)
+		for (const [key, timestamp] of recentMessages.entries()) {
+			if (now - timestamp > DEDUPLICATION_WINDOW) {
+				recentMessages.delete(key);
+			}
+		}
+
+		return true;
+	}
 
 	private translateServerMessage(message: string): string {
 		switch (message) {
@@ -33,13 +63,19 @@ export class AlertService {
 	}
 
 	public successMessage(message: string): void {
-		toast.success(this.translateServerMessage(message));
+		const translatedMessage = this.translateServerMessage(message);
+		if (this.shouldShowMessage(translatedMessage)) {
+			toast.success(translatedMessage);
+		}
 	}
 
 	public errorMessage(message: string): void {
-		toast.error(this.translateServerMessage(message), {
-			autoClose: 15000,
-		});
+		const translatedMessage = this.translateServerMessage(message);
+		if (this.shouldShowMessage(translatedMessage)) {
+			toast.error(translatedMessage, {
+				autoClose: 15000,
+			});
+		}
 	}
 
 	public success(key: string, defaultValue?: string): void {
