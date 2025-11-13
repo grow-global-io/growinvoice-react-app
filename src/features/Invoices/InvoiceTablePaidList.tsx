@@ -187,6 +187,18 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 							</Tooltip>
 						</Box>
 						<Box>
+							<Tooltip title={"download pdf"}>
+								<span>
+									<CustomIconButton
+										src={DownloadIcon}
+										onClick={() => {
+											downloadPdf(params?.row?.id, params?.row?.invoice_number);
+										}}
+									/>
+								</span>
+							</Tooltip>
+						</Box>
+						<Box>
 							<Tooltip title={"send receipt"}>
 								<span>
 									<CustomIconButton
