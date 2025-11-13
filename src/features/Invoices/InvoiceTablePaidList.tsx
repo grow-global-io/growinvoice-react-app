@@ -4,15 +4,20 @@ import { Chip, Tooltip, Typography } from "@mui/material";
 import { Constants } from "@shared/constants";
 import {
 	useInvoiceControllerFindPaidInvoices,
+	getInvoiceControllerTestPDFGenQueryKey,
 	useInvoiceControllerSendInvoicePaymentReceiptManually,
 } from "@api/services/invoice";
 import Loader from "@shared/components/Loader";
 import { currencyFormatter, parseDateStringToFormat } from "@shared/formatter";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import DownloadIcon from "@mui/icons-material/Download";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import { useInvoiceHook } from "./invoiceHooks/useInvoiceHook";
 import { type InvoiceWithAllDataDto } from "@api/services/models";
 import { useTranslation } from "react-i18next";
+import { LoaderService } from "@shared/services/LoaderService";
+import { environment } from "@enviroment";
+import { http } from "@shared/axios";
 import EmailIcon from "@mui/icons-material/Email";
 
 const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) => {
@@ -22,6 +27,29 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 		customerId: customerId ?? undefined,
 	});
 	const { handleView } = useInvoiceHook();
+
+	const downloadPdf = async (invoiceId: string, invoiceNumber?: string) => {
+		LoaderService.instance.showLoader();
+		try {
+			const fileName = `INV-${invoiceNumber ?? invoiceId}.pdf`;
+			const pdfUrl = environment?.baseUrl + getInvoiceControllerTestPDFGenQueryKey(invoiceId)[0];
+			const response = await http.get(pdfUrl, { responseType: "blob" });
+			const blob = new Blob([response.data], { type: "application/pdf" });
+			// await filesaver.saveAs(blob, fileName);
+			const blobUrl = window.URL.createObjectURL(blob);
+			const link = document.createElement("a");
+			link.href = blobUrl;
+			link.download = fileName;
+			document.body.appendChild(link);
+			link.click();
+			link.remove();
+			window.URL.revokeObjectURL(blobUrl);
+		} catch (e) {
+			console.error("Failed to download invoice PDF", e);
+		} finally {
+			LoaderService.instance.hideLoader();
+		}
+	};
 
 	const columns: GridColDef<InvoiceWithAllDataDto>[] = [
 		{
