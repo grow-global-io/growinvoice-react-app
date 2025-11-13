@@ -411,7 +411,8 @@
       "paymentWithStripe": "Payment With Stripe",
       "paymentWithGrowlimitless": "Payment With Growlimitless",
       "paymentWithRazorpay": "Payment With Razorpay",
-      "noInvoiceFound": "No Invoice Found"
+      "noInvoiceFound": "No Invoice Found",
+      "invoicesSentSuccessfully": "Invoices sent to customers successfully"
     },
     "detail": {
       "downloadUpiQr": "Download UPI QR",
@@ -469,6 +470,17 @@
       "termsDelivery": "Delivery dates are not guaranteed and Seller has no liability for damages that may be incurred due to any delay in shipment of goods hereunder. Taxes are excluded unless otherwise stated.",
       "paymentTerms": "The payment will be cleared for the recipient in accordance with the General items for payment transmission and only on the basis of the account number given by the payer.",
       "gdprDisclaimerPersonalData": "The personal data presented in this {invoiceType} is processed in accordance with the EU GDPR data protection laws for {companyName}'s customer invoicing and accounting purposes."
+    },
+    "receiptEmail": {
+      "title": "Payment Receipt",
+      "greeting": "Dear {customerName},",
+      "thankYou": "Thank you! Your invoice #{invoiceNumber} has been successfully paid.",
+      "appreciation": "We appreciate your prompt payment and your business with us.",
+      "viewInvoice": "View Invoice",
+      "viewReceipt": "View Receipt",
+      "questions": "If you have any questions or concerns, please don't hesitate to contact us.",
+      "signature": "Best regards,<br/>Growinvoice Team",
+      "subject": "Payment Receipt - Invoice #{invoiceNumber}"
     }
   },
   "invoiceForm": {
