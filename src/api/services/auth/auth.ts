@@ -19,6 +19,7 @@ import type {
 	UseQueryResult,
 } from "@tanstack/react-query";
 import type {
+	AuthControllerGetGoogleClientId200,
 	AuthControllerGetUserParams,
 	AuthControllerGetUserQuotaParams,
 	LoginSuccessDto,
@@ -29,10 +30,6 @@ import type {
 } from "./models";
 import { authInstance } from "../../instances/authInstance";
 import type { ErrorType } from "../../instances/authInstance";
-
-type AwaitedInput<T> = PromiseLike<T> | T;
-
-type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
 export const authControllerStatus = (signal?: AbortSignal) => {
 	return authInstance<UserWithCompanyDto>({ url: `/api/auth`, method: "GET", signal });
@@ -402,3 +399,100 @@ export const useAuthControllerVerifyGoogleToken = <
 
 	return useMutation(mutationOptions);
 };
+export const authControllerGetGoogleClientId = (signal?: AbortSignal) => {
+	return authInstance<AuthControllerGetGoogleClientId200>({
+		url: `/api/auth/google-client-id`,
+		method: "GET",
+		signal,
+	});
+};
+
+export const getAuthControllerGetGoogleClientIdQueryKey = () => {
+	return [`/api/auth/google-client-id`] as const;
+};
+
+export const getAuthControllerGetGoogleClientIdQueryOptions = <
+	TData = Awaited<ReturnType<typeof authControllerGetGoogleClientId>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof authControllerGetGoogleClientId>>, TError, TData>
+	>;
+}) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey = queryOptions?.queryKey ?? getAuthControllerGetGoogleClientIdQueryKey();
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof authControllerGetGoogleClientId>>> = ({
+		signal,
+	}) => authControllerGetGoogleClientId(signal);
+
+	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof authControllerGetGoogleClientId>>,
+		TError,
+		TData
+	> & { queryKey: QueryKey };
+};
+
+export type AuthControllerGetGoogleClientIdQueryResult = NonNullable<
+	Awaited<ReturnType<typeof authControllerGetGoogleClientId>>
+>;
+export type AuthControllerGetGoogleClientIdQueryError = ErrorType<unknown>;
+
+export function useAuthControllerGetGoogleClientId<
+	TData = Awaited<ReturnType<typeof authControllerGetGoogleClientId>>,
+	TError = ErrorType<unknown>,
+>(options: {
+	query: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof authControllerGetGoogleClientId>>, TError, TData>
+	> &
+		Pick<
+			DefinedInitialDataOptions<
+				Awaited<ReturnType<typeof authControllerGetGoogleClientId>>,
+				TError,
+				TData
+			>,
+			"initialData"
+		>;
+}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useAuthControllerGetGoogleClientId<
+	TData = Awaited<ReturnType<typeof authControllerGetGoogleClientId>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof authControllerGetGoogleClientId>>, TError, TData>
+	> &
+		Pick<
+			UndefinedInitialDataOptions<
+				Awaited<ReturnType<typeof authControllerGetGoogleClientId>>,
+				TError,
+				TData
+			>,
+			"initialData"
+		>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useAuthControllerGetGoogleClientId<
+	TData = Awaited<ReturnType<typeof authControllerGetGoogleClientId>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof authControllerGetGoogleClientId>>, TError, TData>
+	>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+export function useAuthControllerGetGoogleClientId<
+	TData = Awaited<ReturnType<typeof authControllerGetGoogleClientId>>,
+	TError = ErrorType<unknown>,
+>(options?: {
+	query?: Partial<
+		UseQueryOptions<Awaited<ReturnType<typeof authControllerGetGoogleClientId>>, TError, TData>
+	>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+	const queryOptions = getAuthControllerGetGoogleClientIdQueryOptions(options);
+
+	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}

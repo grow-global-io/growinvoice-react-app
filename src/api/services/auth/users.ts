@@ -30,19 +30,14 @@ import type {
 	UpdateCurrencyCompanyDto,
 	UpdateUserCompany,
 	UserControllerBlockUser200,
-	UserControllerCreateUser201,
 	UserControllerUpdateCurrencyCompany201,
 	UserControllerUpdateUser201,
 } from "./models";
 import { authInstance } from "../../instances/authInstance";
 import type { ErrorType } from "../../instances/authInstance";
 
-type AwaitedInput<T> = PromiseLike<T> | T;
-
-type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
-
 export const userControllerCreateUser = (createUserCompany: CreateUserCompany) => {
-	return authInstance<UserControllerCreateUser201>({
+	return authInstance<LoginSuccessDto>({
 		url: `/api/user/create`,
 		method: "POST",
 		headers: { "Content-Type": "application/json" },

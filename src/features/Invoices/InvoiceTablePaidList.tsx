@@ -1,10 +1,11 @@
 import Box from "@mui/material/Box";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
-import { Chip, Typography } from "@mui/material";
+import { Chip, Tooltip, Typography } from "@mui/material";
 import { Constants } from "@shared/constants";
 import {
 	useInvoiceControllerFindPaidInvoices,
 	getInvoiceControllerTestPDFGenQueryKey,
+	useInvoiceControllerSendInvoicePaymentReceiptManually,
 } from "@api/services/invoice";
 import Loader from "@shared/components/Loader";
 import { currencyFormatter, parseDateStringToFormat } from "@shared/formatter";
@@ -17,8 +18,10 @@ import { useTranslation } from "react-i18next";
 import { LoaderService } from "@shared/services/LoaderService";
 import { environment } from "@enviroment";
 import { http } from "@shared/axios";
+import EmailIcon from "@mui/icons-material/Email";
 
 const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) => {
+	const sendReceipt = useInvoiceControllerSendInvoicePaymentReceiptManually();
 	const { t } = useTranslation();
 	const invoiceData = useInvoiceControllerFindPaidInvoices({
 		customerId: customerId ?? undefined,
@@ -169,20 +172,39 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => (
-				<Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-					<CustomIconButton
-						src={VisibilityIcon}
-						onClick={() => {
-							handleView(params?.row?.id);
-						}}
-					/>
-					<CustomIconButton
-						src={DownloadIcon}
-						onClick={() => {
-							downloadPdf(params?.row?.id, params?.row?.invoice_number);
-						}}
-					/>
-				</Box>
+				<>
+					<Box display="flex" gap={1} justifyContent={"center"} alignItems="center">
+						<Box>
+							<Tooltip title={"view invoice"}>
+								<span>
+									<CustomIconButton
+										src={VisibilityIcon}
+										onClick={() => {
+											handleView(params?.row?.id);
+										}}
+									/>
+								</span>
+							</Tooltip>
+						</Box>
+						<Box>
+							<Tooltip title={"send receipt"}>
+								<span>
+									<CustomIconButton
+										disabled={sendReceipt.isPending}
+										src={EmailIcon}
+										onClick={async () => {
+											await sendReceipt.mutateAsync({
+												params: {
+													id: params?.row?.id,
+												},
+											});
+										}}
+									/>
+								</span>
+							</Tooltip>
+						</Box>
+					</Box>
+				</>
 			),
 		},
 	];

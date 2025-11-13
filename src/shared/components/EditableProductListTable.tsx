@@ -73,10 +73,12 @@ export default function FullFeaturedCrudGrid({
 			}),
 		);
 		const tax = taxCodes?.data?.find((tax) => tax.id === formik?.values.tax_id);
-		formik?.setFieldValue("sub_total", subtotal);
+		formik?.setFieldValue("sub_total", Math.round(Number(subtotal ?? 0) * 10) / 10);
 		const discount = subtotal * (Number(formik?.values?.discountPercentage) / 100);
 		const taxPercentage = subtotal * (Number(tax?.percentage ?? 0) / 100);
-		formik?.setFieldValue("total", subtotal - discount + taxPercentage);
+		const total = subtotal - discount + taxPercentage;
+		const round = Math.round(Number(total ?? 0) * 10) / 10;
+		formik?.setFieldValue("total", round);
 	};
 
 	const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
@@ -558,16 +560,24 @@ export default function FullFeaturedCrudGrid({
 				<GridTextField
 					params={params}
 					label={t("invoice.table.hsnCode", { defaultValue: "HSN Code" })}
-					value={`${hsnCodes?.data?.find((hsnCode) => hsnCode.id === params.row.hsnCode_id)?.code} - ${hsnCodes?.data?.find((hsnCode) => hsnCode.id === params.row.hsnCode_id)?.tax?.percentage ?? 0}%`}
+					value={`${hsnCodes?.data?.find((hsnCode) => hsnCode.id === params.row.hsnCode_id)?.code ?? ""} - ${hsnCodes?.data?.find((hsnCode) => hsnCode.id === params.row.hsnCode_id)?.tax?.percentage ?? 0}%`}
 					disabled={true}
 				/>
 			),
 			renderCell: (params) => {
 				const hsnCode = hsnCodes?.data?.find((hsnCode) => hsnCode.id === params.value);
 				return (
-					<Typography>
-						{hsnCode?.code} - {hsnCode?.tax?.percentage ?? 0}%
-					</Typography>
+					<>
+						{hsnCode && hsnCode.code ? (
+							<Typography>
+								{hsnCode?.code} - {hsnCode?.tax?.percentage ?? 0}%
+							</Typography>
+						) : (
+							<>
+								<Typography>-</Typography>
+							</>
+						)}
+					</>
 				);
 			},
 		},
@@ -638,7 +648,7 @@ export default function FullFeaturedCrudGrid({
 				return (
 					<Typography>
 						{currencyFormatter(
-							params.value,
+							Math.round(Number(params.value) * 100) / 100,
 							currencyList?.data?.find((currency) => currency.id === currency_id)?.short_code ??
 								"USD",
 						)}

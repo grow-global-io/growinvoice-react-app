@@ -27,10 +27,6 @@ import type {
 import { authInstance } from "../../instances/authInstance";
 import type { ErrorType } from "../../instances/authInstance";
 
-type AwaitedInput<T> = PromiseLike<T> | T;
-
-type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
-
 export const companyControllerFindOne = (id: string, signal?: AbortSignal) => {
 	return authInstance<CompanyDto>({ url: `/api/company/${id}`, method: "GET", signal });
 };

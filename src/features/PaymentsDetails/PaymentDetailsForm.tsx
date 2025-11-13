@@ -1,4 +1,7 @@
-import { type CreatePaymentDetailsDto, CreatePaymentDetailsDtoPaymentType } from "@api/services/models";
+import {
+	type CreatePaymentDetailsDto,
+	CreatePaymentDetailsDtoPaymentType,
+} from "@api/services/models";
 import { Box, Button, Grid } from "@mui/material";
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";

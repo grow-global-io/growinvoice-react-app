@@ -10,6 +10,7 @@ import type { CreatePaymentsDtoPaymentType } from "./createPaymentsDtoPaymentTyp
 export interface CreatePaymentsDto {
 	amount: number;
 	invoice_id: string;
+	isNeglected?: boolean;
 	/** @nullable */
 	notes?: string | null;
 	otherId?: string;

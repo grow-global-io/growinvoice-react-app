@@ -51,10 +51,8 @@ const VendorsForm = () => {
 		},
 	};
 	const schema: yup.Schema<CreateVendorsWithAddressDto> = yup.object({
-		name: yup
-			.string()
-			.required(t("vendorForm.validation.nameRequired")),
-			// .matches(RegexExp.fullNameRegex, t("vendorForm.validation.nameInvalid")),
+		name: yup.string().required(t("vendorForm.validation.nameRequired")),
+		// .matches(RegexExp.fullNameRegex, t("vendorForm.validation.nameInvalid")),
 		display_name: yup.string().required(t("vendorForm.validation.displayNameRequired")),
 		email: yup
 			.string()

@@ -1,4 +1,10 @@
-import { Autocomplete, Box, FormHelperText, type SelectChangeEvent, TextField } from "@mui/material";
+import {
+	Autocomplete,
+	Box,
+	FormHelperText,
+	type SelectChangeEvent,
+	TextField,
+} from "@mui/material";
 import { type GridRenderEditCellParams, useGridApiContext } from "@mui/x-data-grid";
 import { type ListDto } from "@shared/models/ListDto";
 

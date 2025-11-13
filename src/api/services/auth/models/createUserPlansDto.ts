@@ -5,9 +5,11 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
+import type { CreateUserPlansDtoPaymentType } from "./createUserPlansDtoPaymentType";
 
 export interface CreateUserPlansDto {
 	end_date: string;
+	payment_type?: CreateUserPlansDtoPaymentType;
 	plan_id: string;
 	session_id?: string;
 	start_date: string;
