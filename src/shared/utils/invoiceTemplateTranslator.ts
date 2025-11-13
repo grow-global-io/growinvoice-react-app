@@ -160,7 +160,7 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		// Recipient's Details - handle various formats
 		{
 			english: />Recipient['\u2019]s\s+Details:</gi,
-			translation: `>${t("invoice.template.recipientsDetails")}<`,
+			translation: `>${t("invoice.template.recipientsDetails")}:`,
 		},
 		{
 			english: /Recipient['\u2019]s\s+Details:/gi,
@@ -173,7 +173,7 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		// Payer's Name & Address - handle various formats
 		{
 			english: />Payer['\u2019]s\s+Name\s*&\s*Address:</gi,
-			translation: `>${t("invoice.template.payerNameAddress")}<`,
+			translation: `>${t("invoice.template.payerNameAddress")}:`,
 		},
 		{
 			english: /Payer['\u2019]s\s+Name\s*&\s*Address:/gi,
@@ -183,7 +183,7 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			english: /Payer['\u2019]s\s+Name\s*&\s*Address/gi,
 			translation: t("invoice.template.payerNameAddress"),
 		},
-		{ english: />Name\s*&\s*Address:</gi, translation: `>${t("invoice.template.nameAddress")}<` },
+		{ english: />Name\s*&\s*Address:</gi, translation: `>${t("invoice.template.nameAddress")}:` },
 		{ english: /Name\s*&\s*Address:/gi, translation: t("invoice.template.nameAddress") },
 
 		// Table headers - handle various HTML contexts
@@ -262,13 +262,19 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		},
 		{ english: /Grand\s+Total/gi, translation: t("invoice.template.grandTotal") },
 
-		// Company details
-		{ english: />Company:/gi, translation: `>${t("invoice.template.company")}<` },
-		{ english: /Company:/gi, translation: t("invoice.template.company") },
-		{ english: />Address:/gi, translation: `>${t("invoice.template.address")}<` },
+		// Company details - check if translation already has colon to avoid double colons
+		{
+			english: />Company:/gi,
+			translation: `>${t("invoice.template.company").replace(/:\s*$/, "")}:`,
+		},
+		{ english: /Company:/gi, translation: t("invoice.template.company").replace(/:\s*$/, "") },
+		{
+			english: />Address:/gi,
+			translation: `>${t("invoice.template.address").replace(/:\s*$/, "")}:`,
+		},
 		{ english: /VAT\s+Number:/gi, translation: t("invoice.template.vatNumber") },
-		{ english: />Email:/gi, translation: `>${t("invoice.template.email")}<` },
-		{ english: />Tel:/gi, translation: `>${t("invoice.template.tel")}<` },
+		{ english: />Email:/gi, translation: `>${t("invoice.template.email").replace(/:\s*$/, "")}:` },
+		{ english: />Tel:/gi, translation: `>${t("invoice.template.tel").replace(/:\s*$/, "")}:` },
 
 		// Other fields - handle variations
 		// Ref. No. - match with/without colon and in various HTML contexts
@@ -314,6 +320,15 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			english: /Recipient['\u2019]s\s+European\s+Bank\s+Details/gi,
 			translation: t("invoice.template.recipientEuropeanBankDetails"),
 		},
+		// IBAN and BIC - ensure they have colons
+		// Match IBAN when followed by closing tag (like >IBAN</span> -> >IBAN:</span>)
+		{ english: />IBAN\s*<\//gi, translation: `>IBAN:</` },
+		// Match IBAN when followed by space and content (like >IBAN 123 -> >IBAN: 123)
+		{ english: />IBAN\s+([0-9A-Z])/gi, translation: (_match, after) => `>IBAN: ${after}` },
+		// Match BIC when followed by closing tag (like >BIC</span> -> >BIC:</span>)
+		{ english: />BIC\s*<\//gi, translation: `>BIC:</` },
+		// Match BIC when followed by space and content (like >BIC 123 -> >BIC: 123)
+		{ english: />BIC\s+([0-9A-Z])/gi, translation: (_match, after) => `>BIC: ${after}` },
 		// Cash - match standalone
 		{ english: />Cash</gi, translation: `>${t("invoice.template.cash")}<` },
 		{ english: /\bCash\b/gi, translation: t("invoice.template.cash") },
