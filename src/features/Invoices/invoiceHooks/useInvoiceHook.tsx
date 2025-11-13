@@ -31,8 +31,10 @@ import moment from "moment";
 import { useCallback } from "react";
 import useRazorpay, { type RazorpayOptions } from "react-razorpay";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export const useInvoiceHook = () => {
+	const { t } = useTranslation();
 	const [Razorpay] = useRazorpay();
 	const navigate = useNavigate();
 	const removeInvoice = useInvoiceControllerRemove();
@@ -256,17 +258,20 @@ export const useInvoiceHook = () => {
 
 			// Send receipt email
 			const invoiceLink = `${window.location.origin}/invoice/invoicetemplate/${invoiceId}`;
+			const invoiceNumber = invoiceData?.invoice_number || invoiceId;
+			const customerName = invoiceData?.customer?.name || "Customer";
+
 			const receiptBody = `
 				<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-					<h2 style="color: #333; text-align: center;">Payment Receipt</h2>
+					<h2 style="color: #333; text-align: center;">${t("invoice.receiptEmail.title", { defaultValue: "Payment Receipt" })}</h2>
 					<p style="font-size: 16px; color: #555; line-height: 1.6;">
-						Dear ${invoiceData?.customer?.name || "Customer"},
+						${t("invoice.receiptEmail.greeting", { customerName, defaultValue: `Dear ${customerName},` })}
 					</p>
 					<p style="font-size: 16px; color: #555; line-height: 1.6;">
-						Thank you! Your invoice <strong>#${invoiceData?.invoice_number || invoiceId}</strong> has been successfully paid.
+						${t("invoice.receiptEmail.thankYou", { invoiceNumber, defaultValue: `Thank you! Your invoice #${invoiceNumber} has been successfully paid.` })}
 					</p>
 					<p style="font-size: 16px; color: #555; line-height: 1.6;">
-						We appreciate your prompt payment and your business with us.
+						${t("invoice.receiptEmail.appreciation", { defaultValue: "We appreciate your prompt payment and your business with us." })}
 					</p>
 					<div style="text-align: center; margin: 30px 0;">
 						<a href="${invoiceLink}" style="
@@ -279,15 +284,14 @@ export const useInvoiceHook = () => {
 							border-radius: 5px;
 							font-weight: bold;
 						">
-							View Invoice
+							${t("invoice.receiptEmail.viewReceipt", { defaultValue: "View Receipt" })}
 						</a>
 					</div>
 					<p style="font-size: 14px; color: #777; line-height: 1.6;">
-						If you have any questions or concerns, please don't hesitate to contact us.
+						${t("invoice.receiptEmail.questions", { defaultValue: "If you have any questions or concerns, please don't hesitate to contact us." })}
 					</p>
 					<p style="font-size: 14px; color: #777; line-height: 1.6;">
-						Best regards,<br/>
-						Growinvoice Team
+						${t("invoice.receiptEmail.signature", { defaultValue: "Best regards,<br/>Growinvoice Team" })}
 					</p>
 				</div>
 			`;
@@ -295,7 +299,10 @@ export const useInvoiceHook = () => {
 			await invoiceControllerInvoiceSentToMail(
 				{
 					email: customerEmail,
-					subject: `Payment Receipt - Invoice #${invoiceData?.invoice_number || invoiceId}`,
+					subject: t("invoice.receiptEmail.subject", {
+						invoiceNumber,
+						defaultValue: `Payment Receipt - Invoice #${invoiceNumber}`,
+					}),
 					body: receiptBody,
 				},
 				{

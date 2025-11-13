@@ -5,6 +5,18 @@ import { toastWithButton } from "./toastWithButton";
 import i18next from "i18next";
 // import { RsaService } from "./RsaService";
 
+// Helper function to translate known backend messages
+const translateBackendMessage = (message: string): string => {
+	// Map known backend messages to translation keys
+	const messageMap: Record<string, string> = {
+		"Invoices sent to customers successfully": i18next.t("invoice.invoicesSentSuccessfully", {
+			defaultValue: "Invoices sent to customers successfully",
+		}),
+	};
+
+	return messageMap[message] || message;
+};
+
 export class InterceptorService {
 	public constructor(private _axiosInstance: AxiosInstance) {}
 
@@ -40,7 +52,8 @@ export class InterceptorService {
 						response?.data?.message !==
 							"Limit exceeded. Please upgrade your plan to add more features."
 					) {
-						AlertService.instance.successMessage(response.data.message);
+						const translatedMessage = translateBackendMessage(response.data.message);
+						AlertService.instance.successMessage(translatedMessage);
 					}
 				}
 				LoaderService.instance.hideLoader();

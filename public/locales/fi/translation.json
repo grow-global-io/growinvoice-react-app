@@ -419,6 +419,7 @@
       "paymentWithGrowlimitless": "Maksu Growlimitless:llä",
       "paymentWithRazorpay": "Maksu Razorpay:lla",
       "noInvoiceFound": "Laskua ei löytynyt",
+      "invoicesSentSuccessfully": "Laskut lähetetty asiakkaille onnistuneesti",
       "pleaseAcceptTerms": "Katsomalla tämän laskun, hyväksyt, että näytetyt tiedot käsitellään {companyName} toimesta {customerName} puolesta laskutuksen ja kirjanpidon tarkoituksessa sovellettavien tietosuojalakien (GDPR) mukaisesti."
     },
     "summary": {
@@ -473,6 +474,17 @@
       "termsDelivery": "Toimituspäivät eivät ole taattuja, eikä myyjällä ole vastuuta vahingoista, jotka voivat syntyä tavaroiden lähetyksen viivästymisestä. Verot on jätetty pois, elleivät toisin mainita.",
       "paymentTerms": "Maksu selvitetään vastaanottajalle yleisten maksunsiirtosääntöjen mukaisesti ja vain maksajan antaman tilinumeron perusteella.",
       "gdprDisclaimerPersonalData": "Tässä {invoiceType} esitetyt henkilötiedot käsittelevät sovelletusti {companyName}'s asiakaslaskutuksen ja kirjanpitoa varten tarvittavia tietoja EU:n GDPR -tietosuojalakien mukaisesti."
+    },
+    "receiptEmail": {
+      "title": "Kuitti maksusta.",
+      "greeting": "Hyvä {customerName},",
+      "thankYou": "Kiitoksia! Laskunne #{invoiceNumber} on nyt maksettu.",
+      "appreciation": "Arvostamme oikea-aikaista maksusuoritustanne ja liiketoimintaa kanssanne.",
+      "viewInvoice": "Katso lasku",
+      "viewReceipt": "Katso kuitti",
+      "questions": "Jos teillä on jotakin kysyttävää maksunne suhteen, älä epäröi kääntyä puoleemme ja kysy asiasta meiltä.",
+      "signature": "Parhain terveisin,<br/>Growinvoice -tiimi.",
+      "subject": "Kuitti maksusta - Lasku #{invoiceNumber}"
     }
   },
   "invoiceForm": {
