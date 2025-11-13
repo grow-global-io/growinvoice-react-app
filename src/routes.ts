@@ -52,6 +52,8 @@ import UserManagementList from "@features/Admin/UserManagement/UserManagementLis
 import InvoicesManagementList from "@features/Admin/InvoiceManagement/InvoicesManagementList";
 import PlansManagementList from "@features/Admin/PlansManagement/PlansManagementList";
 import BulkUploadCustomer from "@features/Customer/BulkUploadCustomer";
+import ReceiptListPage from "@pages/ReceiptListPage";
+import CreateReceiptPage from "@pages/CreateReceiptPage";
 
 export const unProtectedRoutes: Route[] = [
 	{
@@ -184,6 +186,30 @@ export const protectedRoutes: Route[] = [
 	{
 		path: "/setting/invoices",
 		Component: InvoicesPage,
+	},
+	{
+		path: "/receipt/receiptlist",
+		Component: ReceiptListPage,
+	},
+	{
+		path: "/receipt/createreceipt",
+		Component: CreateReceiptPage,
+	},
+	{
+		path: "/receipt/createreceipt/:id",
+		Component: CreateReceiptPage,
+	},
+	{
+		path: "/setting/receipt/receiptlist",
+		Component: ReceiptListPage,
+	},
+	{
+		path: "/setting/receipt/createreceipt",
+		Component: CreateReceiptPage,
+	},
+	{
+		path: "/setting/receipt/createreceipt/:id",
+		Component: CreateReceiptPage,
 	},
 	{
 		path: "/setting/productunit",

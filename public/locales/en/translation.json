@@ -320,6 +320,12 @@
       "businessWithoutGST": "Business without GST"
     }
   },
+  "receipt": {
+    "title": "Receipts",
+    "saveReceipt": "Save Receipt",
+    "createReceipt": "Create Receipt",
+    "successfullyCreated": "Receipt Successfully Created"
+  },
   "invoice": {
     "title": "Invoices",
     "create": "Create Invoice",
@@ -947,6 +953,8 @@
     "menu": {
       "myProfile": "My profile",
       "membership": "Membership",
+      "receipt": "Receipt",
+      "createReceipt": "Create Receipt",
       "company": "Company",
       "invoices": "Invoices",
       "quotation": "Quotation",

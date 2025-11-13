@@ -17,6 +17,13 @@ const translateBackendMessage = (message: string): string => {
 	return messageMap[message] || message;
 };
 
+// Flag to suppress success messages during receipt creation
+let suppressSuccessMessages = false;
+
+export const setSuppressSuccessMessages = (value: boolean): void => {
+	suppressSuccessMessages = value;
+};
+
 export class InterceptorService {
 	public constructor(private _axiosInstance: AxiosInstance) {}
 
@@ -47,13 +54,30 @@ export class InterceptorService {
 		this._axiosInstance.interceptors.response.use(
 			(response) => {
 				if (["post", "put", "delete", "patch"].includes(response.config.method || "")) {
-					if (
-						response?.data?.message &&
-						response?.data?.message !==
-							"Limit exceeded. Please upgrade your plan to add more features."
-					) {
-						const translatedMessage = translateBackendMessage(response.data.message);
-						AlertService.instance.successMessage(translatedMessage);
+					const message = response?.data?.message;
+					if (message) {
+						// Normalize message for comparison (trim and lowercase)
+						const normalizedMessage = message.trim().toLowerCase();
+
+						// Always filter out messages that shouldn't be shown (case-insensitive)
+						// "Login successful" should never appear as a toast - it's handled in the login flow
+						const alwaysExcludedMessages = [
+							"limit exceeded. please upgrade your plan to add more features.",
+							"login successful",
+						];
+
+						// Check if message should always be excluded
+						const shouldAlwaysExclude = alwaysExcludedMessages.some(
+							(excluded) => normalizedMessage === excluded.trim().toLowerCase(),
+						);
+
+						// Only show message if:
+						// 1. It's not in the always-excluded list
+						// 2. Success messages are not suppressed (e.g., during receipt creation)
+						if (!shouldAlwaysExclude && !suppressSuccessMessages) {
+							const translatedMessage = translateBackendMessage(message);
+							AlertService.instance.successMessage(translatedMessage);
+						}
 					}
 				}
 				LoaderService.instance.hideLoader();

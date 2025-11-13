@@ -320,6 +320,12 @@
       "businessWithoutGST": "Ettevõte ilma käibemaksuta"
     }
   },
+  "receipt": {
+    "title": "Kviitungid",
+    "saveReceipt": "Salvesta kviitung",
+    "createReceipt": "Loo kviitung",
+    "successfullyCreated": "Kviitung loodud edukalt"
+  },
   "invoice": {
     "title": "Arved",
     "create": "Loo arve",
@@ -953,6 +959,8 @@
       "membership": "Liikmelisus",
       "company": "Ettevõte",
       "invoices": "Arved",
+      "receipt": "Kviitung",
+      "createReceipt": "Loo kviitung",
       "quotation": "Pakkumine",
       "productUnit": "Toote ühik",
       "paymentDetails": "Makse andmed",
