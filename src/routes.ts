@@ -2,7 +2,7 @@ import LoginPage from "@pages/LoginPage";
 // import MainHomePage from "@pages/MainHomePage";
 import RegisterPage from "@pages/RegisterPage";
 import OveviewPage from "@pages/OveviewPage";
-import { Route } from "@shared/models/Route";
+import { type Route } from "@shared/models/Route";
 import ResetPassword from "@features/Authentication/ResetPassword";
 import ProductListPage from "@pages/ProductListPage";
 import CreateProductPage from "@pages/CreateProductPage";
@@ -21,6 +21,7 @@ import ApiCredentialsPage from "@pages/ApiCredentialsPage";
 import InvoiceDetailPage from "@pages/InvoiceDetailPage";
 import QuotationDetailPage from "@pages/QuotationDetailPage";
 import InvoiceTemplatePage from "@pages/InvoiceTemplatePage";
+import OrdersPage from "@pages/OrdersPage";
 import DashboardPage from "@pages/DashboardPage";
 import QuotationSettingsPage from "@pages/QuotationSettingsPage";
 import QuotationTemplatePage from "@pages/QuotationTemplatePage";
@@ -37,6 +38,7 @@ import TaxCodeListPage from "@pages/TaxCodeListPage";
 import ProductUnitListPage from "@pages/ProductUnitListPage";
 import ProductSalesPage from "@pages/ProductSalesPage";
 import CustomerSalesPage from "@pages/CustomerSalesPage";
+import CustomerDataPage from "@pages/CustomerDataPage";
 import ProfitLossPage from "@pages/ProfitLossPage";
 import ExpensesPage from "@pages/ExpensesPage";
 import VendorsPage from "@pages/VendorsPage";
@@ -49,6 +51,9 @@ import AdminOverView from "@features/Admin/AdminOverView";
 import UserManagementList from "@features/Admin/UserManagement/UserManagementList";
 import InvoicesManagementList from "@features/Admin/InvoiceManagement/InvoicesManagementList";
 import PlansManagementList from "@features/Admin/PlansManagement/PlansManagementList";
+import BulkUploadCustomer from "@features/Customer/BulkUploadCustomer";
+import ReceiptListPage from "@pages/ReceiptListPage";
+import CreateReceiptPage from "@pages/CreateReceiptPage";
 
 export const unProtectedRoutes: Route[] = [
 	{
@@ -91,6 +96,10 @@ export const protectedRoutes: Route[] = [
 		Component: OveviewPage,
 	},
 	{
+		path: "/orders",
+		Component: OrdersPage,
+	},
+	{
 		path: "/ai-store",
 		Component: RollUpForm,
 	},
@@ -117,6 +126,10 @@ export const protectedRoutes: Route[] = [
 	{
 		path: "/customer/createcustomer",
 		Component: CreateCustomerPage,
+	},
+	{
+		path: "/customer/bulk-upload",
+		Component: BulkUploadCustomer,
 	},
 	{
 		path: "/invoice/customer/:customerId",
@@ -173,6 +186,30 @@ export const protectedRoutes: Route[] = [
 	{
 		path: "/setting/invoices",
 		Component: InvoicesPage,
+	},
+	{
+		path: "/receipt/receiptlist",
+		Component: ReceiptListPage,
+	},
+	{
+		path: "/receipt/createreceipt",
+		Component: CreateReceiptPage,
+	},
+	{
+		path: "/receipt/createreceipt/:id",
+		Component: CreateReceiptPage,
+	},
+	{
+		path: "/setting/receipt/receiptlist",
+		Component: ReceiptListPage,
+	},
+	{
+		path: "/setting/receipt/createreceipt",
+		Component: CreateReceiptPage,
+	},
+	{
+		path: "/setting/receipt/createreceipt/:id",
+		Component: CreateReceiptPage,
 	},
 	{
 		path: "/setting/productunit",
@@ -249,6 +286,10 @@ export const protectedRoutes: Route[] = [
 	{
 		path: "/reports/customersales",
 		Component: CustomerSalesPage,
+	},
+	{
+		path: "/reports/customerdata",
+		Component: CustomerDataPage,
 	},
 	{
 		path: "/reports/profitloss",

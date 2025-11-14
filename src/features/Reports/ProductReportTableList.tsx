@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Typography } from "@mui/material";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { Typography, Chip } from "@mui/material";
 import { useReportsControllerGetProductReports } from "@api/services/reports";
 import Loader from "@shared/components/Loader";
 import { convertUtcToFormat, currencyFormatter } from "@shared/formatter";
@@ -8,6 +8,7 @@ import { useMemo } from "react";
 import { useInvoiceHook } from "@features/Invoices/invoiceHooks/useInvoiceHook";
 import { CustomToolbar } from "@shared/components/CustomToolbar";
 import { useTranslation } from "react-i18next";
+import { Constants } from "@shared/constants";
 
 const ProductReportTableList = ({ fromDate, toDate }: { fromDate: string; toDate: string }) => {
 	const { t } = useTranslation();
@@ -22,9 +23,20 @@ const ProductReportTableList = ({ fromDate, toDate }: { fromDate: string; toDate
 			},
 		},
 	);
+	// Filter to only show Paid and Partially Paid invoices
+	const filteredProductReportData = useMemo(() => {
+		if (!productReportData?.data || productReportData.data.length === 0) {
+			return [];
+		}
+		return productReportData.data.filter((item: any) => {
+			const paidStatus = item?.paid_status || item?.invoice?.paid_status;
+			return paidStatus === "Paid" || paidStatus === "PartiallyPaid";
+		});
+	}, [productReportData?.data]);
+
 	const ProductReportMap = useMemo(() => {
-		if (productReportData?.data && productReportData?.data?.length > 0) {
-			return productReportData?.data?.map((item) => {
+		if (filteredProductReportData && filteredProductReportData.length > 0) {
+			return filteredProductReportData.map((item) => {
 				return {
 					ProductName: item?.product?.name,
 					InvoiceDate: item?.invoice?.date,
@@ -34,7 +46,7 @@ const ProductReportTableList = ({ fromDate, toDate }: { fromDate: string; toDate
 			});
 		}
 		return [];
-	}, [productReportData?.data]);
+	}, [filteredProductReportData]);
 	const { handleView } = useInvoiceHook();
 	const columns: GridColDef[] = [
 		{
@@ -94,6 +106,30 @@ const ProductReportTableList = ({ fromDate, toDate }: { fromDate: string; toDate
 				return <Typography>{currencyFormatter(params.row?.invoice?.total)}</Typography>;
 			},
 		},
+		{
+			field: "paid_status",
+			headerName: t("invoice.table.paidStatus", { defaultValue: "Status" }),
+			flex: 1,
+			minWidth: 150,
+			renderCell: (params) => {
+				const paidStatus = params.row?.paid_status || params.row?.invoice?.paid_status;
+				if (!paidStatus) return null;
+
+				// Show status, with special emphasis on Partially Paid
+				const paymentStatusKey = paidStatus?.toLowerCase().replace(/\s+/g, "") || "";
+				const translatedPaymentStatus = t(`invoice.paymentStatus.${paymentStatusKey}`, {
+					defaultValue: paidStatus === "PartiallyPaid" ? "Partially Paid" : paidStatus,
+				});
+
+				return (
+					<Chip
+						label={translatedPaymentStatus}
+						color={Constants?.invoiceStatusColorEnums[paidStatus] ?? "default"}
+						variant="filled"
+					/>
+				);
+			},
+		},
 	];
 	if (productReportData.isLoading || productReportData.isRefetching) {
 		return <Loader />;
@@ -102,7 +138,7 @@ const ProductReportTableList = ({ fromDate, toDate }: { fromDate: string; toDate
 		<Box>
 			<DataGrid
 				autoHeight
-				rows={productReportData?.data ?? []}
+				rows={filteredProductReportData ?? []}
 				columns={columns}
 				slots={{
 					toolbar: () => {

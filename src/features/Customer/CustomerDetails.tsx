@@ -1,4 +1,4 @@
-import { GetCustomerWithAddressDto } from "../../api/services/auth/models";
+import { type GetCustomerWithAddressDto } from "../../api/services/auth/models";
 import { Box, Typography } from "@mui/material";
 const CustomerDetails = ({ data }: { data: GetCustomerWithAddressDto }) => {
 	return (

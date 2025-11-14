@@ -1,4 +1,4 @@
-import Axios, { AxiosError, AxiosRequestConfig } from "axios";
+import Axios, { AxiosError, type AxiosRequestConfig } from "axios";
 import { http } from "../../shared/axios";
 import { InterceptorService } from "../../shared/services/InterceptorService";
 

@@ -24,6 +24,7 @@ import InvoiceTemplateCard from "./InvoiceTemplateCard";
 import {
 	getInvoiceControllerTestPDFGenQueryKey,
 	useInvoiceControllerInvoicePublicFindOne,
+	useInvoiceControllerSendInvoicePaymentReceiptManually,
 	useInvoiceControllerTest,
 } from "@api/services/invoice";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -46,6 +47,10 @@ import { currencyFormatter } from "@shared/formatter";
 import { environment } from "@enviroment";
 import { http } from "@shared/axios";
 import { useTranslation } from "react-i18next";
+import { translateInvoiceHtml } from "@shared/utils/invoiceTemplateTranslator";
+import { useEuropeanCountryDetection } from "@shared/hooks/useEuropeanCountryDetection";
+// import filesaver from "file-saver";
+import { LoaderService } from "@shared/services/LoaderService";
 
 const styles = {
 	width: { xs: "100%", sm: "auto" },
@@ -64,6 +69,8 @@ const styles = {
 };
 
 const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: boolean }) => {
+	const sendInvoice = useInvoiceControllerSendInvoicePaymentReceiptManually();
+	// const [termsAccepted, setTermsAccepted] = useState(false);
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const [shareInvoiceId, setShareInvoiceId] = useState<string | null>(null);
@@ -99,6 +106,8 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 		},
 	});
 
+	const { isEuropeanCountry } = useEuropeanCountryDetection();
+
 	const enabledpayment = useGatewaydetailsControllerFindEnabledAll({
 		user_id: getInvoiceData?.data?.user_id ?? "",
 	});
@@ -109,9 +118,14 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 	useEffect(() => {
 		if (iframeRef.current && !getHtmlText.isLoading && getHtmlText.isSuccess) {
 			const iframe = iframeRef.current;
-			iframe.srcdoc = getHtmlText?.data;
+			let html = getHtmlText?.data ?? "";
+
+			// Translate the invoice HTML content after HSN removal
+			const translatedHtml = translateInvoiceHtml(html, t);
+
+			iframe.srcdoc = translatedHtml;
 		}
-	}, [getHtmlText?.isSuccess, getHtmlText?.isRefetching, isMobile]);
+	}, [getHtmlText?.isSuccess, getHtmlText?.isRefetching, isMobile, t, isEuropeanCountry]);
 
 	const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
 		setMoreAnchorEl(event.currentTarget);
@@ -135,12 +149,14 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 	};
 
 	const downloadPdf = async () => {
+		LoaderService.instance.showLoader();
 		try {
 			const invoiceNumber = getInvoiceData?.data?.invoice_number ?? invoiceId;
 			const fileName = `INV-${invoiceNumber}.pdf`;
 			const pdfUrl = environment?.baseUrl + getInvoiceControllerTestPDFGenQueryKey(invoiceId)[0];
 			const response = await http.get(pdfUrl, { responseType: "blob" });
 			const blob = new Blob([response.data], { type: "application/pdf" });
+			// await filesaver.saveAs(blob, fileName);
 			const blobUrl = window.URL.createObjectURL(blob);
 			const link = document.createElement("a");
 			link.href = blobUrl;
@@ -151,6 +167,8 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			window.URL.revokeObjectURL(blobUrl);
 		} catch (e) {
 			console.error("Failed to download invoice PDF", e);
+		} finally {
+			LoaderService.instance.hideLoader();
 		}
 	};
 
@@ -269,7 +287,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 					);
 					return;
 				}
-				await handleSendMail(invoiceId, getInvoiceData?.data?.customer?.email ?? "");
+				await handleSendMail(invoiceId);
 				handleCloseAll();
 			},
 		},
@@ -365,6 +383,7 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 					},
 				]),
 	];
+	// const termsAccept = useInvoiceControllerTermsAcceptedByUser();
 	if (
 		getHtmlText.isLoading ||
 		getInvoiceData?.isLoading ||
@@ -387,6 +406,79 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 				p: IsPublic ? 2 : 0,
 			}}
 		>
+			{/* <Dialog open={getInvoiceData?.data?.termsAccepted === false} maxWidth="md" fullWidth>
+				<DialogTitle>
+					<Typography variant="h4">
+						{t("invoice.detail.termsNotAccepted", {
+							defaultValue: "Attention Required: Please Accept Terms and Conditions",
+						})}
+					</Typography>
+				</DialogTitle>
+				<DialogContent sx={{ p: 3 }}>
+					<Typography variant="body1">
+						{t("invoice.detail.pleaseAcceptTerms", {
+							companyName: (getInvoiceData?.data?.user as any)?.company?.[0]?.name || "",
+							customerName: getInvoiceData?.data?.customer?.name || "",
+							defaultValue: `By viewing this invoice, you acknowledge that the data displayed is processed by 
+							${(getInvoiceData?.data?.user as any)?.company?.[0]?.name}
+							on behalf of ${getInvoiceData?.data?.customer?.name} for the purpose of billing and
+						record-keeping in accordance with applicable data protection laws (GDPR).`,
+						})}
+					</Typography>
+					<Divider sx={{ my: 2 }} />
+					<Box>
+						<FormControl
+							sx={{
+								display: "flex",
+								alignItems: "start",
+							}}
+						>
+							<FormControlLabel
+								sx={{
+									display: "flex",
+									alignItems: "start",
+								}}
+								control={
+									<Checkbox
+										checked={termsAccepted}
+										onChange={(e) => setTermsAccepted(e.target.checked)}
+										sx={{
+											mt: "-5px",
+										}}
+									/>
+								}
+								label={t("invoice.template.gdprAgreement", {
+									defaultValue: `I agree that my name, email, and interaction data (such as invoice open time) may be stored by [GrowInvoice.com] for invoicing and notification purposes in accordance with GDPR and your privacy policy.`,
+								})}
+							/>
+						</FormControl>
+					</Box>
+				</DialogContent>
+				<DialogActions>
+					<Button
+						variant="contained"
+						disabled={!termsAccepted}
+						onClick={async () => {
+							if (!termsAccepted) {
+								return;
+							}
+							try {
+								await termsAccept.mutateAsync({
+									params: {
+										id: invoiceId,
+									},
+								});
+								getInvoiceData.refetch();
+								window.location.reload();
+							} catch (e) {
+								console.error("Error accepting terms", e);
+							}
+						}}
+					>
+						{t("common.accept", { defaultValue: "Accept" })}
+					</Button>
+				</DialogActions>
+			</Dialog> */}
 			<Box
 				sx={{
 					display: "flex",
@@ -408,13 +500,25 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 						}}
 					>
 						<Typography variant="body1" color={"secondary.dark"}>
-							{t("invoice.detail.status", { defaultValue: "Status:" })}
+							{t("invoice.detail.paid_status", { defaultValue: "Status:" })}
 						</Typography>
 						<Chip
-							label={getInvoiceData?.data?.status}
+							label={
+								getInvoiceData?.data?.status === "Mailed to customer"
+									? t("invoice.status.mailedtocustomer", { defaultValue: "Receipt Sent" })
+									: (() => {
+											const statusKey =
+												getInvoiceData?.data?.status?.toLowerCase().replace(/\s+/g, "") || "";
+											return t(`invoice.status.${statusKey}`, {
+												defaultValue: getInvoiceData?.data?.status || "",
+											});
+										})()
+							}
 							variant="filled"
 							color={
-								Constants?.invoiceStatusColorEnums[getInvoiceData?.data?.status ?? ""] ?? "default"
+								Constants?.invoiceStatusColorEnums[getInvoiceData?.data?.paid_status ?? ""] ??
+								Constants?.invoiceStatusColorEnums["Receipt Sent"] ??
+								"default"
 							}
 						/>
 					</Box>
@@ -449,23 +553,40 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 								downloadPdf();
 							}}
 						/>
-						{getInvoiceData?.data?.currency?.short_code === "INR" &&
-							getInvoiceData?.data?.payment?.paymentType === "UPI" && (
-								<Button
-									variant="contained"
-									onClick={() => {
-										handleQrOpen();
-									}}
-								>
-									{t("invoice.detail.downloadUpiQr", { defaultValue: "Download UPI QR" })}
-								</Button>
-							)}
-						<QRCodeDialog
-							open={openQr}
-							onClose={handleQrClose}
-							upidata={`upi://pay?pa=${getInvoiceData?.data?.payment?.upiId}&pn=${getInvoiceData?.data?.user?.name}&cu=INR&url=${window.location.origin}/invoice/invoicetemplate/${invoiceId}&am=${getInvoiceData?.data?.total?.toFixed(2)}`}
-						/>
-						{StripeObject && getInvoiceData?.data?.status !== "Paid" && (
+						<Button
+							variant="contained"
+							onClick={async () => {
+								console.log("Sending payment receipt for invoice ID:", invoiceId);
+								await sendInvoice.mutateAsync({
+									params: {
+										id: invoiceId,
+									},
+								});
+							}}
+						>
+							Send Payment Receipt
+						</Button>
+						{getInvoiceData?.data?.paid_status !== "Paid" && (
+							<>
+								{getInvoiceData?.data?.currency?.short_code === "INR" &&
+									getInvoiceData?.data?.payment?.paymentType === "UPI" && (
+										<Button
+											variant="contained"
+											onClick={() => {
+												handleQrOpen();
+											}}
+										>
+											{t("invoice.detail.downloadUpiQr", { defaultValue: "Download UPI QR" })}
+										</Button>
+									)}
+								<QRCodeDialog
+									open={openQr}
+									onClose={handleQrClose}
+									upidata={`upi://pay?pa=${getInvoiceData?.data?.payment?.upiId}&pn=${getInvoiceData?.data?.user?.name}&cu=INR&url=${window.location.origin}/invoice/invoicetemplate/${invoiceId}&am=${getInvoiceData?.data?.total?.toFixed(2)}`}
+								/>
+							</>
+						)}
+						{StripeObject && getInvoiceData?.data?.paid_status !== "Paid" && (
 							<Button
 								onClick={() => {
 									handleRedirectStripePayment(invoiceId, getInvoiceData?.data?.user_id ?? "");
@@ -475,7 +596,7 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 								{t("invoice.detail.paymentWithStripe", { defaultValue: "Payment With Stripe" })}
 							</Button>
 						)}
-						{gllObject && getInvoiceData?.data?.status !== "Paid" && (
+						{gllObject && getInvoiceData?.data?.paid_status !== "Paid" && (
 							<Button
 								onClick={() => {
 									handleRedirectGllPayment(invoiceId, getInvoiceData?.data?.user_id ?? "");
@@ -487,7 +608,7 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 								})}
 							</Button>
 						)}
-						{razorpayObject && getInvoiceData?.data?.status !== "Paid" && (
+						{razorpayObject && getInvoiceData?.data?.paid_status !== "Paid" && (
 							<Button
 								onClick={() => {
 									// handleRedirectStripePayment(invoiceId, getInvoiceData?.data?.user_id ?? "");

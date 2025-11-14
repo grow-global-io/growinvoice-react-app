@@ -7,32 +7,34 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import {
-	GridRowsProp,
-	GridRowModesModel,
+	type GridRowsProp,
+	type GridRowModesModel,
 	GridRowModes,
 	DataGrid,
-	GridColDef,
+	type GridColDef,
 	GridActionsCellItem,
-	GridEventListener,
-	GridRowId,
-	GridRowModel,
-	GridRowParams,
-	MuiEvent,
+	type GridEventListener,
+	type GridRowId,
+	type GridRowModel,
+	type GridRowParams,
+	type MuiEvent,
 } from "@mui/x-data-grid";
-import { Grid, SelectChangeEvent, Tooltip, Typography, useTheme } from "@mui/material";
+import { Grid, type SelectChangeEvent, Tooltip, Typography, useTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import GridSelectField from "@shared/components/DataGridFields/GridSelectField";
 import GridTextField from "@shared/components/DataGridFields/GridTextField";
 import { useProductControllerFindAll } from "@api/services/product";
 import { currencyFormatter } from "@shared/formatter";
 import CreateProduct from "@features/Products/CreateProduct";
-import { FormikProps } from "formik";
+import { type FormikProps } from "formik";
 import { useTaxcodeControllerFindAll } from "@api/services/tax-code";
 import { useHsncodeControllerFindAll } from "@api/services/hsncode";
 import { CustomIconButton } from "./CustomIconButton";
-import { OmitCreateInvoiceProductsExtended } from "@features/Invoices/CreateInvoice";
+import { type OmitCreateInvoiceProductsExtended } from "@features/Invoices/CreateInvoice";
 import GridMultiSelectField from "@shared/components/DataGridFields/GridMultiSelectField";
 import { useCurrencyControllerFindAll } from "@api/services/currency";
+import { useEuropeanCountryDetection } from "@shared/hooks/useEuropeanCountryDetection";
+import { AlertService } from "@shared/services/AlertService";
 
 export default function FullFeaturedCrudGrid({
 	rows,
@@ -48,10 +50,11 @@ export default function FullFeaturedCrudGrid({
 	// eslint-disable-next-line
 	formik: FormikProps<any>;
 }) {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const currency_id = formik?.values?.currency_id;
 	const taxCodes = useTaxcodeControllerFindAll();
 	const hsnCodes = useHsncodeControllerFindAll();
+	const { isEuropeanCountry } = useEuropeanCountryDetection();
 
 	const handleTotal = (rows: GridRowsProp) => {
 		const subtotal = rows.reduce((acc, row) => acc + (row.total as number), 0);
@@ -70,10 +73,12 @@ export default function FullFeaturedCrudGrid({
 			}),
 		);
 		const tax = taxCodes?.data?.find((tax) => tax.id === formik?.values.tax_id);
-		formik?.setFieldValue("sub_total", subtotal);
+		formik?.setFieldValue("sub_total", Math.round(Number(subtotal ?? 0) * 10) / 10);
 		const discount = subtotal * (Number(formik?.values?.discountPercentage) / 100);
 		const taxPercentage = subtotal * (Number(tax?.percentage ?? 0) / 100);
-		formik?.setFieldValue("total", subtotal - discount + taxPercentage);
+		const total = subtotal - discount + taxPercentage;
+		const round = Math.round(Number(total ?? 0) * 10) / 10;
+		formik?.setFieldValue("total", round);
 	};
 
 	const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
@@ -161,6 +166,8 @@ export default function FullFeaturedCrudGrid({
 		setErrorText(undefined);
 		const randomInRange = Math.floor(Math.random() * (10000 - 1 + 1)) + 1;
 		const id: string = rows.length + 2 + randomInRange + "";
+		// Auto-select first tax if available
+		const defaultTaxes = taxCodes?.data && taxCodes.data.length > 0 ? [taxCodes.data[0].id] : [];
 		setRows((oldRows) => [
 			...oldRows,
 			{
@@ -170,7 +177,7 @@ export default function FullFeaturedCrudGrid({
 				price: 0,
 				total: 0,
 				hsnCode_id: "",
-				taxes: [],
+				taxes: defaultTaxes,
 				isNew: true,
 				isEditPosible: false,
 				isEditble: true,
@@ -189,8 +196,9 @@ export default function FullFeaturedCrudGrid({
 		{
 			field: "product_id",
 			headerName: t("invoice.table.product", { defaultValue: "Product" }),
-			flex: 1.0,
 			editable: true,
+			minWidth: 200,
+			flex: 1.5,
 			renderEditCell: (params) => {
 				const handleProductChange = (event: SelectChangeEvent, valuea?: string) => {
 					const value =
@@ -273,7 +281,7 @@ export default function FullFeaturedCrudGrid({
 		{
 			field: "quantity",
 			headerName: t("invoice.table.qty", { defaultValue: "QTY" }),
-			flex: 0.3,
+			minWidth: 100,
 			editable: true,
 			preProcessEditCellProps: (params) => {
 				const hasError = params.props.value < 1;
@@ -298,17 +306,24 @@ export default function FullFeaturedCrudGrid({
 							?.filter((t) => params.row.taxes?.includes(t.id))
 							?.map((t) => t.percentage)
 							.reduce((acc, curr) => acc + curr, 0) ?? 0;
+					// Calculate total (Selling Price): quantity * price * (1 + taxPercentage/100)
+					const newTotal =
+						price > 0 && value > 0 && taxPercentage > 0
+							? Math.round(value * price * (1 + taxPercentage / 100) * 100) / 100
+							: price > 0 && value > 0
+								? Math.round(value * price * 100) / 100
+								: 0;
 					params.api.setEditCellValue({
 						id: params.id,
 						field: "total",
-						value: price ? price * value + (price * value * taxPercentage) / 100 : 0,
+						value: newTotal,
 					});
 					const updatedRows = rows.map((row) => {
 						if (row.id === params.id) {
 							return {
 								...row,
 								quantity: value,
-								total: price ? price * value + (price * value * taxPercentage) / 100 : 0,
+								total: newTotal,
 							};
 						}
 						return row;
@@ -332,8 +347,8 @@ export default function FullFeaturedCrudGrid({
 		},
 		{
 			field: "price",
-			headerName: t("invoice.table.price", { defaultValue: "Price" }),
-			flex: 0.8,
+			headerName: t("invoice.table.stockPrice", { defaultValue: "Stock Price" }),
+			minWidth: 150,
 			editable: true,
 			preProcessEditCellProps: (params) => {
 				const hasError = params.props.value < 0.00001;
@@ -341,7 +356,7 @@ export default function FullFeaturedCrudGrid({
 			},
 			renderEditCell: (params) => {
 				const onChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
-					const value = parseFloat(event.target.value);
+					const value = Math.round((parseFloat(event.target.value) || 0) * 100) / 100; // Round to 2 decimal places
 					if (value < 0.00001) {
 						setErrorText(
 							t("invoiceForm.validation.priceMin", {
@@ -357,17 +372,24 @@ export default function FullFeaturedCrudGrid({
 							?.filter((t) => params.row.taxes?.includes(t.id))
 							?.map((t) => t.percentage)
 							.reduce((acc, curr) => acc + curr, 0) ?? 0;
+					// Calculate total (Selling Price): quantity * stockPrice * (1 + taxPercentage/100)
+					const newTotal =
+						quantity > 0 && taxPercentage > 0
+							? Math.round(quantity * value * (1 + taxPercentage / 100) * 100) / 100
+							: quantity > 0
+								? Math.round(quantity * value * 100) / 100
+								: 0;
 					params.api.setEditCellValue({
 						id: params.id,
 						field: "total",
-						value: quantity ? quantity * value + (quantity * value * taxPercentage) / 100 : 0,
+						value: newTotal,
 					});
 					const updatedRows = rows.map((row) => {
 						if (row.id === params.id) {
 							return {
 								...row,
 								price: value,
-								total: quantity ? quantity * value + (quantity * value * taxPercentage) / 100 : 0,
+								total: newTotal,
 							};
 						}
 						return row;
@@ -399,12 +421,33 @@ export default function FullFeaturedCrudGrid({
 		},
 		{
 			field: "taxes",
-			headerName: t("invoice.table.taxPercent", { defaultValue: "Tax/GST %" }),
-			flex: 1,
+			headerName: (i18n.language || "en").toLowerCase().startsWith("fi")
+				? t("invoice.table.vatPercent", { defaultValue: "VAT %" })
+				: t("invoice.table.taxPercent", { defaultValue: "Tax/GST %" }),
+			minWidth: 150,
 			editable: true,
 			renderEditCell: (params) => {
 				const handleTaxChange = (_: SelectChangeEvent, value?: string[]) => {
 					const taxIds = value ?? [];
+
+					// Check for duplicate taxes (same name and percentage)
+					const selectedTaxes = taxCodes?.data?.filter((tax) => taxIds.includes(tax.id)) || [];
+					const taxMap = new Map<string, number>();
+
+					for (const tax of selectedTaxes) {
+						const key = `${tax.name}-${tax.percentage}`;
+						if (taxMap.has(key)) {
+							// Duplicate found - show error and don't update
+							AlertService.instance.errorMessage(
+								t("productForm.duplicateTaxError", {
+									defaultValue: `Tax "${tax.name} - ${tax.percentage}%" is already added.`,
+								}),
+							);
+							return; // Don't update if duplicate
+						}
+						taxMap.set(key, 1);
+					}
+
 					const taxPercentage =
 						taxCodes?.data
 							?.filter((t) => taxIds.includes(t.id))
@@ -412,10 +455,17 @@ export default function FullFeaturedCrudGrid({
 							.reduce((acc, curr) => acc + curr, 0) ?? 0;
 					const price = params.row.price;
 					const quantity = params.row.quantity;
+					// Recalculate total (Selling Price) when tax changes: quantity * price * (1 + taxPercentage/100)
+					const newTotal =
+						price > 0 && quantity > 0 && taxPercentage > 0
+							? Math.round(quantity * price * (1 + taxPercentage / 100) * 100) / 100
+							: price > 0 && quantity > 0
+								? Math.round(quantity * price * 100) / 100
+								: 0;
 					params.api.setEditCellValue({
 						id: params.id,
 						field: "total",
-						value: price ? price * quantity + (price * quantity * taxPercentage) / 100 : 0,
+						value: newTotal,
 					});
 					const updatedRows = rows.map((row) => {
 						if (row.id === params.id) {
@@ -423,7 +473,7 @@ export default function FullFeaturedCrudGrid({
 								...row,
 								taxes: taxIds,
 								tax_total_percentage: taxPercentage,
-								total: price ? price * quantity + (price * quantity * taxPercentage) / 100 : 0,
+								total: newTotal,
 							};
 						}
 						return row;
@@ -434,16 +484,59 @@ export default function FullFeaturedCrudGrid({
 				return (
 					<GridMultiSelectField
 						params={params}
-						valueOptions={
-							taxCodes?.data?.map((item) => {
-								return {
-									label: [item?.name, item?.percentage ? `${item?.percentage}%` : ""]
-										.filter(Boolean)
-										.join(" - "),
-									value: item?.id,
-								};
-							}) ?? []
-						}
+						valueOptions={(() => {
+							// Get currently selected tax IDs for this row
+							const selectedTaxIds = params.row.taxes || [];
+							// Get currently selected taxes data
+							const selectedTaxes =
+								taxCodes?.data?.filter((tax) => selectedTaxIds.includes(tax.id)) || [];
+
+							// First, deduplicate taxes by name+percentage (keep only one per unique combination)
+							const seenTaxes = new Map<string, string>(); // key: "name-percentage", value: taxId
+							const uniqueTaxes =
+								taxCodes?.data?.filter((item) => {
+									const percentage = item?.percentage ?? 0;
+									const key = `${item.name}-${percentage}`;
+									if (seenTaxes.has(key)) {
+										// If already seen, only keep it if it's already selected
+										return selectedTaxIds.includes(item.id);
+									}
+									seenTaxes.set(key, item.id);
+									return true;
+								}) || [];
+
+							// Map unique taxes to options
+							return (
+								uniqueTaxes
+									.map((item) => {
+										// Always show percentage, including 0%
+										const percentage = item?.percentage ?? 0;
+										return {
+											label: `${item?.name} - ${percentage}%`,
+											value: item?.id,
+										};
+									})
+									.filter((option) => {
+										// If this tax is already selected, keep it in options
+										if (selectedTaxIds.includes(option.value)) {
+											return true;
+										}
+										// Otherwise, check if it would be a duplicate of already selected
+										const taxItem = taxCodes?.data?.find((tax) => tax.id === option.value);
+										if (!taxItem) return false;
+
+										// Check if a tax with same name and percentage is already selected
+										const isDuplicate = selectedTaxes.some(
+											(selectedTax) =>
+												selectedTax.name === taxItem.name &&
+												selectedTax.percentage === taxItem.percentage,
+										);
+
+										// Filter out duplicates
+										return !isDuplicate;
+									}) ?? []
+							);
+						})()}
 						onChangeValue={handleTaxChange}
 					/>
 				);
@@ -455,49 +548,107 @@ export default function FullFeaturedCrudGrid({
 						?.map((t) => t.percentage)
 						.reduce((acc, curr) => acc + curr, 0) ?? 0;
 
-				return <Typography>{totalTaxPercentage ? `${totalTaxPercentage} %` : "--"}</Typography>;
+				return <Typography>{totalTaxPercentage > 0 ? `${totalTaxPercentage}%` : "0%"}</Typography>;
 			},
 		},
 		{
 			field: "hsnCode_id",
 			headerName: t("invoice.table.hsnCode", { defaultValue: "HSN Code" }),
-			flex: 0.8,
+			minWidth: 150,
 			editable: true,
 			renderEditCell: (params) => (
 				<GridTextField
 					params={params}
 					label={t("invoice.table.hsnCode", { defaultValue: "HSN Code" })}
-					value={`${hsnCodes?.data?.find((hsnCode) => hsnCode.id === params.row.hsnCode_id)?.code} - ${hsnCodes?.data?.find((hsnCode) => hsnCode.id === params.row.hsnCode_id)?.tax?.percentage ?? 0}%`}
+					value={`${hsnCodes?.data?.find((hsnCode) => hsnCode.id === params.row.hsnCode_id)?.code ?? ""} - ${hsnCodes?.data?.find((hsnCode) => hsnCode.id === params.row.hsnCode_id)?.tax?.percentage ?? 0}%`}
 					disabled={true}
 				/>
 			),
 			renderCell: (params) => {
 				const hsnCode = hsnCodes?.data?.find((hsnCode) => hsnCode.id === params.value);
 				return (
-					<Typography>
-						{hsnCode?.code} - {hsnCode?.tax?.percentage ?? 0}%
-					</Typography>
+					<>
+						{hsnCode && hsnCode.code ? (
+							<Typography>
+								{hsnCode?.code} - {hsnCode?.tax?.percentage ?? 0}%
+							</Typography>
+						) : (
+							<>
+								<Typography>-</Typography>
+							</>
+						)}
+					</>
 				);
 			},
 		},
 		{
 			field: "total",
-			headerName: t("invoice.table.amount", { defaultValue: "Amount" }),
-			flex: 0.8,
+			headerName: t("invoice.table.sellingPrice", { defaultValue: "Selling Price" }),
+			minWidth: 150,
 			editable: true,
-			renderEditCell: (params) => (
-				<GridTextField
-					params={params}
-					label={t("invoice.table.amount", { defaultValue: "Amount" })}
-					type="number"
-					disabled={true}
-				/>
-			),
+			renderEditCell: (params) => {
+				const onChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
+					const newTotal = Math.round((parseFloat(event.target.value) || 0) * 100) / 100; // Round to 2 decimal places
+					if (newTotal < 0.00001) {
+						setErrorText(
+							t("invoiceForm.validation.priceMin", {
+								defaultValue: "Price should be greater than 0",
+							}),
+						);
+					} else {
+						setErrorText("");
+					}
+					const quantity = params.row.quantity;
+					const taxPercentage =
+						taxCodes?.data
+							?.filter((t) => params.row.taxes?.includes(t.id))
+							?.map((t) => t.percentage)
+							.reduce((acc, curr) => acc + curr, 0) ?? 0;
+					// Calculate stock price: total / (quantity * (1 + taxPercentage/100))
+					const newStockPrice =
+						quantity > 0 && taxPercentage > 0
+							? Math.round((newTotal / (quantity * (1 + taxPercentage / 100))) * 100) / 100
+							: quantity > 0
+								? Math.round((newTotal / quantity) * 100) / 100
+								: 0;
+					params.api.setEditCellValue({
+						id: params.id,
+						field: "price",
+						value: newStockPrice,
+					});
+					params.api.setEditCellValue({
+						id: params.id,
+						field: "total",
+						value: newTotal,
+					});
+					const updatedRows = rows.map((row) => {
+						if (row.id === params.id) {
+							return {
+								...row,
+								price: newStockPrice,
+								total: newTotal,
+							};
+						}
+						return row;
+					});
+					setRows(updatedRows);
+					handleTotal(updatedRows);
+				};
+				return (
+					<GridTextField
+						params={params}
+						label={t("invoice.table.amount", { defaultValue: "Amount" })}
+						type="number"
+						onChangeValue={onChangeValue}
+						disabled={params.row.product_id === ""}
+					/>
+				);
+			},
 			renderCell: (params) => {
 				return (
 					<Typography>
 						{currencyFormatter(
-							params.value,
+							Math.round(Number(params.value) * 100) / 100,
 							currencyList?.data?.find((currency) => currency.id === currency_id)?.short_code ??
 								"USD",
 						)}
@@ -509,7 +660,7 @@ export default function FullFeaturedCrudGrid({
 			field: "actions",
 			type: "actions",
 			headerName: t("common.actions", { defaultValue: "Actions" }),
-			flex: 0.7,
+			minWidth: 150,
 			cellClassName: "actions",
 			getActions: ({ id }) => {
 				const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
@@ -581,6 +732,14 @@ export default function FullFeaturedCrudGrid({
 		},
 	];
 
+	// Filter out HSN Code column for European countries
+	const filteredColumns = React.useMemo(() => {
+		if (isEuropeanCountry === true) {
+			return columns.filter((col) => col.field !== "hsnCode_id");
+		}
+		return columns;
+	}, [columns, isEuropeanCountry]);
+
 	return (
 		<Box>
 			<DataGrid
@@ -602,7 +761,7 @@ export default function FullFeaturedCrudGrid({
 					},
 				}}
 				rows={rows}
-				columns={columns}
+				columns={filteredColumns}
 				editMode="row"
 				getRowHeight={() => "auto"}
 				rowModesModel={rowModesModel}
@@ -623,7 +782,16 @@ export default function FullFeaturedCrudGrid({
 								}}
 							>
 								<Typography variant="h5">
-									{t("invoiceForm.addProducts", { defaultValue: "Add Products:" })}
+									{t("invoiceForm.addProducts", {
+										defaultValue: "Add Products",
+									})}{" "}
+									{/* <span style={{ fontWeight: "normal", fontSize: "14px" }}>
+										(
+										{t("invoiceForm.addProductsSubtitle", {
+											defaultValue: "for each product, click save once changes are made",
+										})}
+										):
+									</span> */}
 								</Typography>
 								<CreateProduct />
 							</Box>
@@ -652,7 +820,6 @@ export default function FullFeaturedCrudGrid({
 						);
 					},
 				}}
-				autoPageSize
 				autoHeight
 				slotProps={{
 					toolbar: { setRows, setRowModesModel },

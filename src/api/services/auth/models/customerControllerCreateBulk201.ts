@@ -6,6 +6,7 @@
  * OpenAPI spec version: 1.0
  */
 import type { SuccessResponseDto } from "./successResponseDto";
-import type { UserControllerCreateUser201AllOf } from "./userControllerCreateUser201AllOf";
+import type { CustomerControllerCreateBulk201AllOf } from "./customerControllerCreateBulk201AllOf";
 
-export type UserControllerCreateUser201 = SuccessResponseDto & UserControllerCreateUser201AllOf;
+export type CustomerControllerCreateBulk201 = SuccessResponseDto &
+	CustomerControllerCreateBulk201AllOf;

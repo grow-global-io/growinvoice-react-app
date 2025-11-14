@@ -1,5 +1,5 @@
 import { environment } from "@enviroment";
-import { AlertProps } from "@mui/material";
+import { type AlertProps } from "@mui/material";
 import { mountStoreDevtool } from "simple-zustand-devtools";
 import { createStore } from "zustand/vanilla";
 // import { mountStoreDevtool } from "simple-zustand-devtools";

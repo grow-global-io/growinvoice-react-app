@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { mountStoreDevtool } from "simple-zustand-devtools";
 import { environment } from "@enviroment";
 import { LoaderService } from "@shared/services/LoaderService";
-import { UserWithCompanyDto } from "@api/services/models";
+import { type UserWithCompanyDto } from "@api/services/models";
 import { authControllerStatus } from "@api/services/auth";
 
 interface AuthStore {

@@ -16,7 +16,7 @@ import {
 	usePaymentsControllerGrowlimitlessPyamentsForPlans,
 	usePaymentsControllerStripePaymentForPlans,
 } from "@api/services/payments";
-import { PlanWithFeaturesDto } from "@api/services/models";
+import { type PlanWithFeaturesDto } from "@api/services/models";
 import { formatCurrency } from "@shared/formatter";
 import React, { useMemo } from "react";
 import { environment } from "@enviroment";
@@ -84,10 +84,11 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 		const params = { user_id: user?.id ?? "", plan_id: item?.id ?? "" };
 		if (item.price === 0) {
 			// want to open in same tab
-			window.open(
-				`${environment.baseUrl}/api/payments/successGrowlimitlessPlans?plan_id=${item.id}&user_id=${user?.id}`,
-				"_self",
-			);
+			// Use full URL - construct from window.location.origin if baseUrl is not available
+			// This ensures we don't get "undefined" in the URL
+			const baseUrl = environment.baseUrl || window.location.origin;
+			const apiUrl = `${baseUrl}/api/payments/successGrowlimitlessPlans?plan_id=${item.id}&user_id=${user?.id}`;
+			window.open(apiUrl, "_self");
 			return;
 		}
 		if (type === "Stripe") {
@@ -131,7 +132,9 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 			<Grid container sx={style}>
 				<Grid item xs={12} textAlign={"center"}>
 					<Typography variant="h4" p={3}>
-						{item?.name}{" "}
+						{t(`plans.planNames.${item?.name?.toLowerCase().replace(/\s+/g, "")}`, {
+							defaultValue: item?.name || "",
+						})}{" "}
 						{checkIsSubscribe
 							? t("plans.currentPlanSuffix", { defaultValue: "(Current Plan)" })
 							: ""}
@@ -154,7 +157,7 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 											{item?.price === 0
 												? t("plans.unlimited", { defaultValue: "Unlimited" })
 												: plan?.count}{" "}
-											{plan?.feature}
+											{t(`plans.features.${plan?.feature}`, { defaultValue: plan?.feature || "" })}
 										</Typography>
 									}
 								/>

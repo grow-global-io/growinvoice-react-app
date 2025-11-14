@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useStoreLinkStore } from "../../store/storeLinkStore";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -17,8 +17,11 @@ import { useAuthControllerStatus } from "@api/services/auth";
 import { useAuthStore } from "@store/auth";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18s";
 
 const StoreLinkDialog = () => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const { refecthUser } = useAuthStore();
 	const { open, handleClose } = useStoreLinkStore();
@@ -28,11 +31,15 @@ const StoreLinkDialog = () => {
 	};
 	const validationSchema = Yup.object().shape({
 		storeName: Yup.string()
-			.required("Store name is required")
-			.test("uniqueStoreName", "Store name must be unique", async (value) => {
-				if (!value) return true;
-				return /^[a-zA-Z][a-zA-Z0-9_]{2,30}$/.test(value);
-			}),
+			.required(() => i18n.t("store.validation.nameRequired"))
+			.test(
+				"uniqueStoreName",
+				() => i18n.t("store.validation.mustBeUnique"),
+				async (value) => {
+					if (!value) return true;
+					return /^[a-zA-Z][a-zA-Z0-9_]{2,30}$/.test(value);
+				},
+			),
 	});
 	const create = useStoreControllerCreateUpdateStore();
 
@@ -64,7 +71,7 @@ const StoreLinkDialog = () => {
 	return (
 		<Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
 			<AppDialogHeader
-				title="Store Link"
+				title={t("store.link", { defaultValue: "Store Link" })}
 				handleClose={() => {
 					handleClose ? handleClose() : useStoreLinkStore.setState({ open: false });
 				}}
@@ -82,12 +89,14 @@ const StoreLinkDialog = () => {
 								<Form>
 									<Field
 										name="storeName"
-										label="Store Name"
-										placeholder="Enter your store name"
+										label={t("store.name", { defaultValue: "Store Name" })}
+										placeholder={t("store.namePlaceholder", {
+											defaultValue: "Enter your store name",
+										})}
 										component={TextFormField}
 									/>
 									<Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
-										Save
+										{t("app.save", { defaultValue: "Save" })}
 									</Button>
 								</Form>
 							);
@@ -100,7 +109,7 @@ const StoreLinkDialog = () => {
 								<img
 									// qr generate for link
 									src={"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + url}
-									alt="QR Code"
+									alt={t("store.qrCodeAlt", { defaultValue: "QR Code" })}
 									style={{ display: "block", marginLeft: "auto", marginRight: "auto" }}
 								/>
 							</Grid>
@@ -108,7 +117,7 @@ const StoreLinkDialog = () => {
 								<Grid container spacing={1} justifyContent="center">
 									<Grid item xs={12}>
 										<TextField
-											label="Link"
+											label={t("store.link", { defaultValue: "Link" })}
 											value={url}
 											variant="outlined"
 											fullWidth
@@ -116,7 +125,7 @@ const StoreLinkDialog = () => {
 												readOnly: true,
 												endAdornment: (
 													<IconButton
-														aria-label="Copy link"
+														aria-label={t("store.copyLink", { defaultValue: "Copy link" })}
 														onClick={() => {
 															navigate(`/store/verify`);
 															handleClose && handleClose();
@@ -136,7 +145,9 @@ const StoreLinkDialog = () => {
 												startIcon={<LinkIcon />}
 												disabled={copied}
 											>
-												{copied ? "Copied!" : "Copy Link"}
+												{copied
+													? t("store.copied", { defaultValue: "Copied!" })
+													: t("store.copyLink", { defaultValue: "Copy Link" })}
 											</Button>
 											<Button
 												variant="contained"
@@ -146,33 +157,33 @@ const StoreLinkDialog = () => {
 													handleClose && handleClose();
 												}}
 											>
-												Upload Products to Store
+												{t("store.uploadProducts", { defaultValue: "Upload Products to Store" })}
 											</Button>
 										</Box>
 									</Grid>
 									<Grid item xs={12}>
 										<Typography variant="body2" color="textSecondary">
-											Share on social media:
+											{t("store.shareOnSocialMedia", { defaultValue: "Share on social media:" })}
 										</Typography>
 									</Grid>
 									<Grid item xs={12} container spacing={1}>
 										<Grid item>
 											<FacebookShareButton url={url}>
-												<IconButton aria-label="Facebook">
+												<IconButton aria-label={t("store.facebook", { defaultValue: "Facebook" })}>
 													<FacebookIcon />
 												</IconButton>
 											</FacebookShareButton>
 										</Grid>
 										<Grid item>
 											<TwitterShareButton url={url}>
-												<IconButton aria-label="Twitter">
+												<IconButton aria-label={t("store.twitter", { defaultValue: "Twitter" })}>
 													<TwitterIcon />
 												</IconButton>
 											</TwitterShareButton>
 										</Grid>
 										<Grid item>
 											<EmailShareButton url={url}>
-												<IconButton aria-label="Email">
+												<IconButton aria-label={t("store.email", { defaultValue: "Email" })}>
 													<EmailIcon />
 												</IconButton>
 											</EmailShareButton>

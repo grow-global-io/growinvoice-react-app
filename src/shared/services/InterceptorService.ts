@@ -1,11 +1,29 @@
-import { AxiosInstance } from "axios";
+import { type AxiosInstance } from "axios";
 import { AlertService } from "./AlertService";
 import { LoaderService } from "./LoaderService";
 import { toastWithButton } from "./toastWithButton";
 import i18next from "i18next";
 // import { RsaService } from "./RsaService";
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+// Helper function to translate known backend messages
+const translateBackendMessage = (message: string): string => {
+	// Map known backend messages to translation keys
+	const messageMap: Record<string, string> = {
+		"Invoices sent to customers successfully": i18next.t("invoice.invoicesSentSuccessfully", {
+			defaultValue: "Invoices sent to customers successfully",
+		}),
+	};
+
+	return messageMap[message] || message;
+};
+
+// Flag to suppress success messages during receipt creation
+let suppressSuccessMessages = false;
+
+export const setSuppressSuccessMessages = (value: boolean): void => {
+	suppressSuccessMessages = value;
+};
+
 export class InterceptorService {
 	public constructor(private _axiosInstance: AxiosInstance) {}
 
@@ -36,18 +54,41 @@ export class InterceptorService {
 		this._axiosInstance.interceptors.response.use(
 			(response) => {
 				if (["post", "put", "delete", "patch"].includes(response.config.method || "")) {
-					if (
-						response?.data?.message &&
-						response?.data?.message !==
-							"Limit exceeded. Please upgrade your plan to add more features."
-					) {
-						AlertService.instance.successMessage(response.data.message);
+					const message = response?.data?.message;
+					if (message) {
+						// Normalize message for comparison (trim and lowercase)
+						const normalizedMessage = message.trim().toLowerCase();
+
+						// Always filter out messages that shouldn't be shown (case-insensitive)
+						// "Login successful" should never appear as a toast - it's handled in the login flow
+						const alwaysExcludedMessages = [
+							"limit exceeded. please upgrade your plan to add more features.",
+							"login successful",
+						];
+
+						// Check if message should always be excluded
+						const shouldAlwaysExclude = alwaysExcludedMessages.some(
+							(excluded) => normalizedMessage === excluded.trim().toLowerCase(),
+						);
+
+						// Only show message if:
+						// 1. It's not in the always-excluded list
+						// 2. Success messages are not suppressed (e.g., during receipt creation)
+						if (!shouldAlwaysExclude && !suppressSuccessMessages) {
+							const translatedMessage = translateBackendMessage(message);
+							AlertService.instance.successMessage(translatedMessage);
+						}
 					}
 				}
 				LoaderService.instance.hideLoader();
 				return response;
 			},
 			(error) => {
+				// Skip CanceledError - these are expected when React Query cancels requests
+				if (error.code === "ERR_CANCELED" || error.message === "canceled") {
+					return Promise.reject(error);
+				}
+
 				console.error("[InterceptorService] error", error);
 				// check the error status code
 				LoaderService.instance.hideLoader();

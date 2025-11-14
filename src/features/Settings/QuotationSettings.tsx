@@ -13,15 +13,16 @@ import { styled } from "@mui/system";
 import { Formik, Field, Form } from "formik";
 import * as yup from "yup";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
-import { AddressExpressions, Constants } from "@shared/constants";
+import { type AddressExpressions, Constants } from "@shared/constants";
 import SettingFormHeading from "./SettingFormHeading";
 import { RichTextEditor } from "@shared/components/FormFields/RichTextEditor";
 import { CheckBoxFormField } from "@shared/components/FormFields/CheckBoxFormField";
 import { useDialog } from "@shared/hooks/useDialog";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@store/auth";
 import Loader from "@shared/components/Loader";
-import { CreateQuotationSettingsDto } from "@api/services/models";
+import { type CreateQuotationSettingsDto } from "@api/services/models";
 import { useQueryClient } from "@tanstack/react-query";
 import AddressExpressionsDialog from "@shared/components/AddressExpressionsDialog";
 import {
@@ -39,6 +40,7 @@ const CustomFormControlLabel = styled(FormControlLabel)(() => ({
 }));
 
 const QuotationSettings = () => {
+	const { t, i18n } = useTranslation();
 	const queryClient = useQueryClient();
 	const { user } = useAuthStore();
 	const { open, handleClickOpen, handleClose } = useDialog();
@@ -64,20 +66,52 @@ const QuotationSettings = () => {
 	};
 
 	const schema: yup.Schema<CreateQuotationSettingsDto> = yup.object().shape({
-		quotationPrefix: yup.string().required("Invoice Prefix is required"),
-		autoArchive: yup.boolean().required("Auto Archive is required"),
+		quotationPrefix: yup.string().required(() =>
+			i18n.t("quotation.validation.quotationPrefixRequired", {
+				defaultValue: "Quotation Prefix is required",
+			}),
+		),
+		autoArchive: yup.boolean().required(() =>
+			i18n.t("quotation.validation.autoArchiveRequired", {
+				defaultValue: "Auto Archive is required",
+			}),
+		),
 		footer: yup.string().nullable(),
-		dueNotice: yup.number().required("Due Notice is required"),
-		overDueNotice: yup.number().required("Overdue Notice is required"),
-		companyAddressTemplate: yup.string().required("Company Address Template is required"),
-		customerBillingAddressTemplate: yup
-			.string()
-			.required("Customer Billing Address Template is required"),
-		customerShippingAddressTemplate: yup
-			.string()
-			.required("Customer Shipping Address Template is required"),
-		user_id: yup.string().required("User ID is required"),
-		quotationTemplateId: yup.string().required("Invoice Template ID is required"),
+		dueNotice: yup.number().required(() =>
+			i18n.t("quotation.validation.dueNoticeRequired", {
+				defaultValue: "Due Notice is required",
+			}),
+		),
+		overDueNotice: yup.number().required(() =>
+			i18n.t("quotation.validation.overdueNoticeRequired", {
+				defaultValue: "Overdue Notice is required",
+			}),
+		),
+		companyAddressTemplate: yup.string().required(() =>
+			i18n.t("quotation.validation.companyAddressRequired", {
+				defaultValue: "Company Address Template is required",
+			}),
+		),
+		customerBillingAddressTemplate: yup.string().required(() =>
+			i18n.t("quotation.validation.customerBillingRequired", {
+				defaultValue: "Customer Billing Address Template is required",
+			}),
+		),
+		customerShippingAddressTemplate: yup.string().required(() =>
+			i18n.t("quotation.validation.customerShippingRequired", {
+				defaultValue: "Customer Shipping Address Template is required",
+			}),
+		),
+		user_id: yup.string().required(() =>
+			i18n.t("quotation.validation.userIdRequired", {
+				defaultValue: "User ID is required",
+			}),
+		),
+		quotationTemplateId: yup.string().required(() =>
+			i18n.t("quotation.validation.templateIdRequired", {
+				defaultValue: "Quotation Template ID is required",
+			}),
+		),
 	});
 
 	const handleSubmit = async (values: CreateQuotationSettingsDto) => {
@@ -120,67 +154,98 @@ const QuotationSettings = () => {
 								<Grid item xs={12} sm={6} display={"flex"} alignItems={"center"}>
 									<Field
 										name="quotationPrefix"
-										label="Invoice Prefix"
+										label={t("quotation.quotationPrefix", {
+											defaultValue: "Quotation Prefix",
+										})}
 										component={TextFormField}
 										required={true}
-										placeholder="Ex “QUO”"
+										placeholder={t("quotation.quotationPrefixPlaceholder", {
+											defaultValue: "Ex “QUO”",
+										})}
 									/>
 								</Grid>
 								<Grid item xs={12} sm={6}>
 									<Box>
-										<Typography variant="h5">Auto Archive</Typography>
-										<Field name="autoArchive" label="YES" component={CheckBoxFormField} />
+										<Typography variant="h5">{t("quotation.autoArchive")}</Typography>
+										<Field
+											name="autoArchive"
+											label={t("common.yes", { defaultValue: "YES" })}
+											component={CheckBoxFormField}
+										/>
 										<Typography variant="body1" lineHeight={1.2}>
-											Enable this, If you wish to auto archive approved or rejected estimates after
-											30 days.
+											{t("quotation.autoArchiveHelp", {
+												defaultValue:
+													"Enable this if you wish to auto archive approved or rejected estimates after 30 days.",
+											})}
 										</Typography>
 									</Box>
 								</Grid>
 								<Grid item xs={12} sm={6}>
 									<Box>
-										<Typography variant="h5">Auto Convert</Typography>
-										<Field name="autoConvert" label="YES" component={CheckBoxFormField} />
+										<Typography variant="h5">{t("quotation.autoConvert")}</Typography>
+										<Field
+											name="autoConvert"
+											label={t("common.yes", { defaultValue: "YES" })}
+											component={CheckBoxFormField}
+										/>
 										<Typography variant="body1" lineHeight={1.2}>
-											Automatically convert estimates to invoices when Estimate is approved by
-											customer..
+											{t("quotation.autoConvertHelp", {
+												defaultValue:
+													"Automatically convert estimates to invoices when Estimate is approved by customer.",
+											})}
 										</Typography>
 									</Box>
 								</Grid>
 
 								<Grid item xs={12}>
-									<Field name="footer" label="Footer" component={RichTextEditor} required={true} />
+									<Field
+										name="footer"
+										label={t("quotation.footer")}
+										component={RichTextEditor}
+										required={true}
+									/>
 								</Grid>
 								<Grid item xs={12}>
 									<Divider />
 								</Grid>
 								<SettingFormHeading
-									heading="Due Notices"
+									heading={t("quotation.dueNotices")}
 									icon={Constants.customImages.OrangeNoticeIcon}
-									text="Due reminders are sent to unpaid and partially paid invoices as reminders to the customer to pay the invoice before is due."
+									text={t("quotation.dueNoticesHelp", {
+										defaultValue:
+											"Due reminders are sent to unpaid and partially paid invoices as reminders to the customer to pay the invoice before is due.",
+									})}
 								/>
 								<Grid item xs={6}>
 									<Field
 										name="dueNotice"
-										label="Due Notice in Days"
+										label={t("quotation.dueNoticeInDays")}
 										component={TextFormField}
 										required={true}
-										placeholder="x days before due date"
+										placeholder={t("quotation.dueNoticePlaceholder", {
+											defaultValue: "x days before due date",
+										})}
 										type="number"
 									/>
 								</Grid>
 
 								<SettingFormHeading
-									heading="Overdue Notices"
+									heading={t("quotation.overdueNotices")}
 									icon={Constants.customImages.redNoticeIcon}
-									text="Due reminders are sent to unpaid and partially paid invoices as reminders to the customer to pay the invoice before is due."
+									text={t("quotation.overdueNoticesHelp", {
+										defaultValue:
+											"Due reminders are sent to unpaid and partially paid invoices as reminders to the customer to pay the invoice before is due.",
+									})}
 								/>
 								<Grid item xs={6}>
 									<Field
 										name="overDueNotice"
-										label="Overdue Notice in Days"
+										label={t("quotation.overdueNoticeInDays")}
 										component={TextFormField}
 										required={true}
-										placeholder="x days before due date"
+										placeholder={t("quotation.overdueNoticePlaceholder", {
+											defaultValue: "x days before due date",
+										})}
 										type="number"
 									/>
 								</Grid>
@@ -189,7 +254,7 @@ const QuotationSettings = () => {
 									<Divider />
 								</Grid>
 								<SettingFormHeading
-									heading="Addresses"
+									heading={t("quotation.addresses")}
 									icon={Constants.customImages.BlueLocationIcon}
 								/>
 								<Grid item xs={12}>
@@ -200,12 +265,12 @@ const QuotationSettings = () => {
 										}}
 									>
 										<Typography variant="h5" mb={1} sx={{ cursor: "pointer" }}>
-											Show Templates
+											{t("quotation.showTemplates")}
 										</Typography>
 									</Box>
 									<Field
 										name="companyAddressTemplate"
-										label="Company Address Format"
+										label={t("quotation.companyAddressFormat")}
 										component={RichTextEditor}
 										required={true}
 									/>
@@ -218,12 +283,12 @@ const QuotationSettings = () => {
 										}}
 									>
 										<Typography variant="h5" mb={1} sx={{ cursor: "pointer" }}>
-											Show Templates
+											{t("quotation.showTemplates")}
 										</Typography>
 									</Box>
 									<Field
 										name="customerBillingAddressTemplate"
-										label="Customer Billing Address Format"
+										label={t("quotation.customerBillingAddressFormat")}
 										component={RichTextEditor}
 										required={true}
 									/>
@@ -236,12 +301,12 @@ const QuotationSettings = () => {
 										}}
 									>
 										<Typography variant="h5" mb={1} sx={{ cursor: "pointer" }}>
-											Show Templates
+											{t("quotation.showTemplates")}
 										</Typography>
 									</Box>
 									<Field
 										name="customerShippingAddressTemplate"
-										label="Customer Shipping Address Format"
+										label={t("quotation.customerShippingAddressFormat")}
 										component={RichTextEditor}
 										required={true}
 									/>
@@ -250,7 +315,7 @@ const QuotationSettings = () => {
 									<Divider />
 								</Grid>
 								<SettingFormHeading
-									heading="Invoice Templates"
+									heading={t("quotation.quotationTemplates")}
 									icon={Constants.customImages.TemplateIcon}
 								/>
 								<Grid item xs={12}>
@@ -282,7 +347,7 @@ const QuotationSettings = () => {
 								</Grid>
 								<Grid item xs={12} textAlign={"center"}>
 									<Button type="submit" variant="contained">
-										Save Settings
+										{t("quotation.saveSettings", { defaultValue: "Save Settings" })}
 									</Button>
 									{quotationSettings?.data && (
 										<Button
@@ -297,7 +362,7 @@ const QuotationSettings = () => {
 												});
 											}}
 										>
-											Reset Settings
+											{t("quotation.resetSettings", { defaultValue: "Reset Settings" })}
 										</Button>
 									)}
 								</Grid>

@@ -13,7 +13,7 @@ import { styled } from "@mui/system";
 import { Formik, Field, Form } from "formik";
 import * as yup from "yup";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
-import { AddressExpressions, Constants } from "@shared/constants";
+import { type AddressExpressions, Constants } from "@shared/constants";
 import SettingFormHeading from "./SettingFormHeading";
 import { RichTextEditor } from "@shared/components/FormFields/RichTextEditor";
 import { CheckBoxFormField } from "@shared/components/FormFields/CheckBoxFormField";
@@ -29,7 +29,7 @@ import {
 } from "@api/services/invoicesettings";
 import Loader from "@shared/components/Loader";
 import {
-	CreateInvoiceSettingsDto,
+	type CreateInvoiceSettingsDto,
 	InvoiceSettingsDtoInvoiceHeadingType,
 } from "@api/services/models";
 import { useInvoicetemplateControllerFindAll } from "@api/services/invoicetemplate";
@@ -74,9 +74,9 @@ const Invoices = () => {
 		footer: yup.string().nullable(),
 		dueNotice: yup.number().required(t("settings.invoice.validation.dueNoticeRequired")),
 		overDueNotice: yup.number().required(t("settings.invoice.validation.overdueNoticeRequired")),
-		companyAddressTemplate: yup.string(),
-		customerBillingAddressTemplate: yup.string(),
-		customerShippingAddressTemplate: yup.string(),
+		companyAddressTemplate: yup.string().required(),
+		customerBillingAddressTemplate: yup.string().required(),
+		customerShippingAddressTemplate: yup.string().required(),
 		user_id: yup.string().required(t("settings.invoice.validation.userIdRequired")),
 		invoiceTemplateId: yup.string().required(t("settings.invoice.validation.templateIdRequired")),
 		invoiceHeadingType: yup
@@ -130,13 +130,12 @@ const Invoices = () => {
 										name="invoiceHeadingType"
 										label={t("settings.invoice.invoiceHeadingType")}
 										component={AutocompleteField}
-										options={Object.values(InvoiceSettingsDtoInvoiceHeadingType).map((type) => {
-											const label = type.replace(/_/g, " ");
-											return {
-												label: label,
-												value: type,
-											};
-										})}
+										options={Object.values(InvoiceSettingsDtoInvoiceHeadingType).map((type) => ({
+											label: t(`settings.invoice.headingTypes.${type}`, {
+												defaultValue: type.replace(/_/g, " "),
+											}),
+											value: type,
+										}))}
 									/>
 								</Grid>
 								<Grid item xs={12} sm={6} display={"flex"} alignItems={"center"}>

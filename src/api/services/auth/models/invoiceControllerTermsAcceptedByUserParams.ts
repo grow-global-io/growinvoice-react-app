@@ -5,8 +5,7 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
-import type { User } from "./user";
 
-export type UserControllerCreateUser201AllOf = {
-	result?: User;
+export type InvoiceControllerTermsAcceptedByUserParams = {
+	id: string;
 };

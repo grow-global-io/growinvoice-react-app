@@ -7,14 +7,16 @@ import {
 	usePaymentdetailsControllerRemove,
 } from "@api/services/paymentdetails";
 import Loader from "@shared/components/Loader";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useConfirmDialogStore } from "@store/confirmDialog";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import EditIcon from "@mui/icons-material/Edit";
 
 const PaymentDetails = () => {
+	const { t } = useTranslation();
 	const { open, handleClickOpen, handleClose } = useDialog();
 	const paymentDetails = usePaymentdetailsControllerFindAll();
 	const removeDetails = usePaymentdetailsControllerRemove();
@@ -24,7 +26,7 @@ const PaymentDetails = () => {
 	const columns: GridColDef[] = [
 		{
 			field: "paymentType",
-			headerName: "Payment Type",
+			headerName: t("paymentDetails.table.paymentType", { defaultValue: "Payment Type" }),
 			minWidth: 200,
 			renderCell: (params) => {
 				return <Typography>{params.value}</Typography>;
@@ -32,35 +34,68 @@ const PaymentDetails = () => {
 		},
 		{
 			field: "account_no",
-			headerName: "Account Details",
+			headerName: t("paymentDetails.table.accountDetails", { defaultValue: "Account Details" }),
 			minWidth: 200,
 			renderCell: (params) => {
 				if (params?.row?.paymentType === "IndianBank") {
 					return (
 						<Typography>
-							Account No: {params.row.account_no} <br />
-							IFSC Code: {params.row.ifscCode}
+							{t("paymentDetails.labels.accountNo", { defaultValue: "Account No" })}:{" "}
+							{params.row.account_no} <br />
+							{t("paymentDetails.labels.ifsc", { defaultValue: "IFSC Code" })}:{" "}
+							{params.row.ifscCode}
 						</Typography>
 					);
 				} else if (params?.row?.paymentType === "EuropeanBank") {
 					return (
 						<Typography>
-							BIC No.: {params.row.bicNumber} <br />
-							IBAN No.: {params.row.ibanNumber}
+							{t("paymentDetails.labels.bic", { defaultValue: "BIC No." })}: {params.row.bicNumber}{" "}
+							<br />
+							{t("paymentDetails.labels.iban", { defaultValue: "IBAN No." })}:{" "}
+							{params.row.ibanNumber}
 						</Typography>
 					);
 				} else if (params?.row?.paymentType === "UPI") {
-					return <Typography>UPI ID: {params.row.upiId}</Typography>;
+					return (
+						<Typography>
+							{t("paymentDetails.labels.upiId", { defaultValue: "UPI ID" })}: {params.row.upiId}
+						</Typography>
+					);
 				} else if (params?.row?.paymentType === "SwiftCode") {
-					return <Typography>Swift Code: {params.row.swiftCode}</Typography>;
+					return (
+						<Typography>
+							{t("paymentDetails.labels.swift", { defaultValue: "Swift Code" })}:{" "}
+							{params.row.swiftCode}
+						</Typography>
+					);
 				} else if (params?.row?.paymentType === "Paypal") {
-					return <Typography>Paypal ID: {params.row.paypalId}</Typography>;
+					return (
+						<Typography>
+							{t("paymentDetails.labels.paypal", { defaultValue: "Paypal ID" })}:{" "}
+							{params.row.paypalId}
+						</Typography>
+					);
 				} else if (params?.row?.paymentType === "Stripe") {
-					return <Typography>Stripe ID: {params.row.stripeId}</Typography>;
+					return (
+						<Typography>
+							{t("paymentDetails.labels.stripe", { defaultValue: "Stripe ID" })}:{" "}
+							{params.row.stripeId}
+						</Typography>
+					);
 				} else if (params?.row?.paymentType === "Razorpay") {
-					return <Typography>Razorpay ID: {params.row.razorpayId}</Typography>;
+					return (
+						<Typography>
+							{t("paymentDetails.labels.razorpay", { defaultValue: "Razorpay ID" })}:{" "}
+							{params.row.razorpayId}
+						</Typography>
+					);
 				} else if (params?.row?.paymentType === "Mollie") {
-					return <Typography>Mollie ID: {params.row.mollieId}</Typography>;
+					return (
+						<Typography>
+							{t("paymentDetails.labels.mollie", { defaultValue: "Mollie ID" })}:{" "}
+							{params.row.mollieId}
+						</Typography>
+					);
 				}
 
 				return (
@@ -77,11 +112,14 @@ const PaymentDetails = () => {
 		},
 		{
 			field: "action",
-			headerName: "Action",
+			headerName: t("paymentDetails.table.action", { defaultValue: "Action" }),
 			flex: 1,
 			type: "actions",
 			getActions: (params) => [
-				<Tooltip title="Edit" key={params.row?.id}>
+				<Tooltip
+					title={t("paymentDetails.table.edit", { defaultValue: "Edit" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							src={EditIcon}
@@ -93,7 +131,7 @@ const PaymentDetails = () => {
 					</Box>
 				</Tooltip>,
 
-				<Tooltip title="Delete" key={params.row?.id}>
+				<Tooltip title={t("app.delete", { defaultValue: "Delete" })} key={params.row?.id}>
 					<Box>
 						<CustomIconButton
 							key={params.row?.id}
@@ -102,8 +140,12 @@ const PaymentDetails = () => {
 							iconColor="error"
 							onClick={async () => {
 								handleOpen({
-									title: "Delete Details",
-									message: "Are you sure you want to delete this payment?",
+									title: t("paymentDetails.actions.deleteTitle", {
+										defaultValue: "Delete Details",
+									}),
+									message: t("paymentDetails.actions.deleteConfirm", {
+										defaultValue: "Are you sure you want to delete this payment?",
+									}),
 									onConfirm: async () => {
 										await removeDetails.mutateAsync({
 											id: params.row.id,
@@ -113,7 +155,7 @@ const PaymentDetails = () => {
 									onCancel: () => {
 										cleanUp();
 									},
-									confirmButtonText: "Delete",
+									confirmButtonText: t("app.delete", { defaultValue: "Delete" }),
 								});
 							}}
 						/>
@@ -131,7 +173,7 @@ const PaymentDetails = () => {
 			<Grid container spacing={2}>
 				<Grid item xs={6} display="flex" alignItems={"center"}>
 					<Typography variant="h4" mb={3}>
-						Payment Details
+						{t("paymentDetails.title", { defaultValue: "Payment Details" })}
 					</Typography>
 				</Grid>
 				<Grid item xs={6} display="flex" justifyContent="flex-end" alignItems={"center"}>
@@ -143,7 +185,7 @@ const PaymentDetails = () => {
 							handleClickOpen();
 						}}
 					>
-						Add Payment Details
+						{t("paymentDetails.add", { defaultValue: "Add Payment Details" })}
 					</Button>
 				</Grid>
 				<Grid item xs={12}>

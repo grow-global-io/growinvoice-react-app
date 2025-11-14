@@ -1,4 +1,4 @@
-import { ProductWithAllDataDto } from "@api/services/models";
+import { type ProductWithAllDataDto } from "@api/services/models";
 import { createStore } from "zustand/vanilla";
 
 interface ProductStore {

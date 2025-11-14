@@ -2,7 +2,8 @@
   "name": "growinvoice-react-app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://dev.growinvoice.com",
+  "homepage": "https://go.growinvoice.com",
+  "type": "module",
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
@@ -23,13 +24,11 @@
     "@types/file-saver": "^2.0.7",
     "@types/jest": "^27.0.1",
     "@types/moment": "^2.13.0",
-    "@types/node": "^16.7.13",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
     "@typescript-eslint/parser": "^8.29.1",
     "apexcharts": "^3.52.0",
     "axios": "^1.7.4",
     "dayjs": "^1.11.11",
+    "dotenv": "^17.2.3",
     "file-saver": "^2.0.5",
     "firebase": "^12.2.1",
     "formik": "^2.4.6",
@@ -46,9 +45,9 @@
     "match-sorter": "^6.3.4",
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.45",
-    "react": "^18.3.1",
+    "react": "^19.1.1",
     "react-apexcharts": "^1.4.1",
-    "react-dom": "^18.3.1",
+    "react-dom": "^19.1.1",
     "react-error-boundary": "^4.0.13",
     "react-i18next": "^16.2.1",
     "react-icons": "^5.3.0",
@@ -57,7 +56,6 @@
     "react-phone-number-input": "^3.4.5",
     "react-razorpay": "^2.0.1",
     "react-router-dom": "^6.26.0",
-    "react-scripts": "5.0.1",
     "react-share": "^5.2.2",
     "react-to-print": "^3.1.0",
     "react-toastify": "^10.0.5",
@@ -66,35 +64,24 @@
     "styled-components": "^6.1.12",
     "suneditor": "^2.47.0",
     "suneditor-react": "^3.6.1",
-    "typescript": "^4.4.2",
+    "typescript": "~5.9.3",
     "usehooks-ts": "^3.1.0",
     "web-vitals": "^2.1.0",
+    "xlsx": "^0.18.5",
     "yup": "^1.4.0",
     "zustand": "^4.5.4"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "lint": "eslint src/**/*.js src/**/*.jsx",
+    "dev": "vite ",
+    "build": "tsc -b && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
     "generate": "node orval-create.cjs && orval --config ./orval.config.cjs",
     "check:style": "prettier . --check",
     "format": "prettier . --write"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
   "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.0",
     "customize-cra": "^1.0.0",
     "eslint": "^9.24.0",
     "eslint-plugin-react": "7.35.0",
@@ -102,12 +89,15 @@
     "eslint-plugin-react-refresh": "^0.4.9",
     "orval": "^7.0.1",
     "prettier": "^3.3.3",
-    "react-app-rewired": "^2.2.1",
     "simple-zustand-devtools": "^1.1.0",
+    "vite": "^7.1.12",
     "workbox-cli": "^7.3.0",
-    "workbox-webpack-plugin": "^7.3.0"
-  },
-  "resolutions": {
-    "eslint-plugin-react": "7.35.0"
+    "workbox-webpack-plugin": "^7.3.0",
+    "@types/node": "^24.6.0",
+    "@types/react": "^19.1.16",
+    "@types/react-dom": "^19.1.9",
+    "globals": "^16.4.0",
+    "typescript-eslint": "^8.45.0"
   }
+
 }

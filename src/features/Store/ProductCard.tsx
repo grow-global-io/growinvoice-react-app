@@ -1,5 +1,5 @@
-import React, { useMemo } from "react";
-import { ProductWithAllDataDto } from "../../api/services/auth/models";
+import { useMemo } from "react";
+import { type ProductWithAllDataDto } from "../../api/services/auth/models";
 import { Button, Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
 import { formatCurrency } from "@shared/formatter";
 import { useProductCheckoutStore } from "@store/productCheckoutStore";

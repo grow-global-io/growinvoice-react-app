@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from "@mui/material";
-import Lottie, { AnimationItem } from "lottie-web";
+import Lottie, { type AnimationItem } from "lottie-web";
 import { useRef, useEffect } from "react";
 import loderJson from "@assets/payment_success.json";
 import { useNavigate } from "react-router-dom";

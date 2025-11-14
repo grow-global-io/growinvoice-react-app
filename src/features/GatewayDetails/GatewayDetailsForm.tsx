@@ -1,5 +1,5 @@
 import { Box, DialogContent } from "@mui/material";
-import { Field, Form, Formik, FormikHelpers } from "formik";
+import { Field, Form, Formik, type FormikHelpers } from "formik";
 import AppDialogHeader from "@shared/components/Dialog/AppDialogHeader";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import AppDialogFooter from "@shared/components/Dialog/AppDialogFooter";
@@ -7,7 +7,7 @@ import * as yup from "yup";
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { CheckBoxFormField } from "@shared/components/FormFields/CheckBoxFormField";
 import { useAuthStore } from "@store/auth";
-import { CreateGateWayDetailsDto, CreateGateWayDetailsDtoType } from "@api/services/models";
+import { type CreateGateWayDetailsDto, CreateGateWayDetailsDtoType } from "@api/services/models";
 import {
 	getGatewaydetailsControllerFindAllQueryKey,
 	getGatewaydetailsControllerFindOneQueryKey,
@@ -19,6 +19,7 @@ import {
 import { stringToListDto } from "@shared/models/ListDto";
 import { useQueryClient } from "@tanstack/react-query";
 import Loader from "@shared/components/Loader";
+import { useTranslation } from "react-i18next";
 
 const GatewayDetailsForm = ({
 	gatewayId,
@@ -27,6 +28,7 @@ const GatewayDetailsForm = ({
 	gatewayId?: string;
 	handleClose: () => void;
 }) => {
+	const { t, i18n } = useTranslation();
 	const queryClient = useQueryClient();
 	const { user } = useAuthStore();
 	const gateWayList = useGatewaydetailsControllerFindAll();
@@ -56,24 +58,44 @@ const GatewayDetailsForm = ({
 	const schema: yup.Schema<CreateGateWayDetailsDto> = yup.object({
 		type: yup
 			.string()
-			.required("Type is required")
+			.required(() =>
+				i18n.t("gatewayDetails.validation.typeRequired", { defaultValue: "Type is required" }),
+			)
 			.oneOf(Object.values(CreateGateWayDetailsDtoType), "Invalid Type"),
 		key: yup
 			.string()
-			.test("key", "key should be valid", (value) => {
+			.test(
+				"key",
+				() =>
+					i18n.t("gatewayDetails.validation.keyInvalid", { defaultValue: "key should be valid" }),
+				(value) => {
+					if (!value?.includes("*")) {
+						return true;
+					}
+					return false;
+				},
+			)
+			.required(() =>
+				i18n.t("gatewayDetails.validation.keyRequired", { defaultValue: "key is required" }),
+			),
+		secret: yup.string().test(
+			"secret",
+			() =>
+				i18n.t("gatewayDetails.validation.secretInvalid", {
+					defaultValue: "secret should be valid",
+				}),
+			(value) => {
 				if (!value?.includes("*")) {
 					return true;
 				}
 				return false;
-			})
-			.required("key is required"),
-		secret: yup.string().test("secret", "secret should be valid", (value) => {
-			if (!value?.includes("*")) {
-				return true;
-			}
-			return false;
-		}),
-		user_id: yup.string().required("user id is required"),
+			},
+		),
+		user_id: yup
+			.string()
+			.required(() =>
+				i18n.t("gatewayDetails.validation.userIdRequired", { defaultValue: "user id is required" }),
+			),
 		enabled: yup.boolean(),
 	});
 
@@ -114,7 +136,7 @@ const GatewayDetailsForm = ({
 					return (
 						<Form>
 							<AppDialogHeader
-								title="Add Gateway Details"
+								title={t("gatewayDetails.form.title", { defaultValue: "Add Gateway Details" })}
 								handleClose={() => {
 									handleClose();
 								}}
@@ -122,7 +144,7 @@ const GatewayDetailsForm = ({
 							<DialogContent>
 								<Field
 									name="type"
-									label="Type"
+									label={t("gatewayDetails.form.type", { defaultValue: "Type" })}
 									component={AutocompleteField}
 									options={filterTypeOptions()}
 									isRequired={true}
@@ -130,24 +152,32 @@ const GatewayDetailsForm = ({
 								/>
 								<Field
 									name="key"
-									label="Key"
+									label={t("gatewayDetails.form.key", { defaultValue: "Key" })}
 									component={TextFormField}
-									placeholder="Enter Key"
+									placeholder={t("gatewayDetails.form.keyPlaceholder", {
+										defaultValue: "Enter Key",
+									})}
 									isRequired
 								/>
 								<Field
 									name="secret"
-									label="Secret Id"
+									label={t("gatewayDetails.form.secret", { defaultValue: "Secret Id" })}
 									component={TextFormField}
-									placeholder="Enter Secret Id"
+									placeholder={t("gatewayDetails.form.secretPlaceholder", {
+										defaultValue: "Enter Secret Id",
+									})}
 								/>
-								<Field name="enabled" label="Enabled" component={CheckBoxFormField} />
+								<Field
+									name="enabled"
+									label={t("gatewayDetails.enabled", { defaultValue: "Enabled" })}
+									component={CheckBoxFormField}
+								/>
 							</DialogContent>
 							<AppDialogFooter
 								onClickCancel={() => {
 									handleClose();
 								}}
-								saveButtonText="Submit"
+								saveButtonText={t("gatewayDetails.form.submit", { defaultValue: "Submit" })}
 								saveButtonDisabled={!formik.isValid || formik.isSubmitting}
 							/>
 						</Form>

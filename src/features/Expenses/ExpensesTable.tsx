@@ -1,5 +1,5 @@
 import { Box, Tooltip, Typography } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -60,7 +60,13 @@ const ExpensesTable = () => {
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
-				return <Typography>{params.value}</Typography>;
+				return (
+					<Typography>
+						{t(`expenses.categoryTypes.${params.value?.toLowerCase()}`, {
+							defaultValue: params.value,
+						})}
+					</Typography>
+				);
 			},
 		},
 		{
@@ -83,7 +89,7 @@ const ExpensesTable = () => {
 		},
 		{
 			field: "amount",
-			headerName: "Amount",
+			headerName: t("expenses.amount", { defaultValue: "Amount" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
@@ -92,12 +98,15 @@ const ExpensesTable = () => {
 		},
 		{
 			field: "action",
-			headerName: "Action",
+			headerName: t("expenses.table.action", { defaultValue: "Action" }),
 			flex: 1,
 			minWidth: 150,
 			type: "actions",
 			getActions: (params) => [
-				<Tooltip title="Edit expenses" key={params.row?.id}>
+				<Tooltip
+					title={t("expenses.table.edit", { defaultValue: "Edit expenses" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							src={EditIcon}
@@ -107,7 +116,10 @@ const ExpensesTable = () => {
 						/>
 					</Box>
 				</Tooltip>,
-				<Tooltip title="Delete expenses" key={params.row?.id}>
+				<Tooltip
+					title={t("expenses.table.delete", { defaultValue: "Delete expenses" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							key={params.row?.id}
@@ -116,8 +128,10 @@ const ExpensesTable = () => {
 							iconColor="error"
 							onClick={async () => {
 								handleOpen({
-									title: "Delete Expenses",
-									message: "Are you sure you want to delete this expenses?",
+									title: t("expenses.actions.deleteTitle", { defaultValue: "Delete Expenses" }),
+									message: t("expenses.actions.deleteConfirm", {
+										defaultValue: "Are you sure you want to delete this expenses?",
+									}),
 									onConfirm: async () => {
 										await removeExpense.mutateAsync({ id: params.row.id });
 										queryClient.invalidateQueries({
@@ -127,7 +141,7 @@ const ExpensesTable = () => {
 									onCancel: () => {
 										cleanUp();
 									},
-									confirmButtonText: "Delete",
+									confirmButtonText: t("app.delete", { defaultValue: "Delete" }),
 								});
 							}}
 						/>

@@ -5,17 +5,18 @@ import {
 	useHsncodeControllerFindOne,
 	useHsncodeControllerUpdate,
 } from "@api/services/hsncode";
-import { CreateHSNCodeTaxDto } from "@api/services/models";
+import { type CreateHSNCodeTaxDto } from "@api/services/models";
 import { Box, Button } from "@mui/material";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { useAuthStore } from "@store/auth";
-import { Formik, Field, FormikHelpers } from "formik";
+import { Formik, Field, type FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { useQueryClient } from "@tanstack/react-query";
 import { RegexExp } from "@shared/regex";
 import { getTaxcodeControllerFindAllQueryKey } from "@api/services/tax-code";
 import { useCreateHsnCodeStore } from "@store/createHsnCodeStore";
 import Loader from "@shared/components/Loader";
+import { useTranslation } from "react-i18next";
 
 const style = {
 	bgcolor: "custom.lightBlue",
@@ -25,6 +26,7 @@ const style = {
 };
 
 const CreateHSNCode = ({ handleClose }: { handleClose?: () => void }) => {
+	const { t, i18n } = useTranslation();
 	const queryClient = useQueryClient();
 	const { user } = useAuthStore();
 	const createHSNCode = useHsncodeControllerCreate();
@@ -37,13 +39,20 @@ const CreateHSNCode = ({ handleClose }: { handleClose?: () => void }) => {
 	});
 	const validationSchema: Yup.Schema<CreateHSNCodeTaxDto> = Yup.object().shape({
 		hsn_code: Yup.string()
-			.required("HSN Code is required")
-			.matches(RegexExp?.numberRegex, "Invalid HSN Code"),
+			.required(() =>
+				i18n.t("hsn.validation.codeRequired", { defaultValue: "HSN Code is required" }),
+			)
+			.matches(
+				RegexExp?.numberRegex,
+				i18n.t("hsn.validation.codeInvalid", { defaultValue: "Invalid HSN Code" }),
+			),
 		tax: Yup.number()
-			.required("Tax is required")
-			.min(0, "Tax should be greater than 0")
-			.max(100, "Tax should be less than 100"),
-		user_id: Yup.string().required("User id is required"),
+			.required(() => i18n.t("hsn.validation.taxRequired", { defaultValue: "Tax is required" }))
+			.min(0, i18n.t("hsn.validation.taxMin", { defaultValue: "Tax should be greater than 0" }))
+			.max(100, i18n.t("hsn.validation.taxMax", { defaultValue: "Tax should be less than 100" })),
+		user_id: Yup.string().required(() =>
+			i18n.t("hsn.validation.userRequired", { defaultValue: "User id is required" }),
+		),
 	});
 
 	const initialValues: CreateHSNCodeTaxDto = {
@@ -100,13 +109,20 @@ const CreateHSNCode = ({ handleClose }: { handleClose?: () => void }) => {
 				{({ handleSubmit }) => {
 					return (
 						<>
-							<Field component={TextFormField} name="hsn_code" label="HSN Code" type="number" />
+							<Field
+								component={TextFormField}
+								name="hsn_code"
+								label={t("hsn.form.code", { defaultValue: "HSN Code" })}
+								type="number"
+								placeholder={t("hsn.placeholders.code", { defaultValue: "Enter HSN code" })}
+							/>
 							{!editHsnCodeId && (
 								<Field
 									component={TextFormField}
 									type="number"
 									name="tax"
-									label="Tax (in percentage)"
+									label={t("hsn.form.tax", { defaultValue: "Tax (in percentage)" })}
+									placeholder={t("hsn.placeholders.tax", { defaultValue: "Enter percentage" })}
 								/>
 							)}
 							<Box textAlign={"center"}>
@@ -116,11 +132,14 @@ const CreateHSNCode = ({ handleClose }: { handleClose?: () => void }) => {
 										handleSubmit();
 									}}
 								>
-									{editHsnCodeId ? "Update" : "Create"} HSN Code
+									{editHsnCodeId
+										? t("app.update", { defaultValue: "Update" })
+										: t("hsn.form.create", { defaultValue: "Create" })}{" "}
+									{t("hsn.form.codeShort", { defaultValue: "HSN Code" })}
 								</Button>
 								{handleClose && (
 									<Button variant="outlined" onClick={handleClose}>
-										Close
+										{t("app.close", { defaultValue: "Close" })}
 									</Button>
 								)}
 							</Box>

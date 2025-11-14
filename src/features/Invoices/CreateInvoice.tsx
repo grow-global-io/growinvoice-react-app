@@ -7,8 +7,11 @@ import {
 	InputAdornment,
 	Dialog,
 	DialogContent,
+	FormControl,
+	FormControlLabel,
+	Checkbox,
 } from "@mui/material";
-import { Formik, Form, Field, FormikProps, FormikHelpers } from "formik";
+import { Formik, Form, Field, type FormikProps, type FormikHelpers } from "formik";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { DateFormField } from "@shared/components/FormFields/DateFormField";
 import * as yup from "yup";
@@ -18,7 +21,6 @@ import FullFeaturedCrudGrid from "../../shared/components/EditableProductListTab
 import { useAuthStore } from "@store/auth";
 import { useCustomerControllerFindAll } from "@api/services/customer";
 import { CheckBoxFormField } from "@shared/components/FormFields/CheckBoxFormField";
-import { stringToListDto } from "@shared/models/ListDto";
 import moment from "moment";
 import AddIcon from "@mui/icons-material/Add";
 import PaymentDetailsDrawer from "../PaymentsDetails/PaymentDetailsDrawer";
@@ -26,10 +28,10 @@ import { useDialog } from "@shared/hooks/useDialog";
 import { usePaymentdetailsControllerFindAll } from "@api/services/paymentdetails";
 import {
 	CreateInvoiceWithProductsRecurring,
-	OmitCreateInvoiceProductsDto,
+	type OmitCreateInvoiceProductsDto,
 } from "@api/services/models";
 import { useEffect, useRef, useState } from "react";
-import { GridRowsProp } from "@mui/x-data-grid";
+import { type GridRowsProp } from "@mui/x-data-grid";
 import {
 	getInvoiceControllerFindAllQueryKey,
 	getInvoiceControllerFindDueInvoicesQueryKey,
@@ -57,6 +59,12 @@ import SubtotalFooter from "@shared/components/SubtotalFooter";
 import { useInvoicesettingsControllerFindFirst } from "@api/services/invoicesettings";
 import { useCurrencyControllerFindAll } from "@api/services/currency";
 import { useTranslation } from "react-i18next";
+import { translateInvoiceHtml } from "@shared/utils/invoiceTemplateTranslator";
+import SaveAndSendInvoiceButton from "./components/SaveAndSendInvoiceButton";
+import { useInvoiceHook } from "./invoiceHooks/useInvoiceHook";
+import { LoaderService } from "@shared/services/LoaderService";
+import { toast } from "react-toastify";
+import { setSuppressSuccessMessages } from "@shared/services/InterceptorService";
 
 export type OmitCreateInvoiceProductsExtended = Omit<
 	OmitCreateInvoiceProductsDto,
@@ -69,10 +77,19 @@ export type OmitCreateInvoiceProductsExtended = Omit<
 	taxes?: string[];
 };
 
-const CreateInvoice = ({ id }: { id?: string }) => {
+const CreateInvoice = ({
+	id,
+	customerId,
+	isReceipt = false,
+}: {
+	id?: string;
+	customerId?: string;
+	isReceipt?: boolean;
+}) => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
+	const { handlePaid } = useInvoiceHook();
 	const [rows, setRows] = useState<GridRowsProp<OmitCreateInvoiceProductsExtended>>([]);
 	const [productErrorText, setProductErrorText] = useState<string | undefined>(undefined);
 	const { open, handleClickOpen, handleClose } = useDialog();
@@ -122,16 +139,32 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 		}
 	}, [invoiceFindOne.isSuccess || invoiceFindOne?.isRefetching]);
 
+	// Pre-select customer when customerId is provided (only for new invoices)
+	const getInitialCustomerIds = () => {
+		if (id) return []; // Editing existing invoice
+		if (customerId && customerData?.data) {
+			const customerExists = customerData.data.some((c) => c.id === customerId);
+			return customerExists ? [customerId] : [];
+		}
+		return [];
+	};
+
 	const initialValues = {
 		currency_id: invoiceFindOne?.data?.currency_id ?? user?.currency_id ?? "",
-		customer_id: invoiceFindOne?.data?.customer_id ?? "",
+		customer_ids: getInitialCustomerIds(),
 		user_id: user?.id ?? "",
 		invoice_number: invoiceFindOne?.data?.invoice_number ?? new Date().getTime().toString(),
 		reference_number: invoiceFindOne?.data?.reference_number ?? "",
-		date: invoiceFindOne?.data?.date ?? "",
+		date: invoiceFindOne?.data?.date ?? (id ? "" : currentDate),
 		due_date: invoiceFindOne?.data?.due_date ?? "",
 		is_recurring: invoiceFindOne?.data?.is_recurring ?? false,
-		notes: invoiceFindOne?.data?.notes ?? "",
+		notes:
+			invoiceFindOne?.data?.notes ??
+			(id
+				? ""
+				: t("invoiceForm.defaultNote", {
+						defaultValue: "Thank you for shopping with us. Have a Great Day.",
+					})),
 		paymentId: invoiceFindOne?.data?.paymentId ?? "",
 		sub_total: invoiceFindOne?.data?.sub_total ?? 0,
 		tax_id: invoiceFindOne?.data?.tax_id ?? "",
@@ -149,11 +182,35 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 			invoiceFindOne?.data?.template_id ?? invoiceSettings?.data?.invoiceTemplateId ?? "",
 	};
 
-	const formikRef = useRef<FormikProps<typeof initialValues>>(null);
+	// Set customer in form when customer data loads and customerId is provided
+	useEffect(() => {
+		if (!id && customerId && customerData?.data && formikRef.current) {
+			const customerExists = customerData.data.some((c) => c.id === customerId);
+			const currentValues = formikRef.current.values;
+			if (
+				customerExists &&
+				"customer_ids" in currentValues &&
+				Array.isArray(currentValues.customer_ids) &&
+				!currentValues.customer_ids.includes(customerId)
+			) {
+				formikRef.current.setFieldValue("customer_ids", [customerId]);
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [customerData?.data, customerId, id]);
+
+	const updateInitialValues = {
+		...initialValues,
+		customer_ids: undefined,
+		customer_id: invoiceFindOne?.data?.customer_id ?? "",
+	};
+
+	const formikRef = useRef<FormikProps<typeof initialValues | typeof updateInitialValues>>(null);
 
 	const schema = yup.object().shape({
 		currency_id: yup.string().required(t("invoiceForm.validation.currencyRequired")),
-		customer_id: yup.string().required(t("invoiceForm.validation.customerRequired")),
+		// customer_id: yup.string().required(t("invoiceForm.validation.customerRequired")),
+		customer_ids: yup.array().of(yup.string()).min(1, t("invoiceForm.validation.customerRequired")),
 		invoice_number: yup.string().required(t("invoiceForm.validation.invoiceNumberRequired")),
 		reference_number: yup.string(),
 		date: yup.string().required(t("invoiceForm.validation.invoiceDateRequired")),
@@ -196,9 +253,14 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 		template_id: yup.string().required(t("invoiceForm.validation.templateRequired")),
 	});
 
+	const updateSchema = schema.shape({
+		customer_ids: yup.array().of(yup.string()).optional().nullable(),
+		customer_id: yup.string().required(t("invoiceForm.validation.customerRequired")),
+	});
+
 	const handleSubmit = async (
-		values: typeof initialValues,
-		actions: FormikHelpers<typeof initialValues>,
+		values: typeof initialValues | typeof updateInitialValues,
+		actions: FormikHelpers<typeof initialValues | typeof updateInitialValues>,
 	) => {
 		if (rows?.length === 0) {
 			setProductErrorText(t("invoiceForm.validation.atLeastOneProduct"));
@@ -208,74 +270,118 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 			return;
 		}
 
-		if (id) {
-			await invoiceUpdate.mutateAsync({
-				id,
-				data: {
-					...values,
-					recurring: values.recurring as CreateInvoiceWithProductsRecurring,
-					date: formatDateToIso(values.date),
-					due_date: formatDateToIso(values.due_date),
-					due_amount: values.total,
-					paid_amount: 0,
-					product: rows.map((row) => ({
-						...row,
-						taxes: row.taxes?.length ? row.taxes : undefined,
-					})),
-				},
-			});
-		} else {
-			await createInvoice.mutateAsync({
-				data: {
-					...values,
-					reference_number: values?.reference_number
-						? values?.reference_number
-						: values?.invoice_number,
-					recurring: values.recurring as CreateInvoiceWithProductsRecurring,
-					date: formatDateToIso(values.date),
-					due_date: formatDateToIso(values.due_date),
-					due_amount: values.total,
-					paid_amount: 0,
-					product: rows.map((row) => ({
-						...row,
-						taxes: row.taxes?.length ? row.taxes : undefined,
-					})),
-				},
-			});
+		// Show loading for receipt creation and suppress all messages
+		if (isReceipt) {
+			LoaderService.instance.showLoader();
+			// Suppress all success messages during receipt creation
+			setSuppressSuccessMessages(true);
 		}
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerFindOneQueryKey(id ?? ""),
-		});
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerFindAllQueryKey(),
-		});
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerFindDueInvoicesQueryKey(),
-		});
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerFindPaidInvoicesQueryKey(),
-		});
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerTestQueryKey(id ?? ""),
-		});
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerInvoiceCountQueryKey(),
-		});
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerTotalDueQueryKey(),
-		});
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerOutstandingReceivableQueryKey(),
-		});
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerFindDueTodayQueryKey({ date: formatDateToIso(currentDate) }),
-		});
-		await queryClient.refetchQueries({
-			queryKey: getInvoiceControllerFindDueMonthQueryKey({ date: formatDateToIso(currentDate) }),
-		});
-		actions.resetForm();
-		setRows([]);
-		navigate("/invoice/invoicelist");
+
+		try {
+			let savedInvoiceId = id;
+
+			if (id) {
+				await invoiceUpdate.mutateAsync({
+					id,
+					data: {
+						...values,
+						recurring: values.recurring as CreateInvoiceWithProductsRecurring,
+						date: formatDateToIso(values.date),
+						due_date: formatDateToIso(values.due_date),
+						due_amount: isReceipt ? 0 : values.total,
+						paid_amount: isReceipt ? values.total : 0,
+						product: rows.map((row) => ({
+							...row,
+							taxes: row.taxes?.length ? row.taxes : undefined,
+						})),
+					},
+				});
+			} else {
+				const createdInvoice = await createInvoice.mutateAsync({
+					data: {
+						...values,
+						reference_number: values?.reference_number
+							? values?.reference_number
+							: values?.invoice_number,
+						recurring: values.recurring as CreateInvoiceWithProductsRecurring,
+						date: formatDateToIso(values.date),
+						due_date: formatDateToIso(values.due_date),
+						due_amount: isReceipt ? 0 : values.total,
+						paid_amount: isReceipt ? values.total : 0,
+						product: rows.map((row) => ({
+							...row,
+							taxes: row.taxes?.length ? row.taxes : undefined,
+						})),
+					},
+				});
+				savedInvoiceId = createdInvoice?.result?.id;
+			}
+
+			// If this is a receipt, mark it as paid using the API endpoint
+			// This will properly update the paid_status and send the receipt email
+			if (isReceipt && savedInvoiceId) {
+				// Temporarily suppress success messages by storing a flag
+				// The InterceptorService will show messages, but we'll show our combined message after
+				await handlePaid(savedInvoiceId);
+			}
+
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerFindOneQueryKey(id ?? ""),
+			});
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerFindAllQueryKey(),
+			});
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerFindDueInvoicesQueryKey(),
+			});
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerFindPaidInvoicesQueryKey(),
+			});
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerTestQueryKey(id ?? ""),
+			});
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerInvoiceCountQueryKey(),
+			});
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerTotalDueQueryKey(),
+			});
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerOutstandingReceivableQueryKey(),
+			});
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerFindDueTodayQueryKey({ date: formatDateToIso(currentDate) }),
+			});
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerFindDueMonthQueryKey({ date: formatDateToIso(currentDate) }),
+			});
+
+			// For receipt creation, redirect and show message on receipt list page
+			if (isReceipt) {
+				LoaderService.instance.hideLoader();
+				// Re-enable success messages
+				setSuppressSuccessMessages(false);
+				// Dismiss any existing toasts
+				toast.dismiss();
+				actions.resetForm();
+				setRows([]);
+				// Navigate with state to indicate we should show success message
+				navigate("/receipt/receiptlist", {
+					state: { showSuccessMessage: true },
+				});
+			} else {
+				actions.resetForm();
+				setRows([]);
+				navigate("/invoice/invoicelist");
+			}
+		} catch (error) {
+			if (isReceipt) {
+				LoaderService.instance.hideLoader();
+				// Re-enable success messages even on error
+				setSuppressSuccessMessages(false);
+			}
+			throw error;
+		}
 	};
 
 	const currencyList = useCurrencyControllerFindAll();
@@ -309,8 +415,8 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 			/>
 			<Box sx={{ mb: 2, mt: 2 }}>
 				<Formik
-					initialValues={initialValues}
-					validationSchema={schema}
+					initialValues={id ? updateInitialValues : initialValues}
+					validationSchema={id ? updateSchema : schema}
 					onSubmit={handleSubmit}
 					innerRef={formikRef}
 				>
@@ -318,20 +424,66 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 						return (
 							<Form>
 								<Grid container spacing={2}>
-									<Grid item xs={12} sm={4}>
-										<Field
-											name="customer_id"
-											label={t("invoiceForm.customerName")}
-											component={AutocompleteField}
-											options={customerData?.data?.map((customer) => ({
-												value: customer.id,
-												label: customer.display_name,
-											}))}
-											loading={customerData.isLoading}
-											isRequired={true}
-										/>
-									</Grid>
+									{id ? (
+										<Grid item xs={12} sm={4}>
+											<Field
+												name="customer_id"
+												label={t("invoiceForm.customerName")}
+												component={AutocompleteField}
+												options={customerData?.data?.map((customer) => ({
+													value: customer.id,
+													label: customer.display_name,
+												}))}
+												loading={customerData.isLoading}
+												isRequired={true}
+											/>
+										</Grid>
+									) : (
+										<Grid item xs={12} sm={4}>
+											<Field
+												name="customer_ids"
+												label={t("invoiceForm.customerName")}
+												component={AutocompleteField}
+												options={customerData?.data?.map((customer) => ({
+													value: customer.id,
+													label: customer.display_name,
+												}))}
+												loading={customerData.isLoading}
+												isRequired={true}
+												multiple
+												limitTags={2}
+											/>
+										</Grid>
+									)}
 									<Grid item xs={12} sm={4} alignItems={"center"} display={"flex"}>
+										{id ? null : (
+											<FormControl>
+												<FormControlLabel
+													value="end"
+													control={
+														<Checkbox
+															checked={
+																formik.values.customer_ids?.length === customerData?.data?.length
+															}
+															onChange={(e) => {
+																if (e.target.checked) {
+																	formik.setFieldValue(
+																		"customer_ids",
+																		customerData?.data?.map((customer) => customer.id),
+																	);
+																} else {
+																	formik.setFieldValue("customer_ids", []);
+																}
+															}}
+														/>
+													}
+													label={t("invoiceForm.selectAllCustomers", {
+														defaultValue: "Select all customers",
+													})}
+													labelPlacement="end"
+												/>
+											</FormControl>
+										)}
 										<Button
 											variant="text"
 											startIcon={<AddIcon />}
@@ -363,30 +515,36 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 									<Grid item xs={12} mb={3}>
 										<Divider />
 									</Grid>
-									<Grid item xs={12} sm={4}>
-										<Field
-											name="invoice_number"
-											component={TextFormField}
-											label={t("invoiceForm.invoiceNumber")}
-											InputProps={{
-												startAdornment: (
-													<InputAdornment position="start">
-														{invoiceSettings?.data?.invoicePrefix ??
-															t("invoiceForm.invoicePrefixFallback")}
-														{"INV"}-
-													</InputAdornment>
-												),
-											}}
-											isRequired={true}
-										/>
-									</Grid>
-									<Grid item xs={12} sm={4}>
-										<Field
-											name="reference_number"
-											component={TextFormField}
-											label={t("invoiceForm.referenceNumber")}
-										/>
-									</Grid>
+									{id && (
+										<>
+											<Grid item xs={12} sm={4}>
+												<Field
+													name="invoice_number"
+													component={TextFormField}
+													label={t("invoiceForm.invoiceNumber")}
+													InputProps={{
+														startAdornment: (
+															<InputAdornment position="start">
+																{invoiceSettings?.data?.invoicePrefix ??
+																	t("invoiceForm.invoicePrefixFallback", {
+																		defaultPrefix: "INV",
+																	})}
+																-
+															</InputAdornment>
+														),
+													}}
+													isRequired={true}
+												/>
+											</Grid>
+											<Grid item xs={12} sm={4}>
+												<Field
+													name="reference_number"
+													component={TextFormField}
+													label={t("invoiceForm.referenceNumber")}
+												/>
+											</Grid>
+										</>
+									)}
 									<Grid item xs={12} sm={4}>
 										<Field
 											name="date"
@@ -419,9 +577,12 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 												name="recurring"
 												label={t("invoiceForm.recurring")}
 												component={AutocompleteField}
-												options={Object.keys(CreateInvoiceWithProductsRecurring).map(
-													stringToListDto,
-												)}
+												options={Object.keys(CreateInvoiceWithProductsRecurring).map((key) => ({
+													value: key,
+													label: t(`invoiceForm.recurringTypes.${key}`, {
+														defaultValue: key,
+													}),
+												}))}
 											/>
 										</Grid>
 									)}
@@ -593,6 +754,9 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 												const data = await invoicePreview.mutateAsync({
 													data: {
 														...formik.values,
+														customer_id: id
+															? (formik.values as any).customer_id
+															: formik.values.customer_ids?.[0],
 														recurring: formik.values
 															.recurring as CreateInvoiceWithProductsRecurring,
 														tax_id: formik.values.tax_id === "" ? null : formik.values.tax_id,
@@ -600,7 +764,9 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 														paid_amount: 0,
 													},
 												});
-												setPreviewString(data as string);
+												// Translate the invoice HTML content before setting it
+												const translatedHtml = translateInvoiceHtml(data as string, t);
+												setPreviewString(translatedHtml);
 												handleClickOpenInvoicePreview();
 											}}
 											disabled={formik.isValid === false || rows?.length === 0}
@@ -608,10 +774,25 @@ const CreateInvoice = ({ id }: { id?: string }) => {
 											{t("invoiceForm.preview")}
 										</Button>
 									</Grid>
-									<Grid item xs={12} textAlign={"center"}>
+									<Grid
+										item
+										xs={12}
+										textAlign={"center"}
+										sx={{ display: "flex", gap: 2, justifyContent: "center" }}
+									>
 										<Button variant="contained" type="submit">
-											{t("invoiceForm.saveInvoice")}
+											{isReceipt
+												? t("receipt.saveReceipt", { defaultValue: "Save Receipt" })
+												: t("invoiceForm.saveInvoice")}
 										</Button>
+										{!isReceipt && (
+											<SaveAndSendInvoiceButton
+												formik={formik}
+												rows={rows}
+												invoiceId={id}
+												onValidationError={setProductErrorText}
+											/>
+										)}
 									</Grid>
 								</Grid>
 							</Form>

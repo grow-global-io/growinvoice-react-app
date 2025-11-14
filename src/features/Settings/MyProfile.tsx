@@ -1,5 +1,5 @@
 import { Box, Button, Divider, Grid } from "@mui/material";
-import { Formik, Field, Form, FormikHelpers, FormikProps } from "formik";
+import { Formik, Field, Form, type FormikHelpers, type FormikProps } from "formik";
 import * as yup from "yup";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { PhoneInputFormField } from "@shared/components/FormFields/PhoneInputFormField";
@@ -13,11 +13,13 @@ import {
 } from "@api/services/currency";
 import { useUserControllerUpdateUser } from "@api/services/users";
 import { useRef } from "react";
+import { useTranslation } from "react-i18next";
 import Loader from "@shared/components/Loader";
 import { useQueryClient } from "@tanstack/react-query";
 import { useConfirmDialogStore } from "@store/confirmDialog";
 
 const MyProfile = () => {
+	const { t } = useTranslation();
 	const queryClient = useQueryClient();
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
 	const { user, refecthUser, isRefecthing } = useAuthStore();
@@ -33,12 +35,15 @@ const MyProfile = () => {
 	};
 	const formikRef = useRef<FormikProps<typeof initialValues>>(null);
 	const schema = yup.object().shape({
-		name: yup.string().required("Name is required"),
-		email: yup.string().required("Email is required").email("Email is invalid"),
-		phone: yup.number().required("Phone Number is required"),
-		currency_id: yup.string().required("Select Currency is required"),
-		old_password: yup.string().min(7, "Password is at least 7 characters"),
-		password: yup.string().min(7, "Password is at least 7 characters"),
+		name: yup.string().required(() => t("settings.myProfile.validation.nameRequired")),
+		email: yup
+			.string()
+			.required(() => t("settings.myProfile.validation.emailRequired"))
+			.email(() => t("settings.myProfile.validation.emailInvalid")),
+		phone: yup.number().required(() => t("settings.myProfile.validation.phoneRequired")),
+		currency_id: yup.string().required(() => t("settings.myProfile.validation.currencyRequired")),
+		old_password: yup.string().min(7, () => t("settings.myProfile.validation.passwordMin")),
+		password: yup.string().min(7, () => t("settings.myProfile.validation.passwordMin")),
 	});
 
 	const id = user?.company?.[0]?.user_id ?? "";
@@ -60,8 +65,8 @@ const MyProfile = () => {
 	) => {
 		if (values.email !== user?.email) {
 			handleOpen({
-				title: "Email Change",
-				message: "Are you sure you want to change your email?",
+				title: t("settings.myProfile.confirmEmailChangeTitle"),
+				message: t("settings.myProfile.confirmEmailChangeMessage"),
 				onConfirm: async () => {
 					await dataSave(values);
 					actions.resetForm();
@@ -69,7 +74,7 @@ const MyProfile = () => {
 				onCancel: () => {
 					cleanUp();
 				},
-				confirmButtonText: "Yes",
+				confirmButtonText: t("common.yes"),
 			});
 		} else {
 			await dataSave(values);
@@ -95,35 +100,35 @@ const MyProfile = () => {
 							<Grid item xs={12} sm={6}>
 								<Field
 									name="name"
-									label="Full Name"
+									label={t("settings.myProfile.fullName")}
 									component={TextFormField}
-									placeholder={"Enter Full name"}
+									placeholder={t("settings.myProfile.fullNamePlaceholder")}
 								/>
 							</Grid>
 
 							<Grid item xs={12} sm={6}>
 								<Field
 									name="email"
-									label="Email"
+									label={t("settings.myProfile.email")}
 									component={TextFormField}
-									placeholder={"Enter email ID"}
+									placeholder={t("settings.myProfile.emailPlaceholder")}
 								/>
 							</Grid>
 
 							<Grid item xs={12} sm={6}>
 								<Field
 									name="phone"
-									label="Phone"
+									label={t("settings.myProfile.phone")}
 									component={PhoneInputFormField}
 									required={true}
-									placeholder={"Enter mobile nuber"}
+									placeholder={t("settings.myProfile.phonePlaceholder")}
 								/>
 							</Grid>
 
 							<Grid item xs={12} sm={6}>
 								<Field
 									name="currency_id"
-									label="Currency"
+									label={t("settings.myProfile.currency")}
 									loading={currencyList.isLoading || currencyList.isFetching}
 									component={AutocompleteField}
 									options={currencyList?.data
@@ -141,16 +146,16 @@ const MyProfile = () => {
 							</Grid>
 
 							<SettingFormHeading
-								heading="Update Password"
+								heading={t("settings.myProfile.updatePassword")}
 								icon={Constants.customImages.UpdatePassWordIcon}
-								text="If you want to update your password please fill the information below."
+								text={t("settings.myProfile.updatePasswordInfo")}
 							/>
 							<Grid item xs={12} sm={6}>
 								<Field
 									name="old_password"
-									label="Old Password"
+									label={t("settings.myProfile.oldPassword")}
 									component={TextFormField}
-									placeholder={"Enter old password"}
+									placeholder={t("settings.myProfile.oldPasswordPlaceholder")}
 									type="password"
 								/>
 							</Grid>
@@ -158,16 +163,16 @@ const MyProfile = () => {
 							<Grid item xs={12} sm={6}>
 								<Field
 									name="password"
-									label="New Passwod"
+									label={t("settings.myProfile.newPassword")}
 									component={TextFormField}
-									placeholder={"Enter new password"}
+									placeholder={t("settings.myProfile.newPasswordPlaceholder")}
 									type="password"
 								/>
 							</Grid>
 
 							<Grid item xs={12} textAlign={"center"} my={2}>
 								<Button variant="contained" type="submit">
-									Update
+									{t("common.update")}
 								</Button>
 							</Grid>
 						</Grid>

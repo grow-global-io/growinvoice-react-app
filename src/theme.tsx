@@ -1,7 +1,7 @@
 import * as React from "react";
-import { ThemeOptions, createTheme, alpha } from "@mui/material/styles";
+import { type ThemeOptions, createTheme, alpha, type Theme } from "@mui/material/styles";
 import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-import { TransitionProps } from "@mui/material/transitions";
+import { type TransitionProps } from "@mui/material/transitions";
 import { Box, Slide } from "@mui/material";
 import type {} from "@mui/x-data-grid/themeAugmentation";
 import { GridToolbarQuickFilter } from "@mui/x-data-grid";
@@ -496,6 +496,9 @@ const themeOptions: ThemeOptions = {
 				},
 			},
 		},
+		MuiTablePagination: {
+			defaultProps: {},
+		},
 	},
 };
 
@@ -539,4 +542,41 @@ const customTheme = {
 	},
 };
 
-export const theme = createTheme(customTheme);
+export function createAppTheme(): Theme {
+	// Rebuild theme using current i18n language each time this is called
+	// Ensure translations are loaded before accessing them
+	const getTranslation = (key: string, defaultValue: string): string => {
+		try {
+			const translation = i18next.t(key, { defaultValue });
+			// If translation returns the key itself, use defaultValue
+			return translation === key ? defaultValue : translation;
+		} catch (error) {
+			return defaultValue;
+		}
+	};
+
+	const currentTheme = {
+		...customTheme,
+		components: {
+			...customTheme.components,
+			MuiDataGrid: {
+				...customTheme.components?.MuiDataGrid,
+				defaultProps: {
+					...(customTheme.components?.MuiDataGrid?.defaultProps || {}),
+					localeText: {
+						noRowsLabel: getTranslation("table.noRows", "No rows"),
+					},
+				},
+			},
+			MuiTablePagination: {
+				...customTheme.components?.MuiTablePagination,
+				defaultProps: {
+					labelRowsPerPage: getTranslation("table.rowsPerPage", "Rows per page:"),
+				},
+			},
+		},
+	};
+	return createTheme(currentTheme);
+}
+
+export const theme = createAppTheme();

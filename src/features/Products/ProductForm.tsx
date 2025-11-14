@@ -2,7 +2,7 @@ import { Box, Grid, Typography, IconButton, Button, Divider } from "@mui/materia
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { Constants } from "@shared/constants";
-import { Formik, Field, Form, FormikHelpers, FieldArray } from "formik";
+import { Formik, Field, Form, type FormikHelpers, FieldArray } from "formik";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import * as yup from "yup";
@@ -11,9 +11,9 @@ import CreateProductUnit from "../ProductUnit/CreateProductUnit";
 import CreateHSNCode from "../HSNCode/CreateHSNCode";
 import CreateTaxes from "../ProductTaxes/CreateTaxes";
 import { useCreateProductStore } from "@store/createProductStore";
-import { CreateProductWithTaxDto, CreateProductWithTaxDtoType } from "@api/services/models";
+import { type CreateProductWithTaxDto, CreateProductWithTaxDtoType } from "@api/services/models";
 import { useAuthStore } from "@store/auth";
-import { ListDto, stringToListDto } from "@shared/models/ListDto";
+import { type ListDto } from "@shared/models/ListDto";
 import {
 	getProductControllerFindAllQueryKey,
 	useProductControllerCreate,
@@ -30,6 +30,7 @@ import { CheckBoxFormField } from "@shared/components/FormFields/CheckBoxFormFie
 import MultipleFileUploadFormField from "@shared/components/FormFields/MultipleFileUploadFormField";
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
+import { useEffect, useRef, useMemo } from "react";
 
 const schema = yup.object({
 	type: yup
@@ -84,11 +85,72 @@ const schema = yup.object({
 					.typeError(() => i18n.t("productForm.validation.priceNumber"))
 					.required(() => i18n.t("productForm.validation.priceRequired"))
 					.min(0.0000000001, () => i18n.t("productForm.validation.priceMin")),
+				sellPrice: yup
+					.number()
+					.typeError(() => i18n.t("productForm.validation.priceNumber"))
+					.nullable()
+					.optional(),
 			}),
 		)
 		.required(() => i18n.t("productForm.validation.priceBookRequired"))
 		.min(1, () => i18n.t("productForm.validation.priceBookAtLeastOne")),
 });
+
+// Helper component to auto-select first tax when taxes load asynchronously
+const TaxPrefillHelper = ({
+	editValues,
+	taxCodes,
+	setFieldValue,
+	currentTaxValues,
+}: {
+	editValues: any;
+	taxCodes: any;
+	setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
+	currentTaxValues: string[] | null | undefined;
+}) => {
+	const taxPrefilledRef = useRef(false);
+	const previousEditValuesRef = useRef(editValues);
+
+	useEffect(() => {
+		// Reset prefilled flag when switching between edit and create modes
+		if (previousEditValuesRef.current !== editValues) {
+			taxPrefilledRef.current = false;
+			previousEditValuesRef.current = editValues;
+		}
+
+		// Don't prefill if we're in edit mode
+		if (editValues) {
+			return;
+		}
+
+		// Auto-select first tax when:
+		// 1. Not editing (editValues is null/undefined)
+		// 2. Tax codes are loaded and not loading
+		// 3. Haven't already prefilled
+		// 4. Tax field is currently empty
+		if (
+			taxCodes?.data &&
+			taxCodes.data.length > 0 &&
+			!taxCodes.isLoading &&
+			!taxCodes.isFetching &&
+			!taxPrefilledRef.current &&
+			(!currentTaxValues || currentTaxValues.length === 0)
+		) {
+			// Auto-select the first tax
+			setFieldValue("tax", [taxCodes.data[0].id], false);
+			taxPrefilledRef.current = true;
+		}
+	}, [
+		editValues,
+		taxCodes?.data,
+		taxCodes?.isLoading,
+		taxCodes?.isFetching,
+		setFieldValue,
+		currentTaxValues,
+	]);
+
+	return null;
+};
 
 const ProductForm = () => {
 	const { t } = useTranslation();
@@ -104,7 +166,9 @@ const ProductForm = () => {
 	const isIndia = user?.company?.[0]?.country?.name === "India";
 
 	const handleSubmit = async (
-		values: CreateProductWithTaxDto,
+		values: CreateProductWithTaxDto & {
+			priceBook: Array<{ currency_id: string; price: number; sellPrice?: number }>;
+		},
 		action: FormikHelpers<CreateProductWithTaxDto>,
 	) => {
 		if (isGetStartedDialogOpen()) {
@@ -114,9 +178,14 @@ const ProductForm = () => {
 			return;
 		}
 		action.setSubmitting(true);
+		// Remove sellPrice from priceBook before sending to API (API only accepts currency_id and price)
 		const transformedValues = {
 			...values,
 			hsnCode_id: values.hsnCode_id === "" ? null : values.hsnCode_id,
+			priceBook: values.priceBook.map(({ currency_id, price }) => ({
+				currency_id,
+				price,
+			})),
 		};
 		if (editValues) {
 			await updateProduct.mutateAsync({
@@ -136,22 +205,50 @@ const ProductForm = () => {
 		action.setSubmitting(false);
 	};
 
-	const initialValues: CreateProductWithTaxDto = {
-		type: editValues?.type ?? "Goods",
-		name: editValues?.name ?? "",
-		unit_id: editValues?.unit_id ?? "",
-		hsnCode_id: editValues?.hsnCode_id ?? "",
-		tax: editValues?.tax?.map((tax) => tax.tax_id) ?? [],
-		description: editValues?.description ?? "",
-		user_id: user?.id ?? "",
-		priceBook:
-			editValues?.priceBook?.map((price) => ({
-				currency_id: price.currency_id,
-				price: price.price,
-			})) ?? [],
-		images: editValues?.images ?? [],
-		includeStore: editValues?.includeStore ?? false,
-	};
+	// Calculate initial tax values - auto-select first tax for all users when creating new product
+	const initialTaxValues = useMemo(() => {
+		// If editing, use existing taxes
+		if (editValues?.tax) {
+			return editValues.tax.map((tax) => tax.tax_id);
+		}
+
+		// If creating new product, auto-select the first tax
+		if (!editValues && taxCodes?.data && taxCodes.data.length > 0) {
+			return [taxCodes.data[0].id];
+		}
+
+		return [];
+	}, [editValues, taxCodes?.data]);
+
+	const initialValues: CreateProductWithTaxDto = useMemo(
+		() => ({
+			type: editValues?.type ?? "Goods",
+			name: editValues?.name ?? "",
+			unit_id: editValues?.unit_id ?? "",
+			hsnCode_id: editValues?.hsnCode_id ?? "",
+			tax: initialTaxValues,
+			description: editValues?.description ?? "",
+			user_id: user?.id ?? "",
+			priceBook:
+				editValues?.priceBook?.map((price) => {
+					// Calculate sellPrice from price and tax if editing
+					const taxPercentage =
+						taxCodes?.data
+							?.filter((t) => editValues?.tax?.map((tax: any) => tax.tax_id).includes(t.id))
+							?.map((t) => t.percentage)
+							?.reduce((acc, curr) => acc + curr, 0) ?? 0;
+					const calculatedSellPrice = price.price + (price.price * taxPercentage) / 100;
+					return {
+						currency_id: price.currency_id,
+						price: price.price,
+						sellPrice: calculatedSellPrice,
+					};
+				}) ?? [],
+			images: editValues?.images ?? [],
+			includeStore: editValues?.includeStore ?? false,
+		}),
+		[editValues, initialTaxValues, user?.id, taxCodes?.data],
+	);
 
 	const {
 		handleClickOpen: handleProductUnitOpen,
@@ -197,11 +294,22 @@ const ProductForm = () => {
 			</Grid>
 
 			<Box sx={{ mb: 2, mt: 2 }}>
-				<Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit}>
+				<Formik
+					initialValues={initialValues}
+					validationSchema={schema}
+					onSubmit={handleSubmit}
+					enableReinitialize={true}
+				>
 					{({ values, setFieldValue, errors }) => {
 						console.log("errors", errors);
 						return (
 							<Form>
+								<TaxPrefillHelper
+									editValues={editValues}
+									taxCodes={taxCodes}
+									setFieldValue={setFieldValue}
+									currentTaxValues={values.tax}
+								/>
 								<Divider />
 								<Grid container my={1} padding={2}>
 									<Grid item xs={12}>
@@ -209,7 +317,13 @@ const ProductForm = () => {
 											name="type"
 											label={t("productForm.type")}
 											component={AutocompleteField}
-											options={Object.values(CreateProductWithTaxDtoType).map(stringToListDto)}
+											options={Object.values(CreateProductWithTaxDtoType).map((value) => ({
+												value,
+												label:
+													value === CreateProductWithTaxDtoType.Goods
+														? t("product.type.goods", { defaultValue: "Goods" })
+														: t("product.type.services", { defaultValue: "Services" }),
+											}))}
 											isRequired={true}
 										/>
 									</Grid>
@@ -305,14 +419,91 @@ const ProductForm = () => {
 											multiple
 											component={AutocompleteField}
 											loading={taxCodes.isLoading || taxCodes.isFetching}
-											options={taxCodes?.data?.map((item) => {
-												return {
-													label: [item?.name, item?.percentage ? `${item?.percentage}%` : ""]
-														.filter(Boolean)
-														.join(" - "),
-													value: item?.id,
-												};
-											})}
+											options={(() => {
+												// Get currently selected tax IDs
+												const selectedTaxIds = values.tax || [];
+												// Get currently selected taxes data
+												const selectedTaxes =
+													taxCodes?.data?.filter((tax) => selectedTaxIds.includes(tax.id)) || [];
+
+												// First, deduplicate taxes by name+percentage (keep only one per unique combination)
+												const seenTaxes = new Map<string, string>(); // key: "name-percentage", value: taxId
+												const uniqueTaxes =
+													taxCodes?.data?.filter((item) => {
+														const percentage = item?.percentage ?? 0;
+														const key = `${item.name}-${percentage}`;
+														if (seenTaxes.has(key)) {
+															// If already seen, only keep it if it's already selected
+															return selectedTaxIds.includes(item.id);
+														}
+														seenTaxes.set(key, item.id);
+														return true;
+													}) || [];
+
+												// Map unique taxes to options
+												return (
+													uniqueTaxes
+														.map((item) => {
+															// Always show percentage, including 0%
+															const percentage = item?.percentage ?? 0;
+															return {
+																label: `${item?.name} - ${percentage}%`,
+																value: item?.id,
+															};
+														})
+														.filter((option) => {
+															// If this tax is already selected, keep it in options
+															if (selectedTaxIds.includes(option.value)) {
+																return true;
+															}
+															// Otherwise, check if it would be a duplicate of already selected
+															const taxItem = taxCodes?.data?.find(
+																(tax) => tax.id === option.value,
+															);
+															if (!taxItem) return false;
+
+															// Check if a tax with same name and percentage is already selected
+															const isDuplicate = selectedTaxes.some(
+																(selectedTax) =>
+																	selectedTax.name === taxItem.name &&
+																	selectedTax.percentage === taxItem.percentage,
+															);
+
+															// Filter out duplicates
+															return !isDuplicate;
+														}) || []
+												);
+											})()}
+											onValueChange={(value: ListDto) => {
+												if (!value) return;
+
+												// Get current selected tax IDs
+												const currentTaxIds = values.tax || [];
+												// Get the tax data for the newly selected tax
+												const newTax = taxCodes?.data?.find((tax) => tax.id === value.value);
+
+												if (newTax) {
+													// Check if a tax with same name and percentage already exists
+													const selectedTaxes =
+														taxCodes?.data?.filter((tax) => currentTaxIds.includes(tax.id)) || [];
+
+													const isDuplicate = selectedTaxes.some(
+														(selectedTax) =>
+															selectedTax.name === newTax.name &&
+															selectedTax.percentage === newTax.percentage &&
+															selectedTax.id !== newTax.id,
+													);
+
+													if (isDuplicate) {
+														AlertService.instance.errorMessage(
+															t("productForm.duplicateTaxError", {
+																defaultValue: `Tax "${newTax.name} - ${newTax.percentage}%" is already added.`,
+															}),
+														);
+														return; // Don't add the duplicate
+													}
+												}
+											}}
 										/>
 										{!openTaxesForm && (
 											<Button variant="text" onClick={handleTaxesOpen} startIcon={<AddIcon />}>
@@ -333,48 +524,133 @@ const ProductForm = () => {
 												render={(arrayHelpers) => (
 													<>
 														{values.priceBook && values.priceBook.length > 0 ? (
-															values.priceBook.map((_, index) => (
-																<Box key={index} sx={{ mb: 1 }}>
-																	<Grid container spacing={2} alignItems="center">
-																		<Grid item xs={5}>
-																			<Field
-																				name={`priceBook.${index}.currency_id`}
-																				label={t("productForm.currency")}
-																				component={AutocompleteField}
-																				options={currencyList?.data
-																					?.filter(
-																						(currency) =>
-																							currency.short_code === "EUR" ||
-																							currency.short_code === "INR",
-																					)
-																					?.map((currency) => ({
-																						value: currency.id,
-																						label: `${currency.short_code} - ${currency.name}`,
-																					}))}
-																				isRequired={true}
-																			/>
+															values.priceBook.map((_, index) => {
+																// Calculate tax percentage from selected taxes
+																const taxPercentage =
+																	taxCodes?.data
+																		?.filter((t) => values.tax?.includes(t.id))
+																		?.map((t) => t.percentage)
+																		?.reduce((acc, curr) => acc + curr, 0) ?? 0;
+
+																// Recalculate sellPrice when tax changes (if stock price exists)
+																const currentStockPrice =
+																	typeof values.priceBook[index]?.price === "number"
+																		? values.priceBook[index]?.price
+																		: parseFloat(String(values.priceBook[index]?.price || 0)) || 0;
+																if (currentStockPrice > 0) {
+																	const calculatedSellPrice =
+																		taxPercentage > 0
+																			? Math.round(
+																					currentStockPrice * (1 + taxPercentage / 100) * 100,
+																				) / 100
+																			: Math.round(currentStockPrice * 100) / 100;
+																	// Only update if different to avoid infinite loops
+																	const priceBookItem = values.priceBook[index] as any;
+																	const currentSellPrice =
+																		parseFloat(String(priceBookItem?.sellPrice || 0)) || 0;
+																	if (Math.abs(calculatedSellPrice - currentSellPrice) > 0.01) {
+																		setFieldValue(
+																			`priceBook.${index}.sellPrice`,
+																			calculatedSellPrice,
+																		);
+																	}
+																}
+
+																// Handler for Stock Price change
+																const handleStockPriceChange = (value: string) => {
+																	const newStockPrice =
+																		Math.round((parseFloat(value) || 0) * 100) / 100; // Round to 2 decimal places
+																	// Calculate sell price: Stock Price * (1 + tax percentage / 100)
+																	const newSellPrice =
+																		taxPercentage > 0
+																			? Math.round(
+																					newStockPrice * (1 + taxPercentage / 100) * 100,
+																				) / 100
+																			: newStockPrice;
+																	setFieldValue(`priceBook.${index}.price`, newStockPrice);
+																	setFieldValue(`priceBook.${index}.sellPrice`, newSellPrice);
+																};
+
+																// Handler for Selling Price change
+																const handleSellPriceChange = (value: string) => {
+																	const newSellPrice =
+																		Math.round((parseFloat(value) || 0) * 100) / 100; // Round to 2 decimal places
+																	// Calculate stock price: Selling Price / (1 + tax percentage / 100)
+																	const newStockPrice =
+																		taxPercentage > 0
+																			? Math.round(
+																					(newSellPrice / (1 + taxPercentage / 100)) * 100,
+																				) / 100
+																			: newSellPrice;
+																	setFieldValue(`priceBook.${index}.sellPrice`, newSellPrice);
+																	setFieldValue(`priceBook.${index}.price`, newStockPrice);
+																};
+
+																return (
+																	<Box key={index} sx={{ mb: 1 }}>
+																		<Grid container spacing={2} alignItems="center">
+																			<Grid item xs={4}>
+																				<Field
+																					name={`priceBook.${index}.currency_id`}
+																					label={t("productForm.currency")}
+																					component={AutocompleteField}
+																					options={currencyList?.data
+																						?.filter(
+																							(currency) =>
+																								currency.short_code === "EUR" ||
+																								currency.short_code === "INR",
+																						)
+																						?.map((currency) => ({
+																							value: currency.id,
+																							label: `${currency.short_code} - ${currency.name}`,
+																						}))}
+																					isRequired={true}
+																				/>
+																			</Grid>
+																			<Grid item xs={3}>
+																				<Field
+																					name={`priceBook.${index}.price`}
+																					component={TextFormField}
+																					label={t("productForm.stockPrice", {
+																						defaultValue: "Stock Price",
+																					})}
+																					type="number"
+																					step="0.01"
+																					isRequired={true}
+																					marginWholeTop={-0.1}
+																					onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+																						handleStockPriceChange(e.target.value);
+																					}}
+																				/>
+																			</Grid>
+																			<Grid item xs={3}>
+																				<Field
+																					name={`priceBook.${index}.sellPrice`}
+																					component={TextFormField}
+																					label={t("productForm.sellPrice", {
+																						defaultValue: "Selling Price",
+																					})}
+																					type="number"
+																					step="0.01"
+																					isRequired={true}
+																					marginWholeTop={-0.1}
+																					onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+																						handleSellPriceChange(e.target.value);
+																					}}
+																				/>
+																			</Grid>
+																			<Grid item xs={2}>
+																				<CustomIconButton
+																					src={CloseIcon}
+																					buttonType="delete"
+																					iconColor="error"
+																					onClick={() => arrayHelpers.remove(index)}
+																				/>
+																			</Grid>
 																		</Grid>
-																		<Grid item xs={5}>
-																			<Field
-																				name={`priceBook.${index}.price`}
-																				component={TextFormField}
-																				label={t("productForm.price")}
-																				type="number"
-																				isRequired={true}
-																				marginWholeTop={-0.1}
-																			/>
-																		</Grid>
-																		<Grid item xs={2}>
-																			<CustomIconButton
-																				src={CloseIcon}
-																				buttonType="delete"
-																				iconColor="error"
-																				onClick={() => arrayHelpers.remove(index)}
-																			/>
-																		</Grid>
-																	</Grid>
-																</Box>
-															))
+																	</Box>
+																);
+															})
 														) : (
 															<Typography variant="body2" color="error">
 																{t("productForm.noPriceBook")}
@@ -383,7 +659,21 @@ const ProductForm = () => {
 														<Button
 															variant="outlined"
 															startIcon={<AddIcon />}
-															onClick={() => arrayHelpers.push({ currency_id: "", price: 0 })}
+															onClick={() => {
+																// Calculate initial sellPrice based on current tax
+																const taxPercentage =
+																	taxCodes?.data
+																		?.filter((t) => values.tax?.includes(t.id))
+																		?.map((t) => t.percentage)
+																		?.reduce((acc, curr) => acc + curr, 0) ?? 0;
+																const initialSellPrice =
+																	taxPercentage > 0 ? 0 * (1 + taxPercentage / 100) : 0;
+																arrayHelpers.push({
+																	currency_id: "",
+																	price: 0,
+																	sellPrice: initialSellPrice,
+																});
+															}}
 														>
 															{t("productForm.addPrice")}
 														</Button>

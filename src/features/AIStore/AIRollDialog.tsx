@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Box, Dialog, DialogContent, Typography } from "@mui/material";
 import storeLoader from "@assets/store.json";
-import lottie, { AnimationItem } from "lottie-web";
+import lottie, { type AnimationItem } from "lottie-web";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 

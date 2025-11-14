@@ -5,11 +5,13 @@ import Loader from "@shared/components/Loader";
 import { useDialog } from "@shared/hooks/useDialog";
 import { useAuthStore } from "@store/auth";
 import { Field, Form, Formik } from "formik";
-import React from "react";
 import * as Yup from "yup";
 import AiRollDialog from "./AIRollDialog";
+import { useTranslation } from "react-i18next";
+import i18n from "../../i18s";
 
 const RollUpForm = () => {
+	const { t } = useTranslation();
 	const { user } = useAuthStore();
 	const companyFindOne = useCompanyControllerFindOne(user?.company?.[0]?.id ?? "");
 	const companyUpdate = useCompanyControllerUpdate();
@@ -20,9 +22,13 @@ const RollUpForm = () => {
 	};
 
 	const validationSchema = Yup.object().shape({
-		companyName: Yup.string().required("Company name is required"),
-		lineOfBusiness: Yup.string().required("Line of business is required"),
-		shortDescription: Yup.string().required("Short description is required"),
+		companyName: Yup.string().required(() => i18n.t("aiStore.validation.companyNameRequired")),
+		lineOfBusiness: Yup.string().required(() =>
+			i18n.t("aiStore.validation.lineOfBusinessRequired"),
+		),
+		shortDescription: Yup.string().required(() =>
+			i18n.t("aiStore.validation.shortDescriptionRequired"),
+		),
 	});
 
 	const { handleClickOpen, handleClose, open } = useDialog();
@@ -47,8 +53,12 @@ const RollUpForm = () => {
 		<Box>
 			<Grid container spacing={2}>
 				<Grid item xs={12}>
-					<Typography variant="h5">ROLL UP AI STORE</Typography>
-					<Typography variant="body1">Create and manage your AI store with ease.</Typography>
+					<Typography variant="h5">
+						{t("aiStore.title", { defaultValue: "ROLL UP AI STORE" })}
+					</Typography>
+					<Typography variant="body1">
+						{t("aiStore.subtitle", { defaultValue: "Create and manage your AI store with ease." })}
+					</Typography>
 				</Grid>
 				<Grid item xs={12}>
 					<Formik
@@ -60,27 +70,37 @@ const RollUpForm = () => {
 							<Form>
 								<Grid container spacing={2}>
 									<Grid item xs={12} sm={6}>
-										<Field name="companyName" label="Company Name" component={TextFormField} />
+										<Field
+											name="companyName"
+											label={t("aiStore.companyName", { defaultValue: "Company Name" })}
+											component={TextFormField}
+										/>
 									</Grid>
 									<Grid item xs={12} sm={6}>
 										<Field
 											name="lineOfBusiness"
-											label="Line of Business"
+											label={t("aiStore.lineOfBusiness", { defaultValue: "Line of Business" })}
 											component={TextFormField}
+											placeholder={t("aiStore.lineOfBusinessPlaceholder", {
+												defaultValue: "Enter line of business",
+											})}
 										/>
 									</Grid>
 									<Grid item xs={12}>
 										<Field
 											name="shortDescription"
-											label="Short Description"
+											label={t("aiStore.shortDescription", { defaultValue: "Short Description" })}
 											component={TextFormField}
 											multiline
 											rows={4}
+											placeholder={t("aiStore.shortDescriptionPlaceholder", {
+												defaultValue: "Enter short description",
+											})}
 										/>
 									</Grid>
 									<Grid item xs={12} textAlign="center">
 										<Button type="submit" variant="contained" color="primary">
-											Let&apos;s Roll Up AI Store
+											{t("aiStore.submitButton", { defaultValue: "Let's Roll Up AI Store" })}
 										</Button>
 									</Grid>
 								</Grid>

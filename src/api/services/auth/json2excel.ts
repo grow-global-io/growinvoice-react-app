@@ -15,10 +15,6 @@ import type { Json2excelControllerCreateCsv201, Object, UploadResponseDto } from
 import { authInstance } from "../../instances/authInstance";
 import type { ErrorType } from "../../instances/authInstance";
 
-type AwaitedInput<T> = PromiseLike<T> | T;
-
-type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
-
 export const json2excelControllerCreate = (json2excelControllerCreateBody: Object) => {
 	return authInstance<UploadResponseDto>({
 		url: `/api/json2excel`,

@@ -1,70 +1,66 @@
 import { TextField } from "@mui/material";
 import React from "react";
-import DatePicker, { Calendar, DayRange } from "@hassanmojab/react-modern-calendar-datepicker";
-import "@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css";
+import { type DayRange } from "@hassanmojab/react-modern-calendar-datepicker";
 
 export function DateCalander({
 	dayRange,
-	setDayRange,
+	setDayRange: _setDayRange,
 	setDisplayToday,
-	textFieldRequired = true,
+	textFieldRequired: _textFieldRequired = true,
 }: {
-	dayRange: DayRange;
+	dayRange?: DayRange | null;
 	// eslint-disable-next-line
 	setDayRange: React.SetStateAction<any>;
 	setDisplayToday?: (value: React.SetStateAction<boolean>) => void;
 	textFieldRequired?: boolean;
 }) {
-	// eslint-disable-next-line
-	const renderCustomInput = ({ ref }: { ref: React.Ref<any> }) => (
+	// Format date range for display
+	const formatDateRange = (): string => {
+		// Handle null/undefined dayRange
+		if (!dayRange) {
+			return "";
+		}
+
+		// Handle null from/to
+		if (!dayRange.from || !dayRange.to) {
+			return "";
+		}
+
+		const from = dayRange.from;
+		const to = dayRange.to;
+
+		// Validate that from and to are objects with required properties
+		if (
+			typeof from === "object" &&
+			from !== null &&
+			from.day != null &&
+			from.month != null &&
+			from.year != null &&
+			typeof to === "object" &&
+			to !== null &&
+			to.day != null &&
+			to.month != null &&
+			to.year != null
+		) {
+			return `${from.month}/${from.day}/${from.year} - ${to.month}/${to.day}/${to.year}`;
+		}
+
+		return "";
+	};
+
+	const displayValue = formatDateRange();
+
+	return (
 		<TextField
-			autoComplete="off"
-			ref={ref} // necessary
+			fullWidth
+			value={displayValue}
+			placeholder="Date range will be displayed here"
+			disabled
 			onClick={() => {
 				if (setDisplayToday) {
 					setDisplayToday(false);
 				}
 			}}
-			value={
-				dayRange.from != null && dayRange.to != null
-					? `${JSON.stringify(dayRange.from.month)}` +
-						"/" +
-						`${JSON.stringify(dayRange.from.day)}` +
-						"/" +
-						`${JSON.stringify(dayRange.from.year)}` +
-						" - " +
-						`${JSON.stringify(dayRange.to.month)}` +
-						"/" +
-						`${JSON.stringify(dayRange.to.day)}` +
-						"/" +
-						`${JSON.stringify(dayRange.to.year)}`
-					: ""
-			}
-			placeholder=""
-			label={undefined}
-			fullWidth
 		/>
-	);
-	return (
-		<>
-			{textFieldRequired ? (
-				<DatePicker
-					value={dayRange}
-					colorPrimary="#054c5c" // added this
-					colorPrimaryLight="#b8f2ff"
-					calendarPopperPosition={"bottom"}
-					onChange={setDayRange}
-					renderInput={renderCustomInput}
-					shouldHighlightWeekends
-				/>
-			) : (
-				<Calendar
-					value={dayRange}
-					onChange={setDayRange}
-					colorPrimary="#054c5c" // added this
-					colorPrimaryLight="#b8f2ff"
-				/>
-			)}
-		</>
 	);
 }

@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { Typography } from "@mui/material";
 import { useReportsControllerGetCustomerReports } from "@api/services/reports";
 import { convertUtcToFormat, currencyFormatter } from "@shared/formatter";
@@ -25,10 +25,21 @@ const CustomerReportTalbeList = ({ fromDate, toDate }: { fromDate: string; toDat
 			},
 		},
 	);
-	console.log(customerReportData, "data");
+
+	// Filter to only show Paid and Partially Paid invoices
+	const filteredCustomerReportData = useMemo(() => {
+		if (!customerReportData?.data || customerReportData.data.length === 0) {
+			return [];
+		}
+		return customerReportData.data.filter((item: any) => {
+			const paidStatus = item?.paid_status || item?.invoice?.paid_status;
+			return paidStatus === "Paid" || paidStatus === "PartiallyPaid";
+		});
+	}, [customerReportData?.data]);
+
 	const CustomerReportMap = useMemo(() => {
-		if (customerReportData?.data && customerReportData?.data?.length > 0) {
-			return customerReportData?.data?.map((item) => {
+		if (filteredCustomerReportData && filteredCustomerReportData.length > 0) {
+			return filteredCustomerReportData.map((item) => {
 				return {
 					CustomerName: item?.customer?.name,
 					InvoiceDate: item?.date,
@@ -38,7 +49,7 @@ const CustomerReportTalbeList = ({ fromDate, toDate }: { fromDate: string; toDat
 			});
 		}
 		return [];
-	}, [customerReportData?.data]);
+	}, [filteredCustomerReportData]);
 	const columns: GridColDef[] = [
 		{
 			field: "name",
@@ -108,7 +119,7 @@ const CustomerReportTalbeList = ({ fromDate, toDate }: { fromDate: string; toDat
 		<Box>
 			<DataGrid
 				autoHeight
-				rows={customerReportData?.data ?? []}
+				rows={filteredCustomerReportData ?? []}
 				columns={columns}
 				slots={{
 					toolbar: () => {

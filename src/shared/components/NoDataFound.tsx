@@ -1,4 +1,4 @@
-import { SxProps, Theme, Typography } from "@mui/material";
+import { type SxProps, type Theme, Typography } from "@mui/material";
 
 export default function NoDataFound({
 	message,

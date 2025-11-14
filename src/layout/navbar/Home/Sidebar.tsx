@@ -13,6 +13,7 @@ import {
 	ListItemText,
 	Menu,
 	MenuItem,
+	Select,
 	Toolbar,
 	Tooltip,
 	Typography,
@@ -50,7 +51,7 @@ import { useTranslation } from "react-i18next";
 
 const drawerWidth = 240;
 function Sidebar({ children }: { children: React.ReactNode }) {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const { handleOpen } = useStoreLinkStore();
 	const { data: userData } = useAuthControllerStatus();
 	const { user } = useAuthStore();
@@ -144,6 +145,13 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 			menuName: t("product.title"),
 			menuItems: [],
 		},
+		// New My Orders menu (shown above Invoices)
+		{
+			path: "/orders",
+			icon: <ReceiptIcon />,
+			menuName: t("orders.title", { defaultValue: "My Orders" }),
+			menuItems: [],
+		},
 		{
 			path: "/customer/customerlist",
 			icon: <PeopleIcon />,
@@ -157,6 +165,18 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 			menuItems: [
 				{ path: "/invoice/invoicelist", label: t("invoice.title") },
 				{ path: "/invoice/createinvoice", label: t("invoice.create") },
+			],
+		},
+		{
+			path: "/receipt",
+			icon: <ReceiptIcon />,
+			menuName: t("receipt.title", { defaultValue: "Receipt" }),
+			menuItems: [
+				{ path: "/receipt/receiptlist", label: t("receipt.title", { defaultValue: "Receipt" }) },
+				{
+					path: "/receipt/createreceipt",
+					label: t("receipt.createReceipt", { defaultValue: "Create Receipt" }),
+				},
 			],
 		},
 		{
@@ -212,10 +232,17 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 			icon: <SignalCellularAltOutlinedIcon />,
 			menuName: t("nav.reports"),
 			menuItems: [
-				{ path: "/reports/productsales", label: t("report.sales", { defaultValue: "Sales" }) },
+				{
+					path: "/reports/productsales",
+					label: t("report.sales", { defaultValue: "Products Sell" }),
+				},
 				{
 					path: "/reports/customersales",
-					label: t("customer.title") + " " + t("report.sales", { defaultValue: "Sales" }),
+					label: t("report.customer.title", { defaultValue: "All Invoice Report" }),
+				},
+				{
+					path: "/reports/customerdata",
+					label: t("report.customerData.title", { defaultValue: "All Customers Uploaded" }),
 				},
 				{ path: "/reports/profitloss", label: t("report.profitLoss") },
 				{
@@ -455,13 +482,63 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 											const freePlan = user?.UserPlans?.find((plan) => plan?.plan?.price === 0);
 											if (freePlan?.end_date) {
 												const daysLeft = findLeftDate(freePlan.end_date);
-												return daysLeft > 0 ? `${daysLeft} days left` : "Trial expired";
+												return daysLeft > 0
+													? t("app.trial.daysLeft", {
+															defaultValue: "{{days}} days left",
+															days: daysLeft,
+														})
+													: t("app.trial.expired", { defaultValue: "Trial expired" });
 											}
-											return "Trial active";
+											return t("app.trial.active", { defaultValue: "Trial active" });
 										})()}
 									</Typography>
 								</Box>
 							)}
+						{/* Language Selector Dropdown - Always visible */}
+						<Select
+							value={i18n.language}
+							onChange={(e) => {
+								const newLang = e.target.value;
+								i18n.changeLanguage(newLang);
+								// Track that user has manually changed language
+								localStorage.setItem("languageManuallyChanged", "true");
+							}}
+							sx={{
+								minWidth: 80,
+								height: 36,
+								mr: 1,
+								color: "custom.white",
+								"& .MuiOutlinedInput-notchedOutline": {
+									borderColor: "rgba(255, 255, 255, 0.3)",
+								},
+								"&:hover .MuiOutlinedInput-notchedOutline": {
+									borderColor: "rgba(255, 255, 255, 0.5)",
+								},
+								"&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+									borderColor: "custom.white",
+								},
+								"& .MuiSvgIcon-root": {
+									color: "custom.white",
+								},
+								"& .MuiSelect-select": {
+									padding: "8px 32px 8px 12px",
+									fontSize: "0.875rem",
+									fontWeight: 500,
+								},
+							}}
+							MenuProps={{
+								PaperProps: {
+									sx: {
+										bgcolor: "background.paper",
+										mt: 0.5,
+									},
+								},
+							}}
+						>
+							<MenuItem value="en">ENG</MenuItem>
+							<MenuItem value="fi">FI</MenuItem>
+							<MenuItem value="est">EST</MenuItem>
+						</Select>
 						<NotificationMain />
 						<Box
 							mx={{ xs: 0, sm: 2 }}

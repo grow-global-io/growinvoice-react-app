@@ -9,7 +9,7 @@ import {
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import NoDataFound from "@shared/components/NoDataFound";
 import NotificationListItem from "./NotificationItem";
-import { NotificationDto } from "@api/services/models";
+import { type NotificationDto } from "@api/services/models";
 import { useTranslation } from "react-i18next";
 
 const NotificationMain = () => {

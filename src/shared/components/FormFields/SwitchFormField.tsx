@@ -1,5 +1,5 @@
 import React from "react";
-import { FieldProps, getIn } from "formik";
+import { type FieldProps, getIn } from "formik";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import FormControlLabel from "@mui/material/FormControlLabel";

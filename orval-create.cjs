@@ -14,9 +14,9 @@ const commonHooks = {
 	afterAllFilesWrite: "yarn run format",
 };
 
-const BASE_URL = process.env.REACT_APP_BASE_URL || "http://localhost:8080";
+const BASE_URL = process.env.VITE_APP_BASE_URL || "http://localhost:8080";
 const AUTH_API = `${BASE_URL}`;
-const instanceTemplate = `import Axios, { AxiosError, AxiosRequestConfig } from 'axios';
+const instanceTemplate = `import Axios, { AxiosError, type AxiosRequestConfig } from 'axios';
 import { http } from "../../shared/axios";
 import { InterceptorService } from "../../shared/services/InterceptorService";
 

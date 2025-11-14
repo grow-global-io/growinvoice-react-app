@@ -5,19 +5,27 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
-import type { Country } from "./country";
-import type { State } from "./state";
+import type { ShippingAddressCountry } from "./shippingAddressCountry";
+import type { ShippingAddressState } from "./shippingAddressState";
 
 export interface ShippingAddress {
 	address: string;
 	city: string;
-	country?: Country;
-	country_id: string;
+	/** @nullable */
+	country?: ShippingAddressCountry;
+	/** @nullable */
+	country_id: string | null;
+	/** @nullable */
+	country_name: string | null;
 	createdAt: string;
 	id: string;
 	isExist: boolean;
-	state?: State;
-	state_id: string;
+	/** @nullable */
+	state?: ShippingAddressState;
+	/** @nullable */
+	state_id: string | null;
+	/** @nullable */
+	state_name: string | null;
 	/** @nullable */
 	updatedAt: string | null;
 	zip: string;

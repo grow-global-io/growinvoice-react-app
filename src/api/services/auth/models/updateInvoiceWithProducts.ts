@@ -39,6 +39,7 @@ export interface UpdateInvoiceWithProducts {
 	template_id?: string | null;
 	/** @nullable */
 	template_url?: string | null;
+	termsAccepted?: boolean;
 	total?: number;
 	user_id?: string;
 }

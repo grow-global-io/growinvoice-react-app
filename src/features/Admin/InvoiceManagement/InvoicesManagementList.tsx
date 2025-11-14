@@ -1,16 +1,17 @@
 import { useInvoiceControllerFindAll } from "@api/services/invoice";
-import { Invoice } from "@api/services/models";
+import { type Invoice } from "@api/services/models";
 import { Box, Chip, Tooltip, Typography } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import Loader from "@shared/components/Loader";
 import { Constants } from "@shared/constants";
 import { currencyFormatter, parseDateStringToFormat } from "@shared/formatter";
-import React from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useInvoiceHook } from "@features/Invoices/invoiceHooks/useInvoiceHook";
+import { useTranslation } from "react-i18next";
 
 const InvoicesManagementList = () => {
+	const { t } = useTranslation();
 	const invoice = useInvoiceControllerFindAll();
 	const { handleView } = useInvoiceHook();
 
@@ -36,13 +37,10 @@ const InvoicesManagementList = () => {
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
-				return (
-					<Chip
-						label={params.row.fromStore ? "Store" : "Direct"}
-						variant="filled"
-						color="primary"
-					/>
-				);
+				const sourceLabel = params.row.fromStore
+					? t("invoice.source.store", { defaultValue: "Store" })
+					: t("invoice.source.direct", { defaultValue: "Direct" });
+				return <Chip label={sourceLabel} variant="filled" color="primary" />;
 			},
 		},
 		{
@@ -60,10 +58,22 @@ const InvoicesManagementList = () => {
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
+				const statusKey = params.value?.toLowerCase().replace(/\s+/g, "") || "";
+				let translatedStatus = t(`invoice.status.${statusKey}`, {
+					defaultValue: params.value || "",
+				});
+				// Explicitly map "Mailed to customer" to "Receipt Sent"
+				if (params.value === "Mailed to customer") {
+					translatedStatus = t("invoice.status.mailedtocustomer", { defaultValue: "Receipt Sent" });
+				}
 				return (
 					<Chip
-						label={params.value}
-						color={Constants?.invoiceStatusColorEnums[params.value] ?? "default"}
+						label={translatedStatus}
+						color={
+							Constants?.invoiceStatusColorEnums[params.value] ??
+							Constants?.invoiceStatusColorEnums["Receipt Sent"] ??
+							"default"
+						}
 						variant="filled"
 					/>
 				);

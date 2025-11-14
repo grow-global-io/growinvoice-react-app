@@ -2,6 +2,7 @@ import { Button, Drawer } from "@mui/material";
 import HsnCodeForm from "./HsnCodeForm";
 import AddIcon from "@mui/icons-material/Add";
 import { useCreateHsnCodeStore } from "@store/createHsnCodeStore";
+import { useTranslation } from "react-i18next";
 
 export const HsnCodeDrawer = ({
 	open,
@@ -16,6 +17,7 @@ export const HsnCodeDrawer = ({
 );
 
 const CreateHsnCode = () => {
+	const { t } = useTranslation();
 	const { setOpenHsnCodeForm } = useCreateHsnCodeStore.getState();
 
 	return (
@@ -26,7 +28,7 @@ const CreateHsnCode = () => {
 			}}
 			startIcon={<AddIcon />}
 		>
-			Create New
+			{t("hsn.createNew", { defaultValue: "Create New" })}
 		</Button>
 	);
 };

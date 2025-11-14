@@ -1,5 +1,5 @@
 import { Box, Button, Grid } from "@mui/material";
-import { Formik, Field, Form, FormikHelpers } from "formik";
+import { Formik, Field, Form, type FormikHelpers } from "formik";
 import * as yup from "yup";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { PhoneInputFormField } from "@shared/components/FormFields/PhoneInputFormField";
@@ -120,28 +120,32 @@ const Company = () => {
 											label={t("settings.company.phone", { defaultValue: "Phone" })}
 											component={PhoneInputFormField}
 											isRequired={true}
-											placeholder={"Enter mobile nuber"}
+											placeholder={t("settings.company.phonePlaceholder", {
+												defaultValue: "Enter mobile number",
+											})}
 										/>
 									</Grid>
 									<Grid item xs={12} sm={6}>
 										<Field
 											name="vat"
-											label="VAT/GSTIN"
+											label={t("settings.company.vat", { defaultValue: "VAT/GSTIN" })}
 											component={TextFormField}
-											placeholder={"Vat Number"}
+											placeholder={t("settings.company.vatPlaceholder", {
+												defaultValue: "VAT Number",
+											})}
 										/>
 									</Grid>
 									<Grid item xs={12} sm={6}>
 										<Field
 											name="country_id"
-											label="Country"
+											label={t("settings.company.country", { defaultValue: "Country" })}
 											component={AutocompleteField}
 											options={countryFindAll?.data?.map((item) => ({
 												label: item.name,
 												value: item.id,
 											}))}
 											loading={countryFindAll.isLoading}
-											placeholder={"Select"}
+											placeholder={t("app.select", { defaultValue: "Select" })}
 											isRequired={true}
 										/>
 									</Grid>
@@ -149,35 +153,39 @@ const Company = () => {
 										<StateFormField
 											countryFieldName="country_id"
 											stateFieldName="state_id"
-											stateLabel="State"
+											stateLabel={t("settings.company.state", { defaultValue: "State" })}
 										/>
 									</Grid>
 									<Grid item xs={12} sm={6}>
 										<Field
 											name="city"
-											label="City"
+											label={t("settings.company.city", { defaultValue: "City" })}
 											component={TextFormField}
 											isRequired={true}
-											placeholder={"Select"}
+											placeholder={t("app.select", { defaultValue: "Select" })}
 										/>
 									</Grid>
 
 									<Grid item xs={12} sm={6}>
 										<Field
 											name="zip"
-											label="Postal Code"
+											label={t("settings.company.zip", { defaultValue: "Postal Code" })}
 											component={TextFormField}
 											isRequired={true}
-											placeholder={"Enter postal code"}
+											placeholder={t("settings.company.zipPlaceholder", {
+												defaultValue: "Enter postal code",
+											})}
 										/>
 									</Grid>
 									<Grid item xs={12} sm={6}>
 										<Field
 											name="address"
-											label="Address"
+											label={t("settings.company.address", { defaultValue: "Address" })}
 											component={TextFormField}
 											isRequired={true}
-											placeholder={"Add address"}
+											placeholder={t("settings.company.addressPlaceholder", {
+												defaultValue: "Add address",
+											})}
 											multiline
 											rows={5}
 										/>
@@ -185,7 +193,7 @@ const Company = () => {
 
 									<Grid item xs={12} textAlign={"center"} my={2}>
 										<Button variant="contained" type="submit">
-											Update
+											{t("app.update", { defaultValue: "Update" })}
 										</Button>
 									</Grid>
 								</Grid>

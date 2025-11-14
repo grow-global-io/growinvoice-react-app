@@ -1,8 +1,8 @@
-import React from "react";
+// import React from "react";
 import {
-	OmitCreatePlanFeatureDto,
+	type OmitCreatePlanFeatureDto,
 	OmitCreatePlanFeatureDtoFeature,
-	PlanWithFeaturesDto,
+	type PlanWithFeaturesDto,
 } from "../../../api/services/auth/models";
 import { Button, Dialog, DialogContent, Grid, Typography } from "@mui/material";
 import AppDialogHeader from "../../../shared/components/Dialog/AppDialogHeader";
@@ -15,6 +15,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import { getPlansControllerFindAllQueryKey, usePlansControllerUpdate } from "@api/services/plans";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 const PlansFeatureUpdate = ({
 	open,
@@ -25,6 +26,7 @@ const PlansFeatureUpdate = ({
 	handleClose: () => void;
 	planData?: PlanWithFeaturesDto;
 }) => {
+	const { t } = useTranslation();
 	const queryClient = useQueryClient();
 	const plansUpdate = usePlansControllerUpdate();
 	const initialValues: {
@@ -153,7 +155,7 @@ const PlansFeatureUpdate = ({
 								/>
 								<Grid item xs={12} display="flex" justifyContent="flex-end" mt={2}>
 									<Button type="submit" variant="contained" color="primary">
-										Update Features
+										{t("plans.updateFeatures", { defaultValue: "Update Features" })}
 									</Button>
 								</Grid>
 							</Form>

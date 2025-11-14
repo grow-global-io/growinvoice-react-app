@@ -1,5 +1,5 @@
 import { Box, Tooltip, Typography } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import {
 	getVendorsControllerFindAllQueryKey,
@@ -55,7 +55,7 @@ const VendorsTableList = () => {
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
-				return <Typography>{timeAgo(params.value)}</Typography>;
+				return <Typography>{timeAgo(params.value, t)}</Typography>;
 			},
 		},
 		{

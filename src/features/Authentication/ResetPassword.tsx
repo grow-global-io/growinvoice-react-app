@@ -1,5 +1,5 @@
 import { Box, Card, CardContent, Typography, Button } from "@mui/material";
-import { Field, Form, Formik, FormikHelpers } from "formik";
+import { Field, Form, Formik, type FormikHelpers } from "formik";
 import { useLocation, useNavigate } from "react-router-dom";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import NoDataFound from "@shared/components/NoDataFound";

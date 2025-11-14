@@ -2,6 +2,7 @@ import { Divider, Drawer, Grid, IconButton, Typography } from "@mui/material";
 import PaymentDetailsForm from "./PaymentDetailsForm";
 import { Constants } from "@shared/constants";
 import CloseIcon from "@mui/icons-material/Close";
+import { useTranslation } from "react-i18next";
 
 const PaymentDetailsDrawer = ({
 	open,
@@ -12,6 +13,7 @@ const PaymentDetailsDrawer = ({
 	handleClose: () => void;
 	paymentId?: string;
 }) => {
+	const { t } = useTranslation();
 	return (
 		<Drawer anchor="right" open={open} onClose={handleClose}>
 			<Grid container justifyContent={"space-between"} p={2}>
@@ -23,7 +25,8 @@ const PaymentDetailsDrawer = ({
 						gap: 1,
 					}}
 				>
-					<img src={Constants.customImages.CustomerImg} alt="Invoice Icon" /> Payment Details
+					<img src={Constants.customImages.CustomerImg} alt="Invoice Icon" />{" "}
+					{t("paymentDetails.title", { defaultValue: "Payment Details" })}
 				</Typography>
 				<IconButton
 					sx={{

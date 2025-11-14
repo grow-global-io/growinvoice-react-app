@@ -1,11 +1,12 @@
 import React from "react";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
+import { useTranslation } from "react-i18next";
 
 export default function AppDialogFooter({
 	onClickCancel,
-	cancelButtonText = "Cancel",
-	saveButtonText = "Save",
+	cancelButtonText,
+	saveButtonText,
 	saveButtonDisabled = false,
 	cancelButtonDisabled = false,
 	children,
@@ -17,6 +18,9 @@ export default function AppDialogFooter({
 	cancelButtonDisabled?: boolean;
 	children?: React.ReactNode;
 }) {
+	const { t } = useTranslation();
+	const resolvedCancel = cancelButtonText ?? t("app.cancel", { defaultValue: "Cancel" });
+	const resolvedSave = saveButtonText ?? t("app.save", { defaultValue: "Save" });
 	return (
 		<DialogActions
 			sx={{
@@ -33,10 +37,10 @@ export default function AppDialogFooter({
 				color="secondary"
 				onClick={onClickCancel}
 			>
-				{cancelButtonText}
+				{resolvedCancel}
 			</Button>
 			<Button variant="contained" disabled={saveButtonDisabled} color="primary" type="submit">
-				{saveButtonText}
+				{resolvedSave}
 			</Button>
 		</DialogActions>
 	);

@@ -5,21 +5,23 @@ import * as React from "react";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import { useTranslation } from "react-i18next";
 
 const Sidebar = ({ children }: { children: React.ReactNode }) => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const MenuLists = [
 		{
-			menuName: "My profile",
+			menuName: t("settings.menu.myProfile", { defaultValue: "My profile" }),
 			path: "/setting/myprofile",
 		},
 		{
-			menuName: "Membership",
+			menuName: t("settings.menu.membership", { defaultValue: "Membership" }),
 			path: "/setting/membership",
 		},
 		{
-			menuName: "Company",
+			menuName: t("settings.menu.company", { defaultValue: "Company" }),
 			path: "/setting/company",
 		},
 		// {
@@ -27,35 +29,35 @@ const Sidebar = ({ children }: { children: React.ReactNode }) => {
 		// 	path: "/setting/preferences",
 		// },
 		{
-			menuName: "Invoices",
+			menuName: t("settings.menu.invoices", { defaultValue: "Invoices" }),
 			path: "/setting/invoices",
 		},
 		{
-			menuName: "Quotation",
+			menuName: t("settings.menu.quotation", { defaultValue: "Quotation" }),
 			path: "/setting/quotation",
 		},
 		{
-			menuName: "Product Unit",
+			menuName: t("settings.menu.productUnit", { defaultValue: "Product Unit" }),
 			path: "/setting/productunit",
 		},
 		{
-			menuName: "Payment Details",
+			menuName: t("settings.menu.paymentDetails", { defaultValue: "Payment Details" }),
 			path: "/setting/paymentdetails",
 		},
 		{
-			menuName: "Gateway Details",
+			menuName: t("settings.menu.gatewayDetails", { defaultValue: "Gateway Details" }),
 			path: "/setting/gatewaydetails",
 		},
 		{
-			menuName: "HSN Code",
+			menuName: t("settings.menu.hsnCode", { defaultValue: "HSN Code" }),
 			path: "/setting/hsncode",
 		},
 		{
-			menuName: "Tax Types",
+			menuName: t("settings.menu.taxTypes", { defaultValue: "Tax Types" }),
 			path: "/setting/taxtype",
 		},
 		{
-			menuName: "API Credentials",
+			menuName: t("settings.menu.apiCredentials", { defaultValue: "API Credentials" }),
 			path: "/setting/apicredentials",
 		},
 	];
@@ -124,7 +126,7 @@ const Sidebar = ({ children }: { children: React.ReactNode }) => {
 				>
 					<Box>
 						<Typography variant="h3" textTransform={"capitalize"} mb={3}>
-							Settings
+							{t("settings.title", { defaultValue: "Settings" })}
 						</Typography>
 					</Box>
 
@@ -136,7 +138,7 @@ const Sidebar = ({ children }: { children: React.ReactNode }) => {
 				<Box display={"flex"} justifyContent={"space-between"} mb={3}>
 					<Box>
 						<Typography variant="h3" textTransform={"capitalize"}>
-							Setting
+							{t("settings.title", { defaultValue: "Settings" })}
 						</Typography>
 					</Box>
 					<IconButton

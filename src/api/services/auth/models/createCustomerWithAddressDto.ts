@@ -21,7 +21,8 @@ export interface CreateCustomerWithAddressDto {
 	gstIn?: string | null;
 	name: string;
 	option: CreateCustomerWithAddressDtoOption;
-	phone: string;
+	/** @nullable */
+	phone?: string | null;
 	shippingDetails?: CreateShippingAddressDto;
 	user_id: string;
 	/** @nullable */

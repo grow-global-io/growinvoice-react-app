@@ -5,23 +5,9 @@ on:
 name: 🚀 Deploy website on push
 
 jobs:
-  create-env-file:
-    name: 🛠️ Create .env File
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📄 Create .env File
-        run: |
-          echo "REACT_APP_BASE_URL=https://api-dev.growinvoice.com" > .env
-      - name: 📦 Upload .env File
-        uses: actions/upload-artifact@v4
-        with:
-          name: env-file
-          path: .env
-
   web-deploy:
     name: 🎉 Deploy
     runs-on: ubuntu-latest
-    needs: create-env-file
     steps:
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
@@ -29,13 +15,14 @@ jobs:
       # create .env file
       - name: 📄 Create .env File
         run: |
-          echo "REACT_APP_BASE_URL=https://api-dev.growinvoice.com" > .env
-          echo "REACT_APP_FIREBASE_PROJECT_ID=growinvoice-957bc" >> .env
-          echo "REACT_APP_FIREBASE_API_KEY=AIzaSyBQNfsPslDOa9at0zbCx3iFxCs66flfJVw" >> .env
-          echo "REACT_APP_FIREBASE_MESSAGING_SENDER_ID=1009012687487" >> .env
-          echo "REACT_APP_FIREBASE_APP_ID=1:1009012687487:web:00390aec097f131269b54a" >> .env
-          echo "REACT_APP_FIREBASE_MEASUREMENT_ID=G-SH0S2QYNFJ" >> .env
-          echo "REACT_APP_GOOGLE_CLIENT_ID=756951966109-3v1n4n441iq4agtb0pkve9dr9bjf0o9i.apps.googleusercontent.com" >> .env
+          echo "VITE_APP_BASE_URL=https://api-dev.growinvoice.com" > .env
+          echo "VITE_FIREBASE_PROJECT_ID=growinvoice-957bc" >> .env
+          echo "VITE_FIREBASE_API_KEY=AIzaSyBQNfsPslDOa9at0zbCx3iFxCs66flfJVw" >> .env
+          echo "VITE_FIREBASE_MESSAGING_SENDER_ID=1009012687487" >> .env
+          echo "VITE_FIREBASE_APP_ID=1:1009012687487:web:00390aec097f131269b54a" >> .env
+          echo "VITE_FIREBASE_MEASUREMENT_ID=G-SH0S2QYNFJ" >> .env
+          echo "VITE_GOOGLE_CLIENT_ID=670948856097-7msclnm7mjvenq6gepcpfpbav7d5l3tu.apps.googleusercontent.com" >> .env
+          echo "VITE_GOOGLE_CLIENT_SECRET=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" >> .env
       - name: 📦 Upload .env File
         uses: actions/upload-artifact@v4
         with:
@@ -52,7 +39,6 @@ jobs:
         run: |
           yarn install --frozen-lockfile --non-interactive --prefer-offline
           yarn cache clean --all
-          npx update-browserslist-db@latest
           yarn run build
 
       - name: 📂 Sync files
@@ -61,4 +47,4 @@ jobs:
           server: "ftp.growinvoice.com"
           username: "u644247801.reactgrowinvoice"
           password: ${{ secrets.GIT_CPANEL_REACT_PWD }}
-          local-dir: ./build/
+          local-dir: ./dist/

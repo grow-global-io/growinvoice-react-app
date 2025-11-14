@@ -5,6 +5,7 @@
  * Enhance your business with Growinvoice API
  * OpenAPI spec version: 1.0
  */
+import type { UserPlansPaymentType } from "./userPlansPaymentType";
 import type { Plans } from "./plans";
 import type { User } from "./user";
 
@@ -13,6 +14,7 @@ export interface UserPlans {
 	end_date: string;
 	id: string;
 	isExist: boolean;
+	payment_type: UserPlansPaymentType;
 	plan?: Plans;
 	plan_id: string;
 	session_id: string;

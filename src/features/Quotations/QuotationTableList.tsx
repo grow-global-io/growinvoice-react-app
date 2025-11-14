@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { Chip, Tooltip, Typography } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -8,7 +8,7 @@ import { useQuotationControllerFindAll } from "@api/services/quotation";
 import { useAuthStore } from "@store/auth";
 import { useConfirmDialogStore } from "@store/confirmDialog";
 import { currencyFormatter, parseDateStringToFormat } from "@shared/formatter";
-import { Quotation } from "@api/services/models";
+import { type Quotation } from "@api/services/models";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import Loader from "@shared/components/Loader";
 import { useQuotationHook } from "./QuotationHooks/useQuotationHook";
@@ -56,13 +56,17 @@ const QuotationTableList = () => {
 		},
 		{
 			field: "status",
-			headerName: t("quotation.status", { defaultValue: "Status" }),
+			headerName: t("quotation.table.status", { defaultValue: "Status" }),
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
+				const statusKey = params.value?.toLowerCase().replace(/\s+/g, "") || "";
+				const translatedStatus = t(`quotation.status.${statusKey}`, {
+					defaultValue: params.value || "",
+				});
 				return (
 					<Chip
-						label={params.value}
+						label={translatedStatus}
 						color={Constants?.invoiceStatusColorEnums[params?.value] ?? "default"}
 						variant="filled"
 					/>
@@ -83,12 +87,15 @@ const QuotationTableList = () => {
 		},
 		{
 			field: "action",
-			headerName: "Action",
+			headerName: t("quotation.table.action", { defaultValue: "Action" }),
 			flex: 1,
 			minWidth: 150,
 			type: "actions",
 			getActions: (params) => [
-				<Tooltip title="View Quotation" key={params.row?.id}>
+				<Tooltip
+					title={t("quotation.table.view", { defaultValue: "View Quotation" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							onClick={() => {
@@ -98,7 +105,10 @@ const QuotationTableList = () => {
 						/>
 					</Box>
 				</Tooltip>,
-				<Tooltip title="Edit Quotation" key={params.row?.id}>
+				<Tooltip
+					title={t("quotation.table.edit", { defaultValue: "Edit Quotation" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							onClick={() => {
@@ -108,7 +118,10 @@ const QuotationTableList = () => {
 						/>
 					</Box>
 				</Tooltip>,
-				<Tooltip title="Delete Quotation" key={params.row?.id}>
+				<Tooltip
+					title={t("quotation.table.delete", { defaultValue: "Delete Quotation" })}
+					key={params.row?.id}
+				>
 					<Box>
 						<CustomIconButton
 							src={DeleteIcon}
@@ -116,15 +129,17 @@ const QuotationTableList = () => {
 							iconColor="error"
 							onClick={async () => {
 								handleOpen({
-									title: "Delete Quotation",
-									message: "Are you sure you want to delete this quotation?",
+									title: t("quotation.actions.deleteTitle", { defaultValue: "Delete Quotation" }),
+									message: t("quotation.actions.deleteConfirm", {
+										defaultValue: "Are you sure you want to delete this quotation?",
+									}),
 									onConfirm: async () => {
 										await handleDelete(params.row.id);
 									},
 									onCancel: () => {
 										cleanUp();
 									},
-									confirmButtonText: "Delete",
+									confirmButtonText: t("app.delete", { defaultValue: "Delete" }),
 								});
 							}}
 						/>

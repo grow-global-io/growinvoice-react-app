@@ -11,7 +11,6 @@ const firebaseConfig = {
 	appId: environment.firebase.appId,
 	measurementId: environment.firebase.measurementId,
 };
-console.log("firebaseConfig", firebaseConfig);
 
 const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);

@@ -1,6 +1,6 @@
 import { useCreateVendorsStore } from "@store/createVendorsStore";
 import { Box, Button, Divider, Grid, IconButton, Typography } from "@mui/material";
-import { Formik, Form, Field, FormikHelpers } from "formik";
+import { Formik, Form, Field, type FormikHelpers } from "formik";
 import CloseIcon from "@mui/icons-material/Close";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
@@ -12,7 +12,7 @@ import { useCurrencyControllerFindCountries } from "@api/services/currency";
 import * as yup from "yup";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { useAuthStore } from "@store/auth";
-import { CreateVendorsWithAddressDto } from "@api/services/models";
+import { type CreateVendorsWithAddressDto } from "@api/services/models";
 import { RegexExp } from "@shared/regex";
 import {
 	getVendorsControllerFindAllQueryKey,
@@ -51,10 +51,8 @@ const VendorsForm = () => {
 		},
 	};
 	const schema: yup.Schema<CreateVendorsWithAddressDto> = yup.object({
-		name: yup
-			.string()
-			.required(t("vendorForm.validation.nameRequired"))
-			.matches(RegexExp.fullNameRegex, t("vendorForm.validation.nameInvalid")),
+		name: yup.string().required(t("vendorForm.validation.nameRequired")),
+		// .matches(RegexExp.fullNameRegex, t("vendorForm.validation.nameInvalid")),
 		display_name: yup.string().required(t("vendorForm.validation.displayNameRequired")),
 		email: yup
 			.string()

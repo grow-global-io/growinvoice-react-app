@@ -9,7 +9,13 @@
 export interface CreateShippingAddressDto {
 	address: string;
 	city: string;
-	country_id: string;
-	state_id: string;
+	/** @nullable */
+	country_id?: string | null;
+	/** @nullable */
+	country_name?: string | null;
+	/** @nullable */
+	state_id?: string | null;
+	/** @nullable */
+	state_name?: string | null;
 	zip: string;
 }

@@ -15,10 +15,6 @@ import type { SendMailDto, SuccessResponseDto } from "./models";
 import { authInstance } from "../../instances/authInstance";
 import type { ErrorType } from "../../instances/authInstance";
 
-type AwaitedInput<T> = PromiseLike<T> | T;
-
-type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
-
 export const mailControllerSendMail = (sendMailDto: SendMailDto) => {
 	return authInstance<SuccessResponseDto | void>({
 		url: `/api/mail/send`,

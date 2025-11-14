@@ -1,4 +1,4 @@
-import { GetCustomerWithAddressDto } from "@api/services/models";
+import { type GetCustomerWithAddressDto } from "@api/services/models";
 import { createStore } from "zustand/vanilla";
 
 interface CustomerStore {

@@ -9,7 +9,9 @@ import {
 	getInvoiceControllerOutstandingReceivableQueryKey,
 	getInvoiceControllerTestQueryKey,
 	getInvoiceControllerTotalDueQueryKey,
-	useInvoiceControllerInvoiceSentToMail,
+	invoiceControllerInvoicePublicFindOne,
+	invoiceControllerInvoiceSentToMail,
+	useInvoiceControllerBulkInvoiceSentToMail,
 	useInvoiceControllerMarkedAsMailed,
 	useInvoiceControllerMarkedAsPaid,
 	useInvoiceControllerRemove,
@@ -27,16 +29,17 @@ import { LoaderService } from "@shared/services/LoaderService";
 import { useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
 import { useCallback } from "react";
-import useRazorpay, { RazorpayOptions } from "react-razorpay";
+import useRazorpay, { type RazorpayOptions } from "react-razorpay";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export const useInvoiceHook = () => {
+	const { t } = useTranslation();
 	const [Razorpay] = useRazorpay();
 	const navigate = useNavigate();
 	const removeInvoice = useInvoiceControllerRemove();
 	const currentDate = moment().format("YYYY-MM-DD");
 	const queryClient = useQueryClient();
-	const sendInvoiceToMail = useInvoiceControllerInvoiceSentToMail();
 	const markedPaid = useInvoiceControllerMarkedAsPaid();
 	const markedMailedSent = useInvoiceControllerMarkedAsMailed();
 	const createstripPaymentUrl = usePaymentsControllerStripePayment();
@@ -191,35 +194,11 @@ export const useInvoiceHook = () => {
 			}),
 		});
 	};
-
-	const handleSendMail = async (invoiceId: string, email: string) => {
-		const invoiceLink = `${window.location.origin}/invoice/invoicetemplate/${invoiceId}`;
-		const sendMailDto = {
-			email: email,
-			subject: "Invoice Details",
-			body: `
-                <p>Please find the attached invoice. You can also view the invoice online by clicking the button below:</p>
-                <a href="${invoiceLink}" style="text-decoration: none;">
-                    <button style="
-                        display: inline-block;
-                        padding: 10px 20px;
-                        font-size: 16px;
-                        color: white;
-                        background-color: #007BFF;
-                        border: none;
-                        border-radius: 5px;
-                        cursor: pointer;
-                    ">
-                        View Invoice
-                    </button>
-                </a>
-            `,
-		};
-
-		await sendInvoiceToMail.mutateAsync({
-			data: sendMailDto,
+	const sendMail = useInvoiceControllerBulkInvoiceSentToMail();
+	const handleSendMail = async (invoiceId: string) => {
+		await sendMail.mutateAsync({
 			params: {
-				id: invoiceId,
+				ids: [invoiceId],
 			},
 		});
 		queryClient.refetchQueries({
@@ -265,6 +244,77 @@ export const useInvoiceHook = () => {
 		navigate(`/invoice/invoicetemplate/${invoiceId}`);
 	};
 
+	// Helper function to send receipt email
+	const sendReceiptEmail = async (invoiceId: string) => {
+		try {
+			// Fetch invoice data to get customer email
+			const invoiceData = await invoiceControllerInvoicePublicFindOne(invoiceId);
+
+			const customerEmail = invoiceData?.customer?.email;
+			if (!customerEmail) {
+				console.warn("Customer email not found, receipt not sent");
+				return;
+			}
+
+			// Send receipt email
+			const invoiceLink = `${window.location.origin}/invoice/invoicetemplate/${invoiceId}`;
+			const invoiceNumber = invoiceData?.invoice_number || invoiceId;
+			const customerName = invoiceData?.customer?.name || "Customer";
+
+			const receiptBody = `
+				<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+					<h2 style="color: #333; text-align: center;">${t("invoice.receiptEmail.title", { defaultValue: "Payment Receipt" })}</h2>
+					<p style="font-size: 16px; color: #555; line-height: 1.6;">
+						${t("invoice.receiptEmail.greeting", { customerName, defaultValue: `Dear ${customerName},` })}
+					</p>
+					<p style="font-size: 16px; color: #555; line-height: 1.6;">
+						${t("invoice.receiptEmail.thankYou", { invoiceNumber, defaultValue: `Thank you! Your invoice #${invoiceNumber} has been successfully paid.` })}
+					</p>
+					<p style="font-size: 16px; color: #555; line-height: 1.6;">
+						${t("invoice.receiptEmail.appreciation", { defaultValue: "We appreciate your prompt payment and your business with us." })}
+					</p>
+					<div style="text-align: center; margin: 30px 0;">
+						<a href="${invoiceLink}" style="
+							display: inline-block;
+							padding: 12px 30px;
+							font-size: 16px;
+							color: white;
+							background-color: #3399cc;
+							text-decoration: none;
+							border-radius: 5px;
+							font-weight: bold;
+						">
+							${t("invoice.receiptEmail.viewReceipt", { defaultValue: "View Receipt" })}
+						</a>
+					</div>
+					<p style="font-size: 14px; color: #777; line-height: 1.6;">
+						${t("invoice.receiptEmail.questions", { defaultValue: "If you have any questions or concerns, please don't hesitate to contact us." })}
+					</p>
+					<p style="font-size: 14px; color: #777; line-height: 1.6;">
+						${t("invoice.receiptEmail.signature", { defaultValue: "Best regards,<br/>Growinvoice Team" })}
+					</p>
+				</div>
+			`;
+
+			await invoiceControllerInvoiceSentToMail(
+				{
+					email: customerEmail,
+					subject: t("invoice.receiptEmail.subject", {
+						invoiceNumber,
+						defaultValue: `Payment Receipt - Invoice #${invoiceNumber}`,
+					}),
+					body: receiptBody,
+				},
+				{
+					id: invoiceId,
+				},
+			);
+		} catch (error) {
+			console.error("Error sending receipt email:", error);
+			// Don't show error to user as payment was successful
+		}
+	};
+
 	const handlePaid = async (invoiceId: string) => {
 		await markedPaid.mutateAsync({
 			params: {
@@ -272,6 +322,9 @@ export const useInvoiceHook = () => {
 			},
 		});
 		refetchQueries(invoiceId);
+
+		// Auto-send receipt email to customer
+		await sendReceiptEmail(invoiceId);
 	};
 
 	const handleMailedSent = async (invoiceId: string) => {
@@ -295,5 +348,6 @@ export const useInvoiceHook = () => {
 		handleRazorPayPayment,
 		handleRedirectGllPayment,
 		handleRazorPayPaymentForPlans,
+		sendReceiptEmail,
 	};
 };

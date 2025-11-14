@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { Typography } from "@mui/material";
 import { useReportsControllerGetExpenseReports } from "@api/services/reports";
 import Loader from "@shared/components/Loader";
@@ -43,7 +43,13 @@ const ExpensesReportTable = ({ fromDate, toDate }: { fromDate: string; toDate: s
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
-				return <Typography>{params.value}</Typography>;
+				return (
+					<Typography>
+						{t(`expenses.categoryTypes.${params.value?.toLowerCase()}`, {
+							defaultValue: params.value,
+						})}
+					</Typography>
+				);
 			},
 		},
 		{

@@ -34,11 +34,13 @@ import useSocket from "@shared/hooks/useNotificationSocket";
 import PlansPage from "@pages/PlansPage";
 import { useQueryClient } from "@tanstack/react-query";
 import GetStartedErrorComp from "@shared/components/GetStartedErrorComp";
-import ExternalRedirect from "./shared/ExternalRedirectLink";
+// import ExternalRedirect from "./shared/ExternalRedirectLink";
 import { useProductCheckoutStore } from "./store/productCheckoutStore";
 import StoreCheckoutDrawer from "@features/Store/StoreCheckoutDrawer";
 import StoreLinkDialog from "@shared/components/StoreLinkDialog";
 import AdminSideBar from "@layout/navbar/Admin/AdminSideBar";
+import i18n from "./i18s";
+import { useGeoPrefetchStore } from "@store/geoPrefetch";
 
 function AppContainer() {
 	const queryClient = useQueryClient();
@@ -50,6 +52,8 @@ function AppContainer() {
 		setIsLoading(true);
 		validateToken()
 			.then(() => {
+				// Preload geolocation data on login, before dialogs open
+				useGeoPrefetchStore.getState().prefetch();
 				setIsLoading(false);
 			})
 			.catch(() => {
@@ -64,11 +68,60 @@ function AppContainer() {
 	useEffect(() => {
 		if (socket && user?.id) {
 			socket.on("newMessage", (notification) => {
+				// Translate notification title and body
+				const translateNotification = (title: string | undefined, body: string | undefined) => {
+					if (!title) return { translatedTitle: "", translatedBody: "" };
+
+					// Translate payment success notifications
+					if (title === "Payment Success" || title?.toLowerCase().includes("payment success")) {
+						const translatedTitle = i18n.t("notification.payment.success", {
+							defaultValue: "Payment Success",
+						});
+						// Extract plan name from body if present (matches "plan Free Plan", "plan Basic Plan", etc.)
+						let translatedBody = "";
+						if (body) {
+							const planMatch = body.match(/plan\s+([A-Za-z]+\s?[A-Za-z]*)\s/i);
+							if (planMatch) {
+								const planName = planMatch[1].toLowerCase().replace(/\s+/g, "");
+								const translatedPlanName = i18n.t(`plans.planNames.${planName}`, {
+									defaultValue: planMatch[1],
+								});
+								translatedBody = i18n.t("notification.payment.successMessage", {
+									plan: translatedPlanName,
+									defaultValue: `Payment for plan ${translatedPlanName} is successful`,
+								});
+							} else {
+								translatedBody = i18n.t("notification.payment.successMessageGeneric", {
+									defaultValue: body,
+								});
+							}
+						}
+						return { translatedTitle, translatedBody };
+					}
+
+					// Default: try to translate if key exists, otherwise return original
+					return {
+						translatedTitle: i18n.t(`notification.${title.toLowerCase().replace(/\s+/g, "")}`, {
+							defaultValue: title,
+						}),
+						translatedBody: body
+							? i18n.t(`notification.body.${body.toLowerCase().replace(/\s+/g, "")}`, {
+									defaultValue: body,
+								})
+							: "",
+					};
+				};
+
+				const { translatedTitle, translatedBody } = translateNotification(
+					notification?.title,
+					notification?.body,
+				);
+
 				toast(() => {
 					return (
 						<div>
-							<h3>{notification?.title}</h3>
-							<p>{notification?.body}</p>
+							<h3>{translatedTitle || notification?.title}</h3>
+							<p>{translatedBody || notification?.body}</p>
 						</div>
 					);
 				});
@@ -91,7 +144,7 @@ function AppContainer() {
 				{unProtectedRoutes.map(({ path, Component }) => (
 					<Route key={path} path={path} element={<Component />} />
 				))}
-				<Route path="/" element={<ExternalRedirect to="https://www.growinvoice.com/" />} />
+				{/* <Route path="/" element={<ExternalRedirect to="https://www.growinvoice.com/" />} /> */}
 				<Route path="*" element={<Navigate to="/login" replace />} />
 			</Routes>
 		);
@@ -270,7 +323,6 @@ function App() {
 		};
 	}, []);
 
-	
 	return (
 		<>
 			<AppContainer />

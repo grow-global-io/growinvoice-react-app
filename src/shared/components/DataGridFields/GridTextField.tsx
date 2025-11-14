@@ -1,5 +1,5 @@
 import { TextField } from "@mui/material";
-import { GridRenderEditCellParams, useGridApiContext } from "@mui/x-data-grid";
+import { type GridRenderEditCellParams, useGridApiContext } from "@mui/x-data-grid";
 import React from "react";
 
 const GridTextField = ({
@@ -9,10 +9,12 @@ const GridTextField = ({
 	onChangeValue,
 	disabled = false,
 	value,
+	step,
 }: {
 	params: GridRenderEditCellParams;
 	label: string;
 	type?: React.HTMLInputTypeAttribute;
+	step?: string | number;
 	disabled?: boolean;
 	onChangeValue?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 	value?: string | number | null | undefined;
@@ -40,6 +42,7 @@ const GridTextField = ({
 			error={params.error}
 			type={type}
 			disabled={disabled}
+			inputProps={step ? { step } : undefined}
 		/>
 	);
 };

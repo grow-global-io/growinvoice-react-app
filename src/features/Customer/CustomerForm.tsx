@@ -14,15 +14,14 @@ import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { PhoneInputFormField } from "@shared/components/FormFields/PhoneInputFormField";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { Constants } from "@shared/constants";
-import { Formik, Field, Form, FormikHelpers } from "formik";
+import { Formik, Field, Form, type FormikHelpers } from "formik";
 import * as yup from "yup";
 import CloseIcon from "@mui/icons-material/Close";
 import { useCreateCustomerStore } from "@store/createCustomerStore";
 import {
-	CreateCustomerWithAddressDto,
+	type CreateCustomerWithAddressDto,
 	CreateCustomerWithAddressDtoOption,
 } from "@api/services/models";
-import { stringToListDto } from "@shared/models/ListDto";
 import {
 	useCurrencyControllerFindAll,
 	useCurrencyControllerFindCountries,
@@ -44,14 +43,14 @@ import { useAuthControllerStatus } from "@api/services/auth";
 import { AlertService } from "@shared/services/AlertService";
 // import { CheckBoxFormField } from "@shared/components/FormFields/CheckBoxFormField";
 import { useTranslation } from "react-i18next";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 type CustomerFormProps = CreateCustomerWithAddressDto & {
 	isBillingAddressRequired?: boolean;
 };
 
 const CustomerForm = () => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const queryClient = useQueryClient();
 	const countryFindAll = useCurrencyControllerFindCountries();
 	const createCustomer = useCustomerControllerCreate();
@@ -64,7 +63,7 @@ const CustomerForm = () => {
 	const initialValues: CustomerFormProps = {
 		currencies_id: editValues?.currencies_id ?? user?.currency_id ?? "",
 		name: editValues?.name ?? "",
-		option: editValues?.option ?? CreateCustomerWithAddressDtoOption.Freelancer,
+		option: editValues?.option ?? CreateCustomerWithAddressDtoOption.Individual,
 		gstIn: editValues?.gstIn ?? "",
 		user_id: user?.id ?? "",
 		billingDetails: {
@@ -90,10 +89,8 @@ const CustomerForm = () => {
 
 	const schema = yup.object({
 		currencies_id: yup.string(),
-		name: yup
-			.string()
-			.required(t("customerForm.validation.nameRequired"))
-			.matches(RegexExp.fullNameRegex, t("customerForm.validation.nameInvalid")),
+		name: yup.string().required(t("customerForm.validation.nameRequired")),
+		// .matches(RegexExp.fullNameRegex, t("customerForm.validation.nameInvalid")),
 		option: yup
 			.string()
 			.required(t("customerForm.validation.optionRequired"))
@@ -111,24 +108,6 @@ const CustomerForm = () => {
 		}),
 		isBillingAddressRequired: yup.boolean(),
 		user_id: yup.string().required(t("customerForm.validation.userRequired")),
-		// billingDetails: yup.object().when("isBillingAddressRequired", {
-		// 	// @ts-expect-error "true" is not assignable to type 'boolean'
-		// 	is: true, // ✅ boolean, not "true"
-		// 	then: yup.object().shape({
-		// 		address: yup.string().required("Address is required"),
-		// 		city: yup.string().required("City is required"),
-		// 		country_id: yup.string().required("Country is required"),
-		// 		state_id: yup.string().required("State is required"),
-		// 		zip: yup.string().required("Zip is required"),
-		// 	}),
-		// 	otherwise: yup.object().shape({
-		// 		address: yup.string().nullable(),
-		// 		city: yup.string().nullable(),
-		// 		country_id: yup.string().nullable(),
-		// 		state_id: yup.string().nullable(),
-		// 		zip: yup.string().nullable(),
-		// 	}),
-		// }),
 		billingDetails: yup.object().shape({
 			address: yup
 				.string()
@@ -166,11 +145,14 @@ const CustomerForm = () => {
 			state_id: yup
 				.string()
 				.test("billing-state", t("customerForm.validation.stateRequired"), function (value) {
+					const countryId = (this.parent as any)?.country_id as string | undefined;
+					const country = countryFindAll?.data?.find((c) => c.id === countryId);
+					const isFinland = country?.code === "FI" || /finland/i.test(country?.name ?? "");
 					const { isBillingAddressRequired } = this.options.context as {
 						isBillingAddressRequired: boolean;
 					};
-					if (isBillingAddressRequired) {
-						return value !== undefined && value.trim() !== "";
+					if (isBillingAddressRequired && !isFinland) {
+						return value !== undefined && (value as string).trim() !== "";
 					}
 					return true;
 				}),
@@ -226,12 +208,15 @@ const CustomerForm = () => {
 			state_id: yup
 				.string()
 				.test("shipping-state", t("customerForm.validation.stateRequired"), function (value) {
+					const countryId = (this.parent as any)?.country_id as string | undefined;
+					const country = countryFindAll?.data?.find((c) => c.id === countryId);
+					const isFinland = country?.code === "FI" || /finland/i.test(country?.name ?? "");
 					const { isBillingAddressRequired } = this.options.context as {
 						isBillingAddressRequired: boolean;
 					};
-					if (isBillingAddressRequired) {
+					if (isBillingAddressRequired && !isFinland) {
 						// if billing address is required, shipping state is also required
-						return value !== undefined && value.trim() !== "";
+						return value !== undefined && (value as string).trim() !== "";
 					}
 					return true;
 				}),
@@ -252,7 +237,8 @@ const CustomerForm = () => {
 		email: yup.string().email(t("customerForm.validation.emailInvalid")),
 		phone: yup
 			.string()
-			.required(t("customerForm.validation.phoneRequired"))
+			.optional()
+			.nullable()
 			.test("is-phone", t("customerForm.validation.phoneInvalid"), function (value) {
 				if (!value) return true;
 				return isValidPhoneNumber(value);
@@ -335,8 +321,23 @@ const CustomerForm = () => {
 			<Box sx={{ mb: 2, mt: 2 }}>
 				<Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit}>
 					{({ errors, values, setFieldValue }) => {
-						console.log({ values, errors });
-
+						// If Finnish locale, prefill country as Finland (Suomi) only when empty
+						const hasPresetCountryRef = useRef(false);
+						useEffect(() => {
+							if (hasPresetCountryRef.current) return; // only once
+							if (editValues) return; // don't override when editing
+							if (!i18n.language?.toLowerCase().startsWith("fi")) return;
+							const fiCountry = countryFindAll?.data?.find(
+								(c) => c.code === "FI" || /finland|suomi/i.test(c.name ?? ""),
+							);
+							if (!fiCountry) return;
+							// preset only if both empty
+							if (!values?.billingDetails?.country_id && !values?.shippingDetails?.country_id) {
+								setFieldValue("billingDetails.country_id", fiCountry.id, false);
+								setFieldValue("shippingDetails.country_id", fiCountry.id, false);
+								hasPresetCountryRef.current = true;
+							}
+						}, [i18n.language, countryFindAll?.data]);
 						// Automatically set isBillingAddressRequired to true when any billing address field changes
 						useEffect(() => {
 							const billingFields = [
@@ -374,9 +375,19 @@ const CustomerForm = () => {
 												name="option"
 												label={t("customerForm.customerType")}
 												component={AutocompleteField}
-												options={Object.values(CreateCustomerWithAddressDtoOption).map(
-													stringToListDto,
-												)}
+												options={Object.values(CreateCustomerWithAddressDtoOption).map((value) => ({
+													value,
+													label:
+														value === CreateCustomerWithAddressDtoOption.Freelancer
+															? t("customerForm.type.freelancer", { defaultValue: "Freelancer" })
+															: value === CreateCustomerWithAddressDtoOption.BusinessWithGST
+																? t("customerForm.type.businessWithGST", {
+																		defaultValue: "Business with GST",
+																	})
+																: t("customerForm.type.businessWithoutGST", {
+																		defaultValue: "Business without GST",
+																	}),
+												}))}
 												isRequired={true}
 											/>
 										</Grid>
@@ -489,7 +500,14 @@ const CustomerForm = () => {
 														countryFieldName="billingDetails.country_id"
 														stateFieldName="billingDetails.state_id"
 														stateLabel={t("customerForm.state")}
-														isRequired={true}
+														isRequired={(() => {
+															const country = countryFindAll?.data?.find(
+																(c) => c.id === values?.billingDetails?.country_id,
+															);
+															const isFinland =
+																country?.code === "FI" || /finland/i.test(country?.name ?? "");
+															return !isFinland; // not required for Finland
+														})()}
 													/>
 												</Grid>
 												<Grid item xs={12} sm={6}>
@@ -539,16 +557,26 @@ const CustomerForm = () => {
 										<Grid item xs={12} sm={6} textAlign={{ xs: "start", sm: "center" }}>
 											<FormControl>
 												<FormControlLabel
-													disabled={
-														(errors.billingDetails !== undefined &&
+													disabled={(() => {
+														const hasErrors =
+															errors.billingDetails !== undefined &&
 															errors.billingDetails !== null &&
-															Object.keys(errors.billingDetails).length > 0) ||
-														values?.billingDetails?.address === "" ||
-														values.billingDetails?.city === "" ||
-														values.billingDetails?.country_id === "" ||
-														values.billingDetails?.state_id === "" ||
-														values.billingDetails?.zip === ""
-													}
+															Object.keys(errors.billingDetails as any).length > 0;
+														const billing = values?.billingDetails ?? ({} as any);
+														const country = countryFindAll?.data?.find(
+															(c) => c.id === billing.country_id,
+														);
+														const isFinland =
+															country?.code === "FI" || /finland/i.test(country?.name ?? "");
+														const isStateMissing = isFinland ? false : billing.state_id === "";
+														const isAnyMandatoryMissing =
+															billing.address === "" ||
+															billing.city === "" ||
+															billing.country_id === "" ||
+															isStateMissing ||
+															billing.zip === "";
+														return hasErrors || isAnyMandatoryMissing;
+													})()}
 													control={<Checkbox />}
 													onClick={(e: React.MouseEvent<HTMLLabelElement, MouseEvent>) => {
 														const target = e.target as HTMLInputElement;
@@ -594,7 +622,14 @@ const CustomerForm = () => {
 													countryFieldName="shippingDetails.country_id"
 													stateFieldName="shippingDetails.state_id"
 													stateLabel={t("customerForm.state")}
-													isRequired={true}
+													isRequired={(() => {
+														const country = countryFindAll?.data?.find(
+															(c) => c.id === values?.shippingDetails?.country_id,
+														);
+														const isFinland =
+															country?.code === "FI" || /finland/i.test(country?.name ?? "");
+														return !isFinland;
+													})()}
 												/>
 											</Grid>
 											<Grid item xs={12} sm={6}>

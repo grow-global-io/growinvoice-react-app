@@ -17,6 +17,7 @@ export interface Payments {
 	invoice?: Invoice;
 	invoice_id: string;
 	isExist: boolean;
+	isNeglected: boolean;
 	/** @nullable */
 	notes: string | null;
 	otherId: string;

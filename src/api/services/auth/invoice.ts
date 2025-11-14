@@ -19,8 +19,11 @@ import type {
 	UseQueryResult,
 } from "@tanstack/react-query";
 import type {
+	CreateDirectInvoiceWithProducts,
 	CreateInvoiceWithProducts,
 	Invoice,
+	InvoiceControllerBulkInvoiceSentToMail200,
+	InvoiceControllerBulkInvoiceSentToMailParams,
 	InvoiceControllerCreate201,
 	InvoiceControllerFindAllParams,
 	InvoiceControllerFindDueInvoicesParams,
@@ -37,6 +40,10 @@ import type {
 	InvoiceControllerMarkedAsRejectedParams,
 	InvoiceControllerMarkedAsUnpaid200,
 	InvoiceControllerMarkedAsUnpaidParams,
+	InvoiceControllerSendInvoicePaymentReceiptManually200,
+	InvoiceControllerSendInvoicePaymentReceiptManuallyParams,
+	InvoiceControllerTermsAcceptedByUser200,
+	InvoiceControllerTermsAcceptedByUserParams,
 	InvoiceControllerUpdate200,
 	InvoiceWithAllDataDto,
 	SendMailDto,
@@ -45,10 +52,6 @@ import type {
 } from "./models";
 import { authInstance } from "../../instances/authInstance";
 import type { ErrorType } from "../../instances/authInstance";
-
-type AwaitedInput<T> = PromiseLike<T> | T;
-
-type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 
 export const invoiceControllerCreate = (createInvoiceWithProducts: CreateInvoiceWithProducts) => {
 	return authInstance<InvoiceControllerCreate201>({
@@ -1642,6 +1645,72 @@ export const useInvoiceControllerInvoiceSentToMail = <
 
 	return useMutation(mutationOptions);
 };
+export const invoiceControllerBulkInvoiceSentToMail = (
+	params: InvoiceControllerBulkInvoiceSentToMailParams,
+) => {
+	return authInstance<InvoiceControllerBulkInvoiceSentToMail200 | void>({
+		url: `/api/invoice/bulkInvoiceSentToMail`,
+		method: "POST",
+		params,
+	});
+};
+
+export const getInvoiceControllerBulkInvoiceSentToMailMutationOptions = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof invoiceControllerBulkInvoiceSentToMail>>,
+		TError,
+		{ params: InvoiceControllerBulkInvoiceSentToMailParams },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof invoiceControllerBulkInvoiceSentToMail>>,
+	TError,
+	{ params: InvoiceControllerBulkInvoiceSentToMailParams },
+	TContext
+> => {
+	const { mutation: mutationOptions } = options ?? {};
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof invoiceControllerBulkInvoiceSentToMail>>,
+		{ params: InvoiceControllerBulkInvoiceSentToMailParams }
+	> = (props) => {
+		const { params } = props ?? {};
+
+		return invoiceControllerBulkInvoiceSentToMail(params);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type InvoiceControllerBulkInvoiceSentToMailMutationResult = NonNullable<
+	Awaited<ReturnType<typeof invoiceControllerBulkInvoiceSentToMail>>
+>;
+
+export type InvoiceControllerBulkInvoiceSentToMailMutationError = ErrorType<unknown>;
+
+export const useInvoiceControllerBulkInvoiceSentToMail = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof invoiceControllerBulkInvoiceSentToMail>>,
+		TError,
+		{ params: InvoiceControllerBulkInvoiceSentToMailParams },
+		TContext
+	>;
+}): UseMutationResult<
+	Awaited<ReturnType<typeof invoiceControllerBulkInvoiceSentToMail>>,
+	TError,
+	{ params: InvoiceControllerBulkInvoiceSentToMailParams },
+	TContext
+> => {
+	const mutationOptions = getInvoiceControllerBulkInvoiceSentToMailMutationOptions(options);
+
+	return useMutation(mutationOptions);
+};
 export const invoiceControllerMarkedAsRejected = (
 	params: InvoiceControllerMarkedAsRejectedParams,
 ) => {
@@ -1708,6 +1777,72 @@ export const useInvoiceControllerMarkedAsRejected = <
 
 	return useMutation(mutationOptions);
 };
+export const invoiceControllerTermsAcceptedByUser = (
+	params: InvoiceControllerTermsAcceptedByUserParams,
+) => {
+	return authInstance<InvoiceControllerTermsAcceptedByUser200 | void>({
+		url: `/api/invoice/termsAcceptedByUser`,
+		method: "POST",
+		params,
+	});
+};
+
+export const getInvoiceControllerTermsAcceptedByUserMutationOptions = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof invoiceControllerTermsAcceptedByUser>>,
+		TError,
+		{ params: InvoiceControllerTermsAcceptedByUserParams },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof invoiceControllerTermsAcceptedByUser>>,
+	TError,
+	{ params: InvoiceControllerTermsAcceptedByUserParams },
+	TContext
+> => {
+	const { mutation: mutationOptions } = options ?? {};
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof invoiceControllerTermsAcceptedByUser>>,
+		{ params: InvoiceControllerTermsAcceptedByUserParams }
+	> = (props) => {
+		const { params } = props ?? {};
+
+		return invoiceControllerTermsAcceptedByUser(params);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type InvoiceControllerTermsAcceptedByUserMutationResult = NonNullable<
+	Awaited<ReturnType<typeof invoiceControllerTermsAcceptedByUser>>
+>;
+
+export type InvoiceControllerTermsAcceptedByUserMutationError = ErrorType<unknown>;
+
+export const useInvoiceControllerTermsAcceptedByUser = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof invoiceControllerTermsAcceptedByUser>>,
+		TError,
+		{ params: InvoiceControllerTermsAcceptedByUserParams },
+		TContext
+	>;
+}): UseMutationResult<
+	Awaited<ReturnType<typeof invoiceControllerTermsAcceptedByUser>>,
+	TError,
+	{ params: InvoiceControllerTermsAcceptedByUserParams },
+	TContext
+> => {
+	const mutationOptions = getInvoiceControllerTermsAcceptedByUserMutationOptions(options);
+
+	return useMutation(mutationOptions);
+};
 export const invoiceControllerMarkedAsPaid = (params: InvoiceControllerMarkedAsPaidParams) => {
 	return authInstance<InvoiceControllerMarkedAsPaid200 | void>({
 		url: `/api/invoice/markedAsPaid`,
@@ -1769,6 +1904,73 @@ export const useInvoiceControllerMarkedAsPaid = <
 	TContext
 > => {
 	const mutationOptions = getInvoiceControllerMarkedAsPaidMutationOptions(options);
+
+	return useMutation(mutationOptions);
+};
+export const invoiceControllerSendInvoicePaymentReceiptManually = (
+	params: InvoiceControllerSendInvoicePaymentReceiptManuallyParams,
+) => {
+	return authInstance<InvoiceControllerSendInvoicePaymentReceiptManually200 | void>({
+		url: `/api/invoice/send-invoice-payment-receipt-manually`,
+		method: "POST",
+		params,
+	});
+};
+
+export const getInvoiceControllerSendInvoicePaymentReceiptManuallyMutationOptions = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof invoiceControllerSendInvoicePaymentReceiptManually>>,
+		TError,
+		{ params: InvoiceControllerSendInvoicePaymentReceiptManuallyParams },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof invoiceControllerSendInvoicePaymentReceiptManually>>,
+	TError,
+	{ params: InvoiceControllerSendInvoicePaymentReceiptManuallyParams },
+	TContext
+> => {
+	const { mutation: mutationOptions } = options ?? {};
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof invoiceControllerSendInvoicePaymentReceiptManually>>,
+		{ params: InvoiceControllerSendInvoicePaymentReceiptManuallyParams }
+	> = (props) => {
+		const { params } = props ?? {};
+
+		return invoiceControllerSendInvoicePaymentReceiptManually(params);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type InvoiceControllerSendInvoicePaymentReceiptManuallyMutationResult = NonNullable<
+	Awaited<ReturnType<typeof invoiceControllerSendInvoicePaymentReceiptManually>>
+>;
+
+export type InvoiceControllerSendInvoicePaymentReceiptManuallyMutationError = ErrorType<unknown>;
+
+export const useInvoiceControllerSendInvoicePaymentReceiptManually = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof invoiceControllerSendInvoicePaymentReceiptManually>>,
+		TError,
+		{ params: InvoiceControllerSendInvoicePaymentReceiptManuallyParams },
+		TContext
+	>;
+}): UseMutationResult<
+	Awaited<ReturnType<typeof invoiceControllerSendInvoicePaymentReceiptManually>>,
+	TError,
+	{ params: InvoiceControllerSendInvoicePaymentReceiptManuallyParams },
+	TContext
+> => {
+	const mutationOptions =
+		getInvoiceControllerSendInvoicePaymentReceiptManuallyMutationOptions(options);
 
 	return useMutation(mutationOptions);
 };
@@ -1901,13 +2103,13 @@ export const useInvoiceControllerMarkedAsMailed = <
 	return useMutation(mutationOptions);
 };
 export const invoiceControllerInvoicePreviewFromBody = (
-	createInvoiceWithProducts: CreateInvoiceWithProducts,
+	createDirectInvoiceWithProducts: CreateDirectInvoiceWithProducts,
 ) => {
 	return authInstance<string | void>({
 		url: `/api/invoice/invoicePreviewFromBody`,
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
-		data: createInvoiceWithProducts,
+		data: createDirectInvoiceWithProducts,
 	});
 };
 
@@ -1918,20 +2120,20 @@ export const getInvoiceControllerInvoicePreviewFromBodyMutationOptions = <
 	mutation?: UseMutationOptions<
 		Awaited<ReturnType<typeof invoiceControllerInvoicePreviewFromBody>>,
 		TError,
-		{ data: CreateInvoiceWithProducts },
+		{ data: CreateDirectInvoiceWithProducts },
 		TContext
 	>;
 }): UseMutationOptions<
 	Awaited<ReturnType<typeof invoiceControllerInvoicePreviewFromBody>>,
 	TError,
-	{ data: CreateInvoiceWithProducts },
+	{ data: CreateDirectInvoiceWithProducts },
 	TContext
 > => {
 	const { mutation: mutationOptions } = options ?? {};
 
 	const mutationFn: MutationFunction<
 		Awaited<ReturnType<typeof invoiceControllerInvoicePreviewFromBody>>,
-		{ data: CreateInvoiceWithProducts }
+		{ data: CreateDirectInvoiceWithProducts }
 	> = (props) => {
 		const { data } = props ?? {};
 
@@ -1944,7 +2146,7 @@ export const getInvoiceControllerInvoicePreviewFromBodyMutationOptions = <
 export type InvoiceControllerInvoicePreviewFromBodyMutationResult = NonNullable<
 	Awaited<ReturnType<typeof invoiceControllerInvoicePreviewFromBody>>
 >;
-export type InvoiceControllerInvoicePreviewFromBodyMutationBody = CreateInvoiceWithProducts;
+export type InvoiceControllerInvoicePreviewFromBodyMutationBody = CreateDirectInvoiceWithProducts;
 export type InvoiceControllerInvoicePreviewFromBodyMutationError = ErrorType<unknown>;
 
 export const useInvoiceControllerInvoicePreviewFromBody = <
@@ -1954,13 +2156,13 @@ export const useInvoiceControllerInvoicePreviewFromBody = <
 	mutation?: UseMutationOptions<
 		Awaited<ReturnType<typeof invoiceControllerInvoicePreviewFromBody>>,
 		TError,
-		{ data: CreateInvoiceWithProducts },
+		{ data: CreateDirectInvoiceWithProducts },
 		TContext
 	>;
 }): UseMutationResult<
 	Awaited<ReturnType<typeof invoiceControllerInvoicePreviewFromBody>>,
 	TError,
-	{ data: CreateInvoiceWithProducts },
+	{ data: CreateDirectInvoiceWithProducts },
 	TContext
 > => {
 	const mutationOptions = getInvoiceControllerInvoicePreviewFromBodyMutationOptions(options);

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 
-
 /**
  * Custom React hook to detect if the current screen is a mobile screen
  * @param breakpoint - The pixel width to consider as mobile breakpoint (default: 768px)
