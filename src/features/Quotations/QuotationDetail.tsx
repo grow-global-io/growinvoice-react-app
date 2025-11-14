@@ -34,6 +34,7 @@ import { Constants } from "@shared/constants";
 import QuotationTemplateCard from "./QuotationTemplateCard";
 import PrintOutlined from "@mui/icons-material/PrintOutlined";
 import { environment } from "@enviroment";
+import { translateQuotationHtml } from "@shared/utils/quotationTemplateTranslator";
 
 const styles = {
 	width: { xs: "100%", sm: "auto" },
@@ -98,9 +99,14 @@ const QuotationDetail = ({
 	useEffect(() => {
 		if (iframeRef.current && !getHtmlText.isLoading && getHtmlText.isSuccess) {
 			const iframe = iframeRef.current;
-			iframe.srcdoc = getHtmlText?.data;
+			let html = getHtmlText?.data ?? "";
+
+			// Translate the quotation HTML content
+			const translatedHtml = translateQuotationHtml(html, t);
+
+			iframe.srcdoc = translatedHtml;
 		}
-	}, [getHtmlText?.isSuccess, getHtmlText?.isRefetching, isMobile, getHtmlText?.data]);
+	}, [getHtmlText?.isSuccess, getHtmlText?.isRefetching, isMobile, getHtmlText?.data, t]);
 
 	const handleMoreClick = (event: React.MouseEvent<HTMLElement>) => {
 		setMoreAnchorEl(event.currentTarget);
