@@ -261,11 +261,23 @@ export const useInvoiceHook = () => {
 			const invoiceNumber = invoiceData?.invoice_number || invoiceId;
 			const customerName = invoiceData?.customer?.name || "Customer";
 
+			// Get translated greeting and ensure customerName is replaced
+			const greetingTranslation = t("invoice.receiptEmail.greeting", {
+				customerName,
+				defaultValue: `Dear ${customerName},`,
+			});
+			// Manually replace placeholder in case i18next interpolation doesn't work
+			const finalGreeting = greetingTranslation
+				.replace(/\{customerName\}/g, customerName)
+				.replace(/\{\{customerName\}\}/g, customerName)
+				.replace(/\{\{customer nme\}\}/g, customerName)
+				.replace(/\{customer nme\}/g, customerName);
+
 			const receiptBody = `
 				<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
 					<h2 style="color: #333; text-align: center;">${t("invoice.receiptEmail.title", { defaultValue: "Payment Receipt" })}</h2>
 					<p style="font-size: 16px; color: #555; line-height: 1.6;">
-						${t("invoice.receiptEmail.greeting", { customerName, defaultValue: `Dear ${customerName},` })}
+						${finalGreeting}
 					</p>
 					<p style="font-size: 16px; color: #555; line-height: 1.6;">
 						${t("invoice.receiptEmail.thankYou", { invoiceNumber, defaultValue: `Thank you! Your invoice #${invoiceNumber} has been successfully paid.` })}
