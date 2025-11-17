@@ -560,6 +560,7 @@
     "addPayment": "Lisa makse",
     "accountNumber": "Konto number",
     "ifscCode": "IFSC kood",
+    "bankName": "Panga nimi",
     "bicNumber": "BIC number",
     "ibanNumber": "IBAN number",
     "swiftCode": "SWIFT kood",
@@ -715,6 +716,7 @@
     },
     "labels": {
       "accountNo": "Konto nr",
+      "bankName": "Panga nimi",
       "ifsc": "IFSC kood",
       "bic": "BIC nr.",
       "iban": "IBAN nr.",
@@ -732,11 +734,13 @@
     "form": {
       "paymentType": "Makse tüüp",
       "accountNumber": "Konto number",
+      "bankName": "Panga nimi (valikuline)",
       "bicOptional": "BIC number (valikuline)",
       "ibanNumber": "IBAN number"
     },
     "placeholders": {
       "accountNumber": "Sisesta konto number",
+      "bankName": "Sisesta panga nimi (valikuline)",
       "ifsc": "Sisesta IFSC kood",
       "bic": "Sisesta BIC number (valikuline)",
       "iban": "Sisesta IBAN number",

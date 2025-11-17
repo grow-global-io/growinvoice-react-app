@@ -35,78 +35,107 @@ const PaymentDetails = () => {
 		{
 			field: "account_no",
 			headerName: t("paymentDetails.table.accountDetails", { defaultValue: "Account Details" }),
-			minWidth: 200,
+			flex: 1,
+			minWidth: 350,
 			renderCell: (params) => {
 				if (params?.row?.paymentType === "IndianBank") {
 					return (
-						<Typography>
-							{t("paymentDetails.labels.accountNo", { defaultValue: "Account No" })}:{" "}
-							{params.row.account_no} <br />
-							{t("paymentDetails.labels.ifsc", { defaultValue: "IFSC Code" })}:{" "}
-							{params.row.ifscCode}
-						</Typography>
+						<Box sx={{ py: 1 }}>
+							<Typography variant="body2" sx={{ wordBreak: "break-word" }}>
+								{t("paymentDetails.labels.accountNo", { defaultValue: "Account No" })}:{" "}
+								{params.row.account_no}
+							</Typography>
+							<Typography variant="body2" sx={{ wordBreak: "break-word" }}>
+								{t("paymentDetails.labels.ifsc", { defaultValue: "IFSC Code" })}:{" "}
+								{params.row.ifscCode}
+							</Typography>
+						</Box>
 					);
 				} else if (params?.row?.paymentType === "EuropeanBank") {
 					return (
-						<Typography>
-							{t("paymentDetails.labels.bic", { defaultValue: "BIC No." })}: {params.row.bicNumber}{" "}
-							<br />
-							{t("paymentDetails.labels.iban", { defaultValue: "IBAN No." })}:{" "}
-							{params.row.ibanNumber}
-						</Typography>
+						<Box sx={{ py: 1 }}>
+							{(params.row as any)?.bankName && (
+								<Typography variant="body2" sx={{ wordBreak: "break-word", mb: 0.5 }}>
+									{t("paymentDetails.labels.bankName", { defaultValue: "Bank Name" })}:{" "}
+									{(params.row as any).bankName}
+								</Typography>
+							)}
+							<Typography variant="body2" sx={{ wordBreak: "break-word", mb: 0.5 }}>
+								{t("paymentDetails.labels.bic", { defaultValue: "BIC No." })}:{" "}
+								{params.row.bicNumber || "-"}
+							</Typography>
+							<Typography variant="body2" sx={{ wordBreak: "break-word" }}>
+								{t("paymentDetails.labels.iban", { defaultValue: "IBAN No." })}:{" "}
+								{params.row.ibanNumber || "-"}
+							</Typography>
+						</Box>
 					);
 				} else if (params?.row?.paymentType === "UPI") {
 					return (
-						<Typography>
-							{t("paymentDetails.labels.upiId", { defaultValue: "UPI ID" })}: {params.row.upiId}
-						</Typography>
+						<Box sx={{ py: 1 }}>
+							<Typography variant="body2" sx={{ wordBreak: "break-word" }}>
+								{t("paymentDetails.labels.upiId", { defaultValue: "UPI ID" })}: {params.row.upiId}
+							</Typography>
+						</Box>
 					);
 				} else if (params?.row?.paymentType === "SwiftCode") {
 					return (
-						<Typography>
-							{t("paymentDetails.labels.swift", { defaultValue: "Swift Code" })}:{" "}
-							{params.row.swiftCode}
-						</Typography>
+						<Box sx={{ py: 1 }}>
+							<Typography variant="body2" sx={{ wordBreak: "break-word" }}>
+								{t("paymentDetails.labels.swift", { defaultValue: "Swift Code" })}:{" "}
+								{params.row.swiftCode}
+							</Typography>
+						</Box>
 					);
 				} else if (params?.row?.paymentType === "Paypal") {
 					return (
-						<Typography>
-							{t("paymentDetails.labels.paypal", { defaultValue: "Paypal ID" })}:{" "}
-							{params.row.paypalId}
-						</Typography>
+						<Box sx={{ py: 1 }}>
+							<Typography variant="body2" sx={{ wordBreak: "break-word" }}>
+								{t("paymentDetails.labels.paypal", { defaultValue: "Paypal ID" })}:{" "}
+								{params.row.paypalId}
+							</Typography>
+						</Box>
 					);
 				} else if (params?.row?.paymentType === "Stripe") {
 					return (
-						<Typography>
-							{t("paymentDetails.labels.stripe", { defaultValue: "Stripe ID" })}:{" "}
-							{params.row.stripeId}
-						</Typography>
+						<Box sx={{ py: 1 }}>
+							<Typography variant="body2" sx={{ wordBreak: "break-word" }}>
+								{t("paymentDetails.labels.stripe", { defaultValue: "Stripe ID" })}:{" "}
+								{params.row.stripeId}
+							</Typography>
+						</Box>
 					);
 				} else if (params?.row?.paymentType === "Razorpay") {
 					return (
-						<Typography>
-							{t("paymentDetails.labels.razorpay", { defaultValue: "Razorpay ID" })}:{" "}
-							{params.row.razorpayId}
-						</Typography>
+						<Box sx={{ py: 1 }}>
+							<Typography variant="body2" sx={{ wordBreak: "break-word" }}>
+								{t("paymentDetails.labels.razorpay", { defaultValue: "Razorpay ID" })}:{" "}
+								{params.row.razorpayId}
+							</Typography>
+						</Box>
 					);
 				} else if (params?.row?.paymentType === "Mollie") {
 					return (
-						<Typography>
-							{t("paymentDetails.labels.mollie", { defaultValue: "Mollie ID" })}:{" "}
-							{params.row.mollieId}
-						</Typography>
+						<Box sx={{ py: 1 }}>
+							<Typography variant="body2" sx={{ wordBreak: "break-word" }}>
+								{t("paymentDetails.labels.mollie", { defaultValue: "Mollie ID" })}:{" "}
+								{params.row.mollieId}
+							</Typography>
+						</Box>
 					);
 				}
 
 				return (
-					<Typography>
-						{params.row?.mollieId ??
-							params?.row?.paypalId ??
-							params?.row?.razorpayId ??
-							params?.row?.stripeId ??
-							params?.row?.swiftCode ??
-							params?.row?.upiId}
-					</Typography>
+					<Box sx={{ py: 1 }}>
+						<Typography variant="body2" sx={{ wordBreak: "break-word" }}>
+							{params.row?.mollieId ??
+								params?.row?.paypalId ??
+								params?.row?.razorpayId ??
+								params?.row?.stripeId ??
+								params?.row?.swiftCode ??
+								params?.row?.upiId}
+						</Typography>
+					</Box>
 				);
 			},
 		},
@@ -189,7 +218,21 @@ const PaymentDetails = () => {
 					</Button>
 				</Grid>
 				<Grid item xs={12}>
-					<DataGrid autoHeight rows={paymentDetails.data} columns={columns} />{" "}
+					<DataGrid
+						autoHeight
+						rows={paymentDetails.data}
+						columns={columns}
+						sx={{
+							"& .MuiDataGrid-cell": {
+								py: 1,
+							},
+							"& .MuiDataGrid-row": {
+								"&:hover": {
+									backgroundColor: "rgba(0, 0, 0, 0.04)",
+								},
+							},
+						}}
+					/>
 				</Grid>
 			</Grid>
 			<PaymentDetailsDrawer open={open} handleClose={handleClose} paymentId={paymentId ?? ""} />
