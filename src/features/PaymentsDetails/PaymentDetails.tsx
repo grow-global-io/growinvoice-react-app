@@ -36,7 +36,7 @@ const PaymentDetails = () => {
 			field: "account_no",
 			headerName: t("paymentDetails.table.accountDetails", { defaultValue: "Account Details" }),
 			flex: 1,
-			minWidth: 350,
+			minWidth: 400,
 			renderCell: (params) => {
 				if (params?.row?.paymentType === "IndianBank") {
 					return (
@@ -53,19 +53,25 @@ const PaymentDetails = () => {
 					);
 				} else if (params?.row?.paymentType === "EuropeanBank") {
 					return (
-						<Box sx={{ py: 1 }}>
-							{(params.row as any)?.bankName && (
-								<Typography variant="body2" sx={{ wordBreak: "break-word", mb: 0.5 }}>
-									{t("paymentDetails.labels.bankName", { defaultValue: "Bank Name" })}:{" "}
-									{(params.row as any).bankName}
-								</Typography>
-							)}
-							<Typography variant="body2" sx={{ wordBreak: "break-word", mb: 0.5 }}>
-								{t("paymentDetails.labels.bic", { defaultValue: "BIC No." })}:{" "}
+						<Box sx={{ py: 1, width: "100%" }}>
+							<Typography
+								variant="body2"
+								sx={{ wordBreak: "break-word", mb: 0.5, display: "block" }}
+							>
+								<strong>
+									{t("paymentDetails.labels.bankName", { defaultValue: "Bank Name" })}:
+								</strong>{" "}
+								{(params.row as any)?.bankName || "-"}
+							</Typography>
+							<Typography
+								variant="body2"
+								sx={{ wordBreak: "break-word", mb: 0.5, display: "block" }}
+							>
+								<strong>{t("paymentDetails.labels.bic", { defaultValue: "BIC No." })}:</strong>{" "}
 								{params.row.bicNumber || "-"}
 							</Typography>
-							<Typography variant="body2" sx={{ wordBreak: "break-word" }}>
-								{t("paymentDetails.labels.iban", { defaultValue: "IBAN No." })}:{" "}
+							<Typography variant="body2" sx={{ wordBreak: "break-word", display: "block" }}>
+								<strong>{t("paymentDetails.labels.iban", { defaultValue: "IBAN No." })}:</strong>{" "}
 								{params.row.ibanNumber || "-"}
 							</Typography>
 						</Box>
@@ -225,11 +231,17 @@ const PaymentDetails = () => {
 						sx={{
 							"& .MuiDataGrid-cell": {
 								py: 1,
+								overflow: "visible",
+								whiteSpace: "normal",
 							},
 							"& .MuiDataGrid-row": {
 								"&:hover": {
 									backgroundColor: "rgba(0, 0, 0, 0.04)",
 								},
+							},
+							"& .MuiDataGrid-cellContent": {
+								overflow: "visible",
+								whiteSpace: "normal",
 							},
 						}}
 					/>
