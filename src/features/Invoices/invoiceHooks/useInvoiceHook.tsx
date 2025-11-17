@@ -273,6 +273,17 @@ export const useInvoiceHook = () => {
 				.replace(/\{\{customer nme\}\}/g, customerName)
 				.replace(/\{customer nme\}/g, customerName);
 
+			// Get translated thankYou message and ensure invoiceNumber is replaced
+			const thankYouTranslation = t("invoice.receiptEmail.thankYou", {
+				invoiceNumber,
+				defaultValue: `Thank you! Your invoice #${invoiceNumber} has been successfully paid.`,
+			});
+			// Manually replace invoiceNumber placeholder in case i18next interpolation doesn't work
+			const finalThankYou = thankYouTranslation
+				.replace(/\{invoiceNumber\}/g, invoiceNumber)
+				.replace(/\{\{invoiceNumber\}\}/g, invoiceNumber)
+				.replace(/#\{invoiceNumber\}/g, `#${invoiceNumber}`);
+
 			const receiptBody = `
 				<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
 					<h2 style="color: #333; text-align: center;">${t("invoice.receiptEmail.title", { defaultValue: "Payment Receipt" })}</h2>
@@ -280,7 +291,7 @@ export const useInvoiceHook = () => {
 						${finalGreeting}
 					</p>
 					<p style="font-size: 16px; color: #555; line-height: 1.6;">
-						${t("invoice.receiptEmail.thankYou", { invoiceNumber, defaultValue: `Thank you! Your invoice #${invoiceNumber} has been successfully paid.` })}
+						${finalThankYou}
 					</p>
 					<p style="font-size: 16px; color: #555; line-height: 1.6;">
 						${t("invoice.receiptEmail.appreciation", { defaultValue: "We appreciate your prompt payment and your business with us." })}
@@ -308,13 +319,21 @@ export const useInvoiceHook = () => {
 				</div>
 			`;
 
+			// Get translated subject and ensure invoiceNumber is replaced
+			const subjectTranslation = t("invoice.receiptEmail.subject", {
+				invoiceNumber,
+				defaultValue: `Payment Receipt - Invoice #${invoiceNumber}`,
+			});
+			// Manually replace invoiceNumber placeholder in case i18next interpolation doesn't work
+			const finalSubject = subjectTranslation
+				.replace(/\{invoiceNumber\}/g, invoiceNumber)
+				.replace(/\{\{invoiceNumber\}\}/g, invoiceNumber)
+				.replace(/#\{invoiceNumber\}/g, `#${invoiceNumber}`);
+
 			await invoiceControllerInvoiceSentToMail(
 				{
 					email: customerEmail,
-					subject: t("invoice.receiptEmail.subject", {
-						invoiceNumber,
-						defaultValue: `Payment Receipt - Invoice #${invoiceNumber}`,
-					}),
+					subject: finalSubject,
 					body: receiptBody,
 				},
 				{

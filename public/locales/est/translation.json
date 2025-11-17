@@ -614,6 +614,7 @@
       "productType": "Toote tüüp",
       "createdAt": "Loodud",
       "action": "Toiming",
+      "viewProduct": "Vaata toodet",
       "editProduct": "Muuda toodet",
       "deleteProduct": "Kustuta toode"
     },

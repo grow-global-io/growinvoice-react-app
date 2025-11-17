@@ -614,6 +614,7 @@
       "productType": "Product Type",
       "createdAt": "Created At",
       "action": "Action",
+      "viewProduct": "View Product",
       "editProduct": "Edit Product",
       "deleteProduct": "Delete Product"
     },

@@ -63,7 +63,7 @@
     "register": "Rekisteröidy"
   },
   "dashboard": {
-    "rollUpAiStore": "Avaa AI verkkokauppa",
+    "rollUpAiStore": "Luo verkkokauppa",
     "aiAssistant": "AI-avustaja",
     "noWidgetsFound": "Yhteenveto-työkaluja ei löytynyt",
     "deleteData": "Poista tiedot",
@@ -186,7 +186,7 @@
       "payerNameAddress": "Maksajan nimi ja osoite:",
       "refNo": "Viitenumero:",
       "dueDate": "Eräpäivä:",
-      "note": "Huomautus:",
+      "note": "terveisiä:",
       "recipientUpiDetails": "Vastaanottajan UPI-tiedot",
       "recipientCashDetails": "Vastaanottajan käteistiedot",
       "recipientEuropeanBankDetails": "Vastaanottajan eurooppalaiset pankkitiedot",
@@ -194,7 +194,7 @@
       "unit": "Yksikkö",
       "unitPrice": "Yksikköhinta",
       "totalTaxesPercent": "Verot yhteensä (%)",
-      "totalTaxesAmount": "Verot yhteensä (summa)",
+      "totalTaxesAmount": "Verot (summa)",
       "thankYouMessage": "Kiitos ostoksestasi. Hyvää päivää.",
       "paymentTerms": "Maksu selvitetään vastaanottajalle yleisten maksunsiirtosääntöjen mukaisesti ja vain maksajan antaman tilinumeron perusteella.",
       "termsConditions": "Ehdot ja palveluehdot:",
@@ -369,7 +369,7 @@
   },
   "receipt": {
     "title": "Kuitit",
-    "saveReceipt": "Tallenna kuitti",
+    "saveReceipt": "Lähetä kuitti",
     "createReceipt": "Luo kuitti",
     "successfullyCreated": "Kuitti luotu onnistuneesti"
   },
@@ -480,7 +480,7 @@
       "receipt": "KUITTI",
       "invoiceNo": "Laskunumero:",
       "date": "Päiväys:",
-      "invoiceTo": "Lasku osoitteeseen:",
+      "invoiceTo": "Lasku :",
       "payTo": "Maksetaan:",
       "serialNo": "Nro",
       "item": "Tuote",
@@ -504,7 +504,7 @@
       "payerNameAddress": "Maksajan nimi ja osoite:",
       "refNo": "Viitenumero:",
       "dueDate": "Eräpäivä:",
-      "note": "Huomautus:",
+      "note": "Tervehdys:",
       "recipientUpiDetails": "Vastaanottajan UPI-tiedot",
       "recipientCashDetails": "Vastaanottajan käteistiedot",
       "recipientEuropeanBankDetails": "Vastaanottajan eurooppalaiset pankkitiedot",
@@ -512,7 +512,7 @@
       "unit": "Yksikkö",
       "unitPrice": "Yksikköhinta",
       "totalTaxesPercent": "Verot yhteensä (%)",
-      "totalTaxesAmount": "Verot yhteensä (Summa)",
+      "totalTaxesAmount": "Verot (Summa)",
       "thankYouMessage": "Kiitos ostoksestasi. Hyvää päivänjatkoa.",
       "gdprDisclaimer": "Katsomalla tämän laskun, hyväksyt, että näytetyt tiedot käsitellään {companyName} toimesta {customerName} puolesta laskutuksen ja kirjanpidon tarkoituksessa sovellettavien tietosuojalakien (GDPR) mukaisesti.",
       "gdprAgreement": "Hyväksyn, että nimeni, sähköpostiosoitteeni ja vuorovaikutustietoni (kuten laskun avausaika) voidaan tallentaa [GrowInvoice.com]:iin laskutukseen ja ilmoitustarkoituksiin GDPR:n ja tietosuojakäytäntösi mukaisesti.",
@@ -520,7 +520,7 @@
       "termsClaim": "Kaikki väitteet, jotka liittyvät määrään tai toimitusvirheisiin, hylätään ostajalta, ellei niitä tehdä kirjallisesti myyjälle kolmenkymmenen (30) päivän kuluessa tavaroiden toimittamisesta ilmoitettuun osoitteeseen.",
       "termsDelivery": "Toimituspäivät eivät ole taattuja, eikä myyjällä ole vastuuta vahingoista, jotka voivat syntyä tavaroiden lähetyksen viivästymisestä. Verot on jätetty pois, elleivät toisin mainita.",
       "paymentTerms": "Maksu selvitetään vastaanottajalle yleisten maksunsiirtosääntöjen mukaisesti ja vain maksajan antaman tilinumeron perusteella.",
-      "gdprDisclaimerPersonalData": "Tässä {invoiceType} esitetyt henkilötiedot käsittelevät sovelletusti {companyName}'s asiakaslaskutuksen ja kirjanpitoa varten tarvittavia tietoja EU:n GDPR -tietosuojalakien mukaisesti."
+      "gdprDisclaimerPersonalData": "Tässä {invoiceType} esitetyt henkilötiedot käsittelevät sovelletusti {companyName}:n asiakaslaskutuksen ja kirjanpitoa varten tarvittavia tietoja EU:n GDPR -tietosuojalakien mukaisesti."
     },
     "receiptEmail": {
       "title": "Kuitti maksusta.",
@@ -619,6 +619,7 @@
       "productType": "Tuotetyyppi",
       "createdAt": "Luotu",
       "action": "Toiminto",
+      "viewProduct": "Näytä tuote",
       "editProduct": "Muokkaa tuotetta",
       "deleteProduct": "Poista tuote"
     },

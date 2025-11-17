@@ -155,6 +155,13 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		{ english: /Date:/gi, translation: t("invoice.template.date") },
 
 		// Address sections - match with or without leading/trailing whitespace
+		// Match translated invoice/receipt types with "To:" and replace with just the type and colon
+		{ english: /LASKU\s+To:/gi, translation: "LASKU:" },
+		{ english: /KUITTI\s+To:/gi, translation: "KUITTI:" },
+		{ english: /ARVE\s+To:/gi, translation: "ARVE:" },
+		{ english: /KVIITUNG\s+To:/gi, translation: "KVIITUNG:" },
+		{ english: /INVOICE\s+To:/gi, translation: "INVOICE:" },
+		{ english: /RECEIPT\s+To:/gi, translation: "RECEIPT:" },
 		{ english: /Invoice\s+To:/gi, translation: t("invoice.template.invoiceTo") },
 		{ english: /Pay\s+To:/gi, translation: t("invoice.template.payTo") },
 		// Recipient's Details - handle various formats
@@ -374,21 +381,40 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			translation: t("invoice.template.gdprAgreement"),
 		},
 		// GDPR Disclaimer Personal Data - match with flexible whitespace and dynamic content
-		// Handle "invoice", "LASKU" (Finnish), and "ARVE" (Estonian) for invoice type
+		// Handle "invoice", "LASKU" (Finnish), "ARVE" (Estonian), "KUITTI" (Finnish receipt), "KVIITUNG" (Estonian receipt), and "RECEIPT" for document type
 		{
 			english:
-				/The\s+personal\s+data\s+presented\s+in\s+this\s+(invoice|LASKU|ARVE|INVOICE)\s+is\s+processed\s+in\s+accordance\s+with\s+the\s+EU\s+GDPR\s+data\s+protection\s+laws\s+for\s+([^<]+?)(?:'s)?\s+customer\s+invoicing\s+and\s+accounting\s+purposes\./gi,
-			translation: (_match: string, invoiceType: string, companyName: string) => {
-				// Translate invoice type
-				const translatedInvoiceType =
-					invoiceType.toUpperCase() === "LASKU"
-						? t("invoice.template.invoice")
-						: invoiceType.toUpperCase() === "ARVE"
-							? t("invoice.template.invoice")
-							: t("invoice.template.invoice");
+				/The\s+personal\s+data\s+presented\s+in\s+this\s+(invoice|LASKU|ARVE|INVOICE|receipt|KUITTI|KVIITUNG|RECEIPT)\s+is\s+processed\s+in\s+accordance\s+with\s+the\s+EU\s+GDPR\s+data\s+protection\s+laws\s+for\s+([^<]+?)(?:'s)?\s+customer\s+invoicing\s+and\s+accounting\s+purposes\./gi,
+			translation: (_match: string, documentType: string, companyName: string) => {
+				const docTypeUpper = documentType.toUpperCase();
+				const isReceipt =
+					docTypeUpper === "KUITTI" || docTypeUpper === "KVIITUNG" || docTypeUpper === "RECEIPT";
+
+				// Get the base translation key for invoice or receipt
+				const baseType = isReceipt ? t("invoice.template.receipt") : t("invoice.template.invoice");
+
+				// For Finnish: use "laskussa" for invoice, "kuitissa" for receipt
+				// For Estonian: use "arves" for invoice, "kviitungis" for receipt
+				// For English: use "invoice" or "receipt"
+				let translatedType: string;
+				if (docTypeUpper === "LASKU") {
+					translatedType = "laskussa"; // Finnish: in this invoice
+				} else if (docTypeUpper === "KUITTI") {
+					translatedType = "kuitissa"; // Finnish: in this receipt
+				} else if (docTypeUpper === "ARVE") {
+					translatedType = "arves"; // Estonian: in this invoice
+				} else if (docTypeUpper === "KVIITUNG") {
+					translatedType = "kviitungis"; // Estonian: in this receipt
+				} else if (isReceipt) {
+					// For English or other languages, use lowercase receipt
+					translatedType = baseType.toLowerCase();
+				} else {
+					// For English or other languages, use lowercase invoice
+					translatedType = baseType.toLowerCase();
+				}
 
 				return t("invoice.template.gdprDisclaimerPersonalData")
-					.replace("{invoiceType}", translatedInvoiceType)
+					.replace("{invoiceType}", translatedType)
 					.replace("{companyName}", companyName.trim());
 			},
 		},

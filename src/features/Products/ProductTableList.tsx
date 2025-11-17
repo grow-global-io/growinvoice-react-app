@@ -10,12 +10,16 @@ import Loader from "@shared/components/Loader";
 import { timeAgo } from "@shared/formatter";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import EditIcon from "@mui/icons-material/Edit";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useCreateProductStore } from "@store/createProductStore";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useQueryClient } from "@tanstack/react-query";
 import { useConfirmDialogStore } from "@store/confirmDialog";
 import { type ProductWithAllDataDto } from "@api/services/models";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import { useDialog } from "@shared/hooks/useDialog";
+import ProductDialog from "@features/Store/ProductDialog";
 
 const ProductTableList = () => {
 	const { t } = useTranslation();
@@ -25,6 +29,10 @@ const ProductTableList = () => {
 	const removeProduct = useProductControllerRemove();
 
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
+	const { handleClickOpen, handleClose, open } = useDialog();
+	const [selectedProduct, setSelectedProduct] = useState<ProductWithAllDataDto | undefined>(
+		undefined,
+	);
 
 	const columns: GridColDef<ProductWithAllDataDto>[] = [
 		{
@@ -83,8 +91,22 @@ const ProductTableList = () => {
 			type: "actions",
 			getActions: (params) => [
 				<Tooltip
+					title={t("product.table.viewProduct", { defaultValue: "View Product" })}
+					key={`view-${params.row?.id}`}
+				>
+					<Box>
+						<CustomIconButton
+							src={VisibilityIcon}
+							onClick={() => {
+								setSelectedProduct(params.row);
+								handleClickOpen();
+							}}
+						/>
+					</Box>
+				</Tooltip>,
+				<Tooltip
 					title={t("product.table.editProduct", { defaultValue: "Edit Product" })}
-					key={params.row?.id}
+					key={`edit-${params.row?.id}`}
 				>
 					<Box>
 						<CustomIconButton
@@ -97,7 +119,7 @@ const ProductTableList = () => {
 				</Tooltip>,
 				<Tooltip
 					title={t("product.table.deleteProduct", { defaultValue: "Delete Product" })}
-					key={params.row?.id}
+					key={`delete-${params.row?.id}`}
 				>
 					<Box>
 						<CustomIconButton
@@ -134,6 +156,7 @@ const ProductTableList = () => {
 	return (
 		<Box>
 			<DataGrid autoHeight rows={productList?.data} columns={columns} />
+			<ProductDialog product={selectedProduct} handleClose={handleClose} open={open} />
 		</Box>
 	);
 };
