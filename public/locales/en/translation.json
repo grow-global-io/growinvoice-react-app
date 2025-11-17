@@ -560,6 +560,7 @@
     "addPayment": "Add Payment",
     "accountNumber": "Account Number",
     "ifscCode": "IFSC Code",
+    "bankName": "Bank Name",
     "bicNumber": "BIC Number",
     "ibanNumber": "IBAN Number",
     "swiftCode": "Swift Code",
@@ -715,6 +716,7 @@
     },
     "labels": {
       "accountNo": "Account No",
+      "bankName": "Bank Name",
       "ifsc": "IFSC Code",
       "bic": "BIC No.",
       "iban": "IBAN No.",
@@ -732,11 +734,13 @@
     "form": {
       "paymentType": "Payment Type",
       "accountNumber": "Account Number",
+      "bankName": "Bank Name (optional)",
       "bicOptional": "BIC Number (optional)",
       "ibanNumber": "IBAN Number"
     },
     "placeholders": {
       "accountNumber": "Enter account number",
+      "bankName": "Enter bank name (optional)",
       "ifsc": "Enter IFSC code",
       "bic": "Enter BIC number (optional)",
       "iban": "Enter IBAN number",

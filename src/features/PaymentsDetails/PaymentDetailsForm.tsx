@@ -152,7 +152,7 @@ const PaymentDetailsForm = ({
 				i18n.t("paymentDetails.validation.userRequired", { defaultValue: "User is required" }),
 			),
 	});
-	const initialValues: CreatePaymentDetailsDto = {
+	const initialValues: CreatePaymentDetailsDto & { bankName?: string } = {
 		account_no: editPayment.data?.account_no ?? "",
 		bicNumber: editPayment?.data?.bicNumber ?? "",
 		ibanNumber: editPayment?.data?.ibanNumber ?? "",
@@ -165,21 +165,27 @@ const PaymentDetailsForm = ({
 		swiftCode: editPayment?.data?.swiftCode ?? "",
 		upiId: editPayment?.data?.upiId ?? "",
 		user_id: user?.id ?? "",
+		bankName: (editPayment?.data as any)?.bankName ?? "",
 	};
 
 	const handleSubmit = async (
-		values: CreatePaymentDetailsDto,
-		actions: FormikHelpers<CreatePaymentDetailsDto>,
+		values: CreatePaymentDetailsDto & { bankName?: string },
+		actions: FormikHelpers<CreatePaymentDetailsDto & { bankName?: string }>,
 	) => {
 		actions.setSubmitting(true);
+		// Include bankName in the data if it exists
+		const submitData = {
+			...values,
+			...(values.bankName && { bankName: values.bankName }),
+		} as any;
 		if (!paymentId) {
 			await createPayment.mutateAsync({
-				data: values,
+				data: submitData,
 			});
 		} else {
 			await updatePayment.mutateAsync({
 				id: paymentId,
-				data: values,
+				data: submitData,
 			});
 		}
 		queryClient.invalidateQueries({
@@ -256,6 +262,18 @@ const PaymentDetailsForm = ({
 							)}
 							{values.paymentType === "EuropeanBank" && (
 								<>
+									<Grid item xs={12}>
+										<Field
+											name="bankName"
+											label={t("paymentDetails.form.bankName", {
+												defaultValue: "Bank Name (optional)",
+											})}
+											placeholder={t("paymentDetails.placeholders.bankName", {
+												defaultValue: "Enter bank name (optional)",
+											})}
+											component={TextFormField}
+										/>
+									</Grid>
 									<Grid item xs={12}>
 										<Field
 											name="bicNumber"

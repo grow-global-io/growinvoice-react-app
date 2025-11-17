@@ -678,6 +678,12 @@ const CreateInvoice = ({
 															)}
 															{payment.paymentType === "EuropeanBank" && (
 																<>
+																	{(payment as any)?.bankName && (
+																		<Typography variant="subtitle1">
+																			{t("invoiceForm.bankName", { defaultValue: "Bank Name" })}:{" "}
+																			<b>{(payment as any).bankName}</b>
+																		</Typography>
+																	)}
 																	<Typography variant="subtitle1">
 																		{t("invoiceForm.bicNumber")}: <b>{payment.bicNumber}</b>
 																	</Typography>

@@ -565,6 +565,7 @@
     "addPayment": "Lisää maksu",
     "accountNumber": "Tilinumero",
     "ifscCode": "IFSC-koodi",
+    "bankName": "Pankin nimi",
     "bicNumber": "BIC-numero",
     "ibanNumber": "IBAN-numero",
     "swiftCode": "SWIFT-koodi",
@@ -720,6 +721,7 @@
     },
     "labels": {
       "accountNo": "Tilinumero",
+      "bankName": "Pankin nimi",
       "ifsc": "IFSC-koodi",
       "bic": "BIC-numero",
       "iban": "IBAN-numero",
@@ -737,11 +739,13 @@
     "form": {
       "paymentType": "Maksutapa",
       "accountNumber": "Tilinumero",
+      "bankName": "Pankin nimi (valinnainen)",
       "bicOptional": "BIC-numero (valinnainen)",
       "ibanNumber": "IBAN-numero"
     },
     "placeholders": {
       "accountNumber": "Syötä tilinumero",
+      "bankName": "Syötä pankin nimi (valinnainen)",
       "ifsc": "Syötä IFSC-koodi",
       "bic": "Syötä BIC-numero (valinnainen)",
       "iban": "Syötä IBAN-numero",
