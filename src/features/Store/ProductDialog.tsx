@@ -46,9 +46,11 @@ const ProductDialog = ({
 		addProductToCheckout,
 		removeProductFromCheckout,
 	} = useProductCheckoutStore();
-	const priceBook = product?.priceBook?.find(
-		(price) => price.currency?.short_code === currencyCode,
-	);
+
+	// First try to find priceBook matching the store currency, otherwise use the first available priceBook
+	const priceBook =
+		product?.priceBook?.find((price) => price.currency?.short_code === currencyCode) ||
+		product?.priceBook?.[0];
 
 	// A placeholder function for adding to cart
 	const handleAddToCart = () => {
