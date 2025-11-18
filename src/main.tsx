@@ -12,7 +12,24 @@ import { ErrorBoundary } from "react-error-boundary";
 import InternalServerErrorPage from "@pages/InternalServerErrorPage";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import i18n from "./i18s"; // Initialize translations
-import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+
+import { registerSW } from "virtual:pwa-register";
+
+// 3. Call registerSW and use its callbacks
+const updateSW = registerSW({
+	onNeedRefresh() {
+		// This replaces your 'config.onUpdate(registration)'
+		// Show a prompt to the user
+		if (confirm("New content available! Do you want to reload?")) {
+			// This sends the 'SKIP_WAITING' message
+			updateSW(true);
+		}
+	},
+	onOfflineReady() {
+		// This replaces your 'config.onSuccess(registration)'
+		console.log("App is ready to work offline.");
+	},
+});
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -93,6 +110,3 @@ const RootApp = () => {
 };
 
 ReactDOM.createRoot(document.getElementById("root")!).render(<RootApp />);
-
-// Register service worker
-serviceWorkerRegistration.register({});

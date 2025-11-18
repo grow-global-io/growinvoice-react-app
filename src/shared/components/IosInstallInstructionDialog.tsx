@@ -27,9 +27,9 @@ const IosInstallInstructionDialog = ({ open, onClose }: IosInstallInstructionDia
 			<Box sx={style}>
 				<AppDialogHeader title="How to Install?" handleClose={onClose}></AppDialogHeader>
 				<List>
-					{getIOSInstallInstructions().map((instructions, index) => {
+					{getIOSInstallInstructions().map((instructions: JSX.Element | string, index: number) => {
 						return (
-							<ListItem key={index}>
+							<ListItem key={index} sx={{ alignItems: "baseline" }}>
 								{index + 1}. {instructions}
 							</ListItem>
 						);
