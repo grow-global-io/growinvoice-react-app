@@ -73,11 +73,11 @@ export default function FullFeaturedCrudGrid({
 			}),
 		);
 		const tax = taxCodes?.data?.find((tax) => tax.id === formik?.values.tax_id);
-		formik?.setFieldValue("sub_total", Math.round(Number(subtotal ?? 0) * 10) / 10);
+		formik?.setFieldValue("sub_total", parseFloat(Number(subtotal ?? 0).toFixed(2)));
 		const discount = subtotal * (Number(formik?.values?.discountPercentage) / 100);
 		const taxPercentage = subtotal * (Number(tax?.percentage ?? 0) / 100);
 		const total = subtotal - discount + taxPercentage;
-		const round = Math.round(Number(total ?? 0) * 10) / 10;
+		const round = parseFloat(Number(total ?? 0).toFixed(2));
 		formik?.setFieldValue("total", round);
 	};
 
@@ -212,7 +212,7 @@ export default function FullFeaturedCrudGrid({
 					const price =
 						selectedProduct?.priceBook?.find((price) => price.currency_id === currency_id)?.price ??
 						0;
-					const total = price + (price * taxPercentage) / 100;
+					const total = parseFloat((price + (price * taxPercentage) / 100).toFixed(2));
 					const updatedRows: OmitCreateInvoiceProductsExtended[] = rows.map((row) => {
 						if (row.id === params.id) {
 							return {
@@ -309,9 +309,9 @@ export default function FullFeaturedCrudGrid({
 					// Calculate total (Selling Price): quantity * price * (1 + taxPercentage/100)
 					const newTotal =
 						price > 0 && value > 0 && taxPercentage > 0
-							? Math.round(value * price * (1 + taxPercentage / 100) * 100) / 100
+							? parseFloat((value * price * (1 + taxPercentage / 100)).toFixed(2))
 							: price > 0 && value > 0
-								? Math.round(value * price * 100) / 100
+								? parseFloat((value * price).toFixed(2))
 								: 0;
 					params.api.setEditCellValue({
 						id: params.id,
@@ -356,7 +356,7 @@ export default function FullFeaturedCrudGrid({
 			},
 			renderEditCell: (params) => {
 				const onChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
-					const value = Math.round((parseFloat(event.target.value) || 0) * 100) / 100; // Round to 2 decimal places
+					const value = parseFloat((parseFloat(event.target.value) || 0).toFixed(2)); // Round to 2 decimal places
 					if (value < 0.00001) {
 						setErrorText(
 							t("invoiceForm.validation.priceMin", {
@@ -375,9 +375,9 @@ export default function FullFeaturedCrudGrid({
 					// Calculate total (Selling Price): quantity * stockPrice * (1 + taxPercentage/100)
 					const newTotal =
 						quantity > 0 && taxPercentage > 0
-							? Math.round(quantity * value * (1 + taxPercentage / 100) * 100) / 100
+							? parseFloat((quantity * value * (1 + taxPercentage / 100)).toFixed(2))
 							: quantity > 0
-								? Math.round(quantity * value * 100) / 100
+								? parseFloat((quantity * value).toFixed(2))
 								: 0;
 					params.api.setEditCellValue({
 						id: params.id,
@@ -458,9 +458,9 @@ export default function FullFeaturedCrudGrid({
 					// Recalculate total (Selling Price) when tax changes: quantity * price * (1 + taxPercentage/100)
 					const newTotal =
 						price > 0 && quantity > 0 && taxPercentage > 0
-							? Math.round(quantity * price * (1 + taxPercentage / 100) * 100) / 100
+							? parseFloat((quantity * price * (1 + taxPercentage / 100)).toFixed(2))
 							: price > 0 && quantity > 0
-								? Math.round(quantity * price * 100) / 100
+								? parseFloat((quantity * price).toFixed(2))
 								: 0;
 					params.api.setEditCellValue({
 						id: params.id,
@@ -588,7 +588,7 @@ export default function FullFeaturedCrudGrid({
 			editable: true,
 			renderEditCell: (params) => {
 				const onChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
-					const newTotal = Math.round((parseFloat(event.target.value) || 0) * 100) / 100; // Round to 2 decimal places
+					const newTotal = parseFloat((parseFloat(event.target.value) || 0).toFixed(2)); // Round to 2 decimal places
 					if (newTotal < 0.00001) {
 						setErrorText(
 							t("invoiceForm.validation.priceMin", {
@@ -607,9 +607,9 @@ export default function FullFeaturedCrudGrid({
 					// Calculate stock price: total / (quantity * (1 + taxPercentage/100))
 					const newStockPrice =
 						quantity > 0 && taxPercentage > 0
-							? Math.round((newTotal / (quantity * (1 + taxPercentage / 100))) * 100) / 100
+							? parseFloat((newTotal / (quantity * (1 + taxPercentage / 100))).toFixed(2))
 							: quantity > 0
-								? Math.round((newTotal / quantity) * 100) / 100
+								? parseFloat((newTotal / quantity).toFixed(2))
 								: 0;
 					params.api.setEditCellValue({
 						id: params.id,
@@ -648,7 +648,7 @@ export default function FullFeaturedCrudGrid({
 				return (
 					<Typography>
 						{currencyFormatter(
-							Math.round(Number(params.value) * 100) / 100,
+							parseFloat((Number(params.value) || 0).toFixed(2)),
 							currencyList?.data?.find((currency) => currency.id === currency_id)?.short_code ??
 								"USD",
 						)}

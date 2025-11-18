@@ -13,6 +13,8 @@ import { formatCurrency } from "@shared/formatter";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
+import i18n from "../../i18s";
 
 const responsive = {
 	desktop: {
@@ -47,6 +49,45 @@ const ProductDialog = ({
 		removeProductFromCheckout,
 	} = useProductCheckoutStore();
 
+	// Force re-render when translations are loaded or language changes
+	const [, forceUpdate] = useState({});
+	useEffect(() => {
+		const handleLanguageChange = () => {
+			forceUpdate({});
+		};
+		i18n.on("languageChanged", handleLanguageChange);
+		i18n.on("loaded", handleLanguageChange);
+		return () => {
+			i18n.off("languageChanged", handleLanguageChange);
+			i18n.off("loaded", handleLanguageChange);
+		};
+	}, []);
+
+	// Helper function to get translations from resources directly
+	// This works around i18next's issue with keys containing dots in the parent name
+	const getTranslation = (key: string, defaultValue: string): string => {
+		try {
+			const resources = i18n.getResourceBundle(i18n.language, "translation");
+			if (resources && resources["store.product"]) {
+				const storeProduct = resources["store.product"] as Record<string, string>;
+				if (key === "store.product.noImages" && storeProduct.noImages) {
+					return storeProduct.noImages;
+				}
+				if (key === "store.product.noDescription" && storeProduct.noDescription) {
+					return storeProduct.noDescription;
+				}
+				if (key === "store.product.details" && storeProduct.details) {
+					return storeProduct.details;
+				}
+			}
+			// Fallback to i18n.t() if direct access doesn't work
+			const translation = i18n.t(key, { defaultValue, ns: "translation" });
+			return translation === key ? defaultValue : translation;
+		} catch (error) {
+			return defaultValue;
+		}
+	};
+
 	// First try to find priceBook matching the store currency, otherwise use the first available priceBook
 	const priceBook =
 		product?.priceBook?.find((price) => price.currency?.short_code === currencyCode) ||
@@ -66,7 +107,7 @@ const ProductDialog = ({
 	return (
 		<Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
 			<AppDialogHeader
-				title={t("store.product.details", { defaultValue: "Product Details" })}
+				title={getTranslation("store.product.details", "Product Details")}
 				handleClose={handleClose}
 			/>
 			<DialogContent>
@@ -109,7 +150,7 @@ const ProductDialog = ({
 							}}
 						>
 							<Typography variant="h6" color="text.secondary">
-								{t("store.product.noImages", { defaultValue: "No Images Available" })}
+								{getTranslation("store.product.noImages", "No Images Available")}
 							</Typography>
 						</Box>
 					)}
@@ -145,7 +186,7 @@ const ProductDialog = ({
 							</Typography>
 						) : (
 							<Typography variant="body1" color="text.secondary" sx={{ fontStyle: "italic" }}>
-								{t("store.product.noDescription", { defaultValue: "No description available." })}
+								{getTranslation("store.product.noDescription", "No description available.")}
 							</Typography>
 						)}
 						<Typography variant="h6" color="primary" sx={{ marginTop: 2 }}>

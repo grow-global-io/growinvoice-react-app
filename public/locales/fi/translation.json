@@ -369,7 +369,7 @@
   },
   "receipt": {
     "title": "Kuitit",
-    "saveReceipt": "Lähetä kuitti",
+    "saveReceipt": "Tallenna kuitti",
     "createReceipt": "Luo kuitti",
     "successfullyCreated": "Kuitti luotu onnistuneesti"
   },
