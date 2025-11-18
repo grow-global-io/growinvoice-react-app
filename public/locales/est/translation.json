@@ -417,6 +417,8 @@
       "draft": "Mustand",
       "due": "Tasumata",
       "mailedtocustomer": "Kviitung saadetud",
+      "receiptsent": "Kviitung saadetud",
+      "invoicesent": "Arve saadetud",
       "viewed": "Vaadatud",
       "paid": "Makstud",
       "accepted": "Aktsepteeritud",

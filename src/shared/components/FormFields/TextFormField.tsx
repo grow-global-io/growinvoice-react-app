@@ -85,13 +85,34 @@ export const TextFormField: React.FC<
 					shrink: true,
 				}}
 				hidden={true}
+				onFocus={(e: React.FocusEvent<HTMLInputElement>) => {
+					// For number fields, select the value if it's 0 so user can type directly
+					if (props.type === "number") {
+						const value = e.target.value;
+						if (value === "0" || value === "0.00" || value === "0.0") {
+							e.target.select();
+						}
+					}
+					// Call any custom onFocus handler if provided
+					if (props.onFocus) {
+						props.onFocus(e);
+					}
+				}}
 				onBlur={(e) => {
 					form.handleBlur(e);
 					if (props?.type === "number") {
 						const value = e.target.value;
-						const numberValue = parseFloat(value === "" ? "0" : value);
-						form.setFieldValue(field.name, numberValue);
-						e.target.value = numberValue.toString();
+						// Allow empty values - don't force 0 if user cleared the field
+						if (value === "" || value === null || value === undefined) {
+							form.setFieldValue(field.name, "");
+							e.target.value = "";
+						} else {
+							const numberValue = parseFloat(value);
+							if (!isNaN(numberValue)) {
+								form.setFieldValue(field.name, numberValue);
+								e.target.value = numberValue.toString();
+							}
+						}
 					}
 				}}
 			/>

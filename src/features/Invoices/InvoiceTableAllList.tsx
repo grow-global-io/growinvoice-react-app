@@ -73,21 +73,42 @@ const InvoiceTableAllList = ({ customerId }: { customerId?: string | null }) => 
 			flex: 1,
 			minWidth: 150,
 			renderCell: (params) => {
-				const statusKey = params.value?.toLowerCase().replace(/\s+/g, "") || "";
-				let translatedStatus = t(`invoice.status.${statusKey}`, {
-					defaultValue: params.value || "",
-				});
-				// Explicitly map "Mailed to customer" to "Receipt Sent"
-				if (params.value === "Mailed to customer") {
-					translatedStatus = t("invoice.status.mailedtocustomer", { defaultValue: "Receipt Sent" });
+				// Determine status based on paid_status, but keep Draft as Draft
+				const paidStatus = params.row.paid_status;
+				const originalStatus = params.value;
+				let displayStatus: string;
+
+				// If status is "Draft", keep it as "Draft" - don't change based on paid_status
+				if (originalStatus === "Draft") {
+					const statusKey = originalStatus?.toLowerCase().replace(/\s+/g, "") || "";
+					displayStatus = t(`invoice.status.${statusKey}`, {
+						defaultValue: originalStatus || "",
+					});
+				} else if (paidStatus === "Paid") {
+					// If paid, show "Receipt Sent"
+					displayStatus = t("invoice.status.receiptsent", { defaultValue: "Receipt Sent" });
+				} else if (paidStatus === "Unpaid" || paidStatus === "PartiallyPaid") {
+					// If unpaid or partially paid, show "Invoice Sent"
+					displayStatus = t("invoice.status.invoicesent", { defaultValue: "Invoice Sent" });
+				} else {
+					// Fallback to original status if paid_status doesn't match expected values
+					const statusKey = originalStatus?.toLowerCase().replace(/\s+/g, "") || "";
+					displayStatus = t(`invoice.status.${statusKey}`, {
+						defaultValue: originalStatus || "",
+					});
 				}
+
 				return (
 					<Chip
-						label={translatedStatus}
+						label={displayStatus}
 						color={
-							Constants?.invoiceStatusColorEnums[params.value] ??
-							Constants?.invoiceStatusColorEnums["Receipt Sent"] ??
-							"default"
+							originalStatus === "Draft"
+								? (Constants?.invoiceStatusColorEnums[originalStatus] ?? "default")
+								: paidStatus === "Paid"
+									? (Constants?.invoiceStatusColorEnums["Receipt Sent"] ?? "default")
+									: (Constants?.invoiceStatusColorEnums["Invoice Sent"] ??
+										Constants?.invoiceStatusColorEnums[originalStatus] ??
+										"default")
 						}
 						variant="filled"
 					/>
