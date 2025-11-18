@@ -139,10 +139,15 @@ const ProductDialog = ({
 						<Typography variant="h3" sx={{ textTransform: "capitalize" }}>
 							{product?.name || t("store.product.name", { defaultValue: "Product Name" })}
 						</Typography>
-						<Typography variant="body1" color="text.secondary">
-							{product?.description ||
-								t("store.product.description", { defaultValue: "Product Description" })}
-						</Typography>
+						{product?.description ? (
+							<Typography variant="body1" color="text.secondary">
+								{product.description}
+							</Typography>
+						) : (
+							<Typography variant="body1" color="text.secondary" sx={{ fontStyle: "italic" }}>
+								{t("store.product.noDescription", { defaultValue: "No description available." })}
+							</Typography>
+						)}
 						<Typography variant="h6" color="primary" sx={{ marginTop: 2 }}>
 							{t("store.product.price", { defaultValue: "Price:" })}{" "}
 							{formatCurrency(priceBook?.price || 0, priceBook?.currency?.short_code || "INR")}
