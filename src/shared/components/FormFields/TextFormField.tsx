@@ -18,6 +18,7 @@ export const TextFormField: React.FC<
 		type?: string;
 		backgroundColor?: string; // New prop for background color
 		marginWholeTop?: number;
+		onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
 	}
 > = ({ field, form, label, backgroundColor, isRequired, marginWholeTop, ...props }) => {
 	const { t } = useTranslation();
