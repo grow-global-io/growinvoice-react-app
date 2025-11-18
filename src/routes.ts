@@ -19,6 +19,7 @@ import CompanyPage from "@pages/CompanyPage";
 import InvoicesPage from "@pages/InvoicesPage";
 import ApiCredentialsPage from "@pages/ApiCredentialsPage";
 import InvoiceDetailPage from "@pages/InvoiceDetailPage";
+import ReceiptDetailPage from "@pages/ReceiptDetailPage";
 import QuotationDetailPage from "@pages/QuotationDetailPage";
 import InvoiceTemplatePage from "@pages/InvoiceTemplatePage";
 import OrdersPage from "@pages/OrdersPage";
@@ -198,6 +199,10 @@ export const protectedRoutes: Route[] = [
 	{
 		path: "/receipt/createreceipt/:id",
 		Component: CreateReceiptPage,
+	},
+	{
+		path: "/receipt/receiptdetails/:id",
+		Component: ReceiptDetailPage,
 	},
 	{
 		path: "/setting/receipt/receiptlist",

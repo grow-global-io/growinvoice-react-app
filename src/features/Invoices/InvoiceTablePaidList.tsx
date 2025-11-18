@@ -13,7 +13,6 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import DownloadIcon from "@mui/icons-material/Download";
 import EditIcon from "@mui/icons-material/Edit";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
-import { useInvoiceHook } from "./invoiceHooks/useInvoiceHook";
 import { type InvoiceWithAllDataDto } from "@api/services/models";
 import { useTranslation } from "react-i18next";
 import { LoaderService } from "@shared/services/LoaderService";
@@ -29,7 +28,10 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 	const invoiceData = useInvoiceControllerFindPaidInvoices({
 		customerId: customerId ?? undefined,
 	});
-	const { handleView } = useInvoiceHook();
+	// Custom handler for viewing receipts - navigates to receipt detail page
+	const handleViewReceipt = (invoiceId: string) => {
+		navigate(`/receipt/receiptdetails/${invoiceId}`);
+	};
 
 	// Custom handler for editing receipts - navigates to receipt creation page
 	const handleEditReceipt = (invoiceId: string) => {
@@ -70,7 +72,7 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 					<Box
 						sx={{ cursor: "pointer" }}
 						onClick={() => {
-							handleView(params.row.id);
+							handleViewReceipt(params.row.id);
 						}}
 					>
 						<Typography variant="h6" color={"secondary"}>
@@ -188,7 +190,7 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 									<CustomIconButton
 										src={VisibilityIcon}
 										onClick={() => {
-											handleView(params?.row?.id);
+											handleViewReceipt(params?.row?.id);
 										}}
 									/>
 								</span>
