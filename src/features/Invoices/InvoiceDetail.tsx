@@ -24,7 +24,7 @@ import InvoiceTemplateCard from "./InvoiceTemplateCard";
 import {
 	getInvoiceControllerTestPDFGenQueryKey,
 	useInvoiceControllerInvoicePublicFindOne,
-	// useInvoiceControllerSendInvoicePaymentReceiptManually,
+	useInvoiceControllerSendInvoicePaymentReceiptManually,
 	useInvoiceControllerTest,
 } from "@api/services/invoice";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -69,7 +69,7 @@ const styles = {
 };
 
 const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: boolean }) => {
-	// const sendInvoice = useInvoiceControllerSendInvoicePaymentReceiptManually();
+	const sendInvoice = useInvoiceControllerSendInvoicePaymentReceiptManually();
 	// const [termsAccepted, setTermsAccepted] = useState(false);
 	const { t } = useTranslation();
 	const navigate = useNavigate();
@@ -553,7 +553,7 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 								downloadPdf();
 							}}
 						/>
-						{/* <Button
+						<Button
 							variant="contained"
 							onClick={async () => {
 								console.log("Sending payment receipt for invoice ID:", invoiceId);
@@ -565,7 +565,7 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 							}}
 						>
 							{t("invoice.detail.sendPaymentReceipt", { defaultValue: "Send Payment Receipt" })}
-						</Button> */}
+						</Button>
 						{getInvoiceData?.data?.paid_status !== "Paid" && (
 							<>
 								{getInvoiceData?.data?.currency?.short_code === "INR" &&
