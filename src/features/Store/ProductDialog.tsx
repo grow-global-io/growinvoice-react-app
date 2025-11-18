@@ -79,6 +79,9 @@ const ProductDialog = ({
 				if (key === "store.product.details" && storeProduct.details) {
 					return storeProduct.details;
 				}
+				if (key === "store.product.price" && storeProduct.price) {
+					return storeProduct.price;
+				}
 			}
 			// Fallback to i18n.t() if direct access doesn't work
 			const translation = i18n.t(key, { defaultValue, ns: "translation" });
@@ -190,7 +193,7 @@ const ProductDialog = ({
 							</Typography>
 						)}
 						<Typography variant="h6" color="primary" sx={{ marginTop: 2 }}>
-							{t("store.product.price", { defaultValue: "Price:" })}{" "}
+							{getTranslation("store.product.price", "Price:")}{" "}
 							{formatCurrency(priceBook?.price || 0, priceBook?.currency?.short_code || "INR")}
 						</Typography>
 					</Box>

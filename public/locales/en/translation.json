@@ -417,6 +417,8 @@
       "draft": "Draft",
       "due": "Due",
       "mailedtocustomer": "Receipt Sent",
+      "receiptsent": "Receipt Sent",
+      "invoicesent": "Invoice Sent",
       "viewed": "Viewed",
       "paid": "Paid",
       "accepted": "Accepted",

@@ -562,9 +562,17 @@ const ProductForm = () => {
 
 																// Handler for Stock Price change
 																const handleStockPriceChange = (value: string) => {
-																	const newStockPrice = parseFloat(
-																		(parseFloat(value) || 0).toFixed(2),
-																	); // Round to 2 decimal places
+																	// Allow empty values during editing
+																	if (value === "" || value === null || value === undefined) {
+																		setFieldValue(`priceBook.${index}.price`, "");
+																		setFieldValue(`priceBook.${index}.sellPrice`, "");
+																		return;
+																	}
+																	const parsedValue = parseFloat(value);
+																	if (isNaN(parsedValue)) {
+																		return; // Don't update if not a valid number
+																	}
+																	const newStockPrice = parseFloat(parsedValue.toFixed(2)); // Round to 2 decimal places
 																	// Calculate sell price: Stock Price * (1 + tax percentage / 100)
 																	const newSellPrice =
 																		taxPercentage > 0
@@ -578,9 +586,17 @@ const ProductForm = () => {
 
 																// Handler for Selling Price change
 																const handleSellPriceChange = (value: string) => {
-																	const newSellPrice = parseFloat(
-																		(parseFloat(value) || 0).toFixed(2),
-																	); // Round to 2 decimal places
+																	// Allow empty values during editing
+																	if (value === "" || value === null || value === undefined) {
+																		setFieldValue(`priceBook.${index}.sellPrice`, "");
+																		setFieldValue(`priceBook.${index}.price`, "");
+																		return;
+																	}
+																	const parsedValue = parseFloat(value);
+																	if (isNaN(parsedValue)) {
+																		return; // Don't update if not a valid number
+																	}
+																	const newSellPrice = parseFloat(parsedValue.toFixed(2)); // Round to 2 decimal places
 																	// Calculate stock price: Selling Price / (1 + tax percentage / 100)
 																	const newStockPrice =
 																		taxPercentage > 0
@@ -667,17 +683,10 @@ const ProductForm = () => {
 															startIcon={<AddIcon />}
 															onClick={() => {
 																// Calculate initial sellPrice based on current tax
-																const taxPercentage =
-																	taxCodes?.data
-																		?.filter((t) => values.tax?.includes(t.id))
-																		?.map((t) => t.percentage)
-																		?.reduce((acc, curr) => acc + curr, 0) ?? 0;
-																const initialSellPrice =
-																	taxPercentage > 0 ? 0 * (1 + taxPercentage / 100) : 0;
 																arrayHelpers.push({
 																	currency_id: "",
-																	price: 0,
-																	sellPrice: initialSellPrice,
+																	price: "",
+																	sellPrice: "",
 																});
 															}}
 														>

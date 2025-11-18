@@ -423,6 +423,8 @@
       "draft": "Luonnos",
       "due": "Erääntynyt",
       "mailedtocustomer": "Kuitti lähetetty",
+      "receiptsent": "Kuitti lähetetty",
+      "invoicesent": "Lasku lähetetty",
       "viewed": "Katsottu",
       "paid": "Maksettu",
       "accepted": "Hyväksytty",
