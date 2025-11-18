@@ -452,7 +452,7 @@
       "eInvoice": "E-lasku",
       "print": "Tulosta",
       "sendMail": "Lähetä sähköposti",
-      "sendPaymentReceipt": "Lähetä maksukuitti",
+      "sendPaymentReceipt": "Lähetä kuitti",
       "sendWhatsapp": "Lähetä WhatsAppissa",
       "customerEmailNotFound": "Asiakkaan sähköpostia ei löytynyt",
       "dear": "Hyvä",
