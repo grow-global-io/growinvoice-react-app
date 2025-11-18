@@ -11,6 +11,7 @@ import Loader from "@shared/components/Loader";
 import { currencyFormatter, parseDateStringToFormat } from "@shared/formatter";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DownloadIcon from "@mui/icons-material/Download";
+import EditIcon from "@mui/icons-material/Edit";
 import { CustomIconButton } from "@shared/components/CustomIconButton";
 import { useInvoiceHook } from "./invoiceHooks/useInvoiceHook";
 import { type InvoiceWithAllDataDto } from "@api/services/models";
@@ -19,14 +20,21 @@ import { LoaderService } from "@shared/services/LoaderService";
 import { environment } from "@enviroment";
 import { http } from "@shared/axios";
 import EmailIcon from "@mui/icons-material/Email";
+import { useNavigate } from "react-router-dom";
 
 const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) => {
 	const sendReceipt = useInvoiceControllerSendInvoicePaymentReceiptManually();
 	const { t } = useTranslation();
+	const navigate = useNavigate();
 	const invoiceData = useInvoiceControllerFindPaidInvoices({
 		customerId: customerId ?? undefined,
 	});
 	const { handleView } = useInvoiceHook();
+
+	// Custom handler for editing receipts - navigates to receipt creation page
+	const handleEditReceipt = (invoiceId: string) => {
+		navigate(`/receipt/createreceipt/${invoiceId}`);
+	};
 
 	const downloadPdf = async (invoiceId: string, invoiceNumber?: string) => {
 		LoaderService.instance.showLoader();
@@ -175,7 +183,7 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 				<>
 					<Box display="flex" gap={1} justifyContent={"center"} alignItems="center">
 						<Box>
-							<Tooltip title={"view invoice"}>
+							<Tooltip title={t("invoice.table.viewInvoice", { defaultValue: "View Invoice" })}>
 								<span>
 									<CustomIconButton
 										src={VisibilityIcon}
@@ -187,7 +195,19 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 							</Tooltip>
 						</Box>
 						<Box>
-							<Tooltip title={"download pdf"}>
+							<Tooltip title={t("invoice.table.editInvoice", { defaultValue: "Edit Invoice" })}>
+								<span>
+									<CustomIconButton
+										src={EditIcon}
+										onClick={() => {
+											handleEditReceipt(params?.row?.id);
+										}}
+									/>
+								</span>
+							</Tooltip>
+						</Box>
+						<Box>
+							<Tooltip title={t("invoice.table.downloadPdf", { defaultValue: "Download PDF" })}>
 								<span>
 									<CustomIconButton
 										src={DownloadIcon}
@@ -199,7 +219,7 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 							</Tooltip>
 						</Box>
 						<Box>
-							<Tooltip title={"send receipt"}>
+							<Tooltip title={t("invoice.table.sendReceipt", { defaultValue: "Send Receipt" })}>
 								<span>
 									<CustomIconButton
 										disabled={sendReceipt.isPending}
@@ -223,9 +243,16 @@ const InvoiceTablePaidList = ({ customerId }: { customerId?: string | null }) =>
 
 	if (invoiceData.isLoading) return <Loader />;
 
+	// Sort invoices by createdAt in descending order (newest first)
+	const sortedInvoices = [...(invoiceData?.data ?? [])].sort((a, b) => {
+		const dateA = new Date(a.createdAt).getTime();
+		const dateB = new Date(b.createdAt).getTime();
+		return dateB - dateA; // Descending order (newest first)
+	});
+
 	return (
 		<Box>
-			<DataGrid autoHeight rows={invoiceData?.data ?? []} columns={columns} />
+			<DataGrid autoHeight rows={sortedInvoices} columns={columns} />
 		</Box>
 	);
 };

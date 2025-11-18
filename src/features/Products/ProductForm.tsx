@@ -237,7 +237,9 @@ const ProductForm = () => {
 							?.filter((t) => editValues?.tax?.map((tax: any) => tax.tax_id).includes(t.id))
 							?.map((t) => t.percentage)
 							?.reduce((acc, curr) => acc + curr, 0) ?? 0;
-					const calculatedSellPrice = price.price + (price.price * taxPercentage) / 100;
+					const calculatedSellPrice = parseFloat(
+						(price.price + (price.price * taxPercentage) / 100).toFixed(2),
+					);
 					return {
 						currency_id: price.currency_id,
 						price: price.price,
@@ -540,10 +542,12 @@ const ProductForm = () => {
 																if (currentStockPrice > 0) {
 																	const calculatedSellPrice =
 																		taxPercentage > 0
-																			? Math.round(
-																					currentStockPrice * (1 + taxPercentage / 100) * 100,
-																				) / 100
-																			: Math.round(currentStockPrice * 100) / 100;
+																			? parseFloat(
+																					(currentStockPrice * (1 + taxPercentage / 100)).toFixed(
+																						2,
+																					),
+																				)
+																			: parseFloat(currentStockPrice.toFixed(2));
 																	// Only update if different to avoid infinite loops
 																	const priceBookItem = values.priceBook[index] as any;
 																	const currentSellPrice =
@@ -558,14 +562,15 @@ const ProductForm = () => {
 
 																// Handler for Stock Price change
 																const handleStockPriceChange = (value: string) => {
-																	const newStockPrice =
-																		Math.round((parseFloat(value) || 0) * 100) / 100; // Round to 2 decimal places
+																	const newStockPrice = parseFloat(
+																		(parseFloat(value) || 0).toFixed(2),
+																	); // Round to 2 decimal places
 																	// Calculate sell price: Stock Price * (1 + tax percentage / 100)
 																	const newSellPrice =
 																		taxPercentage > 0
-																			? Math.round(
-																					newStockPrice * (1 + taxPercentage / 100) * 100,
-																				) / 100
+																			? parseFloat(
+																					(newStockPrice * (1 + taxPercentage / 100)).toFixed(2),
+																				)
 																			: newStockPrice;
 																	setFieldValue(`priceBook.${index}.price`, newStockPrice);
 																	setFieldValue(`priceBook.${index}.sellPrice`, newSellPrice);
@@ -573,14 +578,15 @@ const ProductForm = () => {
 
 																// Handler for Selling Price change
 																const handleSellPriceChange = (value: string) => {
-																	const newSellPrice =
-																		Math.round((parseFloat(value) || 0) * 100) / 100; // Round to 2 decimal places
+																	const newSellPrice = parseFloat(
+																		(parseFloat(value) || 0).toFixed(2),
+																	); // Round to 2 decimal places
 																	// Calculate stock price: Selling Price / (1 + tax percentage / 100)
 																	const newStockPrice =
 																		taxPercentage > 0
-																			? Math.round(
-																					(newSellPrice / (1 + taxPercentage / 100)) * 100,
-																				) / 100
+																			? parseFloat(
+																					(newSellPrice / (1 + taxPercentage / 100)).toFixed(2),
+																				)
 																			: newSellPrice;
 																	setFieldValue(`priceBook.${index}.sellPrice`, newSellPrice);
 																	setFieldValue(`priceBook.${index}.price`, newStockPrice);

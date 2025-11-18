@@ -421,6 +421,54 @@ const CreateInvoice = ({
 					innerRef={formikRef}
 				>
 					{(formik) => {
+						// Effect to handle currency changes and reset template accordingly
+						useEffect(() => {
+							const selectedCurrency = currencyList?.data?.find(
+								(currency) => currency.id === formik.values.currency_id,
+							);
+							const isEUR = selectedCurrency?.short_code === "EUR";
+
+							if (isEUR) {
+								// If EUR is selected, find and set European template
+								const europeanTemplates = invoiceTemplateFindAll?.data?.filter(
+									(template) =>
+										template.name?.toLowerCase().includes("european") ||
+										template.name?.toLowerCase().includes("eur"),
+								);
+								if (europeanTemplates && europeanTemplates.length > 0) {
+									const currentTemplate = invoiceTemplateFindAll?.data?.find(
+										(t) => t.id === formik.values.template_id,
+									);
+									const isCurrentTemplateEuropean =
+										currentTemplate?.name?.toLowerCase().includes("european") ||
+										currentTemplate?.name?.toLowerCase().includes("eur");
+									// Only set if current template is not European
+									if (!isCurrentTemplateEuropean) {
+										formik.setFieldValue("template_id", europeanTemplates[0].id);
+									}
+								}
+							} else {
+								// If non-EUR is selected, find and set non-European template
+								const nonEuropeanTemplates = invoiceTemplateFindAll?.data?.filter(
+									(template) =>
+										!template.name?.toLowerCase().includes("european") &&
+										!template.name?.toLowerCase().includes("eur"),
+								);
+								if (nonEuropeanTemplates && nonEuropeanTemplates.length > 0) {
+									const currentTemplate = invoiceTemplateFindAll?.data?.find(
+										(t) => t.id === formik.values.template_id,
+									);
+									const isCurrentTemplateEuropean =
+										currentTemplate?.name?.toLowerCase().includes("european") ||
+										currentTemplate?.name?.toLowerCase().includes("eur");
+									// Only set if current template is European
+									if (isCurrentTemplateEuropean) {
+										formik.setFieldValue("template_id", nonEuropeanTemplates[0].id);
+									}
+								}
+							}
+						}, [formik.values.currency_id, currencyList?.data, invoiceTemplateFindAll?.data]);
+
 						return (
 							<Form>
 								<Grid container spacing={2}>
@@ -732,10 +780,49 @@ const CreateInvoice = ({
 											name="template_id"
 											label={t("invoiceForm.invoiceTemplate")}
 											component={AutocompleteField}
-											options={invoiceTemplateFindAll?.data?.map((template) => ({
-												value: template.id,
-												label: template.name,
-											}))}
+											options={(() => {
+												const selectedCurrency = currencyList?.data?.find(
+													(currency) => currency.id === formik.values.currency_id,
+												);
+												const isEUR = selectedCurrency?.short_code === "EUR";
+
+												// If EUR is selected, only show European templates
+												if (isEUR) {
+													const europeanTemplates = invoiceTemplateFindAll?.data?.filter(
+														(template) =>
+															template.name?.toLowerCase().includes("european") ||
+															template.name?.toLowerCase().includes("eur"),
+													);
+													// Set default to first European template if no template is selected
+													if (
+														europeanTemplates &&
+														europeanTemplates.length > 0 &&
+														!formik.values.template_id
+													) {
+														formik.setFieldValue("template_id", europeanTemplates[0].id);
+													}
+													return (
+														europeanTemplates?.map((template) => ({
+															value: template.id,
+															label: template.name,
+														})) || []
+													);
+												}
+
+												// For non-EUR currencies, show all templates except European ones
+												return (
+													invoiceTemplateFindAll?.data
+														?.filter(
+															(template) =>
+																!template.name?.toLowerCase().includes("european") &&
+																!template.name?.toLowerCase().includes("eur"),
+														)
+														?.map((template) => ({
+															value: template.id,
+															label: template.name,
+														})) || []
+												);
+											})()}
 											isRequired={true}
 											loading={
 												invoiceTemplateFindAll.isLoading || invoiceTemplateFindAll.isFetching

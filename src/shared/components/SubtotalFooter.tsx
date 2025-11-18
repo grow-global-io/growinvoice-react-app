@@ -34,14 +34,18 @@ const SubtotalFooter = ({
 
 			const taxPercentage =
 				(formik?.values?.sub_total - discount) * (Number(tax?.percentage ?? 0) / 100);
-			formik?.setFieldValue("total", formik?.values?.sub_total - discount + taxPercentage);
+			const calculatedTotal = parseFloat(
+				(formik?.values?.sub_total - discount + taxPercentage).toFixed(2),
+			);
+			formik?.setFieldValue("total", calculatedTotal);
 			if (formik?.values?.due_amount) {
-				formik?.setFieldValue("due_amount", formik?.values?.sub_total - discount + taxPercentage);
+				formik?.setFieldValue("due_amount", calculatedTotal);
 			}
 		} else {
-			formik?.setFieldValue("total", formik?.values?.sub_total);
+			const calculatedTotal = parseFloat((formik?.values?.sub_total || 0).toFixed(2));
+			formik?.setFieldValue("total", calculatedTotal);
 			if (formik?.values?.due_amount) {
-				formik?.setFieldValue("due_amount", formik?.values?.sub_total);
+				formik?.setFieldValue("due_amount", calculatedTotal);
 			}
 		}
 	}, [formik?.values?.discountPercentage, formik?.values.tax_id]);

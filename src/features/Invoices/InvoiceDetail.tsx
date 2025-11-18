@@ -564,7 +564,7 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 								});
 							}}
 						>
-							Send Payment Receipt
+							{t("invoice.detail.sendPaymentReceipt", { defaultValue: "Send Payment Receipt" })}
 						</Button>
 						{getInvoiceData?.data?.paid_status !== "Paid" && (
 							<>
