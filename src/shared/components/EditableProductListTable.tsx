@@ -204,9 +204,13 @@ export default function FullFeaturedCrudGrid({
 					const value =
 						parseInt(event.target.value) === 0 ? (valuea as string) : event.target.value;
 					const selectedProduct = productList?.data?.find((product) => product.id === value);
-					const taxPercentage =
+					const taxIds =
 						taxCodes?.data
 							?.filter((t) => selectedProduct?.tax?.map((tax) => tax.tax_id).includes(t.id))
+							?.map((t) => t.id) ?? [];
+					const taxPercentage =
+						taxCodes?.data
+							?.filter((t) => taxIds.includes(t.id))
 							?.map((t) => t.percentage)
 							.reduce((acc, curr) => acc + curr, 0) ?? 0;
 					const price =
@@ -222,6 +226,7 @@ export default function FullFeaturedCrudGrid({
 								price: price,
 								total: total,
 								tax_total_percentage: taxPercentage,
+								taxes: taxIds, // Include taxes in updatedRows so handleTotal can use it
 								hsnCode_id: selectedProduct?.hsnCode_id,
 							};
 						}
@@ -242,9 +247,7 @@ export default function FullFeaturedCrudGrid({
 					params.api.setEditCellValue({
 						id: params.id,
 						field: "taxes",
-						value: taxCodes?.data
-							?.filter((t) => selectedProduct?.tax?.map((tax) => tax.tax_id).includes(t.id))
-							?.map((t) => t.id),
+						value: taxIds,
 					});
 					params.api.setEditCellValue({
 						id: params.id,
