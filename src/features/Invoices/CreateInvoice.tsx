@@ -65,6 +65,7 @@ import { useInvoiceHook } from "./invoiceHooks/useInvoiceHook";
 import { LoaderService } from "@shared/services/LoaderService";
 import { toast } from "react-toastify";
 import { setSuppressSuccessMessages } from "@shared/services/InterceptorService";
+import { useEuropeanCountryDetection } from "@shared/hooks/useEuropeanCountryDetection";
 
 export type OmitCreateInvoiceProductsExtended = Omit<
 	OmitCreateInvoiceProductsDto,
@@ -105,6 +106,7 @@ const CreateInvoice = ({
 	const { setOpenCustomerForm } = useCreateCustomerStore.getState();
 	const [previewString, setPreviewString] = useState<string | undefined>(undefined);
 	const invoiceSettings = useInvoicesettingsControllerFindFirst();
+	const { isEuropeanCountry } = useEuropeanCountryDetection();
 	const invoiceFindOne = useInvoiceControllerFindOne(id ?? "", {
 		query: {
 			enabled: id !== undefined,
@@ -421,15 +423,13 @@ const CreateInvoice = ({
 					innerRef={formikRef}
 				>
 					{(formik) => {
-						// Effect to handle currency changes and reset template accordingly
+						// Effect to handle geolocation-based template selection
 						useEffect(() => {
-							const selectedCurrency = currencyList?.data?.find(
-								(currency) => currency.id === formik.values.currency_id,
-							);
-							const isEUR = selectedCurrency?.short_code === "EUR";
+							// Only proceed if geolocation is detected
+							if (isEuropeanCountry === null) return;
 
-							if (isEUR) {
-								// If EUR is selected, find and set European template
+							if (isEuropeanCountry) {
+								// If user is in Europe, find and set European template
 								const europeanTemplates = invoiceTemplateFindAll?.data?.filter(
 									(template) =>
 										template.name?.toLowerCase().includes("european") ||
@@ -447,27 +447,9 @@ const CreateInvoice = ({
 										formik.setFieldValue("template_id", europeanTemplates[0].id);
 									}
 								}
-							} else {
-								// If non-EUR is selected, find and set non-European template
-								const nonEuropeanTemplates = invoiceTemplateFindAll?.data?.filter(
-									(template) =>
-										!template.name?.toLowerCase().includes("european") &&
-										!template.name?.toLowerCase().includes("eur"),
-								);
-								if (nonEuropeanTemplates && nonEuropeanTemplates.length > 0) {
-									const currentTemplate = invoiceTemplateFindAll?.data?.find(
-										(t) => t.id === formik.values.template_id,
-									);
-									const isCurrentTemplateEuropean =
-										currentTemplate?.name?.toLowerCase().includes("european") ||
-										currentTemplate?.name?.toLowerCase().includes("eur");
-									// Only set if current template is European
-									if (isCurrentTemplateEuropean) {
-										formik.setFieldValue("template_id", nonEuropeanTemplates[0].id);
-									}
-								}
 							}
-						}, [formik.values.currency_id, currencyList?.data, invoiceTemplateFindAll?.data]);
+							// If user is not in Europe, show all templates (no filtering needed)
+						}, [isEuropeanCountry, invoiceTemplateFindAll?.data, formik.values.template_id]);
 
 						return (
 							<Form>
@@ -781,13 +763,8 @@ const CreateInvoice = ({
 											label={t("invoiceForm.invoiceTemplate")}
 											component={AutocompleteField}
 											options={(() => {
-												const selectedCurrency = currencyList?.data?.find(
-													(currency) => currency.id === formik.values.currency_id,
-												);
-												const isEUR = selectedCurrency?.short_code === "EUR";
-
-												// If EUR is selected, only show European templates
-												if (isEUR) {
+												// If user is in Europe, only show European templates
+												if (isEuropeanCountry === true) {
 													const europeanTemplates = invoiceTemplateFindAll?.data?.filter(
 														(template) =>
 															template.name?.toLowerCase().includes("european") ||
@@ -809,18 +786,12 @@ const CreateInvoice = ({
 													);
 												}
 
-												// For non-EUR currencies, show all templates except European ones
+												// If user is not in Europe (or geolocation not detected), show all templates including European ones
 												return (
-													invoiceTemplateFindAll?.data
-														?.filter(
-															(template) =>
-																!template.name?.toLowerCase().includes("european") &&
-																!template.name?.toLowerCase().includes("eur"),
-														)
-														?.map((template) => ({
-															value: template.id,
-															label: template.name,
-														})) || []
+													invoiceTemplateFindAll?.data?.map((template) => ({
+														value: template.id,
+														label: template.name,
+													})) || []
 												);
 											})()}
 											isRequired={true}
