@@ -553,19 +553,21 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 								downloadPdf();
 							}}
 						/>
-						<Button
-							variant="contained"
-							onClick={async () => {
-								console.log("Sending payment receipt for invoice ID:", invoiceId);
-								await sendInvoice.mutateAsync({
-									params: {
-										id: invoiceId,
-									},
-								});
-							}}
-						>
-							{t("invoice.detail.sendPaymentReceipt", { defaultValue: "Send Payment Receipt" })}
-						</Button>
+						{user && (
+							<Button
+								variant="contained"
+								onClick={async () => {
+									console.log("Sending payment receipt for invoice ID:", invoiceId);
+									await sendInvoice.mutateAsync({
+										params: {
+											id: invoiceId,
+										},
+									});
+								}}
+							>
+								{t("invoice.detail.sendPaymentReceipt", { defaultValue: "Send Payment Receipt" })}
+							</Button>
+						)}
 						{getInvoiceData?.data?.paid_status !== "Paid" && (
 							<>
 								{getInvoiceData?.data?.currency?.short_code === "INR" &&
