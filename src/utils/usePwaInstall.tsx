@@ -1,3 +1,4 @@
+import { IosShareOutlined } from "@mui/icons-material";
 import { useState, useEffect } from "react";
 
 interface BeforeInstallPromptEvent extends Event {
@@ -174,22 +175,26 @@ export const usePWAInstall = () => {
 		}
 	};
 
-	const getIOSInstallInstructions = (): string[] => {
+	const getIOSInstallInstructions = (): (JSX.Element | string)[] => {
 		const userAgent = navigator.userAgent.toLowerCase();
 
 		if (/safari/.test(userAgent) && !/crios/.test(userAgent)) {
 			// Safari
 			return [
-				"Tap the Share button",
+				<span>
+					Tap the Share button <IosShareOutlined fontSize="inherit" />
+				</span>,
 				'Scroll down and tap "Add to Home Screen"',
 				'Tap "Add" to install the app',
 			];
 		} else if (/crios/.test(userAgent)) {
 			// Chrome on iOS
 			return [
-				"Tap the menu (⋯) in the top right",
-				'Tap "Add to Home Screen"',
-				'Tap "Add" to install the app',
+				<span>
+					Tap the Share button <IosShareOutlined fontSize="inherit" />
+				</span>,
+				'Tap "More" at the bottom of the share menu',
+				'Select "Add to Home Screen" and tap "Add"',
 			];
 		}
 
