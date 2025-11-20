@@ -24,6 +24,11 @@ const CustomersInvoicesSections = ({ customerId }: { customerId: string }) => {
 		if (!customerId) return;
 		navigate(`/invoice/createinvoice?customerId=${customerId}`);
 	};
+
+	const handleCreateReceipt = () => {
+		if (!customerId) return;
+		navigate(`/receipt/createreceipt?customerId=${customerId}`);
+	};
 	if (isLoading) {
 		return <Loader />;
 	}
@@ -80,17 +85,22 @@ const CustomersInvoicesSections = ({ customerId }: { customerId: string }) => {
 								/>
 							</Tabs>
 						</Box>
-						<Button
-							variant="contained"
-							color="primary"
-							onClick={handleCreateInvoice}
+						<Box
 							sx={{
+								display: "flex",
+								gap: 2,
 								ml: { xs: 0, sm: 2 },
 								flexShrink: 0,
+								flexWrap: { xs: "wrap", sm: "nowrap" },
 							}}
 						>
-							{t("customer.createInvoice", { defaultValue: "Create Invoice" })}
-						</Button>
+							<Button variant="contained" color="primary" onClick={handleCreateInvoice}>
+								{t("customer.createInvoice", { defaultValue: "Create Invoice" })}
+							</Button>
+							<Button variant="contained" color="primary" onClick={handleCreateReceipt}>
+								{t("receipt.createReceipt", { defaultValue: "Create Receipt" })}
+							</Button>
+						</Box>
 					</Box>
 				</Grid>
 				<Grid item xs={12}>
