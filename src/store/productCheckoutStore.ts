@@ -28,8 +28,10 @@ export const useProductCheckoutStore = create<ProductCheckoutStore>((set) => ({
 	setOpenCheckoutForm: (open) => set({ open }),
 	checkoutProducts: [],
 	addProductToCheckout: (product) => {
+		const state = useProductCheckoutStore.getState();
+		const currencyCode = state.currencyCode || "INR";
 		const price =
-			product?.priceBook?.find((price) => price.currency?.short_code === "INR")?.price || 0;
+			product?.priceBook?.find((price) => price.currency?.short_code === currencyCode)?.price || 0;
 		const taxPercentage =
 			product?.tax?.reduce((acc, tax) => acc + (tax?.tax?.percentage || 0), 0) || 0;
 		const tax = (price * taxPercentage) / 100; // Calculate tax based on the price and tax percentage
@@ -48,12 +50,12 @@ export const useProductCheckoutStore = create<ProductCheckoutStore>((set) => ({
 	currencyCode: "INR", // Default currency code
 	setCurrencyCode: (code) => set({ currencyCode: code }),
 	changeQuantity: (productId, quantity) => {
-		const product = useProductCheckoutStore
-			.getState()
-			.checkoutProducts.find((p) => p.id === productId);
+		const state = useProductCheckoutStore.getState();
+		const product = state.checkoutProducts.find((p) => p.id === productId);
 		if (!product) return; // If product not found, do nothing
+		const currencyCode = state.currencyCode || "INR";
 		const price =
-			product?.priceBook?.find((price) => price.currency?.short_code === "INR")?.price || 0;
+			product?.priceBook?.find((price) => price.currency?.short_code === currencyCode)?.price || 0;
 		const taxPercentage =
 			product?.tax?.reduce((acc, tax) => acc + (tax?.tax?.percentage || 0), 0) || 0;
 		const tax = (price * taxPercentage) / 100; // Calculate tax based on the price
