@@ -24,6 +24,18 @@ const ProductCard = ({ product }: { product: ProductWithAllDataDto | undefined }
 
 		return product.priceBook?.find((price) => price.currency?.short_code === currencyCode) || null;
 	}, [product, currencyCode]);
+
+	// Calculate tax percentage from product taxes
+	const taxPercentage = useMemo(() => {
+		if (!product?.tax) return 0;
+		return product.tax.reduce((acc, tax) => acc + (tax?.tax?.percentage || 0), 0);
+	}, [product]);
+
+	// Calculate price with tax included
+	const priceWithTax = useMemo(() => {
+		if (!priceBook?.price) return 0;
+		return parseFloat((priceBook.price + (priceBook.price * taxPercentage) / 100).toFixed(2));
+	}, [priceBook, taxPercentage]);
 	return (
 		<Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
 			{/* {product?.images && (
@@ -84,7 +96,7 @@ const ProductCard = ({ product }: { product: ProductWithAllDataDto | undefined }
 					{product?.description}
 				</Typography>
 				<Typography variant="h6" color="primary" sx={{ marginTop: 1 }}>
-					{formatCurrency(priceBook?.price || 0, priceBook?.currency?.short_code || "INR")}
+					{formatCurrency(priceWithTax, priceBook?.currency?.short_code || "INR")}
 				</Typography>
 			</CardContent>
 			<CardActions>

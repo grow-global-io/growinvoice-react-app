@@ -96,6 +96,15 @@ const ProductDialog = ({
 		product?.priceBook?.find((price) => price.currency?.short_code === currencyCode) ||
 		product?.priceBook?.[0];
 
+	// Calculate tax percentage from product taxes
+	const taxPercentage =
+		product?.tax?.reduce((acc, tax) => acc + (tax?.tax?.percentage || 0), 0) || 0;
+
+	// Calculate price with tax included
+	const priceWithTax = priceBook?.price
+		? parseFloat((priceBook.price + (priceBook.price * taxPercentage) / 100).toFixed(2))
+		: 0;
+
 	// A placeholder function for adding to cart
 	const handleAddToCart = () => {
 		if (checkoutProducts.some((p) => p.user_id !== product?.user_id)) {
@@ -194,7 +203,7 @@ const ProductDialog = ({
 						)}
 						<Typography variant="h6" color="primary" sx={{ marginTop: 2 }}>
 							{getTranslation("store.product.price", "Price:")}{" "}
-							{formatCurrency(priceBook?.price || 0, priceBook?.currency?.short_code || "INR")}
+							{formatCurrency(priceWithTax, priceBook?.currency?.short_code || "INR")}
 						</Typography>
 					</Box>
 				</Box>
