@@ -371,7 +371,13 @@
     "title": "Kuitit",
     "saveReceipt": "Tallenna kuitti",
     "createReceipt": "Luo kuitti",
-    "successfullyCreated": "Kuitti luotu onnistuneesti"
+    "successfullyCreated": "Kuitti luotu onnistuneesti",
+    "form": {
+      "title": "Uusi kuitti",
+      "receiptDate": "Kuittipäivä",
+      "receiptDueDate": "Kuittin eräpäivä",
+      "receiptTemplate": "Kuittipohja"
+    }
   },
   "invoice": {
     "title": "Laskut",

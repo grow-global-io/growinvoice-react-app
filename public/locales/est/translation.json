@@ -365,7 +365,13 @@
     "title": "Kviitungid",
     "saveReceipt": "Salvesta kviitung",
     "createReceipt": "Loo kviitung",
-    "successfullyCreated": "Kviitung loodud edukalt"
+    "successfullyCreated": "Kviitung loodud edukalt",
+    "form": {
+      "title": "Uus kviitung",
+      "receiptDate": "Kviitungi kuupäev",
+      "receiptDueDate": "Kviitungi maksetähtaeg",
+      "receiptTemplate": "Kviitungi mall"
+    }
   },
   "invoice": {
     "title": "Arved",
