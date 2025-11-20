@@ -362,9 +362,9 @@
       "currencyInvalid": "Valuutta ei ole kelvollinen"
     },
     "type": {
-      "freelancer": "Freelancer",
-      "businessWithGST": "Yritys GST:llä",
-      "businessWithoutGST": "Yritys ilman GST:tä"
+      "freelancer": "Freelancerina",
+      "businessWithGST": "yritysasiakas",
+      "businessWithoutGST": "yksityisasiakas"
     }
   },
   "receipt": {

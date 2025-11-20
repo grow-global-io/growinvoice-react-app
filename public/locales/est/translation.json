@@ -356,8 +356,8 @@
       "websiteInvalid": "Veebiaadress ei ole kehtiv"
     },
     "type": {
-      "freelancer": "Vabakutseline",
-      "businessWithGST": "Ettevõte koos käibemaksuga",
+      "freelancer": "Eraisik",
+      "businessWithGST": "Ettevõte käibemaksuga",
       "businessWithoutGST": "Ettevõte ilma käibemaksuta"
     }
   },
