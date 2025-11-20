@@ -408,7 +408,9 @@ const CreateInvoice = ({
 				textTransform={"capitalize"}
 			>
 				<img src={Constants.customImages.invoiceIcon} alt={t("invoiceForm.invoiceIconAlt")} />{" "}
-				{t("invoiceForm.title")}
+				{isReceipt
+					? t("receipt.form.title", { defaultValue: "New Receipt" })
+					: t("invoiceForm.title")}
 			</Typography>
 			<Divider
 				sx={{
@@ -579,7 +581,11 @@ const CreateInvoice = ({
 										<Field
 											name="date"
 											component={DateFormField}
-											label={t("invoiceForm.invoiceDate")}
+											label={
+												isReceipt
+													? t("receipt.form.receiptDate", { defaultValue: "Receipt Date" })
+													: t("invoiceForm.invoiceDate")
+											}
 											// minDate={new Date()}
 											isRequired={true}
 										/>
@@ -588,7 +594,11 @@ const CreateInvoice = ({
 										<Field
 											name="due_date"
 											component={DateFormField}
-											label={t("invoiceForm.invoiceDueDate")}
+											label={
+												isReceipt
+													? t("receipt.form.receiptDueDate", { defaultValue: "Receipt Due Date" })
+													: t("invoiceForm.invoiceDueDate")
+											}
 											minDate={moment(formik?.values.date).add(1, "days").toDate()}
 											isRequired={true}
 										/>
@@ -760,7 +770,11 @@ const CreateInvoice = ({
 									<Grid item xs={12} sm={3.5}>
 										<Field
 											name="template_id"
-											label={t("invoiceForm.invoiceTemplate")}
+											label={
+												isReceipt
+													? t("receipt.form.receiptTemplate", { defaultValue: "Receipt Template" })
+													: t("invoiceForm.invoiceTemplate")
+											}
 											component={AutocompleteField}
 											options={(() => {
 												// If user is in Europe, only show European templates

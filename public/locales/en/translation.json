@@ -365,7 +365,13 @@
     "title": "Receipts",
     "saveReceipt": "Save Receipt",
     "createReceipt": "Create Receipt",
-    "successfullyCreated": "Receipt Successfully Created"
+    "successfullyCreated": "Receipt Successfully Created",
+    "form": {
+      "title": "New Receipt",
+      "receiptDate": "Receipt Date",
+      "receiptDueDate": "Receipt Due Date",
+      "receiptTemplate": "Receipt Template"
+    }
   },
   "invoice": {
     "title": "Invoices",
