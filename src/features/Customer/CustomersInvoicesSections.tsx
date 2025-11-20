@@ -24,7 +24,7 @@ const CustomersInvoicesSections = ({ customerId }: { customerId: string }) => {
 		if (!customerId) return;
 		navigate(`/invoice/createinvoice?customerId=${customerId}`);
 	};
-	//test comment
+	//test comment 1
 	const handleCreateReceipt = () => {
 		if (!customerId) return;
 		navigate(`/receipt/createreceipt?customerId=${customerId}`);
