@@ -375,7 +375,11 @@ const CustomerForm = () => {
 												name="option"
 												label={t("customerForm.customerType")}
 												component={AutocompleteField}
-												options={Object.values(CreateCustomerWithAddressDtoOption).map((value) => ({
+												options={[
+													CreateCustomerWithAddressDtoOption.Freelancer,
+													CreateCustomerWithAddressDtoOption.BusinessWithoutGST,
+													CreateCustomerWithAddressDtoOption.BusinessWithGST,
+												].map((value) => ({
 													value,
 													label:
 														value === CreateCustomerWithAddressDtoOption.Freelancer
