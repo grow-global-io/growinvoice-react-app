@@ -46,6 +46,16 @@ const StoreSearchPage = () => {
 					const priceBook = product?.product?.[0]?.priceBook?.find(
 						(price) => price.currency?.short_code === currencyCode,
 					);
+					// Calculate tax percentage from product taxes
+					const taxPercentage =
+						product?.product?.[0]?.tax?.reduce(
+							(acc, tax) => acc + (tax?.tax?.percentage || 0),
+							0,
+						) || 0;
+					// Calculate price with tax included
+					const priceWithTax = priceBook?.price
+						? parseFloat((priceBook.price + (priceBook.price * taxPercentage) / 100).toFixed(2))
+						: 0;
 					return (
 						<Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
 							<Card
@@ -82,10 +92,7 @@ const StoreSearchPage = () => {
 										{product?.product?.[0]?.description ?? ""}
 									</Typography>
 									<Typography variant="h6" color="primary" sx={{ marginTop: 1 }}>
-										{formatCurrency(
-											priceBook?.price || 0,
-											priceBook?.currency?.short_code || "INR",
-										)}
+										{formatCurrency(priceWithTax, priceBook?.currency?.short_code || "INR")}
 									</Typography>
 									<Divider sx={{ margin: "8px 0" }} />
 									<Typography variant="body2" color="text.secondary">
