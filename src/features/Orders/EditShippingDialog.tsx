@@ -53,9 +53,15 @@ const EditShippingDialog: React.FC<EditShippingDialogProps> = ({
 		}
 	}, [invoice, open]);
 
+	// Validation: If status is "Shipped", reference number is required
+	const isSaveDisabled = isSaving || (shippingStatus === "Shipped" && !shippingRefNumber.trim());
+
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!invoice) return;
+
+		// Prevent submission if validation fails
+		if (isSaveDisabled) return;
 
 		setIsSaving(true);
 		try {
@@ -106,7 +112,7 @@ const EditShippingDialog: React.FC<EditShippingDialogProps> = ({
 						sx={{ mb: 2 }}
 					/>
 				</DialogContent>
-				<AppDialogFooter onClickCancel={onClose} saveButtonDisabled={isSaving} />
+				<AppDialogFooter onClickCancel={onClose} saveButtonDisabled={isSaveDisabled} />
 			</form>
 		</Dialog>
 	);
