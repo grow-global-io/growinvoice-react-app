@@ -527,7 +527,7 @@
       "termsConditions": "Ehdot ja palveluehdot:",
       "termsClaim": "Kaikki väitteet, jotka liittyvät määrään tai toimitusvirheisiin, hylätään ostajalta, ellei niitä tehdä kirjallisesti myyjälle kolmenkymmenen (30) päivän kuluessa tavaroiden toimittamisesta ilmoitettuun osoitteeseen.",
       "termsDelivery": "Toimituspäivät eivät ole taattuja, eikä myyjällä ole vastuuta vahingoista, jotka voivat syntyä tavaroiden lähetyksen viivästymisestä. Verot on jätetty pois, elleivät toisin mainita.",
-      "paymentTerms": "Maksu selvitetään vastaanottajalle yleisten maksunsiirtosääntöjen mukaisesti ja vain maksajan antaman tilinumeron perusteella.",
+      "paymentTerms": "Maksu välitetään saajalle yleisten maksunsiirtosääntöjen mukaisesti, ja ainoastaan maksajan ilmoittaman tilinumeron perusteella.",
       "gdprDisclaimerPersonalData": "Tässä {invoiceType} esitetyt henkilötiedot käsittelevät sovelletusti {companyName}:n asiakaslaskutuksen ja kirjanpitoa varten tarvittavia tietoja EU:n GDPR -tietosuojalakien mukaisesti."
     },
     "receiptEmail": {
@@ -540,6 +540,22 @@
       "questions": "Jos teillä on jotakin kysyttävää maksunne suhteen, älä epäröi kääntyä puoleemme ja kysy asiasta meiltä.",
       "signature": "Parhain terveisin,<br/>Growinvoice -tiimi.",
       "subject": "Kuitti maksusta - Lasku #{invoiceNumber}"
+    },
+    "invoiceEmail": {
+      "title": "Laskuilmoitus",
+      "greeting": "Hei {customerName},",
+      "intro": "Olet saanut uuden laskun yritykseltä {companyName}. Tarkista laskun tiedot alla ja käytä painiketta laskun tarkasteluun tai lataamiseen.",
+      "invoiceNumber": "Lasku #{invoiceNumber}",
+      "status": "Tila:",
+      "amount": "Summa:",
+      "date": "Päivämäärä:",
+      "dueDate": "Eräpäivä:",
+      "viewDownloadButton": "Tarkista ja lataa lasku",
+      "invoiceNumberLabel": "Laskunumero:",
+      "linkInstructions": "Jos linkki ei toimi, kopioi ja liitä tämä URL-osoite selaimen osoiteriville:",
+      "questions": "Jos sinulla on kysyttävää, ota yhteyttä osoitteeseen {contactEmail}.",
+      "signature": "Parhain terveisin,<br/>{companyName}",
+      "subject": "Lasku #{invoiceNumber} yritykseltä {companyName}"
     }
   },
   "invoiceForm": {

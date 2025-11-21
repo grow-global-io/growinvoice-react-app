@@ -523,7 +523,7 @@
       "termsConditions": "Tingimused:",
       "termsClaim": "Kõik tarnitud kaubaga seotud pretensioonid tuleb esitada 30 päeva jooksul kirjalikult.",
       "termsDelivery": "Tarnekuupäevad ei ole garanteeritud ja müüja ei vastuta viivituste eest.",
-      "paymentTerms": "Makse kinnitatakse saajale vastavalt üldistele makseülekande tingimustele ja ainult maksja poolt antud kontonumbri alusel.",
+      "paymentTerms": "Makse edastatakse saajale vastavalt üldistele makseülekande reeglitele ja ainult maksja poolt esitatud kontonumbri alusel.",
       "gdprDisclaimerPersonalData": "Selles {invoiceType} esitatud isikuandmeid töödeldakse vastavalt EL GDPR andmekaitse seadustele {companyName} kliendi arvelduse ja arvestuse eesmärgil."
     },
     "receiptEmail": {
@@ -536,6 +536,22 @@
       "questions": "Kui teil on küsimusi või muresid, ärge kartke meiega ühendust võtta.",
       "signature": "Parimate soovidega,<br/>Growinvoice meeskond.",
       "subject": "Makse kviitung - Arve #{invoiceNumber}"
+    },
+    "invoiceEmail": {
+      "title": "Arve teavitus",
+      "greeting": "Tere {customerName},",
+      "intro": "Olete saanud uue arve ettevõttelt {companyName}. Palun vaadake üle arve andmed allpool ja kasutage nuppu arve vaatamiseks või allalaadimiseks.",
+      "invoiceNumber": "Arve #{invoiceNumber}",
+      "status": "Olek:",
+      "amount": "Summa:",
+      "date": "Kuupäev:",
+      "dueDate": "Maksetähtaeg:",
+      "viewDownloadButton": "Vaata ja laadi alla arve",
+      "invoiceNumberLabel": "Arve number:",
+      "linkInstructions": "Kui link ei tööta, kopeerige ja kleepige see URL oma brauseri aadressiribale:",
+      "questions": "Kui teil on küsimusi, võtke meiega ühendust aadressil {contactEmail}.",
+      "signature": "Parimate soovidega,<br/>{companyName}",
+      "subject": "Arve #{invoiceNumber} ettevõttelt {companyName}"
     }
   },
   "invoiceForm": {

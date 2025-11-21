@@ -13,6 +13,8 @@ export type PaymentDetailsDtoPaymentType =
 export const PaymentDetailsDtoPaymentType = {
 	UPI: "UPI",
 	EuropeanBank: "EuropeanBank",
+	Revolut: "Revolut",
+	Wise: "Wise",
 	SwiftCode: "SwiftCode",
 	Paypal: "Paypal",
 	Stripe: "Stripe",

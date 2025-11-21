@@ -28,7 +28,7 @@ export default defineConfig({
 		suppressHmrLogs(),
 		VitePWA({
 			manifest: false,
-			registerType: "prompt",
+			registerType: "autoUpdate",
 			workbox: {
 				// Pre-cache app shell files
 				globPatterns: ["**/*.{js,css,html,ico,png,svg}"],

@@ -12,6 +12,8 @@ export type PaymentsPaymentType = (typeof PaymentsPaymentType)[keyof typeof Paym
 export const PaymentsPaymentType = {
 	UPI: "UPI",
 	EuropeanBank: "EuropeanBank",
+	Revolut: "Revolut",
+	Wise: "Wise",
 	SwiftCode: "SwiftCode",
 	Paypal: "Paypal",
 	Stripe: "Stripe",

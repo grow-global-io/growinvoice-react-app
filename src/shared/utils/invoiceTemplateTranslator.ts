@@ -418,6 +418,32 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 					.replace("{companyName}", companyName.trim());
 			},
 		},
+		// Business types - translate customer business types
+		// Match "Freelancer" (case-insensitive, word boundary to avoid partial matches)
+		{
+			english: /\bFreelancer\b/gi,
+			translation: t("customerForm.type.freelancer") || "Freelancer",
+		},
+		// Match "Business with GST" (various formats)
+		{
+			english: /\bBusiness\s+with\s+GST\b/gi,
+			translation: t("customerForm.type.businessWithGST") || "Business with GST",
+		},
+		// Match "BusinessWithGST" (camelCase format)
+		{
+			english: /\bBusinessWithGST\b/gi,
+			translation: t("customerForm.type.businessWithGST") || "Business with GST",
+		},
+		// Match "Business without GST" (various formats)
+		{
+			english: /\bBusiness\s+without\s+GST\b/gi,
+			translation: t("customerForm.type.businessWithoutGST") || "Business without GST",
+		},
+		// Match "BusinessWithoutGST" (camelCase format)
+		{
+			english: /\bBusinessWithoutGST\b/gi,
+			translation: t("customerForm.type.businessWithoutGST") || "Business without GST",
+		},
 		{ english: /Terms\s*&\s*Conditions:/gi, translation: t("invoice.template.termsConditions") },
 
 		// Terms and Conditions content - match text with flexible whitespace handling
@@ -435,7 +461,7 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		// Payment Terms - match with flexible whitespace handling
 		{
 			english:
-				/The\s+payment\s+will\s+be\s+cleared\s+for\s+the\s+recipient\s+in\s+accordance\s+with\s+the\s+General\s+items\s+for\s+payment\s+transmission\s+and\s+only\s+on\s+the\s+basis\s+of\s+the\s+account\s+number\s+given\s+by\s+the\s+payer\./gi,
+				/The\s+payment\s+will\s+be\s+processed\s+for\s+the\s+recipient\s+according\s+to\s+the\s+general\s+payment\s+transmission\s+rules,\s+and\s+only\s+based\s+on\s+the\s+account\s+number\s+provided\s+by\s+the\s+payer\./gi,
 			translation: t("invoice.template.paymentTerms"),
 		},
 	];
