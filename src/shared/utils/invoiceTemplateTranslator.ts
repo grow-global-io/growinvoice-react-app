@@ -418,6 +418,32 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 					.replace("{companyName}", companyName.trim());
 			},
 		},
+		// Business types - translate customer business types
+		// Match "Freelancer" (case-insensitive, word boundary to avoid partial matches)
+		{
+			english: /\bFreelancer\b/gi,
+			translation: t("customerForm.type.freelancer") || "Freelancer",
+		},
+		// Match "Business with GST" (various formats)
+		{
+			english: /\bBusiness\s+with\s+GST\b/gi,
+			translation: t("customerForm.type.businessWithGST") || "Business with GST",
+		},
+		// Match "BusinessWithGST" (camelCase format)
+		{
+			english: /\bBusinessWithGST\b/gi,
+			translation: t("customerForm.type.businessWithGST") || "Business with GST",
+		},
+		// Match "Business without GST" (various formats)
+		{
+			english: /\bBusiness\s+without\s+GST\b/gi,
+			translation: t("customerForm.type.businessWithoutGST") || "Business without GST",
+		},
+		// Match "BusinessWithoutGST" (camelCase format)
+		{
+			english: /\bBusinessWithoutGST\b/gi,
+			translation: t("customerForm.type.businessWithoutGST") || "Business without GST",
+		},
 		{ english: /Terms\s*&\s*Conditions:/gi, translation: t("invoice.template.termsConditions") },
 
 		// Terms and Conditions content - match text with flexible whitespace handling
