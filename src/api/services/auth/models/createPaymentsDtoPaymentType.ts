@@ -13,6 +13,8 @@ export type CreatePaymentsDtoPaymentType =
 export const CreatePaymentsDtoPaymentType = {
 	UPI: "UPI",
 	EuropeanBank: "EuropeanBank",
+	Revolut: "Revolut",
+	Wise: "Wise",
 	SwiftCode: "SwiftCode",
 	Paypal: "Paypal",
 	Stripe: "Stripe",

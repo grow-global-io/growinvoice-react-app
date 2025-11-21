@@ -716,7 +716,9 @@ const CreateInvoice = ({
 																	UPI: <b>{payment.upiId}</b>
 																</Typography>
 															)}
-															{payment.paymentType === "EuropeanBank" && (
+															{(payment.paymentType === "EuropeanBank" ||
+																payment.paymentType === "Revolut" ||
+																payment.paymentType === "Wise") && (
 																<>
 																	{(payment as any)?.bankName && (
 																		<Typography variant="subtitle1">

@@ -51,7 +51,11 @@ const PaymentDetails = () => {
 							</Typography>
 						</Box>
 					);
-				} else if (params?.row?.paymentType === "EuropeanBank") {
+				} else if (
+					params?.row?.paymentType === "EuropeanBank" ||
+					params?.row?.paymentType === "Revolut" ||
+					params?.row?.paymentType === "Wise"
+				) {
 					return (
 						<Box sx={{ py: 1, width: "100%" }}>
 							<Typography
