@@ -7,7 +7,6 @@ import { useState } from "react";
 import {
 	useInvoiceControllerCreate,
 	useInvoiceControllerUpdate,
-	useInvoiceControllerBulkInvoiceSentToMail,
 	getInvoiceControllerFindAllQueryKey,
 	getInvoiceControllerFindDueInvoicesQueryKey,
 	getInvoiceControllerFindOneQueryKey,
@@ -27,6 +26,7 @@ import moment from "moment";
 import { AlertService } from "@shared/services/AlertService";
 import { type GridRowsProp } from "@mui/x-data-grid";
 import type { OmitCreateInvoiceProductsExtended } from "../CreateInvoice";
+import { useInvoiceHook } from "../invoiceHooks/useInvoiceHook";
 
 interface SaveAndSendInvoiceButtonProps {
 	formik: FormikProps<any>;
@@ -47,8 +47,8 @@ const SaveAndSendInvoiceButton = ({
 	const [isLoading, setIsLoading] = useState(false);
 	const createInvoice = useInvoiceControllerCreate();
 	const updateInvoice = useInvoiceControllerUpdate();
-	const sendMail = useInvoiceControllerBulkInvoiceSentToMail();
 	const customerData = useCustomerControllerFindAll();
+	const { handleSendMail } = useInvoiceHook();
 	const currentDate = moment().format("YYYY-MM-DD");
 
 	const handleSaveAndSend = async () => {
@@ -175,12 +175,8 @@ const SaveAndSendInvoiceButton = ({
 				return;
 			}
 
-			// Send email
-			await sendMail.mutateAsync({
-				params: {
-					ids: [savedInvoiceId],
-				},
-			});
+			// Send email with translations using the hook's handleSendMail function
+			await handleSendMail(savedInvoiceId);
 
 			// Refetch queries after sending email
 			await queryClient.refetchQueries({

@@ -536,6 +536,22 @@
       "questions": "If you have any questions or concerns, please don't hesitate to contact us.",
       "signature": "Best regards,<br/>Growinvoice Team",
       "subject": "Payment Receipt - Invoice #{invoiceNumber}"
+    },
+    "invoiceEmail": {
+      "title": "Invoice notification",
+      "greeting": "Hello {customerName},",
+      "intro": "You have received a new invoice from {companyName}. Please review the invoice details below and use the button to view or download the invoice.",
+      "invoiceNumber": "Invoice #{invoiceNumber}",
+      "status": "Status:",
+      "amount": "Amount:",
+      "date": "Date:",
+      "dueDate": "Due date:",
+      "viewDownloadButton": "View & Download Invoice",
+      "invoiceNumberLabel": "Invoice number:",
+      "linkInstructions": "If the link does not work, copy & paste this URL into your browser:",
+      "questions": "If you have any questions, contact us at {contactEmail}.",
+      "signature": "Best regards,<br/>{companyName}",
+      "subject": "Invoice #{invoiceNumber} from {companyName}"
     }
   },
   "invoiceForm": {

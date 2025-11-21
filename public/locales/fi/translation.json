@@ -540,6 +540,22 @@
       "questions": "Jos teillä on jotakin kysyttävää maksunne suhteen, älä epäröi kääntyä puoleemme ja kysy asiasta meiltä.",
       "signature": "Parhain terveisin,<br/>Growinvoice -tiimi.",
       "subject": "Kuitti maksusta - Lasku #{invoiceNumber}"
+    },
+    "invoiceEmail": {
+      "title": "Laskuilmoitus",
+      "greeting": "Hei {customerName},",
+      "intro": "Olet saanut uuden laskun yritykseltä {companyName}. Tarkista laskun tiedot alla ja käytä painiketta laskun tarkasteluun tai lataamiseen.",
+      "invoiceNumber": "Lasku #{invoiceNumber}",
+      "status": "Tila:",
+      "amount": "Summa:",
+      "date": "Päivämäärä:",
+      "dueDate": "Eräpäivä:",
+      "viewDownloadButton": "Tarkista ja lataa lasku",
+      "invoiceNumberLabel": "Laskunumero:",
+      "linkInstructions": "Jos linkki ei toimi, kopioi ja liitä tämä URL-osoite selaimen osoiteriville:",
+      "questions": "Jos sinulla on kysyttävää, ota yhteyttä osoitteeseen {contactEmail}.",
+      "signature": "Parhain terveisin,<br/>{companyName}",
+      "subject": "Lasku #{invoiceNumber} yritykseltä {companyName}"
     }
   },
   "invoiceForm": {
