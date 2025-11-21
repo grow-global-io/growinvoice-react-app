@@ -461,7 +461,7 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		// Payment Terms - match with flexible whitespace handling
 		{
 			english:
-				/The\s+payment\s+will\s+be\s+cleared\s+for\s+the\s+recipient\s+in\s+accordance\s+with\s+the\s+General\s+items\s+for\s+payment\s+transmission\s+and\s+only\s+on\s+the\s+basis\s+of\s+the\s+account\s+number\s+given\s+by\s+the\s+payer\./gi,
+				/The\s+payment\s+will\s+be\s+processed\s+for\s+the\s+recipient\s+according\s+to\s+the\s+general\s+payment\s+transmission\s+rules,\s+and\s+only\s+based\s+on\s+the\s+account\s+number\s+provided\s+by\s+the\s+payer\./gi,
 			translation: t("invoice.template.paymentTerms"),
 		},
 	];
