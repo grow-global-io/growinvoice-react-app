@@ -68,7 +68,10 @@ const SaveAndSendInvoiceButton = ({
 		setIsLoading(true);
 		try {
 			const values = formik.values;
-			let savedInvoiceId = invoiceId;
+			const invIds = [];
+			if (invoiceId) {
+				invIds.push(invoiceId);
+			}
 
 			// Save the invoice first
 			if (invoiceId) {
@@ -114,11 +117,10 @@ const SaveAndSendInvoiceButton = ({
 				// Extract invoice ID from response
 				// Response structure: { message: string, result?: InvoiceDto }
 				// InvoiceDto has id: string
-				savedInvoiceId =
-					(response as any)?.result?.id || (response as any)?.data?.result?.id || invoiceId;
+				response.result?.forEach((inv) => invIds.push(inv.id));
 			}
 
-			if (!savedInvoiceId) {
+			if (invIds.length === 0) {
 				AlertService.instance.errorMessage(
 					t("invoiceForm.errors.saveFailed", { defaultValue: "Failed to save invoice" }),
 				);
@@ -128,7 +130,7 @@ const SaveAndSendInvoiceButton = ({
 
 			// Refetch queries after saving
 			await queryClient.refetchQueries({
-				queryKey: getInvoiceControllerFindOneQueryKey(savedInvoiceId),
+				queryKey: getInvoiceControllerFindOneQueryKey(invIds[0]),
 			});
 			await queryClient.refetchQueries({
 				queryKey: getInvoiceControllerFindAllQueryKey(),
@@ -140,7 +142,7 @@ const SaveAndSendInvoiceButton = ({
 				queryKey: getInvoiceControllerFindPaidInvoicesQueryKey(),
 			});
 			await queryClient.refetchQueries({
-				queryKey: getInvoiceControllerTestQueryKey(savedInvoiceId),
+				queryKey: getInvoiceControllerTestQueryKey(invIds[0]),
 			});
 			await queryClient.refetchQueries({
 				queryKey: getInvoiceControllerInvoiceCountQueryKey(),
@@ -159,32 +161,32 @@ const SaveAndSendInvoiceButton = ({
 			});
 
 			// Check if customer email exists before sending
-			const customerId = invoiceId
-				? (formik.values as any).customer_id
-				: (formik.values as any).customer_ids?.[0];
+			const customerIds = invoiceId ? [values.customer_id] : values.customer_ids;
 
-			const customer = customerData?.data?.find((c) => c.id === customerId);
-			if (!customer?.email) {
-				AlertService.instance.errorMessage(
-					t("invoice.detail.customerEmailNotFound", {
-						defaultValue: "Customer email not found. Invoice saved but not sent.",
-					}),
-				);
-				formik.resetForm();
-				navigate("/invoice/invoicelist");
-				return;
+			for (const customerId of customerIds) {
+				const customer = customerData?.data?.find((c) => c.id === customerId);
+				if (!customer?.email) {
+					AlertService.instance.errorMessage(
+						t("invoice.detail.customerEmailNotFound", {
+							defaultValue: "Customer email not found. Invoice saved but not sent.",
+						}),
+					);
+					formik.resetForm();
+					navigate("/invoice/invoicelist");
+					return;
+				}
 			}
 
 			// Send email
 			await sendMail.mutateAsync({
 				params: {
-					ids: [savedInvoiceId],
+					ids: invIds,
 				},
 			});
 
 			// Refetch queries after sending email
 			await queryClient.refetchQueries({
-				queryKey: getInvoiceControllerInvoicePublicFindOneQueryKey(savedInvoiceId),
+				queryKey: getInvoiceControllerInvoicePublicFindOneQueryKey(invIds[0]),
 			});
 			await queryClient.refetchQueries({
 				queryKey: getInvoiceControllerFindAllQueryKey(),
@@ -196,7 +198,7 @@ const SaveAndSendInvoiceButton = ({
 				queryKey: getInvoiceControllerFindPaidInvoicesQueryKey(),
 			});
 			await queryClient.refetchQueries({
-				queryKey: getInvoiceControllerTestQueryKey(savedInvoiceId),
+				queryKey: getInvoiceControllerTestQueryKey(invIds[0]),
 			});
 
 			AlertService.instance.success(
