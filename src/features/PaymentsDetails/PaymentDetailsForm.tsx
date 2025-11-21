@@ -62,13 +62,17 @@ const PaymentDetailsForm = ({
 			return schema;
 		}),
 		bicNumber: yup.string().when("paymentType", (paymentType, schema) => {
-			if (paymentType.find((item) => item === "EuropeanBank")) {
+			if (
+				paymentType.find((item) => item === "EuropeanBank" || item === "Revolut" || item === "Wise")
+			) {
 				return schema; // BIC number is optional
 			}
 			return schema;
 		}),
 		ibanNumber: yup.string().when("paymentType", (paymentType, schema) => {
-			if (paymentType.find((item) => item === "EuropeanBank")) {
+			if (
+				paymentType.find((item) => item === "EuropeanBank" || item === "Revolut" || item === "Wise")
+			) {
 				return schema.required(() =>
 					i18n.t("paymentDetails.validation.ibanRequired", {
 						defaultValue: "IBAN number is required",
@@ -260,7 +264,9 @@ const PaymentDetailsForm = ({
 									</Grid>
 								</>
 							)}
-							{values.paymentType === "EuropeanBank" && (
+							{(values.paymentType === "EuropeanBank" ||
+								values.paymentType === "Revolut" ||
+								values.paymentType === "Wise") && (
 								<>
 									<Grid item xs={12}>
 										<Field
