@@ -536,6 +536,22 @@
       "questions": "Kui teil on küsimusi või muresid, ärge kartke meiega ühendust võtta.",
       "signature": "Parimate soovidega,<br/>Growinvoice meeskond.",
       "subject": "Makse kviitung - Arve #{invoiceNumber}"
+    },
+    "invoiceEmail": {
+      "title": "Arve teavitus",
+      "greeting": "Tere {customerName},",
+      "intro": "Olete saanud uue arve ettevõttelt {companyName}. Palun vaadake üle arve andmed allpool ja kasutage nuppu arve vaatamiseks või allalaadimiseks.",
+      "invoiceNumber": "Arve #{invoiceNumber}",
+      "status": "Olek:",
+      "amount": "Summa:",
+      "date": "Kuupäev:",
+      "dueDate": "Maksetähtaeg:",
+      "viewDownloadButton": "Vaata ja laadi alla arve",
+      "invoiceNumberLabel": "Arve number:",
+      "linkInstructions": "Kui link ei tööta, kopeerige ja kleepige see URL oma brauseri aadressiribale:",
+      "questions": "Kui teil on küsimusi, võtke meiega ühendust aadressil {contactEmail}.",
+      "signature": "Parimate soovidega,<br/>{companyName}",
+      "subject": "Arve #{invoiceNumber} ettevõttelt {companyName}"
     }
   },
   "invoiceForm": {
