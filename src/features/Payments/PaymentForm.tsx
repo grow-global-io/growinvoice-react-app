@@ -30,7 +30,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 const PaymentForm = () => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const queryClient = useQueryClient();
 	const { invoiceId, setOpenPaymentForm } = useCreatePaymentStore.getState();
 	const paymentData = usePaymentdetailsControllerFindAll();
@@ -157,6 +157,7 @@ const PaymentForm = () => {
 							},
 							{
 								id: invoiceId,
+								lang: i18n.language,
 							},
 						);
 					}

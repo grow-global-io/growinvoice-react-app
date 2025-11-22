@@ -41,7 +41,7 @@ function QuickSearchToolbar({
 	selectedIds: GridRowSelectionModel;
 	onMarkAsPaid: (invoiceIds: string[]) => Promise<void>;
 }) {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 
 	const sendMail = useInvoiceControllerBulkInvoiceSentToMail();
 
@@ -50,6 +50,7 @@ function QuickSearchToolbar({
 		await sendMail.mutateAsync({
 			params: {
 				ids: selectedIds as string[],
+				lang: i18n.language,
 			},
 		});
 	};
