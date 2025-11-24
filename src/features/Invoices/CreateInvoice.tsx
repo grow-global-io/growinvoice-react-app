@@ -280,7 +280,10 @@ const CreateInvoice = ({
 		}
 
 		try {
-			let savedInvoiceId = id;
+			const invIds = [];
+			if (id) {
+				invIds.push(id);
+			}
 
 			if (id) {
 				await invoiceUpdate.mutateAsync({
@@ -316,15 +319,20 @@ const CreateInvoice = ({
 						})),
 					},
 				});
-				savedInvoiceId = createdInvoice?.result?.id;
+				createdInvoice?.result?.forEach((inv) => invIds.push(inv.id));
 			}
 
+			const paidPromises: any = [];
 			// If this is a receipt, mark it as paid using the API endpoint
 			// This will properly update the paid_status and send the receipt email
-			if (isReceipt && savedInvoiceId) {
+			if (isReceipt && invIds.length) {
 				// Temporarily suppress success messages by storing a flag
 				// The InterceptorService will show messages, but we'll show our combined message after
-				await handlePaid(savedInvoiceId);
+				invIds.forEach((iv) => paidPromises.push(handlePaid(iv)));
+			}
+
+			if (paidPromises.length) {
+				await Promise.all(paidPromises);
 			}
 
 			await queryClient.refetchQueries({

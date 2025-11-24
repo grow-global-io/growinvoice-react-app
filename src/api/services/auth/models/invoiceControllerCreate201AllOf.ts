@@ -8,5 +8,5 @@
 import type { InvoiceDto } from "./invoiceDto";
 
 export type InvoiceControllerCreate201AllOf = {
-	result?: InvoiceDto;
+	result?: InvoiceDto[];
 };
