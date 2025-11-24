@@ -9,4 +9,5 @@
 export interface CreateProductPriceBookDto {
 	currency_id: string;
 	price: number;
+	shippingCharges?: number;
 }
