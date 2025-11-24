@@ -87,7 +87,7 @@ const CreateInvoice = ({
 	customerId?: string;
 	isReceipt?: boolean;
 }) => {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const { handlePaid } = useInvoiceHook();
@@ -851,6 +851,7 @@ const CreateInvoice = ({
 														due_amount: formik.values.total,
 														paid_amount: 0,
 													},
+													params: { lang: i18n.language },
 												});
 												// Translate the invoice HTML content before setting it
 												const translatedHtml = translateInvoiceHtml(data as string, t);
