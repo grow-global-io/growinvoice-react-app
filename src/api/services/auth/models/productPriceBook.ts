@@ -15,6 +15,7 @@ export interface ProductPriceBook {
 	id: string;
 	isExist: boolean;
 	price: number;
+	shippingCharges?: number;
 	product?: Product;
 	product_id: string;
 	/** @nullable */

@@ -90,6 +90,7 @@ const schema = yup.object({
 					.typeError(() => i18n.t("productForm.validation.priceNumber"))
 					.nullable()
 					.optional(),
+				shippingCharges: yup.number().nullable().optional(),
 			}),
 		)
 		.required(() => i18n.t("productForm.validation.priceBookRequired"))
@@ -167,7 +168,12 @@ const ProductForm = () => {
 
 	const handleSubmit = async (
 		values: CreateProductWithTaxDto & {
-			priceBook: Array<{ currency_id: string; price: number; sellPrice?: number }>;
+			priceBook: Array<{
+				currency_id: string;
+				price: number;
+				sellPrice?: number;
+				shippingCharges?: number;
+			}>;
 		},
 		action: FormikHelpers<CreateProductWithTaxDto>,
 	) => {
@@ -182,9 +188,10 @@ const ProductForm = () => {
 		const transformedValues = {
 			...values,
 			hsnCode_id: values.hsnCode_id === "" ? null : values.hsnCode_id,
-			priceBook: values.priceBook.map(({ currency_id, price }) => ({
+			priceBook: values.priceBook.map(({ currency_id, price, shippingCharges }) => ({
 				currency_id,
 				price,
+				shippingCharges,
 			})),
 		};
 		if (editValues) {
@@ -244,6 +251,7 @@ const ProductForm = () => {
 						currency_id: price.currency_id,
 						price: price.price,
 						sellPrice: calculatedSellPrice,
+						shippingCharges: price.shippingCharges ?? 0,
 					};
 				}) ?? [],
 			images: editValues?.images ?? [],
@@ -629,7 +637,7 @@ const ProductForm = () => {
 																					isRequired={true}
 																				/>
 																			</Grid>
-																			<Grid item xs={3}>
+																			<Grid item xs={2}>
 																				<Field
 																					name={`priceBook.${index}.price`}
 																					component={TextFormField}
@@ -645,7 +653,7 @@ const ProductForm = () => {
 																					}}
 																				/>
 																			</Grid>
-																			<Grid item xs={3}>
+																			<Grid item xs={2}>
 																				<Field
 																					name={`priceBook.${index}.sellPrice`}
 																					component={TextFormField}
@@ -662,6 +670,16 @@ const ProductForm = () => {
 																				/>
 																			</Grid>
 																			<Grid item xs={2}>
+																				<Field
+																					name={`priceBook.${index}.shippingCharges`}
+																					type="number"
+																					isRequired={false}
+																					label={"Shipping Price"}
+																					component={TextFormField}
+																					marginWholeTop={-0.1}
+																				/>
+																			</Grid>
+																			<Grid item xs={1}>
 																				<CustomIconButton
 																					src={CloseIcon}
 																					buttonType="delete"
