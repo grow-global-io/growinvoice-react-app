@@ -2104,12 +2104,14 @@ export const useInvoiceControllerMarkedAsMailed = <
 };
 export const invoiceControllerInvoicePreviewFromBody = (
 	createDirectInvoiceWithProducts: CreateDirectInvoiceWithProducts,
+	params?: { lang?: string },
 ) => {
 	return authInstance<string | void>({
 		url: `/api/invoice/invoicePreviewFromBody`,
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		data: createDirectInvoiceWithProducts,
+		params,
 	});
 };
 
@@ -2126,18 +2128,18 @@ export const getInvoiceControllerInvoicePreviewFromBodyMutationOptions = <
 }): UseMutationOptions<
 	Awaited<ReturnType<typeof invoiceControllerInvoicePreviewFromBody>>,
 	TError,
-	{ data: CreateDirectInvoiceWithProducts },
+	{ data: CreateDirectInvoiceWithProducts; params?: { lang?: string } },
 	TContext
 > => {
 	const { mutation: mutationOptions } = options ?? {};
 
 	const mutationFn: MutationFunction<
 		Awaited<ReturnType<typeof invoiceControllerInvoicePreviewFromBody>>,
-		{ data: CreateDirectInvoiceWithProducts }
+		{ data: CreateDirectInvoiceWithProducts; params?: { lang?: string } }
 	> = (props) => {
-		const { data } = props ?? {};
+		const { data, params } = props ?? {};
 
-		return invoiceControllerInvoicePreviewFromBody(data);
+		return invoiceControllerInvoicePreviewFromBody(data, params);
 	};
 
 	return { mutationFn, ...mutationOptions };
@@ -2156,13 +2158,13 @@ export const useInvoiceControllerInvoicePreviewFromBody = <
 	mutation?: UseMutationOptions<
 		Awaited<ReturnType<typeof invoiceControllerInvoicePreviewFromBody>>,
 		TError,
-		{ data: CreateDirectInvoiceWithProducts },
+		{ data: CreateDirectInvoiceWithProducts; params?: { lang?: string } },
 		TContext
 	>;
 }): UseMutationResult<
 	Awaited<ReturnType<typeof invoiceControllerInvoicePreviewFromBody>>,
 	TError,
-	{ data: CreateDirectInvoiceWithProducts },
+	{ data: CreateDirectInvoiceWithProducts; params?: { lang?: string } },
 	TContext
 > => {
 	const mutationOptions = getInvoiceControllerInvoicePreviewFromBodyMutationOptions(options);

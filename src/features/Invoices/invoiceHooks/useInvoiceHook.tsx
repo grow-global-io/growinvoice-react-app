@@ -471,6 +471,7 @@ export const useInvoiceHook = () => {
 				},
 				{
 					id: invoiceId,
+					lang: i18n.language,
 				},
 			);
 		} catch (error) {
@@ -489,6 +490,7 @@ export const useInvoiceHook = () => {
 			await sendMail.mutateAsync({
 				params: {
 					ids: [invoiceId],
+					lang: i18n.language,
 				},
 			});
 		}
@@ -646,6 +648,7 @@ export const useInvoiceHook = () => {
 				},
 				{
 					id: invoiceId,
+					lang: i18n.language,
 				},
 			);
 		} catch (error) {

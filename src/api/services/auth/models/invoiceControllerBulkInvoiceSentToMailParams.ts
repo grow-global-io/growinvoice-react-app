@@ -11,4 +11,5 @@ export type InvoiceControllerBulkInvoiceSentToMailParams = {
 	 * Array of Invoice IDs
 	 */
 	ids: string[];
+	lang?: string;
 };

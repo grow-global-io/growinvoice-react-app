@@ -8,4 +8,5 @@
 
 export type InvoiceControllerInvoiceSentToMailParams = {
 	id: string;
+	lang?: string;
 };
