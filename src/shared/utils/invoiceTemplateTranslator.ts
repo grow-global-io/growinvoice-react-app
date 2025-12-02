@@ -8,6 +8,13 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 
 	let translatedHtml = html;
 
+	// First, handle mixed-language text that might come from backend
+	// Replace "Recipient's Käteinen Details" with proper translation
+	translatedHtml = translatedHtml.replace(
+		/Recipient['\u2019]s\s+Käteinen\s+Details/gi,
+		t("invoice.template.recipientCashDetails"),
+	);
+
 	// First pass: Replace all translation keys that appear as literal strings
 	// This handles keys that the backend inserts directly into HTML
 	// Order matters: longer keys first to avoid partial matches
@@ -310,12 +317,31 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			translation: t("invoice.template.recipientUpiDetails"),
 		},
 		// Recipient's Cash Details - match in various HTML contexts
+		// Handle mixed translations (e.g., "Recipient's Käteinen Details" from backend)
+		// Must come before "Recipient's Cash Details" to catch mixed translations first
+		{
+			english: />Recipient['\u2019]s\s+Käteinen\s+Details</gi,
+			translation: `>${t("invoice.template.recipientCashDetails")}<`,
+		},
+		{
+			english: /Recipient['\u2019]s\s+Käteinen\s+Details/gi,
+			translation: t("invoice.template.recipientCashDetails"),
+		},
 		{
 			english: />Recipient['\u2019]s\s+Cash\s+Details</gi,
 			translation: `>${t("invoice.template.recipientCashDetails")}<`,
 		},
 		{
 			english: /Recipient['\u2019]s\s+Cash\s+Details/gi,
+			translation: t("invoice.template.recipientCashDetails"),
+		},
+		// Handle Finnish translation that might appear
+		{
+			english: />Vastaanottajan\s+käteistiedot</gi,
+			translation: `>${t("invoice.template.recipientCashDetails")}<`,
+		},
+		{
+			english: /Vastaanottajan\s+käteistiedot/gi,
 			translation: t("invoice.template.recipientCashDetails"),
 		},
 		// Recipient's European Bank Details - match in various HTML contexts
@@ -337,6 +363,9 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		// Match BIC when followed by space and content (like >BIC 123 -> >BIC: 123)
 		{ english: />BIC\s+([0-9A-Z])/gi, translation: (_match, after) => `>BIC: ${after}` },
 		// Cash - match standalone
+		// Handle Finnish "Käteinen" that might appear from backend
+		{ english: />Käteinen</gi, translation: `>${t("invoice.template.cash")}<` },
+		{ english: /\bKäteinen\b/gi, translation: t("invoice.template.cash") },
 		{ english: />Cash</gi, translation: `>${t("invoice.template.cash")}<` },
 		{ english: /\bCash\b/gi, translation: t("invoice.template.cash") },
 		// Unit and Unit Price
@@ -459,6 +488,24 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			translation: t("invoice.template.termsDelivery"),
 		},
 		// Payment Terms - match with flexible whitespace handling
+		// Match both variations: "cleared" and "processed", "General items" and "general payment transmission rules"
+		// Handle case variations, flexible spacing, and HTML entities
+		{
+			english:
+				/The\s+payment\s+will\s+be\s+cleared\s+for\s+the\s+recipient\s+in\s+accordance\s+with\s+the\s+General\s+items\s+for\s+payment\s+transmission\s+and\s+only\s+on\s+the\s+basis\s+of\s+the\s+account\s+number\s+given\s+by\s+the\s+payer\./gi,
+			translation: t("invoice.template.paymentTerms"),
+		},
+		{
+			english:
+				/The\s+payment\s+will\s+be\s+cleared\s+for\s+the\s+recipient\s+in\s+accordance\s+with\s+the\s+general\s+items\s+for\s+payment\s+transmission\s+and\s+only\s+on\s+the\s+basis\s+of\s+the\s+account\s+number\s+given\s+by\s+the\s+payer\./gi,
+			translation: t("invoice.template.paymentTerms"),
+		},
+		// More flexible pattern that handles HTML breaks and extra whitespace
+		{
+			english:
+				/The\s+payment\s+will\s+be\s+cleared\s+for\s+the\s+recipient\s+in\s+accordance\s+with\s+the\s+[Gg]eneral\s+items?\s+for\s+payment\s+transmission\s+and\s+only\s+on\s+the\s+basis\s+of\s+the\s+account\s+number\s+given\s+by\s+the\s+payer\.?/gi,
+			translation: t("invoice.template.paymentTerms"),
+		},
 		{
 			english:
 				/The\s+payment\s+will\s+be\s+processed\s+for\s+the\s+recipient\s+according\s+to\s+the\s+general\s+payment\s+transmission\s+rules,\s+and\s+only\s+based\s+on\s+the\s+account\s+number\s+provided\s+by\s+the\s+payer\./gi,

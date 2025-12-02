@@ -90,7 +90,7 @@ const CreateInvoice = ({
 	customerId?: string;
 	isReceipt?: boolean;
 }) => {
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const { handlePaid } = useInvoiceHook();
@@ -848,19 +848,22 @@ const CreateInvoice = ({
 													}}
 													options={
 														formik?.values?.customer_ids
-															? formik?.values?.customer_ids?.map((id) => {
+															? (formik?.values?.customer_ids?.map((id) => {
 																	const customer = customerData?.data?.find((cus) => cus.id === id);
 																	return {
 																		value: customer?.id ?? "",
 																		label: customer?.display_name ?? "",
 																	};
-																})
+																}) ?? [])
 															: (formik?.values as any)?.customer_id
-																? customerData?.data
+																? (customerData?.data
 																		?.filter(
 																			(cus) => cus.id === (formik?.values as any).customer_id,
 																		)
-																		?.map((cus) => ({ value: cus?.id, label: cus?.display_name }))
+																		?.map((cus) => ({
+																			value: cus?.id,
+																			label: cus?.display_name,
+																		})) ?? [])
 																: []
 													}
 													renderInput={(params) => (
@@ -901,6 +904,9 @@ const CreateInvoice = ({
 												const data = await invoicePreview.mutateAsync({
 													data: {
 														...formik.values,
+														reference_number: formik.values.reference_number
+															? formik.values.reference_number
+															: formik.values.invoice_number,
 														customer_id: id
 															? (formik.values as any).customer_id
 															: selectedPreviewCustomer?.value,
@@ -910,7 +916,7 @@ const CreateInvoice = ({
 														due_amount: formik.values.total,
 														paid_amount: 0,
 													},
-													params: { lang: i18n.language },
+													params: { lang: "en" }, // Always request English from backend, frontend will translate
 												});
 												// Translate the invoice HTML content before setting it
 												const translatedHtml = translateInvoiceHtml(data as string, t);
