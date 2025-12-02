@@ -10,9 +10,82 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 
 	// First, handle mixed-language text that might come from backend
 	// Replace "Recipient's Käteinen Details" with proper translation
+	// Handle all possible variations: different apostrophes, HTML entities, with/without tags
+	const recipientCashTranslation = t("invoice.template.recipientCashDetails");
+	const recipientsDetailsTranslation = t("invoice.template.recipientsDetails");
+	const payerNameAddressTranslation = t("invoice.template.payerNameAddress");
+
+	// Multiple aggressive replacements to catch all variations
+	// Pattern 1: Standard apostrophe with HTML tags
 	translatedHtml = translatedHtml.replace(
-		/Recipient['\u2019]s\s+Käteinen\s+Details/gi,
-		t("invoice.template.recipientCashDetails"),
+		/(>|&gt;)?Recipient['\u2019\u2018\u0027]s\s+Käteinen\s+Details(<|&lt;)?/gi,
+		(_match, prefix, suffix) => {
+			const pre = prefix || "";
+			const suf = suffix || "";
+			return `${pre}${recipientCashTranslation}${suf}`;
+		},
+	);
+
+	// Pattern 2: Without HTML tags
+	translatedHtml = translatedHtml.replace(
+		/Recipient['\u2019\u2018\u0027]s\s+Käteinen\s+Details/gi,
+		recipientCashTranslation,
+	);
+
+	// Pattern 3: Handle HTML entities for apostrophe
+	translatedHtml = translatedHtml.replace(
+		/Recipient(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Käteinen\s+Details/gi,
+		recipientCashTranslation,
+	);
+
+	// Pattern 4: Handle case variations
+	translatedHtml = translatedHtml.replace(
+		/recipient['\u2019\u2018\u0027]s\s+käteinen\s+details/gi,
+		recipientCashTranslation,
+	);
+
+	// Early replacement for "Recipient's Details:" - must come before "Recipient's Cash Details"
+	// Match the English text and replace with translation (translation already has correct colon per language)
+	translatedHtml = translatedHtml.replace(
+		/Recipient['\u2019\u2018\u0027]s\s+Details\s*:+/gi,
+		recipientsDetailsTranslation,
+	);
+	translatedHtml = translatedHtml.replace(
+		/Recipient(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Details\s*:+/gi,
+		recipientsDetailsTranslation,
+	);
+	// Also match without colon (for cases where backend doesn't send colon)
+	translatedHtml = translatedHtml.replace(
+		/Recipient['\u2019\u2018\u0027]s\s+Details(?!\s*:)/gi,
+		recipientsDetailsTranslation,
+	);
+
+	// Early replacement for "Payer's Name & Address:" - EXACTLY like "Recipient's Details:" above
+	// Match the English text and replace with translation (translation already has correct colon per language)
+	// Pattern 1: Standard apostrophe with & symbol, with colon(s)
+	translatedHtml = translatedHtml.replace(
+		/Payer['\u2019\u2018\u0027]s\s+Name\s*&\s*Address\s*:+/gi,
+		payerNameAddressTranslation,
+	);
+	// Pattern 2: HTML entities for apostrophe with & symbol, with colon(s)
+	translatedHtml = translatedHtml.replace(
+		/Payer(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Name\s*&\s*Address\s*:+/gi,
+		payerNameAddressTranslation,
+	);
+	// Pattern 3: Standard apostrophe with &amp; (HTML entity for &), with colon(s)
+	translatedHtml = translatedHtml.replace(
+		/Payer['\u2019\u2018\u0027]s\s+Name\s*&amp;\s*Address\s*:+/gi,
+		payerNameAddressTranslation,
+	);
+	// Pattern 4: HTML entities for apostrophe with &amp;, with colon(s)
+	translatedHtml = translatedHtml.replace(
+		/Payer(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Name\s*&amp;\s*Address\s*:+/gi,
+		payerNameAddressTranslation,
+	);
+	// Pattern 5: Without colon (for cases where backend doesn't send colon)
+	translatedHtml = translatedHtml.replace(
+		/Payer['\u2019\u2018\u0027]s\s+Name\s*&\s*Address(?!\s*:)/gi,
+		payerNameAddressTranslation,
 	);
 
 	// First pass: Replace all translation keys that appear as literal strings
@@ -25,7 +98,21 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		},
 		{
 			key: "invoice.template.recipientCashDetails",
-			value: t("invoice.template.recipientCashDetails"),
+			value: recipientCashTranslation,
+		},
+		// Also handle the mixed-language text as a key (in case backend sends it as a key)
+		{
+			key: "Recipient's Käteinen Details",
+			value: recipientCashTranslation,
+		},
+		// Handle "Payer's Name & Address:" as a direct key
+		{
+			key: "Payer's Name & Address:",
+			value: `${payerNameAddressTranslation}:`,
+		},
+		{
+			key: "Payer's Name & Address",
+			value: payerNameAddressTranslation,
 		},
 		{
 			key: "invoice.template.recipientEuropeanBankDetails",
@@ -172,30 +259,65 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		{ english: /Invoice\s+To:/gi, translation: t("invoice.template.invoiceTo") },
 		{ english: /Pay\s+To:/gi, translation: t("invoice.template.payTo") },
 		// Recipient's Details - handle various formats
+		// Must come before "Recipient's Cash Details" to avoid conflicts
+		// Handle all apostrophe types and HTML contexts
+		// Use translation directly (it already handles colon correctly per language)
 		{
-			english: />Recipient['\u2019]s\s+Details:</gi,
-			translation: `>${t("invoice.template.recipientsDetails")}:`,
+			english: />Recipient['\u2019\u2018\u0027]s\s+Details\s*:?\s*</gi,
+			translation: `>${recipientsDetailsTranslation}<`,
 		},
 		{
-			english: /Recipient['\u2019]s\s+Details:/gi,
-			translation: t("invoice.template.recipientsDetails"),
+			english: /Recipient['\u2019\u2018\u0027]s\s+Details\s*:?\s*/gi,
+			translation: recipientsDetailsTranslation,
+		},
+		// Handle HTML entities for apostrophe
+		{
+			english: />Recipient(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Details\s*:?\s*</gi,
+			translation: `>${recipientsDetailsTranslation}<`,
 		},
 		{
-			english: /Recipient['\u2019]s\s+Details/gi,
-			translation: t("invoice.template.recipientsDetails"),
+			english: /Recipient(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Details\s*:?\s*/gi,
+			translation: recipientsDetailsTranslation,
 		},
 		// Payer's Name & Address - handle various formats
+		// Handle all apostrophe types and HTML contexts
+		// Must come early to avoid conflicts with other patterns
+		// Use translation directly (it already handles colon correctly per language)
 		{
-			english: />Payer['\u2019]s\s+Name\s*&\s*Address:</gi,
-			translation: `>${t("invoice.template.payerNameAddress")}:`,
+			english: />Payer['\u2019\u2018\u0027]s\s+Name\s*&\s*Address\s*:?\s*</gi,
+			translation: `>${payerNameAddressTranslation}<`,
 		},
 		{
-			english: /Payer['\u2019]s\s+Name\s*&\s*Address:/gi,
-			translation: t("invoice.template.payerNameAddress"),
+			english: /Payer['\u2019\u2018\u0027]s\s+Name\s*&\s*Address\s*:?\s*/gi,
+			translation: payerNameAddressTranslation,
+		},
+		// Handle HTML entities for apostrophe
+		{
+			english: />Payer(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Name\s*&\s*Address\s*:?\s*</gi,
+			translation: `>${payerNameAddressTranslation}<`,
 		},
 		{
-			english: /Payer['\u2019]s\s+Name\s*&\s*Address/gi,
-			translation: t("invoice.template.payerNameAddress"),
+			english: /Payer(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Name\s*&\s*Address\s*:?\s*/gi,
+			translation: payerNameAddressTranslation,
+		},
+		// Handle &amp; (HTML entity for &)
+		{
+			english: />Payer['\u2019\u2018\u0027]s\s+Name\s*&amp;\s*Address\s*:?\s*</gi,
+			translation: `>${payerNameAddressTranslation}<`,
+		},
+		{
+			english: /Payer['\u2019\u2018\u0027]s\s+Name\s*&amp;\s*Address\s*:?\s*/gi,
+			translation: payerNameAddressTranslation,
+		},
+		// Handle "and" instead of "&"
+		{
+			english: /Payer['\u2019\u2018\u0027]s\s+Name\s+and\s+Address\s*:?\s*/gi,
+			translation: payerNameAddressTranslation,
+		},
+		// Handle case variations
+		{
+			english: /payer['\u2019\u2018\u0027]s\s+name\s*&\s*address\s*:?\s*/gi,
+			translation: payerNameAddressTranslation,
 		},
 		{ english: />Name\s*&\s*Address:</gi, translation: `>${t("invoice.template.nameAddress")}:` },
 		{ english: /Name\s*&\s*Address:/gi, translation: t("invoice.template.nameAddress") },
@@ -521,6 +643,64 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			translatedHtml = translatedHtml.replace(english, translation);
 		}
 	});
+
+	// Final post-processing: Catch any remaining instances
+	// This is a safety net to ensure we catch everything
+	translatedHtml = translatedHtml.replace(
+		/Recipient['\u2019\u2018\u0027]s\s+Käteinen\s+Details/gi,
+		recipientCashTranslation,
+	);
+	translatedHtml = translatedHtml.replace(
+		/Recipient(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Käteinen\s+Details/gi,
+		recipientCashTranslation,
+	);
+
+	// Final catch for "Recipient's Details:" - match one or more colons and replace with translation
+	translatedHtml = translatedHtml.replace(
+		/Recipient['\u2019\u2018\u0027]s\s+Details\s*:+/gi,
+		recipientsDetailsTranslation,
+	);
+	translatedHtml = translatedHtml.replace(
+		/Recipient(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Details\s*:+/gi,
+		recipientsDetailsTranslation,
+	);
+	// Also match without colon
+	translatedHtml = translatedHtml.replace(
+		/Recipient['\u2019\u2018\u0027]s\s+Details(?!\s*:)/gi,
+		recipientsDetailsTranslation,
+	);
+
+	// Final catch for "Payer's Name & Address:" - match one or more colons and replace with translation
+	// Pattern 1: Standard apostrophes, with colon(s)
+	translatedHtml = translatedHtml.replace(
+		/Payer['\u2019\u2018\u0027]s\s+Name\s*&\s*Address\s*:+/gi,
+		payerNameAddressTranslation,
+	);
+	// Pattern 2: HTML entities, with colon(s)
+	translatedHtml = translatedHtml.replace(
+		/Payer(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Name\s*&\s*Address\s*:+/gi,
+		payerNameAddressTranslation,
+	);
+	// Pattern 3: Handle &amp;, with colon(s)
+	translatedHtml = translatedHtml.replace(
+		/Payer['\u2019\u2018\u0027]s\s+Name\s*&amp;\s*Address\s*:+/gi,
+		payerNameAddressTranslation,
+	);
+	// Pattern 4: Handle "and" instead of "&", with colon(s)
+	translatedHtml = translatedHtml.replace(
+		/Payer['\u2019\u2018\u0027]s\s+Name\s+and\s+Address\s*:+/gi,
+		payerNameAddressTranslation,
+	);
+	// Pattern 5: Case variations, with colon(s)
+	translatedHtml = translatedHtml.replace(
+		/payer['\u2019\u2018\u0027]s\s+name\s*&\s*address\s*:+/gi,
+		payerNameAddressTranslation,
+	);
+	// Pattern 6: Without colon
+	translatedHtml = translatedHtml.replace(
+		/Payer['\u2019\u2018\u0027]s\s+Name\s*&\s*Address(?!\s*:)/gi,
+		payerNameAddressTranslation,
+	);
 
 	return translatedHtml;
 };
