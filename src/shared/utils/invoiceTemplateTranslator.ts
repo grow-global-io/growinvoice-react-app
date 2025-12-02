@@ -376,9 +376,17 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		// Summary section - handle various contexts (order matters: longer patterns first)
 		// Match "Discount (X%)" format - we'll translate "Discount (" and keep the percentage
 		// Need to match "Discount" before the opening parenthesis in various contexts
-		// Discount - handle carefully to avoid adding extra <
+		// Discount - handle carefully to avoid adding extra < or breaking HTML tags
 		// Match "Discount (<" specifically and replace with translation (keeping the <)
 		{ english: />Discount\s*\(\s*</gi, translation: `>${t("invoice.template.discount")}<` },
+		// Match "Discount (" followed by HTML tag (like <span>, <b>, etc.) - preserve the tag completely
+		{
+			english: />Discount\s*\(\s*<[^>]+>/gi,
+			translation: (match) => {
+				// Replace just "Discount (" part, keep the entire HTML tag intact
+				return match.replace(/Discount\s*\(/gi, t("invoice.template.discount"));
+			},
+		},
 		// Match "Discount (" (without <) and replace with translation (without adding <)
 		{
 			english: />Discount\s*\([^<]/gi,
@@ -769,17 +777,30 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 	translatedHtml = translatedHtml.replace(/>Date:\s+([a-z][a-z0-9]*)>/gi, (_match, tagName) => {
 		return `>${t("invoice.template.date")} <${tagName}>`;
 	});
-	// Fix "Discount (<" -> "Discount (" (remove the stray <)
+	// Fix "Discount ( span class="..." -> "Discount ( <span class="..." (restore broken HTML tag)
 	translatedHtml = translatedHtml.replace(
-		/([^>])Discount\s*\(\s*<\s*([^<])/gi,
-		(_match, before, after) => {
-			return `${before}${t("invoice.template.discount")} ${after}`;
+		/>Discount\s*\(\s+([a-z][a-z0-9]*)\s+class\s*=\s*"([^"]+)">/gi,
+		(_match, tagName, className) => {
+			return `>${t("invoice.template.discount")} <${tagName} class="${className}">`;
 		},
 	);
-	// Fix "Discount (<" at start of line or after >
-	translatedHtml = translatedHtml.replace(/>Discount\s*\(\s*<\s*([^<])/gi, (_match, after) => {
-		return `>${t("invoice.template.discount")} ${after}`;
+	// Fix "Discount ( span>" -> "Discount ( <span>" (restore broken HTML tag without class)
+	translatedHtml = translatedHtml.replace(
+		/>Discount\s*\(\s+([a-z][a-z0-9]*)>/gi,
+		(_match, tagName) => {
+			return `>${t("invoice.template.discount")} <${tagName}>`;
+		},
+	);
+	// Fix double parenthesis issue: "Alennus ((" -> "Alennus ("
+	translatedHtml = translatedHtml.replace(/([^>])Discount\s*\(\s*\(/gi, (_match, before) => {
+		return `${before}${t("invoice.template.discount")}`;
 	});
+	translatedHtml = translatedHtml.replace(/>Discount\s*\(\s*\(/gi, () => {
+		return `>${t("invoice.template.discount")}`;
+	});
+	// Also fix for translated versions (Finnish: "Alennus ((" -> "Alennus (")
+	translatedHtml = translatedHtml.replace(/(Alennus\s*\()\s*\(/gi, "$1");
+	translatedHtml = translatedHtml.replace(/(Alennus\s*\()\s*\(/gi, "$1");
 
 	return translatedHtml;
 };
