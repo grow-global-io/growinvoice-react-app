@@ -590,6 +590,8 @@
     "swiftCode": "Swift Code",
     "invoiceTemplate": "Invoice Template",
     "preview": "Preview",
+    "selectCustomer": "SELECT CUSTOMER",
+    "enterSelectCustomer": "Enter select customer",
     "saveInvoice": "Save Invoice",
     "invoicePreview": "Invoice Preview",
     "saveAndSendInvoice": "Save and Send Invoice",

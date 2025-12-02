@@ -590,6 +590,8 @@
     "swiftCode": "SWIFT kood",
     "invoiceTemplate": "Arve mall",
     "preview": "Eelvaade",
+    "selectCustomer": "VALI KLIENT",
+    "enterSelectCustomer": "Sisesta vali klient",
     "saveInvoice": "Salvesta arve",
     "invoicePreview": "Arve eelvaade",
     "saveAndSendInvoice": "Salvesta ja saada arve",

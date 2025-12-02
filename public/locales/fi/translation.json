@@ -595,6 +595,8 @@
     "swiftCode": "SWIFT-koodi",
     "invoiceTemplate": "Laskupohja",
     "preview": "Esikatselu",
+    "selectCustomer": "VALITSE ASIAKAS",
+    "enterSelectCustomer": "Syötä valitse asiakas",
     "saveInvoice": "Tallenna lasku",
     "invoicePreview": "Laskun esikatselu",
     "saveAndSendInvoice": "Tallenna ja lähetä lasku",

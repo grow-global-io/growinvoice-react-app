@@ -12,6 +12,7 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 	// Replace "Recipient's Käteinen Details" with proper translation
 	// Handle all possible variations: different apostrophes, HTML entities, with/without tags
 	const recipientCashTranslation = t("invoice.template.recipientCashDetails");
+	const recipientEuropeanBankTranslation = t("invoice.template.recipientEuropeanBankDetails");
 	const recipientsDetailsTranslation = t("invoice.template.recipientsDetails");
 	const payerNameAddressTranslation = t("invoice.template.payerNameAddress");
 	const dueDateTranslation = t("invoice.template.dueDate");
@@ -48,6 +49,35 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 	translatedHtml = translatedHtml.replace(
 		/recipient['\u2019\u2018\u0027]s\s+käteinen\s+details/gi,
 		recipientCashTranslation,
+	);
+
+	// CRITICAL: Handle "Recipient's European Bank Details" with aggressive early replacements
+	// Pattern 1: Standard apostrophe with HTML tags
+	translatedHtml = translatedHtml.replace(
+		/(>|&gt;)?Recipient['\u2019\u2018\u0027]s\s+European\s+Bank\s+Details(<|&lt;)?/gi,
+		(_match, prefix, suffix) => {
+			const pre = prefix || "";
+			const suf = suffix || "";
+			return `${pre}${recipientEuropeanBankTranslation}${suf}`;
+		},
+	);
+
+	// Pattern 2: Without HTML tags
+	translatedHtml = translatedHtml.replace(
+		/Recipient['\u2019\u2018\u0027]s\s+European\s+Bank\s+Details/gi,
+		recipientEuropeanBankTranslation,
+	);
+
+	// Pattern 3: Handle HTML entities for apostrophe
+	translatedHtml = translatedHtml.replace(
+		/Recipient(&#39;|&apos;|&#x2019;|&#x2018;)s\s+European\s+Bank\s+Details/gi,
+		recipientEuropeanBankTranslation,
+	);
+
+	// Pattern 4: Handle case variations
+	translatedHtml = translatedHtml.replace(
+		/recipient['\u2019\u2018\u0027]s\s+european\s+bank\s+details/gi,
+		recipientEuropeanBankTranslation,
 	);
 
 	// Early replacement for "Recipient's Details:" - must come before "Recipient's Cash Details"
@@ -526,12 +556,31 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			translation: t("invoice.template.recipientCashDetails"),
 		},
 		// Recipient's European Bank Details - match in various HTML contexts
+		// Handle all apostrophe types and HTML entities
 		{
-			english: />Recipient['\u2019]s\s+European\s+Bank\s+Details</gi,
+			english: />Recipient['\u2019\u2018\u0027]s\s+European\s+Bank\s+Details</gi,
 			translation: `>${t("invoice.template.recipientEuropeanBankDetails")}<`,
 		},
 		{
-			english: /Recipient['\u2019]s\s+European\s+Bank\s+Details/gi,
+			english: /Recipient['\u2019\u2018\u0027]s\s+European\s+Bank\s+Details/gi,
+			translation: t("invoice.template.recipientEuropeanBankDetails"),
+		},
+		// Handle HTML entities for apostrophe
+		{
+			english: />Recipient(&#39;|&apos;|&#x2019;|&#x2018;)s\s+European\s+Bank\s+Details</gi,
+			translation: `>${t("invoice.template.recipientEuropeanBankDetails")}<`,
+		},
+		{
+			english: /Recipient(&#39;|&apos;|&#x2019;|&#x2018;)s\s+European\s+Bank\s+Details/gi,
+			translation: t("invoice.template.recipientEuropeanBankDetails"),
+		},
+		// Handle case variations
+		{
+			english: />recipient['\u2019\u2018\u0027]s\s+european\s+bank\s+details</gi,
+			translation: `>${t("invoice.template.recipientEuropeanBankDetails")}<`,
+		},
+		{
+			english: /recipient['\u2019\u2018\u0027]s\s+european\s+bank\s+details/gi,
 			translation: t("invoice.template.recipientEuropeanBankDetails"),
 		},
 		// IBAN and BIC - ensure they have colons

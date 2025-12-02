@@ -837,7 +837,7 @@ const CreateInvoice = ({
 											<FormControl fullWidth>
 												<InputLabel sx={{ ml: -1.6 }} shrink>
 													<Typography variant="h4" color="text.primary">
-														SELECT CUSTOMER
+														{t("invoiceForm.selectCustomer", { defaultValue: "SELECT CUSTOMER" })}
 													</Typography>
 												</InputLabel>
 												<Autocomplete
@@ -869,7 +869,9 @@ const CreateInvoice = ({
 													renderInput={(params) => (
 														<TextField
 															{...params}
-															placeholder="Enter select customer"
+															placeholder={t("invoiceForm.enterSelectCustomer", {
+																defaultValue: "Enter select customer",
+															})}
 															error={previewCustomerError}
 															helperText={
 																previewCustomerError
