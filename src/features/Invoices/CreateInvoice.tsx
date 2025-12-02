@@ -10,6 +10,9 @@ import {
 	FormControl,
 	FormControlLabel,
 	Checkbox,
+	Autocomplete,
+	TextField,
+	InputLabel,
 } from "@mui/material";
 import { Formik, Form, Field, type FormikProps, type FormikHelpers } from "formik";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
@@ -87,7 +90,7 @@ const CreateInvoice = ({
 	customerId?: string;
 	isReceipt?: boolean;
 }) => {
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const { handlePaid } = useInvoiceHook();
@@ -107,6 +110,11 @@ const CreateInvoice = ({
 	const [previewString, setPreviewString] = useState<string | undefined>(undefined);
 	const invoiceSettings = useInvoicesettingsControllerFindFirst();
 	const { isEuropeanCountry } = useEuropeanCountryDetection();
+	const [selectedPreviewCustomer, setSelectedPreviewCustomer] = useState<{
+		label: string;
+		value: string;
+	} | null>(null);
+	const [previewCustomerError, setPreviewCustomerError] = useState<boolean>(false);
 	const invoiceFindOne = useInvoiceControllerFindOne(id ?? "", {
 		query: {
 			enabled: id !== undefined,
@@ -777,7 +785,7 @@ const CreateInvoice = ({
 									<Grid item xs={12} sm={6}>
 										<SubtotalFooter formik={formik} />
 									</Grid>
-									<Grid item xs={12} sm={3.5}>
+									<Grid item xs={12} sm={3}>
 										<Field
 											name="template_id"
 											label={
@@ -824,6 +832,58 @@ const CreateInvoice = ({
 											}
 										/>
 									</Grid>
+									{!id && (
+										<Grid item xs={12} sm={3}>
+											<FormControl fullWidth>
+												<InputLabel sx={{ ml: -1.6 }} shrink>
+													<Typography variant="h4" color="text.primary">
+														{t("invoiceForm.selectCustomer", { defaultValue: "SELECT CUSTOMER" })}
+													</Typography>
+												</InputLabel>
+												<Autocomplete
+													value={selectedPreviewCustomer}
+													onChange={(_, newValue) => {
+														setSelectedPreviewCustomer(newValue);
+														setPreviewCustomerError(false);
+													}}
+													options={
+														formik?.values?.customer_ids
+															? (formik?.values?.customer_ids?.map((id) => {
+																	const customer = customerData?.data?.find((cus) => cus.id === id);
+																	return {
+																		value: customer?.id ?? "",
+																		label: customer?.display_name ?? "",
+																	};
+																}) ?? [])
+															: (formik?.values as any)?.customer_id
+																? (customerData?.data
+																		?.filter(
+																			(cus) => cus.id === (formik?.values as any).customer_id,
+																		)
+																		?.map((cus) => ({
+																			value: cus?.id,
+																			label: cus?.display_name,
+																		})) ?? [])
+																: []
+													}
+													renderInput={(params) => (
+														<TextField
+															{...params}
+															placeholder={t("invoiceForm.enterSelectCustomer", {
+																defaultValue: "Enter select customer",
+															})}
+															error={previewCustomerError}
+															helperText={
+																previewCustomerError
+																	? t("invoiceForm.validation.customerRequired")
+																	: ""
+															}
+														/>
+													)}
+												/>
+											</FormControl>
+										</Grid>
+									)}
 									<Grid
 										item
 										xs={12}
@@ -839,19 +899,26 @@ const CreateInvoice = ({
 										<Button
 											variant="outlined"
 											onClick={async () => {
+												if (!selectedPreviewCustomer && !id) {
+													setPreviewCustomerError(true);
+													return;
+												}
 												const data = await invoicePreview.mutateAsync({
 													data: {
 														...formik.values,
+														reference_number: formik.values.reference_number
+															? formik.values.reference_number
+															: formik.values.invoice_number,
 														customer_id: id
 															? (formik.values as any).customer_id
-															: formik.values.customer_ids?.[0],
+															: selectedPreviewCustomer?.value,
 														recurring: formik.values
 															.recurring as CreateInvoiceWithProductsRecurring,
 														tax_id: formik.values.tax_id === "" ? null : formik.values.tax_id,
 														due_amount: formik.values.total,
 														paid_amount: 0,
 													},
-													params: { lang: i18n.language },
+													params: { lang: "en" }, // Always request English from backend, frontend will translate
 												});
 												// Translate the invoice HTML content before setting it
 												const translatedHtml = translateInvoiceHtml(data as string, t);

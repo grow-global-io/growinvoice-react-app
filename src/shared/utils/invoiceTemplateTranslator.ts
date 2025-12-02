@@ -8,6 +8,122 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 
 	let translatedHtml = html;
 
+	// First, handle mixed-language text that might come from backend
+	// Replace "Recipient's Käteinen Details" with proper translation
+	// Handle all possible variations: different apostrophes, HTML entities, with/without tags
+	const recipientCashTranslation = t("invoice.template.recipientCashDetails");
+	const recipientEuropeanBankTranslation = t("invoice.template.recipientEuropeanBankDetails");
+	const recipientsDetailsTranslation = t("invoice.template.recipientsDetails");
+	const payerNameAddressTranslation = t("invoice.template.payerNameAddress");
+	const dueDateTranslation = t("invoice.template.dueDate");
+
+	// CRITICAL: Handle "Due Päiväys:" (mixed English-Finnish) FIRST
+	// This must come before any other Due Date patterns
+	translatedHtml = translatedHtml.replace(/Due\s+Päiväys\s*:+/gi, dueDateTranslation);
+	translatedHtml = translatedHtml.replace(/>Due\s+Päiväys\s*:+/gi, `>${dueDateTranslation}`);
+
+	// Multiple aggressive replacements to catch all variations
+	// Pattern 1: Standard apostrophe with HTML tags
+	translatedHtml = translatedHtml.replace(
+		/(>|&gt;)?Recipient['\u2019\u2018\u0027]s\s+Käteinen\s+Details(<|&lt;)?/gi,
+		(_match, prefix, suffix) => {
+			const pre = prefix || "";
+			const suf = suffix || "";
+			return `${pre}${recipientCashTranslation}${suf}`;
+		},
+	);
+
+	// Pattern 2: Without HTML tags
+	translatedHtml = translatedHtml.replace(
+		/Recipient['\u2019\u2018\u0027]s\s+Käteinen\s+Details/gi,
+		recipientCashTranslation,
+	);
+
+	// Pattern 3: Handle HTML entities for apostrophe
+	translatedHtml = translatedHtml.replace(
+		/Recipient(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Käteinen\s+Details/gi,
+		recipientCashTranslation,
+	);
+
+	// Pattern 4: Handle case variations
+	translatedHtml = translatedHtml.replace(
+		/recipient['\u2019\u2018\u0027]s\s+käteinen\s+details/gi,
+		recipientCashTranslation,
+	);
+
+	// CRITICAL: Handle "Recipient's European Bank Details" with aggressive early replacements
+	// Pattern 1: Standard apostrophe with HTML tags
+	translatedHtml = translatedHtml.replace(
+		/(>|&gt;)?Recipient['\u2019\u2018\u0027]s\s+European\s+Bank\s+Details(<|&lt;)?/gi,
+		(_match, prefix, suffix) => {
+			const pre = prefix || "";
+			const suf = suffix || "";
+			return `${pre}${recipientEuropeanBankTranslation}${suf}`;
+		},
+	);
+
+	// Pattern 2: Without HTML tags
+	translatedHtml = translatedHtml.replace(
+		/Recipient['\u2019\u2018\u0027]s\s+European\s+Bank\s+Details/gi,
+		recipientEuropeanBankTranslation,
+	);
+
+	// Pattern 3: Handle HTML entities for apostrophe
+	translatedHtml = translatedHtml.replace(
+		/Recipient(&#39;|&apos;|&#x2019;|&#x2018;)s\s+European\s+Bank\s+Details/gi,
+		recipientEuropeanBankTranslation,
+	);
+
+	// Pattern 4: Handle case variations
+	translatedHtml = translatedHtml.replace(
+		/recipient['\u2019\u2018\u0027]s\s+european\s+bank\s+details/gi,
+		recipientEuropeanBankTranslation,
+	);
+
+	// Early replacement for "Recipient's Details:" - must come before "Recipient's Cash Details"
+	// Match the English text and replace with translation (translation already has correct colon per language)
+	translatedHtml = translatedHtml.replace(
+		/Recipient['\u2019\u2018\u0027]s\s+Details\s*:+/gi,
+		recipientsDetailsTranslation,
+	);
+	translatedHtml = translatedHtml.replace(
+		/Recipient(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Details\s*:+/gi,
+		recipientsDetailsTranslation,
+	);
+	// Also match without colon (for cases where backend doesn't send colon)
+	translatedHtml = translatedHtml.replace(
+		/Recipient['\u2019\u2018\u0027]s\s+Details(?!\s*:)/gi,
+		recipientsDetailsTranslation,
+	);
+
+	// Early replacement for "Payer's Name & Address:" - EXACTLY like "Recipient's Details:" above
+	// Match the English text and replace with translation (translation already has correct colon per language)
+	// Pattern 1: Standard apostrophe with & symbol, with colon(s)
+	translatedHtml = translatedHtml.replace(
+		/Payer['\u2019\u2018\u0027]s\s+Name\s*&\s*Address\s*:+/gi,
+		payerNameAddressTranslation,
+	);
+	// Pattern 2: HTML entities for apostrophe with & symbol, with colon(s)
+	translatedHtml = translatedHtml.replace(
+		/Payer(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Name\s*&\s*Address\s*:+/gi,
+		payerNameAddressTranslation,
+	);
+	// Pattern 3: Standard apostrophe with &amp; (HTML entity for &), with colon(s)
+	translatedHtml = translatedHtml.replace(
+		/Payer['\u2019\u2018\u0027]s\s+Name\s*&amp;\s*Address\s*:+/gi,
+		payerNameAddressTranslation,
+	);
+	// Pattern 4: HTML entities for apostrophe with &amp;, with colon(s)
+	translatedHtml = translatedHtml.replace(
+		/Payer(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Name\s*&amp;\s*Address\s*:+/gi,
+		payerNameAddressTranslation,
+	);
+	// Pattern 5: Without colon (for cases where backend doesn't send colon)
+	translatedHtml = translatedHtml.replace(
+		/Payer['\u2019\u2018\u0027]s\s+Name\s*&\s*Address(?!\s*:)/gi,
+		payerNameAddressTranslation,
+	);
+
 	// First pass: Replace all translation keys that appear as literal strings
 	// This handles keys that the backend inserts directly into HTML
 	// Order matters: longer keys first to avoid partial matches
@@ -18,7 +134,21 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		},
 		{
 			key: "invoice.template.recipientCashDetails",
-			value: t("invoice.template.recipientCashDetails"),
+			value: recipientCashTranslation,
+		},
+		// Also handle the mixed-language text as a key (in case backend sends it as a key)
+		{
+			key: "Recipient's Käteinen Details",
+			value: recipientCashTranslation,
+		},
+		// Handle "Payer's Name & Address:" as a direct key
+		{
+			key: "Payer's Name & Address:",
+			value: `${payerNameAddressTranslation}:`,
+		},
+		{
+			key: "Payer's Name & Address",
+			value: payerNameAddressTranslation,
 		},
 		{
 			key: "invoice.template.recipientEuropeanBankDetails",
@@ -151,7 +281,27 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		// Invoice number and date - be more flexible with spacing
 		{ english: /Invoice\s+No:/gi, translation: t("invoice.template.invoiceNo") },
 		{ english: /Invoice\s+No\.:/gi, translation: t("invoice.template.invoiceNo") },
-		{ english: />Date:/gi, translation: `>${t("invoice.template.date")}<` },
+		// Date - handle carefully to avoid adding extra < or breaking HTML tags
+		// Match "Date:<" specifically and replace with translation (keeping the <)
+		{ english: />Date:\s*</gi, translation: `>${t("invoice.template.date")}<` },
+		// Match "Date:" followed by HTML tag (like <b>, <span>, etc.) - preserve the tag completely
+		{
+			english: />Date:\s*<[^>]+>/gi,
+			translation: (match) => {
+				// Replace just "Date:" part, keep the entire HTML tag intact
+				return match.replace(/Date:/gi, t("invoice.template.date"));
+			},
+		},
+		// Match "Date:" followed by whitespace (common case)
+		{ english: />Date:\s+/gi, translation: `>${t("invoice.template.date")} ` },
+		// Match "Date:" followed by any non-HTML character (fallback)
+		{
+			english: />Date:\s*[^<\s]/gi,
+			translation: (match) => {
+				// Replace just "Date:" part, keep the rest
+				return match.replace(/Date:/gi, t("invoice.template.date"));
+			},
+		},
 		{ english: /Date:/gi, translation: t("invoice.template.date") },
 
 		// Address sections - match with or without leading/trailing whitespace
@@ -165,30 +315,65 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		{ english: /Invoice\s+To:/gi, translation: t("invoice.template.invoiceTo") },
 		{ english: /Pay\s+To:/gi, translation: t("invoice.template.payTo") },
 		// Recipient's Details - handle various formats
+		// Must come before "Recipient's Cash Details" to avoid conflicts
+		// Handle all apostrophe types and HTML contexts
+		// Use translation directly (it already handles colon correctly per language)
 		{
-			english: />Recipient['\u2019]s\s+Details:</gi,
-			translation: `>${t("invoice.template.recipientsDetails")}:`,
+			english: />Recipient['\u2019\u2018\u0027]s\s+Details\s*:?\s*</gi,
+			translation: `>${recipientsDetailsTranslation}<`,
 		},
 		{
-			english: /Recipient['\u2019]s\s+Details:/gi,
-			translation: t("invoice.template.recipientsDetails"),
+			english: /Recipient['\u2019\u2018\u0027]s\s+Details\s*:?\s*/gi,
+			translation: recipientsDetailsTranslation,
+		},
+		// Handle HTML entities for apostrophe
+		{
+			english: />Recipient(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Details\s*:?\s*</gi,
+			translation: `>${recipientsDetailsTranslation}<`,
 		},
 		{
-			english: /Recipient['\u2019]s\s+Details/gi,
-			translation: t("invoice.template.recipientsDetails"),
+			english: /Recipient(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Details\s*:?\s*/gi,
+			translation: recipientsDetailsTranslation,
 		},
 		// Payer's Name & Address - handle various formats
+		// Handle all apostrophe types and HTML contexts
+		// Must come early to avoid conflicts with other patterns
+		// Use translation directly (it already handles colon correctly per language)
 		{
-			english: />Payer['\u2019]s\s+Name\s*&\s*Address:</gi,
-			translation: `>${t("invoice.template.payerNameAddress")}:`,
+			english: />Payer['\u2019\u2018\u0027]s\s+Name\s*&\s*Address\s*:?\s*</gi,
+			translation: `>${payerNameAddressTranslation}<`,
 		},
 		{
-			english: /Payer['\u2019]s\s+Name\s*&\s*Address:/gi,
-			translation: t("invoice.template.payerNameAddress"),
+			english: /Payer['\u2019\u2018\u0027]s\s+Name\s*&\s*Address\s*:?\s*/gi,
+			translation: payerNameAddressTranslation,
+		},
+		// Handle HTML entities for apostrophe
+		{
+			english: />Payer(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Name\s*&\s*Address\s*:?\s*</gi,
+			translation: `>${payerNameAddressTranslation}<`,
 		},
 		{
-			english: /Payer['\u2019]s\s+Name\s*&\s*Address/gi,
-			translation: t("invoice.template.payerNameAddress"),
+			english: /Payer(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Name\s*&\s*Address\s*:?\s*/gi,
+			translation: payerNameAddressTranslation,
+		},
+		// Handle &amp; (HTML entity for &)
+		{
+			english: />Payer['\u2019\u2018\u0027]s\s+Name\s*&amp;\s*Address\s*:?\s*</gi,
+			translation: `>${payerNameAddressTranslation}<`,
+		},
+		{
+			english: /Payer['\u2019\u2018\u0027]s\s+Name\s*&amp;\s*Address\s*:?\s*/gi,
+			translation: payerNameAddressTranslation,
+		},
+		// Handle "and" instead of "&"
+		{
+			english: /Payer['\u2019\u2018\u0027]s\s+Name\s+and\s+Address\s*:?\s*/gi,
+			translation: payerNameAddressTranslation,
+		},
+		// Handle case variations
+		{
+			english: /payer['\u2019\u2018\u0027]s\s+name\s*&\s*address\s*:?\s*/gi,
+			translation: payerNameAddressTranslation,
 		},
 		{ english: />Name\s*&\s*Address:</gi, translation: `>${t("invoice.template.nameAddress")}:` },
 		{ english: /Name\s*&\s*Address:/gi, translation: t("invoice.template.nameAddress") },
@@ -221,7 +406,25 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		// Summary section - handle various contexts (order matters: longer patterns first)
 		// Match "Discount (X%)" format - we'll translate "Discount (" and keep the percentage
 		// Need to match "Discount" before the opening parenthesis in various contexts
-		{ english: />Discount\s*\(/gi, translation: `>${t("invoice.template.discount")}<` },
+		// Discount - handle carefully to avoid adding extra < or breaking HTML tags
+		// Match "Discount (<" specifically and replace with translation (keeping the <)
+		{ english: />Discount\s*\(\s*</gi, translation: `>${t("invoice.template.discount")}<` },
+		// Match "Discount (" followed by HTML tag (like <span>, <b>, etc.) - preserve the tag completely
+		{
+			english: />Discount\s*\(\s*<[^>]+>/gi,
+			translation: (match) => {
+				// Replace just "Discount (" part, keep the entire HTML tag intact
+				return match.replace(/Discount\s*\(/gi, t("invoice.template.discount"));
+			},
+		},
+		// Match "Discount (" (without <) and replace with translation (without adding <)
+		{
+			english: />Discount\s*\([^<]/gi,
+			translation: (match) => {
+				// Replace just "Discount (" part, keep the rest (like the percentage)
+				return match.replace(/Discount\s*\(/gi, t("invoice.template.discount"));
+			},
+		},
 		{ english: /Discount\s*\(/gi, translation: t("invoice.template.discount") },
 		// Also match standalone "Discount" in case it appears separately
 		{
@@ -293,9 +496,24 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		{ english: /Ref\.\s*No\.:/gi, translation: t("invoice.template.refNo") },
 		{ english: /Ref\.\s*No\./gi, translation: t("invoice.template.refNo").replace(":", "") },
 		{ english: /Ref\s+No:/gi, translation: t("invoice.template.refNo") },
+		// Due Date - handle various formats including mixed language
+		// Handle "Due Päiväys:" (mixed English-Finnish) first - must come before "Due Date"
+		{ english: />Due\s+Päiväys:</gi, translation: `>${t("invoice.template.dueDate")}<` },
+		{ english: /Due\s+Päiväys:/gi, translation: t("invoice.template.dueDate") },
+		{ english: /Due\s+Päiväys/gi, translation: t("invoice.template.dueDate") },
+		// Handle "Due Date:" (English)
 		{ english: />Due\s+Date:</gi, translation: `>${t("invoice.template.dueDate")}<` },
 		{ english: /Due\s+Date:/gi, translation: t("invoice.template.dueDate") },
 		{ english: /Due\s+Date/gi, translation: t("invoice.template.dueDate") },
+		// Handle standalone "Due" followed by any translated date word (catch any mixed cases)
+		{
+			english: />Due\s+([A-ZÄÖÅ][a-zäöå]+):</gi,
+			translation: () => {
+				// Replace "Due [any Finnish/Estonian date word]:" with just the translation
+				return `>${t("invoice.template.dueDate")}<`;
+			},
+		},
+		{ english: /Due\s+([A-ZÄÖÅ][a-zäöå]+):/gi, translation: () => t("invoice.template.dueDate") },
 		// Note - match with colon in various contexts
 		{ english: />Note:</gi, translation: `>${t("invoice.template.note")}<` },
 		{ english: /Note:/gi, translation: t("invoice.template.note") },
@@ -310,6 +528,16 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			translation: t("invoice.template.recipientUpiDetails"),
 		},
 		// Recipient's Cash Details - match in various HTML contexts
+		// Handle mixed translations (e.g., "Recipient's Käteinen Details" from backend)
+		// Must come before "Recipient's Cash Details" to catch mixed translations first
+		{
+			english: />Recipient['\u2019]s\s+Käteinen\s+Details</gi,
+			translation: `>${t("invoice.template.recipientCashDetails")}<`,
+		},
+		{
+			english: /Recipient['\u2019]s\s+Käteinen\s+Details/gi,
+			translation: t("invoice.template.recipientCashDetails"),
+		},
 		{
 			english: />Recipient['\u2019]s\s+Cash\s+Details</gi,
 			translation: `>${t("invoice.template.recipientCashDetails")}<`,
@@ -318,13 +546,41 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			english: /Recipient['\u2019]s\s+Cash\s+Details/gi,
 			translation: t("invoice.template.recipientCashDetails"),
 		},
-		// Recipient's European Bank Details - match in various HTML contexts
+		// Handle Finnish translation that might appear
 		{
-			english: />Recipient['\u2019]s\s+European\s+Bank\s+Details</gi,
+			english: />Vastaanottajan\s+käteistiedot</gi,
+			translation: `>${t("invoice.template.recipientCashDetails")}<`,
+		},
+		{
+			english: /Vastaanottajan\s+käteistiedot/gi,
+			translation: t("invoice.template.recipientCashDetails"),
+		},
+		// Recipient's European Bank Details - match in various HTML contexts
+		// Handle all apostrophe types and HTML entities
+		{
+			english: />Recipient['\u2019\u2018\u0027]s\s+European\s+Bank\s+Details</gi,
 			translation: `>${t("invoice.template.recipientEuropeanBankDetails")}<`,
 		},
 		{
-			english: /Recipient['\u2019]s\s+European\s+Bank\s+Details/gi,
+			english: /Recipient['\u2019\u2018\u0027]s\s+European\s+Bank\s+Details/gi,
+			translation: t("invoice.template.recipientEuropeanBankDetails"),
+		},
+		// Handle HTML entities for apostrophe
+		{
+			english: />Recipient(&#39;|&apos;|&#x2019;|&#x2018;)s\s+European\s+Bank\s+Details</gi,
+			translation: `>${t("invoice.template.recipientEuropeanBankDetails")}<`,
+		},
+		{
+			english: /Recipient(&#39;|&apos;|&#x2019;|&#x2018;)s\s+European\s+Bank\s+Details/gi,
+			translation: t("invoice.template.recipientEuropeanBankDetails"),
+		},
+		// Handle case variations
+		{
+			english: />recipient['\u2019\u2018\u0027]s\s+european\s+bank\s+details</gi,
+			translation: `>${t("invoice.template.recipientEuropeanBankDetails")}<`,
+		},
+		{
+			english: /recipient['\u2019\u2018\u0027]s\s+european\s+bank\s+details/gi,
 			translation: t("invoice.template.recipientEuropeanBankDetails"),
 		},
 		// IBAN and BIC - ensure they have colons
@@ -337,6 +593,9 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		// Match BIC when followed by space and content (like >BIC 123 -> >BIC: 123)
 		{ english: />BIC\s+([0-9A-Z])/gi, translation: (_match, after) => `>BIC: ${after}` },
 		// Cash - match standalone
+		// Handle Finnish "Käteinen" that might appear from backend
+		{ english: />Käteinen</gi, translation: `>${t("invoice.template.cash")}<` },
+		{ english: /\bKäteinen\b/gi, translation: t("invoice.template.cash") },
 		{ english: />Cash</gi, translation: `>${t("invoice.template.cash")}<` },
 		{ english: /\bCash\b/gi, translation: t("invoice.template.cash") },
 		// Unit and Unit Price
@@ -459,6 +718,24 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			translation: t("invoice.template.termsDelivery"),
 		},
 		// Payment Terms - match with flexible whitespace handling
+		// Match both variations: "cleared" and "processed", "General items" and "general payment transmission rules"
+		// Handle case variations, flexible spacing, and HTML entities
+		{
+			english:
+				/The\s+payment\s+will\s+be\s+cleared\s+for\s+the\s+recipient\s+in\s+accordance\s+with\s+the\s+General\s+items\s+for\s+payment\s+transmission\s+and\s+only\s+on\s+the\s+basis\s+of\s+the\s+account\s+number\s+given\s+by\s+the\s+payer\./gi,
+			translation: t("invoice.template.paymentTerms"),
+		},
+		{
+			english:
+				/The\s+payment\s+will\s+be\s+cleared\s+for\s+the\s+recipient\s+in\s+accordance\s+with\s+the\s+general\s+items\s+for\s+payment\s+transmission\s+and\s+only\s+on\s+the\s+basis\s+of\s+the\s+account\s+number\s+given\s+by\s+the\s+payer\./gi,
+			translation: t("invoice.template.paymentTerms"),
+		},
+		// More flexible pattern that handles HTML breaks and extra whitespace
+		{
+			english:
+				/The\s+payment\s+will\s+be\s+cleared\s+for\s+the\s+recipient\s+in\s+accordance\s+with\s+the\s+[Gg]eneral\s+items?\s+for\s+payment\s+transmission\s+and\s+only\s+on\s+the\s+basis\s+of\s+the\s+account\s+number\s+given\s+by\s+the\s+payer\.?/gi,
+			translation: t("invoice.template.paymentTerms"),
+		},
 		{
 			english:
 				/The\s+payment\s+will\s+be\s+processed\s+for\s+the\s+recipient\s+according\s+to\s+the\s+general\s+payment\s+transmission\s+rules,\s+and\s+only\s+based\s+on\s+the\s+account\s+number\s+provided\s+by\s+the\s+payer\./gi,
@@ -474,6 +751,105 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			translatedHtml = translatedHtml.replace(english, translation);
 		}
 	});
+
+	// Final post-processing: Catch any remaining instances
+	// This is a safety net to ensure we catch everything
+	translatedHtml = translatedHtml.replace(
+		/Recipient['\u2019\u2018\u0027]s\s+Käteinen\s+Details/gi,
+		recipientCashTranslation,
+	);
+	translatedHtml = translatedHtml.replace(
+		/Recipient(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Käteinen\s+Details/gi,
+		recipientCashTranslation,
+	);
+
+	// Final catch for "Recipient's Details:" - match one or more colons and replace with translation
+	translatedHtml = translatedHtml.replace(
+		/Recipient['\u2019\u2018\u0027]s\s+Details\s*:+/gi,
+		recipientsDetailsTranslation,
+	);
+	translatedHtml = translatedHtml.replace(
+		/Recipient(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Details\s*:+/gi,
+		recipientsDetailsTranslation,
+	);
+	// Also match without colon
+	translatedHtml = translatedHtml.replace(
+		/Recipient['\u2019\u2018\u0027]s\s+Details(?!\s*:)/gi,
+		recipientsDetailsTranslation,
+	);
+
+	// Final catch for "Payer's Name & Address:" - match one or more colons and replace with translation
+	// Pattern 1: Standard apostrophes, with colon(s)
+	translatedHtml = translatedHtml.replace(
+		/Payer['\u2019\u2018\u0027]s\s+Name\s*&\s*Address\s*:+/gi,
+		payerNameAddressTranslation,
+	);
+	// Pattern 2: HTML entities, with colon(s)
+	translatedHtml = translatedHtml.replace(
+		/Payer(&#39;|&apos;|&#x2019;|&#x2018;)s\s+Name\s*&\s*Address\s*:+/gi,
+		payerNameAddressTranslation,
+	);
+	// Pattern 3: Handle &amp;, with colon(s)
+	translatedHtml = translatedHtml.replace(
+		/Payer['\u2019\u2018\u0027]s\s+Name\s*&amp;\s*Address\s*:+/gi,
+		payerNameAddressTranslation,
+	);
+	// Pattern 4: Handle "and" instead of "&", with colon(s)
+	translatedHtml = translatedHtml.replace(
+		/Payer['\u2019\u2018\u0027]s\s+Name\s+and\s+Address\s*:+/gi,
+		payerNameAddressTranslation,
+	);
+	// Pattern 5: Case variations, with colon(s)
+	translatedHtml = translatedHtml.replace(
+		/payer['\u2019\u2018\u0027]s\s+name\s*&\s*address\s*:+/gi,
+		payerNameAddressTranslation,
+	);
+	// Pattern 6: Without colon
+	translatedHtml = translatedHtml.replace(
+		/Payer['\u2019\u2018\u0027]s\s+Name\s*&\s*Address(?!\s*:)/gi,
+		payerNameAddressTranslation,
+	);
+
+	// Final catch for "Due Päiväys:" (mixed English-Finnish)
+	translatedHtml = translatedHtml.replace(/Due\s+Päiväys\s*:+/gi, dueDateTranslation);
+	translatedHtml = translatedHtml.replace(/>Due\s+Päiväys\s*:+/gi, `>${dueDateTranslation}`);
+
+	// Post-processing: Fix broken HTML tags after "Date:" or "Discount ("
+	// Fix "Date: b class="..." -> "Date: <b class="..." (restore broken HTML tag)
+	translatedHtml = translatedHtml.replace(
+		/>Date:\s+([a-z][a-z0-9]*)\s+class\s*=\s*"([^"]+)">/gi,
+		(_match, tagName, className) => {
+			return `>${t("invoice.template.date")} <${tagName} class="${className}">`;
+		},
+	);
+	// Fix "Date: b>" -> "Date: <b>" (restore broken HTML tag without class)
+	translatedHtml = translatedHtml.replace(/>Date:\s+([a-z][a-z0-9]*)>/gi, (_match, tagName) => {
+		return `>${t("invoice.template.date")} <${tagName}>`;
+	});
+	// Fix "Discount ( span class="..." -> "Discount ( <span class="..." (restore broken HTML tag)
+	translatedHtml = translatedHtml.replace(
+		/>Discount\s*\(\s+([a-z][a-z0-9]*)\s+class\s*=\s*"([^"]+)">/gi,
+		(_match, tagName, className) => {
+			return `>${t("invoice.template.discount")} <${tagName} class="${className}">`;
+		},
+	);
+	// Fix "Discount ( span>" -> "Discount ( <span>" (restore broken HTML tag without class)
+	translatedHtml = translatedHtml.replace(
+		/>Discount\s*\(\s+([a-z][a-z0-9]*)>/gi,
+		(_match, tagName) => {
+			return `>${t("invoice.template.discount")} <${tagName}>`;
+		},
+	);
+	// Fix double parenthesis issue: "Alennus ((" -> "Alennus ("
+	translatedHtml = translatedHtml.replace(/([^>])Discount\s*\(\s*\(/gi, (_match, before) => {
+		return `${before}${t("invoice.template.discount")}`;
+	});
+	translatedHtml = translatedHtml.replace(/>Discount\s*\(\s*\(/gi, () => {
+		return `>${t("invoice.template.discount")}`;
+	});
+	// Also fix for translated versions (Finnish: "Alennus ((" -> "Alennus (")
+	translatedHtml = translatedHtml.replace(/(Alennus\s*\()\s*\(/gi, "$1");
+	translatedHtml = translatedHtml.replace(/(Alennus\s*\()\s*\(/gi, "$1");
 
 	return translatedHtml;
 };
