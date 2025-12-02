@@ -14,6 +14,12 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 	const recipientCashTranslation = t("invoice.template.recipientCashDetails");
 	const recipientsDetailsTranslation = t("invoice.template.recipientsDetails");
 	const payerNameAddressTranslation = t("invoice.template.payerNameAddress");
+	const dueDateTranslation = t("invoice.template.dueDate");
+
+	// CRITICAL: Handle "Due Päiväys:" (mixed English-Finnish) FIRST
+	// This must come before any other Due Date patterns
+	translatedHtml = translatedHtml.replace(/Due\s+Päiväys\s*:+/gi, dueDateTranslation);
+	translatedHtml = translatedHtml.replace(/>Due\s+Päiväys\s*:+/gi, `>${dueDateTranslation}`);
 
 	// Multiple aggressive replacements to catch all variations
 	// Pattern 1: Standard apostrophe with HTML tags
@@ -245,7 +251,27 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		// Invoice number and date - be more flexible with spacing
 		{ english: /Invoice\s+No:/gi, translation: t("invoice.template.invoiceNo") },
 		{ english: /Invoice\s+No\.:/gi, translation: t("invoice.template.invoiceNo") },
-		{ english: />Date:/gi, translation: `>${t("invoice.template.date")}<` },
+		// Date - handle carefully to avoid adding extra < or breaking HTML tags
+		// Match "Date:<" specifically and replace with translation (keeping the <)
+		{ english: />Date:\s*</gi, translation: `>${t("invoice.template.date")}<` },
+		// Match "Date:" followed by HTML tag (like <b>, <span>, etc.) - preserve the tag completely
+		{
+			english: />Date:\s*<[^>]+>/gi,
+			translation: (match) => {
+				// Replace just "Date:" part, keep the entire HTML tag intact
+				return match.replace(/Date:/gi, t("invoice.template.date"));
+			},
+		},
+		// Match "Date:" followed by whitespace (common case)
+		{ english: />Date:\s+/gi, translation: `>${t("invoice.template.date")} ` },
+		// Match "Date:" followed by any non-HTML character (fallback)
+		{
+			english: />Date:\s*[^<\s]/gi,
+			translation: (match) => {
+				// Replace just "Date:" part, keep the rest
+				return match.replace(/Date:/gi, t("invoice.template.date"));
+			},
+		},
 		{ english: /Date:/gi, translation: t("invoice.template.date") },
 
 		// Address sections - match with or without leading/trailing whitespace
@@ -350,7 +376,17 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		// Summary section - handle various contexts (order matters: longer patterns first)
 		// Match "Discount (X%)" format - we'll translate "Discount (" and keep the percentage
 		// Need to match "Discount" before the opening parenthesis in various contexts
-		{ english: />Discount\s*\(/gi, translation: `>${t("invoice.template.discount")}<` },
+		// Discount - handle carefully to avoid adding extra <
+		// Match "Discount (<" specifically and replace with translation (keeping the <)
+		{ english: />Discount\s*\(\s*</gi, translation: `>${t("invoice.template.discount")}<` },
+		// Match "Discount (" (without <) and replace with translation (without adding <)
+		{
+			english: />Discount\s*\([^<]/gi,
+			translation: (match) => {
+				// Replace just "Discount (" part, keep the rest (like the percentage)
+				return match.replace(/Discount\s*\(/gi, t("invoice.template.discount"));
+			},
+		},
 		{ english: /Discount\s*\(/gi, translation: t("invoice.template.discount") },
 		// Also match standalone "Discount" in case it appears separately
 		{
@@ -422,9 +458,24 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		{ english: /Ref\.\s*No\.:/gi, translation: t("invoice.template.refNo") },
 		{ english: /Ref\.\s*No\./gi, translation: t("invoice.template.refNo").replace(":", "") },
 		{ english: /Ref\s+No:/gi, translation: t("invoice.template.refNo") },
+		// Due Date - handle various formats including mixed language
+		// Handle "Due Päiväys:" (mixed English-Finnish) first - must come before "Due Date"
+		{ english: />Due\s+Päiväys:</gi, translation: `>${t("invoice.template.dueDate")}<` },
+		{ english: /Due\s+Päiväys:/gi, translation: t("invoice.template.dueDate") },
+		{ english: /Due\s+Päiväys/gi, translation: t("invoice.template.dueDate") },
+		// Handle "Due Date:" (English)
 		{ english: />Due\s+Date:</gi, translation: `>${t("invoice.template.dueDate")}<` },
 		{ english: /Due\s+Date:/gi, translation: t("invoice.template.dueDate") },
 		{ english: /Due\s+Date/gi, translation: t("invoice.template.dueDate") },
+		// Handle standalone "Due" followed by any translated date word (catch any mixed cases)
+		{
+			english: />Due\s+([A-ZÄÖÅ][a-zäöå]+):</gi,
+			translation: () => {
+				// Replace "Due [any Finnish/Estonian date word]:" with just the translation
+				return `>${t("invoice.template.dueDate")}<`;
+			},
+		},
+		{ english: /Due\s+([A-ZÄÖÅ][a-zäöå]+):/gi, translation: () => t("invoice.template.dueDate") },
 		// Note - match with colon in various contexts
 		{ english: />Note:</gi, translation: `>${t("invoice.template.note")}<` },
 		{ english: /Note:/gi, translation: t("invoice.template.note") },
@@ -701,6 +752,34 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		/Payer['\u2019\u2018\u0027]s\s+Name\s*&\s*Address(?!\s*:)/gi,
 		payerNameAddressTranslation,
 	);
+
+	// Final catch for "Due Päiväys:" (mixed English-Finnish)
+	translatedHtml = translatedHtml.replace(/Due\s+Päiväys\s*:+/gi, dueDateTranslation);
+	translatedHtml = translatedHtml.replace(/>Due\s+Päiväys\s*:+/gi, `>${dueDateTranslation}`);
+
+	// Post-processing: Fix broken HTML tags after "Date:" or "Discount ("
+	// Fix "Date: b class="..." -> "Date: <b class="..." (restore broken HTML tag)
+	translatedHtml = translatedHtml.replace(
+		/>Date:\s+([a-z][a-z0-9]*)\s+class\s*=\s*"([^"]+)">/gi,
+		(_match, tagName, className) => {
+			return `>${t("invoice.template.date")} <${tagName} class="${className}">`;
+		},
+	);
+	// Fix "Date: b>" -> "Date: <b>" (restore broken HTML tag without class)
+	translatedHtml = translatedHtml.replace(/>Date:\s+([a-z][a-z0-9]*)>/gi, (_match, tagName) => {
+		return `>${t("invoice.template.date")} <${tagName}>`;
+	});
+	// Fix "Discount (<" -> "Discount (" (remove the stray <)
+	translatedHtml = translatedHtml.replace(
+		/([^>])Discount\s*\(\s*<\s*([^<])/gi,
+		(_match, before, after) => {
+			return `${before}${t("invoice.template.discount")} ${after}`;
+		},
+	);
+	// Fix "Discount (<" at start of line or after >
+	translatedHtml = translatedHtml.replace(/>Discount\s*\(\s*<\s*([^<])/gi, (_match, after) => {
+		return `>${t("invoice.template.discount")} ${after}`;
+	});
 
 	return translatedHtml;
 };
