@@ -15,6 +15,8 @@ export interface InvoiceProductWithAllDataDto {
 	/** @nullable */
 	hsnCode?: InvoiceProductWithAllDataDtoHsnCode;
 	/** @nullable */
+	discount?: number | null;
+	/** @nullable */
 	hsnCode_id: string | null;
 	id: string;
 	invoice?: Invoice;

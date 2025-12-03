@@ -76,6 +76,7 @@ export type OmitCreateInvoiceProductsExtended = Omit<
 	isEditPosible?: boolean;
 	isEditble?: boolean;
 	taxes?: string[];
+	discount?: number;
 };
 
 const CreateInvoice = ({
@@ -136,6 +137,7 @@ const CreateInvoice = ({
 					isNew: true,
 					isEditPosible: false,
 					isEditble: true,
+					discount: product?.discount ?? 0,
 				})) ?? [],
 			);
 		}
@@ -179,6 +181,7 @@ const CreateInvoice = ({
 			invoiceFindOne?.data?.product?.map((product) => ({
 				...product,
 				taxes: product?.product?.tax?.map((tax) => tax?.tax_id) ?? [],
+				discount: product?.discount ?? 0,
 			})) ?? [],
 		template_id:
 			invoiceFindOne?.data?.template_id ?? invoiceSettings?.data?.invoiceTemplateId ?? "",
@@ -249,6 +252,7 @@ const CreateInvoice = ({
 				price: yup.number().required(t("invoiceForm.validation.priceRequired")),
 				total: yup.number().required(t("invoiceForm.validation.totalRequired")),
 				taxes: yup.array().of(yup.string()).nullable().optional(),
+				discount: yup.number().min(0).max(100).optional(),
 			}),
 		),
 		user_id: yup.string().required(t("invoiceForm.validation.userRequired")),
@@ -298,6 +302,7 @@ const CreateInvoice = ({
 						product: rows.map((row) => ({
 							...row,
 							taxes: row.taxes?.length ? row.taxes : undefined,
+							discount: row.discount,
 						})),
 					},
 				});
@@ -316,6 +321,7 @@ const CreateInvoice = ({
 						product: rows.map((row) => ({
 							...row,
 							taxes: row.taxes?.length ? row.taxes : undefined,
+							discount: row.discount,
 						})),
 					},
 				});

@@ -69,6 +69,7 @@ export default function FullFeaturedCrudGrid({
 					tax_id: row.tax_id,
 					hsnCode_id: row.hsnCode_id,
 					taxes: row.taxes,
+					discount: row.discount,
 				};
 			}),
 		);
@@ -178,6 +179,7 @@ export default function FullFeaturedCrudGrid({
 				total: 0,
 				hsnCode_id: "",
 				taxes: defaultTaxes,
+				discount: 0,
 				isNew: true,
 				isEditPosible: false,
 				isEditble: true,
@@ -228,6 +230,7 @@ export default function FullFeaturedCrudGrid({
 								tax_total_percentage: taxPercentage,
 								taxes: taxIds, // Include taxes in updatedRows so handleTotal can use it
 								hsnCode_id: selectedProduct?.hsnCode_id,
+								discount: 0,
 							};
 						}
 						return row;
@@ -303,18 +306,21 @@ export default function FullFeaturedCrudGrid({
 						setErrorText("");
 					}
 					const price = params.row.price;
+					const discount = params.row.discount || 0;
 					// const taxPercentage = params.row.tax_total_percentage ?? 0;
 					const taxPercentage =
 						taxCodes?.data
 							?.filter((t) => params.row.taxes?.includes(t.id))
 							?.map((t) => t.percentage)
 							.reduce((acc, curr) => acc + curr, 0) ?? 0;
-					// Calculate total (Selling Price): quantity * price * (1 + taxPercentage/100)
+					// Calculate total (Selling Price): quantity * price * (1 - discount/100) * (1 + taxPercentage/100)
 					const newTotal =
 						price > 0 && value > 0 && taxPercentage > 0
-							? parseFloat((value * price * (1 + taxPercentage / 100)).toFixed(2))
+							? parseFloat(
+									(value * price * (1 - discount / 100) * (1 + taxPercentage / 100)).toFixed(2),
+								)
 							: price > 0 && value > 0
-								? parseFloat((value * price).toFixed(2))
+								? parseFloat((value * price * (1 - discount / 100)).toFixed(2))
 								: 0;
 					params.api.setEditCellValue({
 						id: params.id,
@@ -370,17 +376,20 @@ export default function FullFeaturedCrudGrid({
 						setErrorText("");
 					}
 					const quantity = params.row.quantity;
+					const discount = params.row.discount || 0;
 					const taxPercentage =
 						taxCodes?.data
 							?.filter((t) => params.row.taxes?.includes(t.id))
 							?.map((t) => t.percentage)
 							.reduce((acc, curr) => acc + curr, 0) ?? 0;
-					// Calculate total (Selling Price): quantity * stockPrice * (1 + taxPercentage/100)
+					// Calculate total (Selling Price): quantity * stockPrice * (1 - discount/100) * (1 + taxPercentage/100)
 					const newTotal =
 						quantity > 0 && taxPercentage > 0
-							? parseFloat((quantity * value * (1 + taxPercentage / 100)).toFixed(2))
+							? parseFloat(
+									(quantity * value * (1 - discount / 100) * (1 + taxPercentage / 100)).toFixed(2),
+								)
 							: quantity > 0
-								? parseFloat((quantity * value).toFixed(2))
+								? parseFloat((quantity * value * (1 - discount / 100)).toFixed(2))
 								: 0;
 					params.api.setEditCellValue({
 						id: params.id,
@@ -423,6 +432,75 @@ export default function FullFeaturedCrudGrid({
 			},
 		},
 		{
+			field: "discount",
+			headerName: t("invoice.table.discount", { defaultValue: "Discount %" }),
+			minWidth: 100,
+			editable: true,
+			preProcessEditCellProps: (params) => {
+				const hasError = params.props.value < 0 || params.props.value > 100;
+				return { ...params.props, error: hasError };
+			},
+			renderEditCell: (params) => {
+				const onChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
+					const value = parseFloat((parseFloat(event.target.value) || 0).toFixed(2));
+					if (value < 0 || value > 100) {
+						setErrorText(
+							t("invoiceForm.validation.discountRange", {
+								defaultValue: "Discount should be between 0 and 100",
+							}),
+						);
+					} else {
+						setErrorText("");
+					}
+					const quantity = params.row.quantity;
+					const price = params.row.price;
+					const taxPercentage =
+						taxCodes?.data
+							?.filter((t) => params.row.taxes?.includes(t.id))
+							?.map((t) => t.percentage)
+							.reduce((acc, curr) => acc + curr, 0) ?? 0;
+					// Calculate total (Selling Price): quantity * stockPrice * (1 - discount/100) * (1 + taxPercentage/100)
+					const newTotal =
+						quantity > 0 && price > 0 && taxPercentage > 0
+							? parseFloat(
+									(quantity * price * (1 - value / 100) * (1 + taxPercentage / 100)).toFixed(2),
+								)
+							: quantity > 0 && price > 0
+								? parseFloat((quantity * price * (1 - value / 100)).toFixed(2))
+								: 0;
+					params.api.setEditCellValue({
+						id: params.id,
+						field: "total",
+						value: newTotal,
+					});
+					const updatedRows = rows.map((row) => {
+						if (row.id === params.id) {
+							return {
+								...row,
+								discount: value,
+								total: newTotal,
+							};
+						}
+						return row;
+					});
+					setRows(updatedRows);
+					handleTotal(updatedRows);
+				};
+				return (
+					<GridTextField
+						params={params}
+						label="discount"
+						type="number"
+						onChangeValue={onChangeValue}
+						disabled={params.row.product_id === ""}
+					/>
+				);
+			},
+			renderCell: (params) => {
+				return <Typography>{params.value}%</Typography>;
+			},
+		},
+		{
 			field: "taxes",
 			headerName: (i18n.language || "en").toLowerCase().startsWith("fi")
 				? t("invoice.table.vatPercent", { defaultValue: "VAT %" })
@@ -458,12 +536,15 @@ export default function FullFeaturedCrudGrid({
 							.reduce((acc, curr) => acc + curr, 0) ?? 0;
 					const price = params.row.price;
 					const quantity = params.row.quantity;
-					// Recalculate total (Selling Price) when tax changes: quantity * price * (1 + taxPercentage/100)
+					const discount = params.row.discount || 0;
+					// Recalculate total (Selling Price) when tax changes: quantity * price * (1 - discount/100) * (1 + taxPercentage/100)
 					const newTotal =
 						price > 0 && quantity > 0 && taxPercentage > 0
-							? parseFloat((quantity * price * (1 + taxPercentage / 100)).toFixed(2))
+							? parseFloat(
+									(quantity * price * (1 - discount / 100) * (1 + taxPercentage / 100)).toFixed(2),
+								)
 							: price > 0 && quantity > 0
-								? parseFloat((quantity * price).toFixed(2))
+								? parseFloat((quantity * price * (1 - discount / 100)).toFixed(2))
 								: 0;
 					params.api.setEditCellValue({
 						id: params.id,
@@ -602,17 +683,23 @@ export default function FullFeaturedCrudGrid({
 						setErrorText("");
 					}
 					const quantity = params.row.quantity;
+					const discount = params.row.discount || 0;
 					const taxPercentage =
 						taxCodes?.data
 							?.filter((t) => params.row.taxes?.includes(t.id))
 							?.map((t) => t.percentage)
 							.reduce((acc, curr) => acc + curr, 0) ?? 0;
-					// Calculate stock price: total / (quantity * (1 + taxPercentage/100))
+					// Calculate stock price: total / (quantity * (1 - discount/100) * (1 + taxPercentage/100))
 					const newStockPrice =
-						quantity > 0 && taxPercentage > 0
-							? parseFloat((newTotal / (quantity * (1 + taxPercentage / 100))).toFixed(2))
-							: quantity > 0
-								? parseFloat((newTotal / quantity).toFixed(2))
+						quantity > 0 && taxPercentage > 0 && 1 - discount / 100 > 0
+							? parseFloat(
+									(
+										newTotal /
+										(quantity * (1 - discount / 100) * (1 + taxPercentage / 100))
+									).toFixed(2),
+								)
+							: quantity > 0 && 1 - discount / 100 > 0
+								? parseFloat((newTotal / (quantity * (1 - discount / 100))).toFixed(2))
 								: 0;
 					params.api.setEditCellValue({
 						id: params.id,
