@@ -419,7 +419,8 @@
       "action": "Toiminto",
       "viewInvoice": "Näytä lasku",
       "editInvoice": "Muokkaa laskua",
-      "deleteInvoice": "Poista lasku"
+      "deleteInvoice": "Poista lasku",
+      "productDiscount": "Alennus %"
     },
     "source": {
       "direct": "Suora",

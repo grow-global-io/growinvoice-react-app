@@ -433,7 +433,7 @@ export default function FullFeaturedCrudGrid({
 		},
 		{
 			field: "discount",
-			headerName: t("invoice.table.discount", { defaultValue: "Discount %" }),
+			headerName: t("invoice.table.productDiscount", { defaultValue: "Discount %" }),
 			minWidth: 100,
 			editable: true,
 			preProcessEditCellProps: (params) => {
