@@ -475,6 +475,96 @@ const CreateInvoice = ({
 							// If user is not in Europe, show all templates (no filtering needed)
 						}, [isEuropeanCountry, invoiceTemplateFindAll?.data, formik.values.template_id]);
 
+						// Compute available customer options for preview
+						const previewCustomerOptions = formik?.values?.customer_ids
+							? (formik?.values?.customer_ids?.map((id) => {
+									const customer = customerData?.data?.find((cus) => cus.id === id);
+									return {
+										value: customer?.id ?? "",
+										label: customer?.display_name ?? "",
+									};
+								}) ?? [])
+							: (formik?.values as any)?.customer_id
+								? (customerData?.data
+										?.filter((cus) => cus.id === (formik?.values as any).customer_id)
+										?.map((cus) => ({
+											value: cus?.id,
+											label: cus?.display_name,
+										})) ?? [])
+								: [];
+
+						// Auto-select customer if there's only one option
+						useEffect(() => {
+							if (!id && previewCustomerOptions.length === 1 && selectedPreviewCustomer === null) {
+								setSelectedPreviewCustomer(previewCustomerOptions[0]);
+							}
+						}, [
+							previewCustomerOptions.length,
+							selectedPreviewCustomer,
+							id,
+							formik?.values?.customer_ids,
+							(formik?.values as any)?.customer_id,
+							customerData?.data,
+						]);
+
+						// Sync selectedPreviewCustomer with main customer field
+						// Clear when main field is cleared, update when main field changes
+						useEffect(() => {
+							if (!id) {
+								// For new invoices, check customer_ids
+								const customerIds = formik?.values?.customer_ids;
+								const isEmpty =
+									!customerIds ||
+									(customerIds && Array.isArray(customerIds) && customerIds.length === 0);
+
+								if (isEmpty) {
+									// Main customer field is empty, clear preview customer
+									if (selectedPreviewCustomer !== null) {
+										setSelectedPreviewCustomer(null);
+									}
+								} else if (customerIds && Array.isArray(customerIds) && customerIds.length > 0) {
+									// If selectedPreviewCustomer doesn't match any customer in customer_ids, update it
+									if (
+										selectedPreviewCustomer &&
+										!customerIds.includes(selectedPreviewCustomer.value)
+									) {
+										// Find the first matching customer from customer_ids
+										const matchingCustomer = previewCustomerOptions.find((opt) =>
+											customerIds.includes(opt.value),
+										);
+										if (matchingCustomer) {
+											setSelectedPreviewCustomer(matchingCustomer);
+										} else {
+											setSelectedPreviewCustomer(null);
+										}
+									}
+								}
+							} else {
+								// For editing invoices, check customer_id
+								const customerId = (formik?.values as any)?.customer_id;
+								if (!customerId) {
+									// Main customer field is empty, clear preview customer
+									if (selectedPreviewCustomer !== null) {
+										setSelectedPreviewCustomer(null);
+									}
+								} else if (
+									selectedPreviewCustomer &&
+									selectedPreviewCustomer.value !== customerId
+								) {
+									// Update selectedPreviewCustomer to match the main field
+									const matchingCustomer = previewCustomerOptions.find(
+										(opt) => opt.value === customerId,
+									);
+									if (matchingCustomer) {
+										setSelectedPreviewCustomer(matchingCustomer);
+									} else {
+										setSelectedPreviewCustomer(null);
+									}
+								}
+							}
+							// eslint-disable-next-line react-hooks/exhaustive-deps
+						}, [formik?.values?.customer_ids, (formik?.values as any)?.customer_id, id]);
+
 						return (
 							<Form>
 								<Grid container spacing={2}>
@@ -852,26 +942,7 @@ const CreateInvoice = ({
 														setSelectedPreviewCustomer(newValue);
 														setPreviewCustomerError(false);
 													}}
-													options={
-														formik?.values?.customer_ids
-															? (formik?.values?.customer_ids?.map((id) => {
-																	const customer = customerData?.data?.find((cus) => cus.id === id);
-																	return {
-																		value: customer?.id ?? "",
-																		label: customer?.display_name ?? "",
-																	};
-																}) ?? [])
-															: (formik?.values as any)?.customer_id
-																? (customerData?.data
-																		?.filter(
-																			(cus) => cus.id === (formik?.values as any).customer_id,
-																		)
-																		?.map((cus) => ({
-																			value: cus?.id,
-																			label: cus?.display_name,
-																		})) ?? [])
-																: []
-													}
+													options={previewCustomerOptions}
 													renderInput={(params) => (
 														<TextField
 															{...params}
