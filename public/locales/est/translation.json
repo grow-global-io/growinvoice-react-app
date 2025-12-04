@@ -413,7 +413,8 @@
       "action": "Toiming",
       "viewInvoice": "Vaata arvet",
       "editInvoice": "Muuda arvet",
-      "deleteInvoice": "Kustuta arve"
+      "deleteInvoice": "Kustuta arve",
+      "productDiscount": "Allahindlus %"
     },
     "source": {
       "direct": "Otsene",

@@ -13,5 +13,6 @@ export interface OmitCreateInvoiceProductsDto {
 	product_id: string;
 	quantity: number;
 	taxes?: string[];
+	discount?: number;
 	total: number;
 }

@@ -413,7 +413,8 @@
       "action": "Action",
       "viewInvoice": "View Invoice",
       "editInvoice": "Edit Invoice",
-      "deleteInvoice": "Delete Invoice"
+      "deleteInvoice": "Delete Invoice",
+      "productDiscount": "Discount %"
     },
     "source": {
       "direct": "Direct",
