@@ -17,8 +17,9 @@ export const FileUploadFormField: React.FC<
 		label: string;
 		required?: boolean;
 		accept?: string;
+		tooltipIcon?: React.ReactNode;
 	}
-> = ({ field, form, label, accept = "image/*" }) => {
+> = ({ field, form, label, accept = "image/*", ...props }) => {
 	const [name, setName] = React.useState<string>("");
 	const errorText = getIn(form.touched, field.name) && getIn(form.errors, field.name);
 	const [docTypeError, setDocTypeError] = React.useState<boolean>(false);
@@ -51,9 +52,33 @@ export const FileUploadFormField: React.FC<
 	return (
 		<FormControl fullWidth error={!!errorText}>
 			{field.name && (
-				<InputLabel sx={{ ml: -1.6 }} shrink htmlFor={field.name}>
-					<Typography variant="h4" color="text.primary">
+				<InputLabel
+					sx={{
+						ml: -1.6,
+						overflow: "visible",
+						whiteSpace: "nowrap",
+						maxWidth: "none",
+						width: "auto",
+						minWidth: "fit-content",
+					}}
+					shrink
+					htmlFor={field.name}
+				>
+					<Typography
+						variant="h4"
+						color="text.primary"
+						sx={{
+							display: "inline-flex",
+							alignItems: "center",
+							whiteSpace: "nowrap",
+							overflow: "visible",
+							maxWidth: "none",
+							width: "auto",
+							minWidth: "fit-content",
+						}}
+					>
 						{label?.toUpperCase()}
+						{props.tooltipIcon}
 					</Typography>
 				</InputLabel>
 			)}

@@ -1511,5 +1511,327 @@
       "totalDueAmount": "Maksettava summa yhteensä"
     },
     "toBeFilled": "täydennettävä"
+  },
+  "tooltips": {
+    "productForm": {
+      "type": {
+        "title": "Tuotteen tyyppi",
+        "description": "Valitse, onko kyseessä Tavara (fyysinen tuote) vai Palvelu (aineeton palvelu). Tämä luokittelu vaikuttaa siihen, miten tuote käsitellään laskuissa ja raporteissa."
+      },
+      "name": {
+        "title": "Tuotteen nimi",
+        "description": "Anna selkeä ja kuvaava nimi tuotteellesi. Tämä nimi näkyy laskuissa, kuitissa ja tuoteluettelossasi."
+      },
+      "includeStore": {
+        "title": "Sisällytä kauppaan",
+        "description": "Ota tämä vaihtoehto käyttöön, jotta tuote on saatavilla verkkokaupassasi. Kun vaihtoehto on käytössä, vähintään yksi tuotekuva vaaditaan."
+      },
+      "images": {
+        "title": "Tuotekuvat",
+        "description": "Lataa yksi tai useampi kuva tuotteestasi. Kuvat vaaditaan, jos haluat sisällyttää tämän tuotteen kauppaasi. Tuetut muodot: JPG, PNG, GIF."
+      },
+      "unit_id": {
+        "title": "Tuotteen yksikkö",
+        "description": "Valitse tämän tuotteen mittayksikkö (esim. kappaleet, kg, litrat, tunnit). Voit lisätä uuden yksikön tarvittaessa."
+      },
+      "hsnCode_id": {
+        "title": "HSN-koodi (Intia)",
+        "description": "Harmonisoidun nimeämisjärjestelmän koodi, jota käytetään veroluokittelussa Intiassa. Pakollinen intialaisille yrityksille. Koodi sisältää liittyvän veroprosentin."
+      },
+      "tax": {
+        "title": "Verot",
+        "description": "Valitse yksi tai useampi tähän tuotteeseen soveltuva verokanta. Verot lasketaan automaattisesti ja sisällytetään myyntihintaan. Voit lisätä uusia verokantoja tarvittaessa."
+      },
+      "currency_id": {
+        "title": "Valuutta",
+        "description": "Valitse tämän hinnan valuutta. Tällä hetkellä tuetaan EUR (euro) ja INR (intialainen rupia)."
+      },
+      "price": {
+        "title": "Varastohinta",
+        "description": "Anna tuotteen perushinta (ilman veroja). Myyntihinta lasketaan automaattisesti tämän hinnan ja valittujen verokantojen perusteella."
+      },
+      "sellPrice": {
+        "title": "Myyntihinta",
+        "description": "Lopullinen hinta veroineen. Tämä lasketaan automaattisesti varastohinnasta ja verokannoista, mutta voit säätää sitä manuaalisesti tarvittaessa."
+      },
+      "shippingCharges": {
+        "title": "Toimituskulut",
+        "description": "Valinnainen toimituskulu tälle tuotteelle. Anna summa, joka lisätään kokonaissummaan, kun toimitus vaaditaan."
+      },
+      "description": {
+        "title": "Kuvaus",
+        "description": "Anna yksityiskohtainen kuvaus tuotteesta. Tämä auttaa asiakkaita ymmärtämään, mitä he ostavat, ja voi parantaa myyntiä."
+      }
+    },
+    "customerForm": {
+      "option": {
+        "title": "Asiakastyyppi",
+        "description": "Valitse asiakastyyppi: Freelancer, Yritys ilman ALV:ta tai Yritys ALV:n kanssa. Tämä määrittää verovaatimukset ja saatavilla olevat kentät."
+      },
+      "name": {
+        "title": "Asiakkaan nimi",
+        "description": "Anna asiakkaan täysi laillinen nimi. Tämä on pakollinen kenttä ja se näkyy laskuissa ja asiakirjoissa."
+      },
+      "display_name": {
+        "title": "Näyttönimi",
+        "description": "Anna näyttönimi asiakkaalle. Näin asiakas näkyy asiakasluettelossasi ja se voi poiketa laillisesta nimestä."
+      },
+      "email": {
+        "title": "Sähköpostiosoite",
+        "description": "Anna asiakkaan sähköpostiosoite. Tätä käytetään laskujen, kuitin ja muiden viestien lähettämiseen."
+      },
+      "phone": {
+        "title": "Puhelinnumero",
+        "description": "Anna asiakkaan puhelinnumero maakoodilla. Tämä on valinnainen, mutta suositeltavaa yhteystietoja varten."
+      },
+      "website": {
+        "title": "Verkkosivusto",
+        "description": "Anna asiakkaan verkkosivuston URL-osoite, jos saatavilla. Tämä on valinnainen ja käytetään viittauksena."
+      },
+      "currencies_id": {
+        "title": "Valuutta",
+        "description": "Valitse tämän asiakkaan oletusvaluutta. Tämä määrittää laskuissa ja tapahtumissa käytettävän valuutan."
+      },
+      "gstIn": {
+        "title": "ALV-numero",
+        "description": "Anna ALV:n (arvonlisäveron) rekisteröintinumero. Pakollinen ALV-rekisteröinnin omaaville yrityksille."
+      },
+      "billingCountry": {
+        "title": "Laskutusmaa",
+        "description": "Valitse laskutusosoitteen maa. Tämä on pakollinen ja vaikuttaa verolaskelmiin ja osoitteen muotoiluun."
+      },
+      "billingState": {
+        "title": "Laskutusmaa/lääni",
+        "description": "Valitse laskutusosoitteen maakunta tai lääni. Pakollinen useimmille maille paitsi Suomelle. Käytetään vero- ja toimituslaskelmiin."
+      },
+      "billingCity": {
+        "title": "Laskutuskaupunki",
+        "description": "Anna laskutusosoitteen kaupunki. Tämä on pakollinen kenttä ja auttaa osoitteen vahvistamisessa ja toimituslaskelmissa."
+      },
+      "billingZip": {
+        "title": "Laskutuspostinumero",
+        "description": "Anna laskutusosoitteen postinumero. Tämä on pakollinen ja auttaa osoitteen vahvistamisessa ja toimituslaskelmissa."
+      },
+      "billingAddress": {
+        "title": "Laskutusosoite",
+        "description": "Anna täydellinen laskutusosoite, mukaan lukien katu, rakennusnumero ja kaikki muut osoitetiedot. Tämä on pakollinen kenttä."
+      },
+      "shippingCountry": {
+        "title": "Toimitusmaa",
+        "description": "Valitse toimitusosoitteen maa. Voit käyttää samaa kuin laskutusosoite tai antaa eri toimituspaikan."
+      },
+      "shippingState": {
+        "title": "Toimitusmaa/lääni",
+        "description": "Valitse toimitusosoitteen maakunta tai lääni. Pakollinen useimmille maille paitsi Suomelle. Käytetään toimituslaskelmiin."
+      },
+      "shippingCity": {
+        "title": "Toimituskaupunki",
+        "description": "Anna toimitusosoitteen kaupunki. Tämä on pakollinen, kun toimitusosoite on annettu, ja auttaa toimituslaskelmissa."
+      },
+      "shippingZip": {
+        "title": "Toimituspostinumero",
+        "description": "Anna toimitusosoitteen postinumero. Tämä on pakollinen, kun toimitusosoite on annettu, ja auttaa toimituslaskelmissa."
+      },
+      "shippingAddress": {
+        "title": "Toimitusosoite",
+        "description": "Anna täydellinen toimitusosoite, mukaan lukien katu, rakennusnumero ja kaikki muut osoitetiedot. Voit kopioida laskutusosoitteesta tai antaa erikseen."
+      }
+    },
+    "invoiceForm": {
+      "customer_id": {
+        "title": "Asiakas",
+        "description": "Valitse tämän laskun asiakas. Voit valita useita asiakkaita uusille laskuille tai yhden asiakkaan muokatessa. Tämän asiakkaan tiedot näkyvät laskussa."
+      },
+      "currency_id": {
+        "title": "Valuutta",
+        "description": "Valitse tämän laskun valuutta. Vain EUR ja INR valuutat ovat saatavilla. Tämä määrittää laskun kaikissa summissa käytettävän valuutan."
+      },
+      "invoice_number": {
+        "title": "Laskunumero",
+        "description": "Anna laskunumero. Tämä luodaan automaattisesti laskun etuliiteasetusten perusteella. Laskunumero yksilöi tämän laskun."
+      },
+      "reference_number": {
+        "title": "Viitenumero",
+        "description": "Anna valinnainen viitenumero tälle laskulle. Tätä voidaan käyttää sisäiseen seurantaan tai viittaamaan liittyviin asiakirjoihin. Jos jätetään tyhjäksi, se oletusarvoisesti on laskunumero."
+      },
+      "date": {
+        "title": "Laskun päivämäärä",
+        "description": "Valitse päivämäärä, jolloin lasku on annettu. Tämä päivämäärä näkyy laskussa ja sitä käytetään maksun seurantaan ja raportointiin."
+      },
+      "due_date": {
+        "title": "Eräpäivä",
+        "description": "Valitse päivämäärä, jolloin maksu on erääntynyt. Tämän päivämäärän on oltava laskun päivämäärän jälkeen. Eräpäivää käytetään maksuaikataulujen ja myöhässä olevien laskujen seurantaan."
+      },
+      "is_recurring": {
+        "title": "Toistuva lasku",
+        "description": "Valitse tämä, jos tämän laskun pitäisi luoda automaattisesti toistuvalla aikataululla. Toistuvat laskut ovat hyödyllisiä tilauspohjaisille palveluille tai säännölliselle laskutukselle."
+      },
+      "recurring": {
+        "title": "Toistumistiheys",
+        "description": "Valitse, kuinka usein tämän laskun pitäisi luoda automaattisesti. Vaihtoehdot sisältävät päivittäin, viikoittain, kuukausittain, neljännesvuosittain tai vuosittain. Tämä on saatavilla vain, kun 'Toistuva lasku' on valittu."
+      },
+      "notes": {
+        "title": "Huomautukset",
+        "description": "Anna kaikki lisähuomautukset tai ehdot tälle laskulle. Nämä huomautukset näkyvät laskussa ja voivat sisältää maksuehtoja, erityisohjeita tai muita asiaankuuluvia tietoja."
+      },
+      "paymentId": {
+        "title": "Maksutiedot",
+        "description": "Valitse laskussa näytettävät maksutiedot. Tämä sisältää pankkitilin tiedot, UPI-tiedot tai muut maksutavat. Voit lisätä uusia maksutietoja tarvittaessa."
+      },
+      "template_id": {
+        "title": "Laskumalli",
+        "description": "Valitse tälle laskulle käytettävä malli. Mallit hallitsevat laskun asettelua ja suunnittelua. Eurooppalaiset mallit valitaan automaattisesti eurooppalaisille käyttäjille."
+      },
+      "selectCustomer": {
+        "title": "Esikatseluasiakas",
+        "description": "Valitse asiakas, jotta voit esikatsella, miltä lasku näyttää kyseiselle asiakkaalle. Tätä käytetään vain esikatselutarkoituksiin eikä se vaikuta varsinaiseen laskun luomiseen."
+      }
+    },
+    "quotationForm": {
+      "customer_id": {
+        "title": "Asiakas",
+        "description": "Valitse tämän tarjouksen asiakas. Asiakkaan tiedot näkyvät tarjousasiakirjassa."
+      },
+      "currency_id": {
+        "title": "Valuutta",
+        "description": "Valitse tämän tarjouksen valuutta. Tämä määrittää tarjouksen kaikissa summissa käytettävän valuutan."
+      },
+      "quatation_number": {
+        "title": "Tarjousnumero",
+        "description": "Anna tarjousnumero. Tämä luodaan automaattisesti tarjouksen etuliiteasetusten perusteella. Tarjousnumero yksilöi tämän tarjouksen."
+      },
+      "reference_number": {
+        "title": "Viitenumero",
+        "description": "Anna valinnainen viitenumero tälle tarjoukselle. Tätä voidaan käyttää sisäiseen seurantaan tai viittaamaan liittyviin asiakirjoihin."
+      },
+      "date": {
+        "title": "Tarjouksen päivämäärä",
+        "description": "Valitse päivämäärä, jolloin tarjous on annettu. Tämä päivämäärä näkyy tarjouksessa ja sitä käytetään seurantaan ja raportointiin."
+      },
+      "expiry_at": {
+        "title": "Vanhentumispäivä",
+        "description": "Valitse päivämäärä, jolloin tämä tarjous vanhenee. Tämän päivämäärän on oltava tarjouksen päivämäärän jälkeen. Tarjous on voimassa tähän vanhentumispäivään asti."
+      },
+      "notes": {
+        "title": "Huomautukset",
+        "description": "Anna kaikki lisähuomautukset tai ehdot tälle tarjoukselle. Nämä huomautukset näkyvät tarjouksessa ja voivat sisältää ehtoja, olosuhteita tai muita asiaankuuluvia tietoja, jotka ovat näkyvissä asiakkaalle."
+      },
+      "private_notes": {
+        "title": "Yksityiset huomautukset",
+        "description": "Anna yksityiset huomautukset, jotka eivät ole näkyvissä asiakkaalle. Nämä huomautukset ovat vain sisäiseen käyttöön ja voivat sisältää muistutuksia, sisäisiä kommentteja tai lisätietoja."
+      },
+      "template_id": {
+        "title": "Tarjousmalli",
+        "description": "Valitse tälle tarjoukselle käytettävä malli. Mallit hallitsevat tarjousasiakirjan asettelua ja suunnittelua."
+      }
+    },
+    "expenseForm": {
+      "receipt_url": {
+        "title": "Kuitti",
+        "description": "Lataa kuitti tai asiakirja tälle kululle. Tuetut muodot sisältävät kuvat ja PDF-tiedostot. Suurin tiedostokoko on 5MB. Tämä kuitti liitetään kulutietueeseen dokumentointitarkoituksiin."
+      },
+      "category": {
+        "title": "Kategoria",
+        "description": "Valitse tämän kulun kategoria. Kategoriat auttavat järjestämään kulut raportointia ja verotusta varten. Vaihtoehdot sisältävät Matkustus, Ruoka, Toimisto, Vuokra, Palkka ja Muu."
+      },
+      "vendor_id": {
+        "title": "Toimittaja",
+        "description": "Valitse tämän kulun toimittaja tai tavarantoimittaja. Toimittajat ovat yrityksiä tai henkilöitä, joille maksoit tämän kulun. Voit lisätä uuden toimittajan tarvittaessa."
+      },
+      "expenseDate": {
+        "title": "Kulun päivämäärä",
+        "description": "Valitse päivämäärä, jolloin tämä kulu syntyi. Tätä päivämäärää käytetään seurantaan, raportointiin ja verotukseen."
+      },
+      "amount": {
+        "title": "Summa",
+        "description": "Anna tämän kulun kokonaissumma. Tämän pitäisi olla kululle maksettu summa, pois lukien verot, ellei veroja sisällytetä summaan."
+      },
+      "currency_id": {
+        "title": "Valuutta",
+        "description": "Valitse tämän kulun valuutta. Tämä määrittää kulusumman valuutan ja auttaa monivaluuttakulujen seurannassa."
+      },
+      "notes": {
+        "title": "Huomautukset",
+        "description": "Anna kaikki lisähuomautukset tai yksityiskohdat tästä kulusta. Nämä huomautukset voivat sisältää kulun tarkoituksen, maksutavan tai muita asiaankuuluvia tietoja."
+      }
+    },
+    "paymentForm": {
+      "reference_number": {
+        "title": "Viitenumero",
+        "description": "Anna valinnainen viitenumero tälle maksulle. Tätä voidaan käyttää sisäiseen seurantaan, tapahtumatunnukseen tai viittaamaan liittyviin asiakirjoihin."
+      },
+      "invoice_id": {
+        "title": "Lasku",
+        "description": "Valitse lasku, jolle tämä maksu tehdään. Maksusumma sovelletaan valittuun laskuun. Tämä kenttä täytetään automaattisesti, kun luot maksun laskusta."
+      },
+      "amount": {
+        "title": "Summa",
+        "description": "Anna maksusumma. Tämä summa ei voi ylittää valitun laskun erääntynyttä summaa. Summa vähennetään laskun maksamattomasta saldosta."
+      },
+      "paymentDetails_id": {
+        "title": "Maksutiedot",
+        "description": "Valitse tässä maksussa käytetty maksutapa. Tämä sisältää pankkitilin tiedot, UPI-tiedot tai muut maksutavat. Voit lisätä uusia maksutietoja tarvittaessa."
+      },
+      "notes": {
+        "title": "Huomautukset",
+        "description": "Anna kaikki lisähuomautukset tästä maksusta. Nämä huomautukset ovat näkyvissä ja voivat sisältää maksun vahvistustietoja, tapahtumaviitteitä tai muita asiaankuuluvia tietoja."
+      },
+      "private_notes": {
+        "title": "Yksityiset huomautukset",
+        "description": "Anna yksityiset huomautukset, jotka eivät ole näkyvissä muille. Nämä huomautukset ovat vain sisäiseen käyttöön ja voivat sisältää muistutuksia, sisäisiä kommentteja tai lisätietoja maksusta."
+      }
+    },
+    "vendorForm": {
+      "name": {
+        "title": "Yhteyshenkilön nimi",
+        "description": "Anna tämän toimittajan yhteyshenkilön nimi. Tämä on ensisijainen yhteyshenkilön nimi ja on pakollinen kenttä."
+      },
+      "display_name": {
+        "title": "Näyttönimi",
+        "description": "Anna näyttönimi toimittajalle. Näin toimittaja näkyy toimittajaluettelossasi ja se voi poiketa yhteyshenkilön nimestä. Tämä on pakollinen kenttä."
+      },
+      "email": {
+        "title": "Sähköpostiosoite",
+        "description": "Anna toimittajan sähköpostiosoite. Tätä käytetään viestintään ja se on pakollinen kenttä. Varmista, että syötät kelvollisen sähköpostimuodon."
+      },
+      "phone": {
+        "title": "Puhelinnumero",
+        "description": "Anna toimittajan puhelinnumero maakoodilla. Tämä on valinnainen, mutta suositeltavaa yhteystietoja varten."
+      },
+      "website": {
+        "title": "Verkkosivusto",
+        "description": "Anna toimittajan verkkosivuston URL-osoite, jos saatavilla. Tämä on valinnainen ja käytetään viittauksena."
+      },
+      "billingCountry": {
+        "title": "Laskutusmaa",
+        "description": "Valitse laskutusosoitteen maa. Tämä on pakollinen ja vaikuttaa osoitteen muotoiluun ja verolaskelmiin."
+      },
+      "billingState": {
+        "title": "Laskutusmaa/lääni",
+        "description": "Valitse laskutusosoitteen maakunta tai lääni. Tämä on pakollinen ja käytetään osoitteen vahvistamiseen ja verotukseen."
+      },
+      "billingCity": {
+        "title": "Laskutuskaupunki",
+        "description": "Anna laskutusosoitteen kaupunki. Tämä on pakollinen kenttä ja auttaa osoitteen vahvistamisessa ja toimituslaskelmissa."
+      },
+      "billingZip": {
+        "title": "Laskutuspostinumero",
+        "description": "Anna laskutusosoitteen postinumero. Tämä on pakollinen ja auttaa osoitteen vahvistamisessa ja toimituslaskelmissa."
+      },
+      "billingAddress": {
+        "title": "Laskutusosoite",
+        "description": "Anna täydellinen laskutusosoite, mukaan lukien katu, rakennusnumero ja kaikki muut osoitetiedot. Tämä on pakollinen kenttä."
+      }
+    },
+    "shippingForm": {
+      "shippingStatus": {
+        "title": "Toimituksen tila",
+        "description": "Valitse toimituksen nykyinen tila. Valitse 'Lähetetty', kun tilaus on lähetetty, tai 'Lähetettävä', jos se on vielä odottamassa. Kun tila on asetettu 'Lähetetty', toimitusviitenumero tulee pakolliseksi."
+      },
+      "shippingRefNumber": {
+        "title": "Toimitusviitenumero",
+        "description": "Anna toimittajan toimittama toimitusviitenumero tai seurantanumero. Tämä on pakollinen, kun toimituksen tila on asetettu 'Lähetetty'. Tämä numero auttaa seuraamaan tilausta kuljetuksen aikana."
+      }
+    }
   }
 }

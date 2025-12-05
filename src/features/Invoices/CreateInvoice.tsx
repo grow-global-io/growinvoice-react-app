@@ -13,12 +13,16 @@ import {
 	Autocomplete,
 	TextField,
 	InputLabel,
+	Tooltip,
 } from "@mui/material";
+import InfoIcon from "@mui/icons-material/Info";
 import { Formik, Form, Field, type FormikProps, type FormikHelpers } from "formik";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { DateFormField } from "@shared/components/FormFields/DateFormField";
 import * as yup from "yup";
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
+import { FieldWithTooltip } from "@shared/components/FormFields/FieldWithTooltip";
+import { invoiceFormTooltips } from "@shared/tooltips";
 import { Constants } from "@shared/constants";
 import FullFeaturedCrudGrid from "../../shared/components/EditableProductListTable";
 import { useAuthStore } from "@store/auth";
@@ -570,33 +574,43 @@ const CreateInvoice = ({
 								<Grid container spacing={2}>
 									{id ? (
 										<Grid item xs={12} sm={4}>
-											<Field
-												name="customer_id"
-												label={t("invoiceForm.customerName")}
-												component={AutocompleteField}
-												options={customerData?.data?.map((customer) => ({
-													value: customer.id,
-													label: customer.display_name,
-												}))}
-												loading={customerData.isLoading}
-												isRequired={true}
-											/>
+											<FieldWithTooltip
+												tooltipTitle={t(invoiceFormTooltips.customer_id.titleKey)}
+												tooltipDescription={t(invoiceFormTooltips.customer_id.descriptionKey)}
+											>
+												<Field
+													name="customer_id"
+													label={t("invoiceForm.customerName")}
+													component={AutocompleteField}
+													options={customerData?.data?.map((customer) => ({
+														value: customer.id,
+														label: customer.display_name,
+													}))}
+													loading={customerData.isLoading}
+													isRequired={true}
+												/>
+											</FieldWithTooltip>
 										</Grid>
 									) : (
 										<Grid item xs={12} sm={4}>
-											<Field
-												name="customer_ids"
-												label={t("invoiceForm.customerName")}
-												component={AutocompleteField}
-												options={customerData?.data?.map((customer) => ({
-													value: customer.id,
-													label: customer.display_name,
-												}))}
-												loading={customerData.isLoading}
-												isRequired={true}
-												multiple
-												limitTags={2}
-											/>
+											<FieldWithTooltip
+												tooltipTitle={t(invoiceFormTooltips.customer_id.titleKey)}
+												tooltipDescription={t(invoiceFormTooltips.customer_id.descriptionKey)}
+											>
+												<Field
+													name="customer_ids"
+													label={t("invoiceForm.customerName")}
+													component={AutocompleteField}
+													options={customerData?.data?.map((customer) => ({
+														value: customer.id,
+														label: customer.display_name,
+													}))}
+													loading={customerData.isLoading}
+													isRequired={true}
+													multiple
+													limitTags={2}
+												/>
+											</FieldWithTooltip>
 										</Grid>
 									)}
 									<Grid item xs={12} sm={4} alignItems={"center"} display={"flex"}>
@@ -639,22 +653,27 @@ const CreateInvoice = ({
 										</Button>
 									</Grid>
 									<Grid item xs={12} sm={4}>
-										<Field
-											name="currency_id"
-											label={t("invoiceForm.currency")}
-											component={AutocompleteField}
-											loading={currencyList.isLoading || currencyList.isFetching}
-											options={currencyList?.data
-												?.filter(
-													(currency) =>
-														currency.short_code === "EUR" || currency.short_code === "INR",
-												)
-												?.map((currency) => ({
-													value: currency.id,
-													label: `${currency.short_code} - ${currency.name}`,
-												}))}
-											isRequired={true}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(invoiceFormTooltips.currency_id.titleKey)}
+											tooltipDescription={t(invoiceFormTooltips.currency_id.descriptionKey)}
+										>
+											<Field
+												name="currency_id"
+												label={t("invoiceForm.currency")}
+												component={AutocompleteField}
+												loading={currencyList.isLoading || currencyList.isFetching}
+												options={currencyList?.data
+													?.filter(
+														(currency) =>
+															currency.short_code === "EUR" || currency.short_code === "INR",
+													)
+													?.map((currency) => ({
+														value: currency.id,
+														label: `${currency.short_code} - ${currency.name}`,
+													}))}
+												isRequired={true}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12} mb={3}>
 										<Divider />
@@ -662,80 +681,112 @@ const CreateInvoice = ({
 									{id && (
 										<>
 											<Grid item xs={12} sm={4}>
-												<Field
-													name="invoice_number"
-													component={TextFormField}
-													label={t("invoiceForm.invoiceNumber")}
-													InputProps={{
-														startAdornment: (
-															<InputAdornment position="start">
-																{invoiceSettings?.data?.invoicePrefix ??
-																	t("invoiceForm.invoicePrefixFallback", {
-																		defaultPrefix: "INV",
-																	})}
-																-
-															</InputAdornment>
-														),
-													}}
-													isRequired={true}
-												/>
+												<FieldWithTooltip
+													tooltipTitle={t(invoiceFormTooltips.invoice_number.titleKey)}
+													tooltipDescription={t(invoiceFormTooltips.invoice_number.descriptionKey)}
+												>
+													<Field
+														name="invoice_number"
+														component={TextFormField}
+														label={t("invoiceForm.invoiceNumber")}
+														InputProps={{
+															startAdornment: (
+																<InputAdornment position="start">
+																	{invoiceSettings?.data?.invoicePrefix ??
+																		t("invoiceForm.invoicePrefixFallback", {
+																			defaultPrefix: "INV",
+																		})}
+																	-
+																</InputAdornment>
+															),
+														}}
+														isRequired={true}
+													/>
+												</FieldWithTooltip>
 											</Grid>
 											<Grid item xs={12} sm={4}>
-												<Field
-													name="reference_number"
-													component={TextFormField}
-													label={t("invoiceForm.referenceNumber")}
-												/>
+												<FieldWithTooltip
+													tooltipTitle={t(invoiceFormTooltips.reference_number.titleKey)}
+													tooltipDescription={t(
+														invoiceFormTooltips.reference_number.descriptionKey,
+													)}
+												>
+													<Field
+														name="reference_number"
+														component={TextFormField}
+														label={t("invoiceForm.referenceNumber")}
+													/>
+												</FieldWithTooltip>
 											</Grid>
 										</>
 									)}
 									<Grid item xs={12} sm={4}>
-										<Field
-											name="date"
-											component={DateFormField}
-											label={
-												isReceipt
-													? t("receipt.form.receiptDate", { defaultValue: "Receipt Date" })
-													: t("invoiceForm.invoiceDate")
-											}
-											// minDate={new Date()}
-											isRequired={true}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(invoiceFormTooltips.date.titleKey)}
+											tooltipDescription={t(invoiceFormTooltips.date.descriptionKey)}
+										>
+											<Field
+												name="date"
+												component={DateFormField}
+												label={
+													isReceipt
+														? t("receipt.form.receiptDate", { defaultValue: "Receipt Date" })
+														: t("invoiceForm.invoiceDate")
+												}
+												// minDate={new Date()}
+												isRequired={true}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12} sm={4}>
-										<Field
-											name="due_date"
-											component={DateFormField}
-											label={
-												isReceipt
-													? t("receipt.form.receiptDueDate", { defaultValue: "Receipt Due Date" })
-													: t("invoiceForm.invoiceDueDate")
-											}
-											minDate={moment(formik?.values.date).add(1, "days").toDate()}
-											isRequired={true}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(invoiceFormTooltips.due_date.titleKey)}
+											tooltipDescription={t(invoiceFormTooltips.due_date.descriptionKey)}
+										>
+											<Field
+												name="due_date"
+												component={DateFormField}
+												label={
+													isReceipt
+														? t("receipt.form.receiptDueDate", { defaultValue: "Receipt Due Date" })
+														: t("invoiceForm.invoiceDueDate")
+												}
+												minDate={moment(formik?.values.date).add(1, "days").toDate()}
+												isRequired={true}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12} sm={4} display={"flex"} alignItems={"center"}>
-										<Field
-											name="is_recurring"
-											label={t("invoiceForm.isRecurring")}
-											component={CheckBoxFormField}
-											isRequired={true}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(invoiceFormTooltips.is_recurring.titleKey)}
+											tooltipDescription={t(invoiceFormTooltips.is_recurring.descriptionKey)}
+										>
+											<Field
+												name="is_recurring"
+												label={t("invoiceForm.isRecurring")}
+												component={CheckBoxFormField}
+												isRequired={true}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									{formik?.values.is_recurring && (
 										<Grid item xs={12} sm={4}>
-											<Field
-												name="recurring"
-												label={t("invoiceForm.recurring")}
-												component={AutocompleteField}
-												options={Object.keys(CreateInvoiceWithProductsRecurring).map((key) => ({
-													value: key,
-													label: t(`invoiceForm.recurringTypes.${key}`, {
-														defaultValue: key,
-													}),
-												}))}
-											/>
+											<FieldWithTooltip
+												tooltipTitle={t(invoiceFormTooltips.recurring.titleKey)}
+												tooltipDescription={t(invoiceFormTooltips.recurring.descriptionKey)}
+											>
+												<Field
+													name="recurring"
+													label={t("invoiceForm.recurring")}
+													component={AutocompleteField}
+													options={Object.keys(CreateInvoiceWithProductsRecurring).map((key) => ({
+														value: key,
+														label: t(`invoiceForm.recurringTypes.${key}`, {
+															defaultValue: key,
+														}),
+													}))}
+												/>
+											</FieldWithTooltip>
 										</Grid>
 									)}
 									<Grid item xs={12} mb={3}>
@@ -766,27 +817,37 @@ const CreateInvoice = ({
 											},
 										}}
 									>
-										<Field
-											name="notes"
-											component={TextFormField}
-											label={t("invoiceForm.notes")}
-											multiline
-											rows={5}
-										/>
-										<Field
-											name="paymentId"
-											label={t("invoiceForm.paymentDetails")}
-											component={AutocompleteField}
-											options={paymentData?.data?.map((payment) => ({
-												value: payment.id,
-												label:
-													payment.paymentType === "UPI"
-														? payment.paymentType
-														: convertToReadableText(payment.paymentType),
-											}))}
-											loading={paymentData.isLoading}
-											isRequired={true}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(invoiceFormTooltips.notes.titleKey)}
+											tooltipDescription={t(invoiceFormTooltips.notes.descriptionKey)}
+										>
+											<Field
+												name="notes"
+												component={TextFormField}
+												label={t("invoiceForm.notes")}
+												multiline
+												rows={5}
+											/>
+										</FieldWithTooltip>
+										<FieldWithTooltip
+											tooltipTitle={t(invoiceFormTooltips.paymentId.titleKey)}
+											tooltipDescription={t(invoiceFormTooltips.paymentId.descriptionKey)}
+										>
+											<Field
+												name="paymentId"
+												label={t("invoiceForm.paymentDetails")}
+												component={AutocompleteField}
+												options={paymentData?.data?.map((payment) => ({
+													value: payment.id,
+													label:
+														payment.paymentType === "UPI"
+															? payment.paymentType
+															: convertToReadableText(payment.paymentType),
+												}))}
+												loading={paymentData.isLoading}
+												isRequired={true}
+											/>
+										</FieldWithTooltip>
 										<Box>
 											<Button variant="text" startIcon={<AddIcon />} onClick={handleClickOpen}>
 												{t("invoiceForm.addPayment")}
@@ -882,58 +943,108 @@ const CreateInvoice = ({
 										<SubtotalFooter formik={formik} />
 									</Grid>
 									<Grid item xs={12} sm={3}>
-										<Field
-											name="template_id"
-											label={
-												isReceipt
-													? t("receipt.form.receiptTemplate", { defaultValue: "Receipt Template" })
-													: t("invoiceForm.invoiceTemplate")
-											}
-											component={AutocompleteField}
-											options={(() => {
-												// If user is in Europe, only show European templates
-												if (isEuropeanCountry === true) {
-													const europeanTemplates = invoiceTemplateFindAll?.data?.filter(
-														(template) =>
-															template.name?.toLowerCase().includes("european") ||
-															template.name?.toLowerCase().includes("eur"),
-													);
-													// Set default to first European template if no template is selected
-													if (
-														europeanTemplates &&
-														europeanTemplates.length > 0 &&
-														!formik.values.template_id
-													) {
-														formik.setFieldValue("template_id", europeanTemplates[0].id);
+										<FieldWithTooltip
+											tooltipTitle={t(invoiceFormTooltips.template_id.titleKey)}
+											tooltipDescription={t(invoiceFormTooltips.template_id.descriptionKey)}
+										>
+											<Field
+												name="template_id"
+												label={
+													isReceipt
+														? t("receipt.form.receiptTemplate", {
+																defaultValue: "Receipt Template",
+															})
+														: t("invoiceForm.invoiceTemplate")
+												}
+												component={AutocompleteField}
+												options={(() => {
+													// If user is in Europe, only show European templates
+													if (isEuropeanCountry === true) {
+														const europeanTemplates = invoiceTemplateFindAll?.data?.filter(
+															(template) =>
+																template.name?.toLowerCase().includes("european") ||
+																template.name?.toLowerCase().includes("eur"),
+														);
+														// Set default to first European template if no template is selected
+														if (
+															europeanTemplates &&
+															europeanTemplates.length > 0 &&
+															!formik.values.template_id
+														) {
+															formik.setFieldValue("template_id", europeanTemplates[0].id);
+														}
+														return (
+															europeanTemplates?.map((template) => ({
+																value: template.id,
+																label: template.name,
+															})) || []
+														);
 													}
+
+													// If user is not in Europe (or geolocation not detected), show all templates including European ones
 													return (
-														europeanTemplates?.map((template) => ({
+														invoiceTemplateFindAll?.data?.map((template) => ({
 															value: template.id,
 															label: template.name,
 														})) || []
 													);
+												})()}
+												isRequired={true}
+												loading={
+													invoiceTemplateFindAll.isLoading || invoiceTemplateFindAll.isFetching
 												}
-
-												// If user is not in Europe (or geolocation not detected), show all templates including European ones
-												return (
-													invoiceTemplateFindAll?.data?.map((template) => ({
-														value: template.id,
-														label: template.name,
-													})) || []
-												);
-											})()}
-											isRequired={true}
-											loading={
-												invoiceTemplateFindAll.isLoading || invoiceTemplateFindAll.isFetching
-											}
-										/>
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									{!id && (
 										<Grid item xs={12} sm={3}>
 											<FormControl fullWidth>
-												<InputLabel sx={{ ml: -1.6 }} shrink>
-													<Typography variant="h4" color="text.primary">
+												<InputLabel
+													sx={{
+														ml: -1.6,
+														overflow: "visible",
+														whiteSpace: "nowrap",
+														maxWidth: "none",
+														width: "auto",
+														minWidth: "fit-content",
+													}}
+													shrink
+												>
+													<Typography
+														variant="h4"
+														color="text.primary"
+														sx={{
+															display: "inline-flex",
+															alignItems: "center",
+															whiteSpace: "nowrap",
+															overflow: "visible",
+															maxWidth: "none",
+															width: "auto",
+															minWidth: "fit-content",
+														}}
+													>
 														{t("invoiceForm.selectCustomer", { defaultValue: "SELECT CUSTOMER" })}
+														<Tooltip
+															title={
+																<Box>
+																	<strong>{t(invoiceFormTooltips.selectCustomer.titleKey)}</strong>
+																	<br />
+																	{t(invoiceFormTooltips.selectCustomer.descriptionKey)}
+																</Box>
+															}
+															arrow
+															placement="top"
+														>
+															<InfoIcon
+																sx={{
+																	fontSize: 18,
+																	color: "primary.main",
+																	cursor: "help",
+																	ml: 0.5,
+																	verticalAlign: "middle",
+																}}
+															/>
+														</Tooltip>
 													</Typography>
 												</InputLabel>
 												<Autocomplete

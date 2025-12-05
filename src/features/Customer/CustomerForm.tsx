@@ -13,6 +13,8 @@ import {
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { PhoneInputFormField } from "@shared/components/FormFields/PhoneInputFormField";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
+import { FieldWithTooltip } from "@shared/components/FormFields/FieldWithTooltip";
+import { customerFormTooltips } from "@shared/tooltips";
 import { Constants } from "@shared/constants";
 import { Formik, Field, Form, type FormikHelpers } from "formik";
 import * as yup from "yup";
@@ -371,89 +373,129 @@ const CustomerForm = () => {
 								<Box padding={2}>
 									<Grid container spacing={2} bgcolor={"custom.lightgray"}>
 										<Grid item xs={12} sm={8}>
-											<Field
-												name="option"
-												label={t("customerForm.customerType")}
-												component={AutocompleteField}
-												options={[
-													CreateCustomerWithAddressDtoOption.Freelancer,
-													CreateCustomerWithAddressDtoOption.BusinessWithoutGST,
-													CreateCustomerWithAddressDtoOption.BusinessWithGST,
-												].map((value) => ({
-													value,
-													label:
-														value === CreateCustomerWithAddressDtoOption.Freelancer
-															? t("customerForm.type.freelancer", { defaultValue: "Freelancer" })
-															: value === CreateCustomerWithAddressDtoOption.BusinessWithGST
-																? t("customerForm.type.businessWithGST", {
-																		defaultValue: "Business with GST",
-																	})
-																: t("customerForm.type.businessWithoutGST", {
-																		defaultValue: "Business without GST",
-																	}),
-												}))}
-												isRequired={true}
-											/>
-										</Grid>
-
-										<Grid item xs={12} sm={6}>
-											<Field
-												name="name"
-												label={t("customerForm.customerName")}
-												component={TextFormField}
-												isRequired={true}
-											/>
-										</Grid>
-										<Grid item xs={12} sm={6}>
-											<Field
-												name="display_name"
-												label={t("customerForm.displayName")}
-												component={TextFormField}
-											/>
-										</Grid>
-
-										<Grid item xs={12} sm={6}>
-											<Field
-												name="email"
-												label={t("customerForm.email")}
-												component={TextFormField}
-											/>
-										</Grid>
-										<Grid item xs={12} sm={6}>
-											<Field
-												name="phone"
-												label={t("customerForm.phone")}
-												component={PhoneInputFormField}
-												defaultCountry={userData?.company?.[0]?.country?.code ?? undefined}
-											/>
-										</Grid>
-										<Grid item xs={12} sm={6}>
-											<Field
-												name="website"
-												label={t("customerForm.website")}
-												component={TextFormField}
-											/>
-										</Grid>
-										<Grid item xs={12} sm={6}>
-											<Field
-												name="currencies_id"
-												label={t("customerForm.currency")}
-												loading={currencyList.isLoading || currencyList.isFetching}
-												component={AutocompleteField}
-												options={currencyList?.data?.map((currency) => ({
-													value: currency.id,
-													label: `${currency.short_code} - ${currency.name}`,
-												}))}
-											/>
-										</Grid>
-										{values.option === CreateCustomerWithAddressDtoOption.BusinessWithGST && (
-											<Grid item xs={12} sm={6}>
+											<FieldWithTooltip
+												tooltipTitle={t(customerFormTooltips.option.titleKey)}
+												tooltipDescription={t(customerFormTooltips.option.descriptionKey)}
+											>
 												<Field
-													name="gstIn"
-													label={t("customerForm.gstNumber")}
+													name="option"
+													label={t("customerForm.customerType")}
+													component={AutocompleteField}
+													options={[
+														CreateCustomerWithAddressDtoOption.Freelancer,
+														CreateCustomerWithAddressDtoOption.BusinessWithoutGST,
+														CreateCustomerWithAddressDtoOption.BusinessWithGST,
+													].map((value) => ({
+														value,
+														label:
+															value === CreateCustomerWithAddressDtoOption.Freelancer
+																? t("customerForm.type.freelancer", { defaultValue: "Freelancer" })
+																: value === CreateCustomerWithAddressDtoOption.BusinessWithGST
+																	? t("customerForm.type.businessWithGST", {
+																			defaultValue: "Business with GST",
+																		})
+																	: t("customerForm.type.businessWithoutGST", {
+																			defaultValue: "Business without GST",
+																		}),
+													}))}
+													isRequired={true}
+												/>
+											</FieldWithTooltip>
+										</Grid>
+
+										<Grid item xs={12} sm={6}>
+											<FieldWithTooltip
+												tooltipTitle={t(customerFormTooltips.name.titleKey)}
+												tooltipDescription={t(customerFormTooltips.name.descriptionKey)}
+											>
+												<Field
+													name="name"
+													label={t("customerForm.customerName")}
 													component={TextFormField}
 													isRequired={true}
 												/>
+											</FieldWithTooltip>
+										</Grid>
+										<Grid item xs={12} sm={6}>
+											<FieldWithTooltip
+												tooltipTitle={t(customerFormTooltips.display_name.titleKey)}
+												tooltipDescription={t(customerFormTooltips.display_name.descriptionKey)}
+											>
+												<Field
+													name="display_name"
+													label={t("customerForm.displayName")}
+													component={TextFormField}
+												/>
+											</FieldWithTooltip>
+										</Grid>
+
+										<Grid item xs={12} sm={6}>
+											<FieldWithTooltip
+												tooltipTitle={t(customerFormTooltips.email.titleKey)}
+												tooltipDescription={t(customerFormTooltips.email.descriptionKey)}
+											>
+												<Field
+													name="email"
+													label={t("customerForm.email")}
+													component={TextFormField}
+												/>
+											</FieldWithTooltip>
+										</Grid>
+										<Grid item xs={12} sm={6}>
+											<FieldWithTooltip
+												tooltipTitle={t(customerFormTooltips.phone.titleKey)}
+												tooltipDescription={t(customerFormTooltips.phone.descriptionKey)}
+											>
+												<Field
+													name="phone"
+													label={t("customerForm.phone")}
+													component={PhoneInputFormField}
+													defaultCountry={userData?.company?.[0]?.country?.code ?? undefined}
+												/>
+											</FieldWithTooltip>
+										</Grid>
+										<Grid item xs={12} sm={6}>
+											<FieldWithTooltip
+												tooltipTitle={t(customerFormTooltips.website.titleKey)}
+												tooltipDescription={t(customerFormTooltips.website.descriptionKey)}
+											>
+												<Field
+													name="website"
+													label={t("customerForm.website")}
+													component={TextFormField}
+												/>
+											</FieldWithTooltip>
+										</Grid>
+										<Grid item xs={12} sm={6}>
+											<FieldWithTooltip
+												tooltipTitle={t(customerFormTooltips.currencies_id.titleKey)}
+												tooltipDescription={t(customerFormTooltips.currencies_id.descriptionKey)}
+											>
+												<Field
+													name="currencies_id"
+													label={t("customerForm.currency")}
+													loading={currencyList.isLoading || currencyList.isFetching}
+													component={AutocompleteField}
+													options={currencyList?.data?.map((currency) => ({
+														value: currency.id,
+														label: `${currency.short_code} - ${currency.name}`,
+													}))}
+												/>
+											</FieldWithTooltip>
+										</Grid>
+										{values.option === CreateCustomerWithAddressDtoOption.BusinessWithGST && (
+											<Grid item xs={12} sm={6}>
+												<FieldWithTooltip
+													tooltipTitle={t(customerFormTooltips.gstIn.titleKey)}
+													tooltipDescription={t(customerFormTooltips.gstIn.descriptionKey)}
+												>
+													<Field
+														name="gstIn"
+														label={t("customerForm.gstNumber")}
+														component={TextFormField}
+														isRequired={true}
+													/>
+												</FieldWithTooltip>
 											</Grid>
 										)}
 									</Grid>
@@ -482,61 +524,85 @@ const CustomerForm = () => {
 										<Grid item xs={12}>
 											<Grid container spacing={1}>
 												<Grid item xs={12} sm={6}>
-													<Field
-														name="billingDetails.country_id"
-														component={AutocompleteField}
-														label={t("customerForm.country")}
-														options={countryFindAll?.data?.map((item) => ({
-															label: item.name,
-															value: item.id,
-														}))}
-														loading={countryFindAll.isLoading}
-														isRequired={true}
-													/>
+													<FieldWithTooltip
+														tooltipTitle={t(customerFormTooltips.billingCountry.titleKey)}
+														tooltipDescription={t(
+															customerFormTooltips.billingCountry.descriptionKey,
+														)}
+													>
+														<Field
+															name="billingDetails.country_id"
+															component={AutocompleteField}
+															label={t("customerForm.country")}
+															options={countryFindAll?.data?.map((item) => ({
+																label: item.name,
+																value: item.id,
+															}))}
+															loading={countryFindAll.isLoading}
+															isRequired={true}
+														/>
+													</FieldWithTooltip>
 												</Grid>
 												<Grid item xs={12} sm={6}>
-													{/* <Field
-												name="billingDetails.state_id"
-												component={AutocompleteField}
-												label="State"
-											/> */}
-													<StateFormField
-														countryFieldName="billingDetails.country_id"
-														stateFieldName="billingDetails.state_id"
-														stateLabel={t("customerForm.state")}
-														isRequired={(() => {
-															const country = countryFindAll?.data?.find(
-																(c) => c.id === values?.billingDetails?.country_id,
-															);
-															const isFinland =
-																country?.code === "FI" || /finland/i.test(country?.name ?? "");
-															return !isFinland; // not required for Finland
-														})()}
-													/>
+													<FieldWithTooltip
+														tooltipTitle={t(customerFormTooltips.billingState.titleKey)}
+														tooltipDescription={t(customerFormTooltips.billingState.descriptionKey)}
+													>
+														<StateFormField
+															countryFieldName="billingDetails.country_id"
+															stateFieldName="billingDetails.state_id"
+															stateLabel={t("customerForm.state")}
+															isRequired={(() => {
+																const country = countryFindAll?.data?.find(
+																	(c) => c.id === values?.billingDetails?.country_id,
+																);
+																const isFinland =
+																	country?.code === "FI" || /finland/i.test(country?.name ?? "");
+																return !isFinland; // not required for Finland
+															})()}
+														/>
+													</FieldWithTooltip>
 												</Grid>
 												<Grid item xs={12} sm={6}>
-													<Field
-														name="billingDetails.city"
-														component={TextFormField}
-														label={t("customerForm.city")}
-														isRequired={true}
-													/>
-													<Field
-														name="billingDetails.zip"
-														component={TextFormField}
-														label={t("customerForm.zipCode")}
-														isRequired={true}
-													/>
+													<FieldWithTooltip
+														tooltipTitle={t(customerFormTooltips.billingCity.titleKey)}
+														tooltipDescription={t(customerFormTooltips.billingCity.descriptionKey)}
+													>
+														<Field
+															name="billingDetails.city"
+															component={TextFormField}
+															label={t("customerForm.city")}
+															isRequired={true}
+														/>
+													</FieldWithTooltip>
+													<FieldWithTooltip
+														tooltipTitle={t(customerFormTooltips.billingZip.titleKey)}
+														tooltipDescription={t(customerFormTooltips.billingZip.descriptionKey)}
+													>
+														<Field
+															name="billingDetails.zip"
+															component={TextFormField}
+															label={t("customerForm.zipCode")}
+															isRequired={true}
+														/>
+													</FieldWithTooltip>
 												</Grid>
 												<Grid item xs={12} sm={6}>
-													<Field
-														name="billingDetails.address"
-														component={TextFormField}
-														label={t("customerForm.address")}
-														multiline
-														rows={6}
-														isRequired={true}
-													/>
+													<FieldWithTooltip
+														tooltipTitle={t(customerFormTooltips.billingAddress.titleKey)}
+														tooltipDescription={t(
+															customerFormTooltips.billingAddress.descriptionKey,
+														)}
+													>
+														<Field
+															name="billingDetails.address"
+															component={TextFormField}
+															label={t("customerForm.address")}
+															multiline
+															rows={6}
+															isRequired={true}
+														/>
+													</FieldWithTooltip>
 												</Grid>
 											</Grid>
 										</Grid>
@@ -604,61 +670,85 @@ const CustomerForm = () => {
 									<Grid item xs={12}>
 										<Grid container spacing={1}>
 											<Grid item xs={12} sm={6}>
-												<Field
-													name="shippingDetails.country_id"
-													component={AutocompleteField}
-													label={t("customerForm.country")}
-													options={countryFindAll?.data?.map((item) => ({
-														label: item.name,
-														value: item.id,
-													}))}
-													loading={countryFindAll.isLoading}
-													isRequired={true}
-												/>
+												<FieldWithTooltip
+													tooltipTitle={t(customerFormTooltips.shippingCountry.titleKey)}
+													tooltipDescription={t(
+														customerFormTooltips.shippingCountry.descriptionKey,
+													)}
+												>
+													<Field
+														name="shippingDetails.country_id"
+														component={AutocompleteField}
+														label={t("customerForm.country")}
+														options={countryFindAll?.data?.map((item) => ({
+															label: item.name,
+															value: item.id,
+														}))}
+														loading={countryFindAll.isLoading}
+														isRequired={true}
+													/>
+												</FieldWithTooltip>
 											</Grid>
 											<Grid item xs={12} sm={6}>
-												{/* <Field
-											name="shippingDetails.state_id"
-											component={AutocompleteField}
-											label="State"
-										/> */}
-												<StateFormField
-													countryFieldName="shippingDetails.country_id"
-													stateFieldName="shippingDetails.state_id"
-													stateLabel={t("customerForm.state")}
-													isRequired={(() => {
-														const country = countryFindAll?.data?.find(
-															(c) => c.id === values?.shippingDetails?.country_id,
-														);
-														const isFinland =
-															country?.code === "FI" || /finland/i.test(country?.name ?? "");
-														return !isFinland;
-													})()}
-												/>
+												<FieldWithTooltip
+													tooltipTitle={t(customerFormTooltips.shippingState.titleKey)}
+													tooltipDescription={t(customerFormTooltips.shippingState.descriptionKey)}
+												>
+													<StateFormField
+														countryFieldName="shippingDetails.country_id"
+														stateFieldName="shippingDetails.state_id"
+														stateLabel={t("customerForm.state")}
+														isRequired={(() => {
+															const country = countryFindAll?.data?.find(
+																(c) => c.id === values?.shippingDetails?.country_id,
+															);
+															const isFinland =
+																country?.code === "FI" || /finland/i.test(country?.name ?? "");
+															return !isFinland;
+														})()}
+													/>
+												</FieldWithTooltip>
 											</Grid>
 											<Grid item xs={12} sm={6}>
-												<Field
-													name="shippingDetails.city"
-													component={TextFormField}
-													label={t("customerForm.city")}
-													isRequired={true}
-												/>
-												<Field
-													name="shippingDetails.zip"
-													component={TextFormField}
-													label={t("customerForm.zipCode")}
-													isRequired={true}
-												/>
+												<FieldWithTooltip
+													tooltipTitle={t(customerFormTooltips.shippingCity.titleKey)}
+													tooltipDescription={t(customerFormTooltips.shippingCity.descriptionKey)}
+												>
+													<Field
+														name="shippingDetails.city"
+														component={TextFormField}
+														label={t("customerForm.city")}
+														isRequired={true}
+													/>
+												</FieldWithTooltip>
+												<FieldWithTooltip
+													tooltipTitle={t(customerFormTooltips.shippingZip.titleKey)}
+													tooltipDescription={t(customerFormTooltips.shippingZip.descriptionKey)}
+												>
+													<Field
+														name="shippingDetails.zip"
+														component={TextFormField}
+														label={t("customerForm.zipCode")}
+														isRequired={true}
+													/>
+												</FieldWithTooltip>
 											</Grid>
 											<Grid item xs={12} sm={6}>
-												<Field
-													name="shippingDetails.address"
-													component={TextFormField}
-													label={t("customerForm.address")}
-													multiline
-													rows={6}
-													isRequired={true}
-												/>
+												<FieldWithTooltip
+													tooltipTitle={t(customerFormTooltips.shippingAddress.titleKey)}
+													tooltipDescription={t(
+														customerFormTooltips.shippingAddress.descriptionKey,
+													)}
+												>
+													<Field
+														name="shippingDetails.address"
+														component={TextFormField}
+														label={t("customerForm.address")}
+														multiline
+														rows={6}
+														isRequired={true}
+													/>
+												</FieldWithTooltip>
 											</Grid>
 										</Grid>
 									</Grid>

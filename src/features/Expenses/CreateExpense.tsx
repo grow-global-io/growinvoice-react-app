@@ -6,6 +6,8 @@ import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { DateFormField } from "@shared/components/FormFields/DateFormField";
 import { FileUploadFormField } from "@shared/components/FormFields/FileUploadFormField";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
+import { FieldWithTooltip } from "@shared/components/FormFields/FieldWithTooltip";
+import { expenseFormTooltips } from "@shared/tooltips";
 import { Constants } from "@shared/constants";
 import { Formik, Form, Field, type FormikHelpers } from "formik";
 import * as yup from "yup";
@@ -128,38 +130,53 @@ const CreateExpense = ({ id }: { id?: string }) => {
 							<Form>
 								<Grid container spacing={2}>
 									<Grid item xs={12} sm={6}>
-										<Field
-											name="receipt_url"
-											label={t("expensesForm.receipt")}
-											component={FileUploadFormField}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(expenseFormTooltips.receipt_url.titleKey)}
+											tooltipDescription={t(expenseFormTooltips.receipt_url.descriptionKey)}
+										>
+											<Field
+												name="receipt_url"
+												label={t("expensesForm.receipt")}
+												component={FileUploadFormField}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12} sm={6}>
-										<Field
-											name="category"
-											label={t("expensesForm.category")}
-											component={AutocompleteField}
-											options={Object.values(CreateExpensesDtoCategory).map((value) => ({
-												value,
-												label: t(`expenses.categoryTypes.${value.toLowerCase()}`, {
-													defaultValue: value,
-												}),
-											}))}
-											isRequired={true}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(expenseFormTooltips.category.titleKey)}
+											tooltipDescription={t(expenseFormTooltips.category.descriptionKey)}
+										>
+											<Field
+												name="category"
+												label={t("expensesForm.category")}
+												component={AutocompleteField}
+												options={Object.values(CreateExpensesDtoCategory).map((value) => ({
+													value,
+													label: t(`expenses.categoryTypes.${value.toLowerCase()}`, {
+														defaultValue: value,
+													}),
+												}))}
+												isRequired={true}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12} sm={6}>
-										<Field
-											name="vendor_id"
-											label={t("expensesForm.vendor")}
-											component={AutocompleteField}
-											options={vendorsData?.data?.map((customer) => ({
-												value: customer.id,
-												label: customer.display_name,
-											}))}
-											loading={vendorsData.isLoading}
-											isRequired={true}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(expenseFormTooltips.vendor_id.titleKey)}
+											tooltipDescription={t(expenseFormTooltips.vendor_id.descriptionKey)}
+										>
+											<Field
+												name="vendor_id"
+												label={t("expensesForm.vendor")}
+												component={AutocompleteField}
+												options={vendorsData?.data?.map((customer) => ({
+													value: customer.id,
+													label: customer.display_name,
+												}))}
+												loading={vendorsData.isLoading}
+												isRequired={true}
+											/>
+										</FieldWithTooltip>
 										<Button
 											variant="text"
 											onClick={() => setOpenVendorsForm(true)}
@@ -169,42 +186,62 @@ const CreateExpense = ({ id }: { id?: string }) => {
 										</Button>
 									</Grid>
 									<Grid item xs={12} sm={6}>
-										<Field
-											name="expenseDate"
-											label={t("expensesForm.expenseDate")}
-											component={DateFormField}
-											isRequired={true}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(expenseFormTooltips.expenseDate.titleKey)}
+											tooltipDescription={t(expenseFormTooltips.expenseDate.descriptionKey)}
+										>
+											<Field
+												name="expenseDate"
+												label={t("expensesForm.expenseDate")}
+												component={DateFormField}
+												isRequired={true}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12} sm={6}>
-										<Field
-											name="amount"
-											label={t("expensesForm.amount")}
-											component={TextFormField}
-											isRequired={true}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(expenseFormTooltips.amount.titleKey)}
+											tooltipDescription={t(expenseFormTooltips.amount.descriptionKey)}
+										>
+											<Field
+												name="amount"
+												label={t("expensesForm.amount")}
+												component={TextFormField}
+												isRequired={true}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12} sm={6}>
-										<Field
-											name="currency_id"
-											label={t("expensesForm.currency")}
-											loading={currencyList.isLoading || currencyList.isFetching}
-											component={AutocompleteField}
-											options={currencyList?.data?.map((currency) => ({
-												value: currency.id,
-												label: `${currency.short_code} - ${currency.name}`,
-											}))}
-											isRequired={true}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(expenseFormTooltips.currency_id.titleKey)}
+											tooltipDescription={t(expenseFormTooltips.currency_id.descriptionKey)}
+										>
+											<Field
+												name="currency_id"
+												label={t("expensesForm.currency")}
+												loading={currencyList.isLoading || currencyList.isFetching}
+												component={AutocompleteField}
+												options={currencyList?.data?.map((currency) => ({
+													value: currency.id,
+													label: `${currency.short_code} - ${currency.name}`,
+												}))}
+												isRequired={true}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12} sm={6}>
-										<Field
-											name="notes"
-											label={t("expensesForm.notes")}
-											component={TextFormField}
-											multiline
-											rows={5}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(expenseFormTooltips.notes.titleKey)}
+											tooltipDescription={t(expenseFormTooltips.notes.descriptionKey)}
+										>
+											<Field
+												name="notes"
+												label={t("expensesForm.notes")}
+												component={TextFormField}
+												multiline
+												rows={5}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12} textAlign={"center"}>
 										<Button variant="contained" type="submit">

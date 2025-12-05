@@ -48,6 +48,7 @@ function AsyncAutoCompleteField({
 	isRequired?: boolean;
 	isGpt?: boolean;
 	onValueChange?: (value: ListDto) => void;
+	tooltipIcon?: React.ReactNode;
 }) {
 	const [typedData, setTypedData] = React.useState<ListDto>();
 	const [debouncedInputValue, setSearchTerm] = useDebounceValue("", 500);
@@ -73,16 +74,50 @@ function AsyncAutoCompleteField({
 
 	const errorText = getIn(form.touched, field.name) && getIn(form.errors, field.name);
 	return (
-		<FormControl fullWidth error={!!errorText}>
+		<FormControl
+			fullWidth
+			error={!!errorText}
+			sx={{
+				overflow: "visible",
+				"& .MuiInputLabel-root": {
+					overflow: "visible",
+					maxWidth: "none",
+				},
+			}}
+		>
 			{field.name && (
-				<InputLabel sx={{ ml: -1.6 }} shrink htmlFor={field.name}>
-					<Typography variant="h4" color="text.primary">
+				<InputLabel
+					sx={{
+						ml: -1.6,
+						overflow: "visible",
+						whiteSpace: "nowrap",
+						maxWidth: "none",
+						width: "auto",
+						minWidth: "fit-content",
+					}}
+					shrink
+					htmlFor={field.name}
+				>
+					<Typography
+						variant="h4"
+						color="text.primary"
+						sx={{
+							display: "inline-flex",
+							alignItems: "center",
+							whiteSpace: "nowrap",
+							overflow: "visible",
+							maxWidth: "none",
+							width: "auto",
+							minWidth: "fit-content",
+						}}
+					>
 						{label?.toUpperCase()}
 						{isRequired && (
 							<Typography variant="h5" color="error" component="span">
 								{" *"}
 							</Typography>
 						)}
+						{props.tooltipIcon}
 					</Typography>
 				</InputLabel>
 			)}
@@ -151,6 +186,7 @@ type AutocompleteProps = {
 	isRequired?: boolean;
 	isGpt?: boolean;
 	disableClearable?: boolean;
+	tooltipIcon?: React.ReactNode;
 };
 
 export const AutocompleteField: React.FC<FieldProps & AutocompleteProps> = ({
@@ -185,16 +221,50 @@ export const AutocompleteField: React.FC<FieldProps & AutocompleteProps> = ({
 	}
 
 	return (
-		<FormControl fullWidth error={!!errorText}>
+		<FormControl
+			fullWidth
+			error={!!errorText}
+			sx={{
+				overflow: "visible",
+				"& .MuiInputLabel-root": {
+					overflow: "visible",
+					maxWidth: "none",
+				},
+			}}
+		>
 			{field.name && (
-				<InputLabel sx={{ ml: -1.6 }} shrink htmlFor={field.name}>
-					<Typography variant="h4" color="text.primary">
+				<InputLabel
+					sx={{
+						ml: -1.6,
+						overflow: "visible",
+						whiteSpace: "nowrap",
+						maxWidth: "none",
+						width: "auto",
+						minWidth: "fit-content",
+					}}
+					shrink
+					htmlFor={field.name}
+				>
+					<Typography
+						variant="h4"
+						color="text.primary"
+						sx={{
+							display: "inline-flex",
+							alignItems: "center",
+							whiteSpace: "nowrap",
+							overflow: "visible",
+							maxWidth: "none",
+							width: "auto",
+							minWidth: "fit-content",
+						}}
+					>
 						{label?.toUpperCase()}
 						{isRequired && (
 							<Typography variant="h5" color="error" component="span">
 								{" *"}
 							</Typography>
 						)}
+						{props.tooltipIcon}
 					</Typography>
 				</InputLabel>
 			)}

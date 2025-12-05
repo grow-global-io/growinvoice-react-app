@@ -6,10 +6,15 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import Tooltip from "@mui/material/Tooltip";
+import InfoIcon from "@mui/icons-material/Info";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import AppDialogHeader from "@shared/components/Dialog/AppDialogHeader";
 import AppDialogFooter from "@shared/components/Dialog/AppDialogFooter";
 import { useTranslation } from "react-i18next";
 import type { InvoiceWithAllDataDto } from "@api/services/models";
+import { shippingFormTooltips } from "@shared/tooltips";
 
 interface EditShippingDialogProps {
 	open: boolean;
@@ -83,8 +88,49 @@ const EditShippingDialog: React.FC<EditShippingDialogProps> = ({
 				/>
 				<DialogContent>
 					<FormControl fullWidth sx={{ mb: 3, mt: 2 }}>
-						<InputLabel>
-							{t("orders.table.shippingStatus", { defaultValue: "Shipment Status" })}
+						<InputLabel
+							sx={{
+								overflow: "visible",
+								whiteSpace: "nowrap",
+								maxWidth: "none",
+								width: "auto",
+								minWidth: "fit-content",
+							}}
+						>
+							<Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
+								<Typography
+									sx={{
+										whiteSpace: "nowrap",
+										overflow: "visible",
+										maxWidth: "none",
+										width: "auto",
+										minWidth: "fit-content",
+									}}
+								>
+									{t("orders.table.shippingStatus", { defaultValue: "Shipment Status" })}
+								</Typography>
+								<Tooltip
+									title={
+										<Box>
+											<strong>{t(shippingFormTooltips.shippingStatus.titleKey)}</strong>
+											<br />
+											{t(shippingFormTooltips.shippingStatus.descriptionKey)}
+										</Box>
+									}
+									arrow
+									placement="top"
+								>
+									<InfoIcon
+										sx={{
+											fontSize: 18,
+											color: "primary.main",
+											cursor: "help",
+											ml: 0.5,
+											verticalAlign: "middle",
+										}}
+									/>
+								</Tooltip>
+							</Box>
 						</InputLabel>
 						<Select
 							value={shippingStatus}
@@ -99,18 +145,67 @@ const EditShippingDialog: React.FC<EditShippingDialogProps> = ({
 							</MenuItem>
 						</Select>
 					</FormControl>
-					<TextField
-						fullWidth
-						label={t("orders.table.shippingRefNumber", {
-							defaultValue: "Shipping Reference Number",
-						})}
-						value={shippingRefNumber}
-						onChange={(e) => setShippingRefNumber(e.target.value)}
-						placeholder={t("orders.dialog.shippingRefPlaceholder", {
-							defaultValue: "Enter shipping reference number",
-						})}
-						sx={{ mb: 2 }}
-					/>
+					<FormControl fullWidth sx={{ mb: 2 }}>
+						<InputLabel
+							shrink
+							sx={{
+								overflow: "visible",
+								whiteSpace: "nowrap",
+								maxWidth: "none",
+								width: "auto",
+								minWidth: "fit-content",
+							}}
+						>
+							<Box sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}>
+								<Typography
+									sx={{
+										whiteSpace: "nowrap",
+										overflow: "visible",
+										maxWidth: "none",
+										width: "auto",
+										minWidth: "fit-content",
+									}}
+								>
+									{t("orders.table.shippingRefNumber", {
+										defaultValue: "Shipping Reference Number",
+									})}
+								</Typography>
+								<Tooltip
+									title={
+										<Box>
+											<strong>{t(shippingFormTooltips.shippingRefNumber.titleKey)}</strong>
+											<br />
+											{t(shippingFormTooltips.shippingRefNumber.descriptionKey)}
+										</Box>
+									}
+									arrow
+									placement="top"
+								>
+									<InfoIcon
+										sx={{
+											fontSize: 18,
+											color: "primary.main",
+											cursor: "help",
+											ml: 0.5,
+											verticalAlign: "middle",
+										}}
+									/>
+								</Tooltip>
+							</Box>
+						</InputLabel>
+						<TextField
+							fullWidth
+							value={shippingRefNumber}
+							onChange={(e) => setShippingRefNumber(e.target.value)}
+							placeholder={t("orders.dialog.shippingRefPlaceholder", {
+								defaultValue: "Enter shipping reference number",
+							})}
+							label={undefined}
+							InputLabelProps={{
+								shrink: true,
+							}}
+						/>
+					</FormControl>
 				</DialogContent>
 				<AppDialogFooter onClickCancel={onClose} saveButtonDisabled={isSaveDisabled} />
 			</form>

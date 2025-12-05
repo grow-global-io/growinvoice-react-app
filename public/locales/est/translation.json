@@ -1489,5 +1489,327 @@
       "totalDueAmount": "Kokku tasumata summa"
     },
     "toBeFilled": "täitmiseks"
+  },
+  "tooltips": {
+    "productForm": {
+      "type": {
+        "title": "Toote tüüp",
+        "description": "Valige, kas see on Kaup (füüsiline toode) või Teenus (vaimne teenus). See klassifikatsioon mõjutab seda, kuidas toodet käsitletakse arvetes ja aruannetes."
+      },
+      "name": {
+        "title": "Toote nimi",
+        "description": "Sisestage selge ja kirjeldav nimi oma tootele. See nimi kuvatakse arvetel, kviitungitel ja tootekataloogis."
+      },
+      "includeStore": {
+        "title": "Kaasa poodi",
+        "description": "Lubage see valik, et toode oleks saadaval teie veebipoes. Kui valik on lubatud, on vaja vähemalt ühte tootekuju."
+      },
+      "images": {
+        "title": "Toote pildid",
+        "description": "Laadige üles üks või mitu oma toote pilti. Pildid on vajalikud, kui soovite selle toote kaasata oma poodi. Toetatud vormingud: JPG, PNG, GIF."
+      },
+      "unit_id": {
+        "title": "Toote ühik",
+        "description": "Valige selle toote mõõtühik (nt tükid, kg, liitrid, tunnid). Vajadusel saate lisada uue ühiku."
+      },
+      "hsnCode_id": {
+        "title": "HSN-kood (India)",
+        "description": "Harmoneeritud nomenklatuuri süsteemi kood, mida kasutatakse maksuklassifikatsiooniks Indias. Nõutav India ettevõtetele. Kood sisaldab seotud maksuprotsenti."
+      },
+      "tax": {
+        "title": "Maksud",
+        "description": "Valige üks või mitu sellele tootele rakendatavat maksumäära. Maksud arvutatakse automaatselt ja kaasatakse müügihinnasse. Vajadusel saate lisada uusi maksumäärasid."
+      },
+      "currency_id": {
+        "title": "Valuuta",
+        "description": "Valige selle hinna valuuta. Praegu toetatakse EUR (euro) ja INR (India ruupia)."
+      },
+      "price": {
+        "title": "Laohind",
+        "description": "Sisestage toote baasmaksumus (ilma maksudeta). Müügihind arvutatakse automaatselt selle hinna ja valitud maksumäärade põhjal."
+      },
+      "sellPrice": {
+        "title": "Müügihind",
+        "description": "Lõplik hind koos maksudega. See arvutatakse automaatselt laohinnast ja maksumääradest, kuid vajadusel saate seda käsitsi kohandada."
+      },
+      "shippingCharges": {
+        "title": "Saatmiskulud",
+        "description": "Valikuline saatmiskulu selle toote jaoks. Sisestage summa, mis lisatakse kogusummale, kui saatmine on vajalik."
+      },
+      "description": {
+        "title": "Kirjeldus",
+        "description": "Esitage toote üksikasjalik kirjeldus. See aitab klientidel mõista, mida nad ostavad, ja võib parandada müüki."
+      }
+    },
+    "customerForm": {
+      "option": {
+        "title": "Kliendi tüüp",
+        "description": "Valige kliendi tüüp: Vabakutseline, Ettevõte ilma KM-ta või Ettevõte KM-ga. See määrab maksunõuded ja saadaolevad väljad."
+      },
+      "name": {
+        "title": "Kliendi nimi",
+        "description": "Sisestage kliendi täielik juriidiline nimi. See on kohustuslik väli ja kuvatakse arvetel ja dokumentidel."
+      },
+      "display_name": {
+        "title": "Kuvatav nimi",
+        "description": "Sisestage kliendi kuvatav nimi. Nii kuvatakse klient teie kliendiloendis ja see võib erineda juriidilisest nimest."
+      },
+      "email": {
+        "title": "E-posti aadress",
+        "description": "Sisestage kliendi e-posti aadress. Seda kasutatakse arvete, kviitungite ja muude suhtluste saatmiseks."
+      },
+      "phone": {
+        "title": "Telefoninumber",
+        "description": "Sisestage kliendi telefoninumber riigikoodiga. See on valikuline, kuid soovitatav kontaktide jaoks."
+      },
+      "website": {
+        "title": "Veebisait",
+        "description": "Sisestage kliendi veebisaidi URL, kui see on saadaval. See on valikuline ja kasutatakse viitamiseks."
+      },
+      "currencies_id": {
+        "title": "Valuuta",
+        "description": "Valige selle kliendi vaikevaluuta. See määrab arvetes ja tehingutes kasutatava valuuta."
+      },
+      "gstIn": {
+        "title": "KM number",
+        "description": "Sisestage KM (kaudse maksu) registreerimisnumber. Nõutav KM-registreerimisega ettevõtetele."
+      },
+      "billingCountry": {
+        "title": "Arveldusriik",
+        "description": "Valige arveldusaadressi riik. See on kohustuslik ja mõjutab maksuarvestusi ja aadressi vormingut."
+      },
+      "billingState": {
+        "title": "Arveldusmaakond/piirkond",
+        "description": "Valige arveldusaadressi maakond või piirkond. Nõutav enamikule riikidele välja arvatud Soome. Kasutatakse maksu- ja saatmise arvutustes."
+      },
+      "billingCity": {
+        "title": "Arvelduslinn",
+        "description": "Sisestage arveldusaadressi linn. See on kohustuslik väli ja aitab aadressi kinnitamisel ja saatmise arvutustel."
+      },
+      "billingZip": {
+        "title": "Arvelduspostiindeks",
+        "description": "Sisestage arveldusaadressi postiindeks. See on kohustuslik ja aitab aadressi kinnitamisel ja saatmise arvutustel."
+      },
+      "billingAddress": {
+        "title": "Arveldusaadress",
+        "description": "Sisestage täielik arveldusaadress, sealhulgas tänava nimi, hoone number ja kõik muud aadressiandmed. See on kohustuslik väli."
+      },
+      "shippingCountry": {
+        "title": "Saatmise riik",
+        "description": "Valige saatmisaadressi riik. Võite kasutada sama kui arveldusaadress või sisestada erineva saatmise asukoha."
+      },
+      "shippingState": {
+        "title": "Saatmise maakond/piirkond",
+        "description": "Valige saatmisaadressi maakond või piirkond. Nõutav enamikule riikidele välja arvatud Soome. Kasutatakse saatmise arvutustes."
+      },
+      "shippingCity": {
+        "title": "Saatmise linn",
+        "description": "Sisestage saatmisaadressi linn. See on kohustuslik, kui saatmisaadress on esitatud, ja aitab saatmise arvutustel."
+      },
+      "shippingZip": {
+        "title": "Saatmise postiindeks",
+        "description": "Sisestage saatmisaadressi postiindeks. See on kohustuslik, kui saatmisaadress on esitatud, ja aitab saatmise arvutustel."
+      },
+      "shippingAddress": {
+        "title": "Saatmisaadress",
+        "description": "Sisestage täielik saatmisaadress, sealhulgas tänava nimi, hoone number ja kõik muud aadressiandmed. Võite kopeerida arveldusaadressist või sisestada eraldi."
+      }
+    },
+    "invoiceForm": {
+      "customer_id": {
+        "title": "Klient",
+        "description": "Valige selle arve klient. Uute arvete puhul saate valida mitu klienti või ühe kliendi muutmisel. Selle kliendi andmed kuvatakse arvel."
+      },
+      "currency_id": {
+        "title": "Valuuta",
+        "description": "Valige selle arve valuuta. Saadaval on ainult EUR (euro) ja INR (India ruupia) valuutad. See määrab kõigis arve summas kasutatava valuuta."
+      },
+      "invoice_number": {
+        "title": "Arve number",
+        "description": "Sisestage arve number. See luuakse automaatselt teie arve eesliite seadete põhjal. Arve number identifitseerib selle arve üheselt."
+      },
+      "reference_number": {
+        "title": "Viitenumber",
+        "description": "Sisestage valikuline viitenumber sellele arvele. Seda saab kasutada sisemiseks jälgimiseks või seotud dokumentidele viitamiseks. Kui jäetakse tühjaks, on see vaikimisi arve number."
+      },
+      "date": {
+        "title": "Arve kuupäev",
+        "description": "Valige kuupäev, mil arve väljastati. See kuupäev kuvatakse arvel ja seda kasutatakse maksete jälgimiseks ja aruandluseks."
+      },
+      "due_date": {
+        "title": "Tähtaeg",
+        "description": "Valige kuupäev, mil makse on tähtaeg. See kuupäev peab olema arve kuupäeva järel. Tähtaega kasutatakse maksetähtaegade ja hilinenud arvete jälgimiseks."
+      },
+      "is_recurring": {
+        "title": "Korduv arve",
+        "description": "Märkige see, kui see arve peaks automaatselt luua korduval ajakavas. Korduvad arved on kasulikud tellimuspõhistele teenustele või regulaarsele arveldusele."
+      },
+      "recurring": {
+        "title": "Kordumise sagedus",
+        "description": "Valige, kui sageli see arve peaks automaatselt luua. Valikud hõlmavad päeviti, nädalati, kuus, kvartaalselt või aastas. See on saadaval ainult siis, kui 'Korduv arve' on märgitud."
+      },
+      "notes": {
+        "title": "Märkused",
+        "description": "Sisestage kõik lisamärkused või tingimused sellele arvele. Need märkused kuvatakse arvel ja võivad sisaldada maksetingimusi, eriinstruktsioone või muud asjakohast teavet."
+      },
+      "paymentId": {
+        "title": "Makseandmed",
+        "description": "Valige arvel kuvatavad makseviisi andmed. See hõlmab pangakonto andmeid, UPI andmeid või muid makseviise. Vajadusel saate lisada uusi makseandmeid."
+      },
+      "template_id": {
+        "title": "Arve mall",
+        "description": "Valige selle arve jaoks kasutatav mall. Mallid kontrollivad arve paigutust ja kujundust. Euroopa mallid valitakse automaatselt Euroopa kasutajatele."
+      },
+      "selectCustomer": {
+        "title": "Eelvaate klient",
+        "description": "Valige klient, et näha eelvaadet, kuidas arve selle konkreetse kliendi jaoks välja näeb. Seda kasutatakse ainult eelvaate eesmärgil ja see ei mõjuta tegelikku arve loomist."
+      }
+    },
+    "quotationForm": {
+      "customer_id": {
+        "title": "Klient",
+        "description": "Valige selle pakkumise klient. Kliendi andmed kuvatakse pakkumise dokumendil."
+      },
+      "currency_id": {
+        "title": "Valuuta",
+        "description": "Valige selle pakkumise valuuta. See määrab kõigis pakkumise summas kasutatava valuuta."
+      },
+      "quatation_number": {
+        "title": "Pakkumise number",
+        "description": "Sisestage pakkumise number. See luuakse automaatselt teie pakkumise eesliite seadete põhjal. Pakkumise number identifitseerib selle pakkumise üheselt."
+      },
+      "reference_number": {
+        "title": "Viitenumber",
+        "description": "Sisestage valikuline viitenumber sellele pakkumisele. Seda saab kasutada sisemiseks jälgimiseks või seotud dokumentidele viitamiseks."
+      },
+      "date": {
+        "title": "Pakkumise kuupäev",
+        "description": "Valige kuupäev, mil pakkumine väljastati. See kuupäev kuvatakse pakkumisel ja seda kasutatakse jälgimiseks ja aruandluseks."
+      },
+      "expiry_at": {
+        "title": "Aegumise kuupäev",
+        "description": "Valige kuupäev, mil see pakkumine aegub. See kuupäev peab olema pakkumise kuupäeva järel. Pakkumine kehtib selle aegumise kuupäevani."
+      },
+      "notes": {
+        "title": "Märkused",
+        "description": "Sisestage kõik lisamärkused või tingimused sellele pakkumisele. Need märkused kuvatakse pakkumisel ja võivad sisaldada tingimusi, olukordi või muud asjakohast teavet, mis on nähtavad kliendile."
+      },
+      "private_notes": {
+        "title": "Privaatsed märkused",
+        "description": "Sisestage privaatsed märkused, mis ei ole nähtavad kliendile. Need märkused on ainult teie sisemiseks kasutamiseks ja võivad sisaldada meeldetuletusi, sisemisi kommentaare või lisainfot."
+      },
+      "template_id": {
+        "title": "Pakkumise mall",
+        "description": "Valige selle pakkumise jaoks kasutatav mall. Mallid kontrollivad pakkumise dokumendi paigutust ja kujundust."
+      }
+    },
+    "expenseForm": {
+      "receipt_url": {
+        "title": "Kviitung",
+        "description": "Laadige üles kviitung või dokument sellele kulule. Toetatud vormingud hõlmavad pilte ja PDF-faile. Maksimaalne failisuurus on 5MB. See kviitung lisatakse kulutietuele dokumenteerimise eesmärgil."
+      },
+      "category": {
+        "title": "Kategooria",
+        "description": "Valige selle kulu kategooria. Kategooriad aitavad korraldada kulusid aruandluse ja maksustamise eesmärgil. Valikud hõlmavad Reisimine, Toit, Kontor, Rent, Palk ja Muu."
+      },
+      "vendor_id": {
+        "title": "Tarnija",
+        "description": "Valige selle kulu tarnija või hankija. Tarnijad on ettevõtted või isikud, kellele maksite selle kulu. Vajadusel saate lisada uue tarnija."
+      },
+      "expenseDate": {
+        "title": "Kulu kuupäev",
+        "description": "Valige kuupäev, mil see kulu tekkis. Seda kuupäeva kasutatakse jälgimiseks, aruandluseks ja maksustamiseks."
+      },
+      "amount": {
+        "title": "Summa",
+        "description": "Sisestage selle kulu kogusumma. See peaks olema kulu jaoks makstud summa, välja arvatud maksud, välja arvatud juhul, kui maksud on summasse kaasatud."
+      },
+      "currency_id": {
+        "title": "Valuuta",
+        "description": "Valige selle kulu valuuta. See määrab kulusumma valuuta ja aitab mitme valuuta kulude jälgimisel."
+      },
+      "notes": {
+        "title": "Märkused",
+        "description": "Sisestage kõik lisamärkused või üksikasjad selle kulu kohta. Need märkused võivad sisaldada kulu eesmärki, makseviisi või muud asjakohast teavet."
+      }
+    },
+    "paymentForm": {
+      "reference_number": {
+        "title": "Viitenumber",
+        "description": "Sisestage valikuline viitenumber sellele maksele. Seda saab kasutada sisemiseks jälgimiseks, tehingu ID-ks või seotud dokumentidele viitamiseks."
+      },
+      "invoice_id": {
+        "title": "Arve",
+        "description": "Valige arve, millele see makse tehakse. Maksesumma rakendatakse valitud arvele. See väli täidetakse automaatselt, kui loite makse arvest."
+      },
+      "amount": {
+        "title": "Summa",
+        "description": "Sisestage maksesumma. See summa ei tohi ületada valitud arve tähtaegset summat. Summa mahaarvatakse arve tasumata saldost."
+      },
+      "paymentDetails_id": {
+        "title": "Makseandmed",
+        "description": "Valige selle makse jaoks kasutatud makseviis. See hõlmab pangakonto andmeid, UPI andmeid või muid makseviise. Vajadusel saate lisada uusi makseandmeid."
+      },
+      "notes": {
+        "title": "Märkused",
+        "description": "Sisestage kõik lisamärkused selle makse kohta. Need märkused on nähtavad ja võivad sisaldada makse kinnituse andmeid, tehingu viiteid või muud asjakohast teavet."
+      },
+      "private_notes": {
+        "title": "Privaatsed märkused",
+        "description": "Sisestage privaatsed märkused, mis ei ole nähtavad teistele. Need märkused on ainult teie sisemiseks kasutamiseks ja võivad sisaldada meeldetuletusi, sisemisi kommentaare või lisainfot makse kohta."
+      }
+    },
+    "vendorForm": {
+      "name": {
+        "title": "Kontaktisiku nimi",
+        "description": "Sisestage selle tarnija kontaktisiku nimi. See on peamine kontaktisiku nimi ja on kohustuslik väli."
+      },
+      "display_name": {
+        "title": "Kuvatav nimi",
+        "description": "Sisestage tarnija kuvatav nimi. Nii kuvatakse tarnija teie tarnijaloendis ja see võib erineda kontaktisiku nimest. See on kohustuslik väli."
+      },
+      "email": {
+        "title": "E-posti aadress",
+        "description": "Sisestage tarnija e-posti aadress. Seda kasutatakse suhtluseks ja see on kohustuslik väli. Veenduge, et sisestate kehtiva e-posti vormingu."
+      },
+      "phone": {
+        "title": "Telefoninumber",
+        "description": "Sisestage tarnija telefoninumber riigikoodiga. See on valikuline, kuid soovitatav kontaktide jaoks."
+      },
+      "website": {
+        "title": "Veebisait",
+        "description": "Sisestage tarnija veebisaidi URL, kui see on saadaval. See on valikuline ja kasutatakse viitamiseks."
+      },
+      "billingCountry": {
+        "title": "Arveldusriik",
+        "description": "Valige arveldusaadressi riik. See on kohustuslik ja mõjutab aadressi vormingut ja maksuarvestusi."
+      },
+      "billingState": {
+        "title": "Arveldusmaakond/piirkond",
+        "description": "Valige arveldusaadressi maakond või piirkond. See on kohustuslik ja kasutatakse aadressi kinnitamiseks ja maksustamiseks."
+      },
+      "billingCity": {
+        "title": "Arvelduslinn",
+        "description": "Sisestage arveldusaadressi linn. See on kohustuslik väli ja aitab aadressi kinnitamisel ja saatmise arvutustel."
+      },
+      "billingZip": {
+        "title": "Arvelduspostiindeks",
+        "description": "Sisestage arveldusaadressi postiindeks. See on kohustuslik ja aitab aadressi kinnitamisel ja saatmise arvutustel."
+      },
+      "billingAddress": {
+        "title": "Arveldusaadress",
+        "description": "Sisestage täielik arveldusaadress, sealhulgas tänava nimi, hoone number ja kõik muud aadressiandmed. See on kohustuslik väli."
+      }
+    },
+    "shippingForm": {
+      "shippingStatus": {
+        "title": "Saatmise olek",
+        "description": "Valige saatmise praegune olek. Valige 'Saadetud', kui tellimus on saadetud, või 'Saadetav', kui see on veel ootel. Kui olek on seatud 'Saadetud', muutub saatmise viitenumber kohustuslikuks."
+      },
+      "shippingRefNumber": {
+        "title": "Saatmise viitenumber",
+        "description": "Sisestage saatmise pakkuja poolt esitatud saatmise viitenumber või jälgimisnumber. See on kohustuslik, kui saatmise olek on seatud 'Saadetud'. See number aitab tellimust jälgida transpordi ajal."
+      }
+    }
   }
 }

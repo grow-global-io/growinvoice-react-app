@@ -8,6 +8,8 @@ import { PhoneInputFormField } from "@shared/components/FormFields/PhoneInputFor
 import { Constants } from "@shared/constants";
 import StateFormField from "@shared/components/FormFields/StateFormField";
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
+import { FieldWithTooltip } from "@shared/components/FormFields/FieldWithTooltip";
+import { vendorFormTooltips } from "@shared/tooltips";
 import { useCurrencyControllerFindCountries } from "@api/services/currency";
 import * as yup from "yup";
 import { isValidPhoneNumber } from "react-phone-number-input";
@@ -146,36 +148,61 @@ const VendorsForm = () => {
 								<Divider />
 								<Grid container spacing={2} bgcolor={"custom.lightgray"} padding={2}>
 									<Grid item xs={12} md={6}>
-										<Field
-											name="name"
-											label={t("vendorForm.contactName")}
-											component={TextFormField}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(vendorFormTooltips.name.titleKey)}
+											tooltipDescription={t(vendorFormTooltips.name.descriptionKey)}
+										>
+											<Field
+												name="name"
+												label={t("vendorForm.contactName")}
+												component={TextFormField}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12} md={6}>
-										<Field
-											name="display_name"
-											label={t("vendorForm.displayName")}
-											component={TextFormField}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(vendorFormTooltips.display_name.titleKey)}
+											tooltipDescription={t(vendorFormTooltips.display_name.descriptionKey)}
+										>
+											<Field
+												name="display_name"
+												label={t("vendorForm.displayName")}
+												component={TextFormField}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12} md={6}>
-										<Field name="email" label={t("vendorForm.email")} component={TextFormField} />
+										<FieldWithTooltip
+											tooltipTitle={t(vendorFormTooltips.email.titleKey)}
+											tooltipDescription={t(vendorFormTooltips.email.descriptionKey)}
+										>
+											<Field name="email" label={t("vendorForm.email")} component={TextFormField} />
+										</FieldWithTooltip>
 									</Grid>
 
 									<Grid item xs={12} md={6}>
-										<Field
-											name="phone"
-											label={t("vendorForm.phone")}
-											component={PhoneInputFormField}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(vendorFormTooltips.phone.titleKey)}
+											tooltipDescription={t(vendorFormTooltips.phone.descriptionKey)}
+										>
+											<Field
+												name="phone"
+												label={t("vendorForm.phone")}
+												component={PhoneInputFormField}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12} md={6}>
-										<Field
-											name="website"
-											label={t("vendorForm.website")}
-											component={TextFormField}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(vendorFormTooltips.website.titleKey)}
+											tooltipDescription={t(vendorFormTooltips.website.descriptionKey)}
+										>
+											<Field
+												name="website"
+												label={t("vendorForm.website")}
+												component={TextFormField}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 								</Grid>
 								<Grid container spacing={2} padding={2}>
@@ -199,49 +226,74 @@ const VendorsForm = () => {
 									<Grid item xs={12}>
 										<Grid container spacing={1}>
 											<Grid item xs={12} sm={6}>
-												<Field
-													name="billingAddress.country_id"
-													component={AutocompleteField}
-													label={t("vendorForm.country")}
-													options={countryFindAll?.data?.map((item) => ({
-														label: item.name,
-														value: item.id,
-													}))}
-													loading={countryFindAll.isLoading}
-													isRequired={true}
-												/>
+												<FieldWithTooltip
+													tooltipTitle={t(vendorFormTooltips.billingCountry.titleKey)}
+													tooltipDescription={t(vendorFormTooltips.billingCountry.descriptionKey)}
+												>
+													<Field
+														name="billingAddress.country_id"
+														component={AutocompleteField}
+														label={t("vendorForm.country")}
+														options={countryFindAll?.data?.map((item) => ({
+															label: item.name,
+															value: item.id,
+														}))}
+														loading={countryFindAll.isLoading}
+														isRequired={true}
+													/>
+												</FieldWithTooltip>
 											</Grid>
 											<Grid item xs={12} sm={6}>
-												<StateFormField
-													countryFieldName="billingAddress.country_id"
-													stateFieldName="billingAddress.state_id"
-													stateLabel={t("vendorForm.state")}
-													isRequired={true}
-												/>
+												<FieldWithTooltip
+													tooltipTitle={t(vendorFormTooltips.billingState.titleKey)}
+													tooltipDescription={t(vendorFormTooltips.billingState.descriptionKey)}
+												>
+													<StateFormField
+														countryFieldName="billingAddress.country_id"
+														stateFieldName="billingAddress.state_id"
+														stateLabel={t("vendorForm.state")}
+														isRequired={true}
+													/>
+												</FieldWithTooltip>
 											</Grid>
 											<Grid item xs={12} sm={6}>
-												<Field
-													name="billingAddress.city"
-													component={TextFormField}
-													label={t("vendorForm.city")}
-													isRequired={true}
-												/>
-												<Field
-													name="billingAddress.zip"
-													component={TextFormField}
-													label={t("vendorForm.pincode")}
-													isRequired={true}
-												/>
+												<FieldWithTooltip
+													tooltipTitle={t(vendorFormTooltips.billingCity.titleKey)}
+													tooltipDescription={t(vendorFormTooltips.billingCity.descriptionKey)}
+												>
+													<Field
+														name="billingAddress.city"
+														component={TextFormField}
+														label={t("vendorForm.city")}
+														isRequired={true}
+													/>
+												</FieldWithTooltip>
+												<FieldWithTooltip
+													tooltipTitle={t(vendorFormTooltips.billingZip.titleKey)}
+													tooltipDescription={t(vendorFormTooltips.billingZip.descriptionKey)}
+												>
+													<Field
+														name="billingAddress.zip"
+														component={TextFormField}
+														label={t("vendorForm.pincode")}
+														isRequired={true}
+													/>
+												</FieldWithTooltip>
 											</Grid>
 											<Grid item xs={12} sm={6}>
-												<Field
-													name="billingAddress.address"
-													component={TextFormField}
-													label={t("vendorForm.address")}
-													multiline
-													rows={6}
-													isRequired={true}
-												/>
+												<FieldWithTooltip
+													tooltipTitle={t(vendorFormTooltips.billingAddress.titleKey)}
+													tooltipDescription={t(vendorFormTooltips.billingAddress.descriptionKey)}
+												>
+													<Field
+														name="billingAddress.address"
+														component={TextFormField}
+														label={t("vendorForm.address")}
+														multiline
+														rows={6}
+														isRequired={true}
+													/>
+												</FieldWithTooltip>
 											</Grid>
 										</Grid>
 									</Grid>

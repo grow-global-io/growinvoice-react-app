@@ -18,6 +18,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { type ListDto } from "@shared/models/ListDto";
+import { FieldWithTooltip } from "@shared/components/FormFields/FieldWithTooltip";
+import { paymentFormTooltips } from "@shared/tooltips";
 import { usePaymentdetailsControllerFindAll } from "@api/services/paymentdetails";
 import { useDialog } from "@shared/hooks/useDialog";
 import PaymentDetailsDrawer from "@features/PaymentsDetails/PaymentDetailsDrawer";
@@ -205,57 +207,77 @@ const PaymentForm = () => {
 								<Divider />
 								<Grid container padding={2}>
 									<Grid item xs={12}>
-										<Field
-											name="reference_number"
-											component={TextFormField}
-											label={t("paymentForm.referenceNumber")}
-											type="number"
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(paymentFormTooltips.reference_number.titleKey)}
+											tooltipDescription={t(paymentFormTooltips.reference_number.descriptionKey)}
+										>
+											<Field
+												name="reference_number"
+												component={TextFormField}
+												label={t("paymentForm.referenceNumber")}
+												type="number"
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									{!invoiceId && (
 										<Grid item xs={12}>
-											<Field
-												name="invoice_id"
-												label={t("paymentForm.invoice")}
-												component={AutocompleteField}
-												options={invoiceData?.data?.map((invoice) => ({
-													value: invoice.id,
-													label: invoice.invoice_number,
-												}))}
-												loading={invoiceData.isLoading || invoiceData.isFetching}
-												isRequired={true}
-												onValueChange={(value: ListDto) => {
-													const invoice = invoiceData?.data?.find(
-														(item) => item.id === value.value,
-													);
-													setFieldValue("amount", invoice?.total ?? 0);
-												}}
-												disabled={invoiceId ?? false}
-											/>
+											<FieldWithTooltip
+												tooltipTitle={t(paymentFormTooltips.invoice_id.titleKey)}
+												tooltipDescription={t(paymentFormTooltips.invoice_id.descriptionKey)}
+											>
+												<Field
+													name="invoice_id"
+													label={t("paymentForm.invoice")}
+													component={AutocompleteField}
+													options={invoiceData?.data?.map((invoice) => ({
+														value: invoice.id,
+														label: invoice.invoice_number,
+													}))}
+													loading={invoiceData.isLoading || invoiceData.isFetching}
+													isRequired={true}
+													onValueChange={(value: ListDto) => {
+														const invoice = invoiceData?.data?.find(
+															(item) => item.id === value.value,
+														);
+														setFieldValue("amount", invoice?.total ?? 0);
+													}}
+													disabled={invoiceId ?? false}
+												/>
+											</FieldWithTooltip>
 										</Grid>
 									)}
 									<Grid item xs={12}>
-										<Field
-											name="amount"
-											component={TextFormField}
-											label={t("paymentForm.amount")}
-											type="number"
-											// disabled={true}
-											isRequired={true}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(paymentFormTooltips.amount.titleKey)}
+											tooltipDescription={t(paymentFormTooltips.amount.descriptionKey)}
+										>
+											<Field
+												name="amount"
+												component={TextFormField}
+												label={t("paymentForm.amount")}
+												type="number"
+												// disabled={true}
+												isRequired={true}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12}>
-										<Field
-											name="paymentDetails_id"
-											label={t("paymentForm.paymentDetails")}
-											component={AutocompleteField}
-											options={paymentData?.data?.map((payment) => ({
-												value: payment.id,
-												label: payment.paymentType,
-											}))}
-											loading={paymentData.isLoading}
-											isRequired={true}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(paymentFormTooltips.paymentDetails_id.titleKey)}
+											tooltipDescription={t(paymentFormTooltips.paymentDetails_id.descriptionKey)}
+										>
+											<Field
+												name="paymentDetails_id"
+												label={t("paymentForm.paymentDetails")}
+												component={AutocompleteField}
+												options={paymentData?.data?.map((payment) => ({
+													value: payment.id,
+													label: payment.paymentType,
+												}))}
+												loading={paymentData.isLoading}
+												isRequired={true}
+											/>
+										</FieldWithTooltip>
 										<Box>
 											<Button variant="text" startIcon={<AddIcon />} onClick={handleClickOpen}>
 												{t("paymentForm.addPayment")}
@@ -264,22 +286,32 @@ const PaymentForm = () => {
 									</Grid>
 
 									<Grid item xs={12}>
-										<Field
-											name="notes"
-											component={TextFormField}
-											label={t("paymentForm.notes")}
-											multiline
-											rows={5}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(paymentFormTooltips.notes.titleKey)}
+											tooltipDescription={t(paymentFormTooltips.notes.descriptionKey)}
+										>
+											<Field
+												name="notes"
+												component={TextFormField}
+												label={t("paymentForm.notes")}
+												multiline
+												rows={5}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12}>
-										<Field
-											name="private_notes"
-											component={TextFormField}
-											label={t("paymentForm.privateNotes")}
-											multiline
-											rows={5}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(paymentFormTooltips.private_notes.titleKey)}
+											tooltipDescription={t(paymentFormTooltips.private_notes.descriptionKey)}
+										>
+											<Field
+												name="private_notes"
+												component={TextFormField}
+												label={t("paymentForm.privateNotes")}
+												multiline
+												rows={5}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 
 									<Grid item xs={12} textAlign={"center"}>
