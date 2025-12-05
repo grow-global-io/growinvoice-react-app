@@ -1494,6 +1494,328 @@
       "totalDueAmount": "Total Due Amount"
     },
     "toBeFilled": "to be filled"
+  },
+  "tooltips": {
+    "productForm": {
+      "type": {
+        "title": "Product Type",
+        "description": "Select whether this is a Goods (physical product) or Services (intangible service). This classification affects how the product is handled in invoices and reports."
+      },
+      "name": {
+        "title": "Product Name",
+        "description": "Enter a clear and descriptive name for your product. This name will appear in invoices, receipts, and your product catalog."
+      },
+      "includeStore": {
+        "title": "Include in Store",
+        "description": "Enable this option to make the product available in your online store. When enabled, at least one product image is required."
+      },
+      "images": {
+        "title": "Product Images",
+        "description": "Upload one or more images of your product. Images are required if you want to include this product in your store. Supported formats: JPG, PNG, GIF."
+      },
+      "unit_id": {
+        "title": "Product Unit",
+        "description": "Select the unit of measurement for this product (e.g., pieces, kg, liters, hours). You can add a new unit if needed."
+      },
+      "hsnCode_id": {
+        "title": "HSN Code (India)",
+        "description": "Harmonized System of Nomenclature code used for tax classification in India. Required for Indian businesses. The code includes the associated tax percentage."
+      },
+      "tax": {
+        "title": "Taxes",
+        "description": "Select one or more tax rates that apply to this product. Taxes are automatically calculated and included in the selling price. You can add new tax rates if needed."
+      },
+      "currency_id": {
+        "title": "Currency",
+        "description": "Select the currency for this price entry. Currently supports EUR (Euro) and INR (Indian Rupee)."
+      },
+      "price": {
+        "title": "Stock Price",
+        "description": "Enter the base cost price of the product (excluding taxes). The selling price will be automatically calculated based on this price and the selected tax rates."
+      },
+      "sellPrice": {
+        "title": "Selling Price",
+        "description": "The final price including taxes. This is automatically calculated from the stock price and tax rates, but you can manually adjust it if needed."
+      },
+      "shippingCharges": {
+        "title": "Shipping Charges",
+        "description": "Optional shipping cost for this product. Enter the amount that will be added to the total when shipping is required."
+      },
+      "description": {
+        "title": "Description",
+        "description": "Provide a detailed description of the product. This helps customers understand what they are purchasing and can improve sales."
+      }
+    },
+    "customerForm": {
+      "option": {
+        "title": "Customer Type",
+        "description": "Select the type of customer: Freelancer, Business without GST, or Business with GST. This determines tax requirements and available fields."
+      },
+      "name": {
+        "title": "Customer Name",
+        "description": "Enter the full legal name of the customer. This is a required field and will appear on invoices and documents."
+      },
+      "display_name": {
+        "title": "Display Name",
+        "description": "Enter a display name for the customer. This is how the customer will appear in your customer list and can be different from the legal name."
+      },
+      "email": {
+        "title": "Email Address",
+        "description": "Enter the customer's email address. This will be used for sending invoices, receipts, and other communications."
+      },
+      "phone": {
+        "title": "Phone Number",
+        "description": "Enter the customer's phone number with country code. This is optional but recommended for contact purposes."
+      },
+      "website": {
+        "title": "Website",
+        "description": "Enter the customer's website URL if applicable. This is optional and used for reference purposes."
+      },
+      "currencies_id": {
+        "title": "Currency",
+        "description": "Select the default currency for this customer. This determines the currency used for invoices and transactions."
+      },
+      "gstIn": {
+        "title": "GST Number",
+        "description": "Enter the GST (Goods and Services Tax) registration number. Required for businesses with GST registration."
+      },
+      "billingCountry": {
+        "title": "Billing Country",
+        "description": "Select the country for the billing address. This is required and affects tax calculations and address formatting."
+      },
+      "billingState": {
+        "title": "Billing State/Province",
+        "description": "Select the state or province for the billing address. Required for most countries except Finland. Used for tax and shipping calculations."
+      },
+      "billingCity": {
+        "title": "Billing City",
+        "description": "Enter the city for the billing address. This is a required field and helps in address validation and shipping calculations."
+      },
+      "billingZip": {
+        "title": "Billing Postal/ZIP Code",
+        "description": "Enter the postal or ZIP code for the billing address. This is required and helps in address validation and shipping calculations."
+      },
+      "billingAddress": {
+        "title": "Billing Address",
+        "description": "Enter the complete billing address including street name, building number, and any additional address details. This is a required field."
+      },
+      "shippingCountry": {
+        "title": "Shipping Country",
+        "description": "Select the country for the shipping address. You can use the same as billing address or enter a different shipping location."
+      },
+      "shippingState": {
+        "title": "Shipping State/Province",
+        "description": "Select the state or province for the shipping address. Required for most countries except Finland. Used for shipping calculations."
+      },
+      "shippingCity": {
+        "title": "Shipping City",
+        "description": "Enter the city for the shipping address. This is required when shipping address is provided and helps in shipping calculations."
+      },
+      "shippingZip": {
+        "title": "Shipping Postal/ZIP Code",
+        "description": "Enter the postal or ZIP code for the shipping address. This is required when shipping address is provided and helps in shipping calculations."
+      },
+      "shippingAddress": {
+        "title": "Shipping Address",
+        "description": "Enter the complete shipping address including street name, building number, and any additional address details. You can copy from billing address or enter separately."
+      }
+    },
+    "invoiceForm": {
+      "customer_id": {
+        "title": "Customer",
+        "description": "Select the customer for this invoice. You can select multiple customers for new invoices or a single customer when editing. This customer's information will appear on the invoice."
+      },
+      "currency_id": {
+        "title": "Currency",
+        "description": "Select the currency for this invoice. Only EUR and INR currencies are available. This determines the currency used for all amounts on the invoice."
+      },
+      "invoice_number": {
+        "title": "Invoice Number",
+        "description": "Enter the invoice number. This is automatically generated based on your invoice prefix settings. The invoice number uniquely identifies this invoice."
+      },
+      "reference_number": {
+        "title": "Reference Number",
+        "description": "Enter an optional reference number for this invoice. This can be used for your internal tracking or to reference related documents. If left empty, it will default to the invoice number."
+      },
+      "date": {
+        "title": "Invoice Date",
+        "description": "Select the date when the invoice is issued. This date appears on the invoice and is used for payment tracking and reporting."
+      },
+      "due_date": {
+        "title": "Due Date",
+        "description": "Select the date when payment is due. This date must be after the invoice date. The due date is used to track payment deadlines and overdue invoices."
+      },
+      "is_recurring": {
+        "title": "Recurring Invoice",
+        "description": "Check this box if this invoice should be generated automatically on a recurring schedule. Recurring invoices are useful for subscription-based services or regular billing."
+      },
+      "recurring": {
+        "title": "Recurring Frequency",
+        "description": "Select how often this invoice should be generated automatically. Options include daily, weekly, monthly, quarterly, or yearly. This is only available when 'Recurring Invoice' is checked."
+      },
+      "notes": {
+        "title": "Notes",
+        "description": "Enter any additional notes or terms for this invoice. These notes will appear on the invoice and can include payment terms, special instructions, or other relevant information."
+      },
+      "paymentId": {
+        "title": "Payment Details",
+        "description": "Select the payment method details that will be displayed on the invoice. This includes bank account information, UPI details, or other payment methods. You can add new payment details if needed."
+      },
+      "template_id": {
+        "title": "Invoice Template",
+        "description": "Select the template to use for this invoice. Templates control the layout and design of the invoice. European templates are automatically selected for European users."
+      },
+      "selectCustomer": {
+        "title": "Preview Customer",
+        "description": "Select a customer to preview how the invoice will look for that specific customer. This is used for preview purposes only and does not affect the actual invoice creation."
+      }
+    },
+    "quotationForm": {
+      "customer_id": {
+        "title": "Customer",
+        "description": "Select the customer for this quotation. The customer's information will appear on the quotation document."
+      },
+      "currency_id": {
+        "title": "Currency",
+        "description": "Select the currency for this quotation. This determines the currency used for all amounts on the quotation."
+      },
+      "quatation_number": {
+        "title": "Quotation Number",
+        "description": "Enter the quotation number. This is automatically generated based on your quotation prefix settings. The quotation number uniquely identifies this quotation."
+      },
+      "reference_number": {
+        "title": "Reference Number",
+        "description": "Enter an optional reference number for this quotation. This can be used for your internal tracking or to reference related documents."
+      },
+      "date": {
+        "title": "Quotation Date",
+        "description": "Select the date when the quotation is issued. This date appears on the quotation and is used for tracking and reporting."
+      },
+      "expiry_at": {
+        "title": "Expiry Date",
+        "description": "Select the date when this quotation expires. This date must be after the quotation date. The quotation is valid until this expiry date."
+      },
+      "notes": {
+        "title": "Notes",
+        "description": "Enter any additional notes or terms for this quotation. These notes will appear on the quotation and can include terms, conditions, or other relevant information visible to the customer."
+      },
+      "private_notes": {
+        "title": "Private Notes",
+        "description": "Enter private notes that will not be visible to the customer. These notes are for your internal use only and can include reminders, internal comments, or additional information."
+      },
+      "template_id": {
+        "title": "Quotation Template",
+        "description": "Select the template to use for this quotation. Templates control the layout and design of the quotation document."
+      }
+    },
+    "expenseForm": {
+      "receipt_url": {
+        "title": "Receipt",
+        "description": "Upload a receipt or document for this expense. Supported formats include images and PDF files. Maximum file size is 5MB. This receipt will be attached to the expense record for documentation purposes."
+      },
+      "category": {
+        "title": "Category",
+        "description": "Select the category for this expense. Categories help organize expenses for reporting and tax purposes. Options include Travel, Food, Office, Rent, Salary, and Other."
+      },
+      "vendor_id": {
+        "title": "Vendor",
+        "description": "Select the vendor or supplier for this expense. Vendors are the companies or individuals you paid for this expense. You can add a new vendor if needed."
+      },
+      "expenseDate": {
+        "title": "Expense Date",
+        "description": "Select the date when this expense was incurred. This date is used for tracking, reporting, and tax purposes."
+      },
+      "amount": {
+        "title": "Amount",
+        "description": "Enter the total amount of this expense. This should be the amount paid for the expense, excluding any taxes unless taxes are included in the amount."
+      },
+      "currency_id": {
+        "title": "Currency",
+        "description": "Select the currency for this expense. This determines the currency used for the expense amount and helps with multi-currency expense tracking."
+      },
+      "notes": {
+        "title": "Notes",
+        "description": "Enter any additional notes or details about this expense. These notes can include the purpose of the expense, payment method, or any other relevant information."
+      }
+    },
+    "paymentForm": {
+      "reference_number": {
+        "title": "Reference Number",
+        "description": "Enter an optional reference number for this payment. This can be used for your internal tracking, transaction ID, or to reference related documents."
+      },
+      "invoice_id": {
+        "title": "Invoice",
+        "description": "Select the invoice for which this payment is being made. The payment amount will be applied to the selected invoice. This field is automatically filled when creating a payment from an invoice."
+      },
+      "amount": {
+        "title": "Amount",
+        "description": "Enter the payment amount. This amount cannot exceed the due amount of the selected invoice. The amount will be deducted from the invoice's outstanding balance."
+      },
+      "paymentDetails_id": {
+        "title": "Payment Details",
+        "description": "Select the payment method used for this payment. This includes bank account information, UPI details, or other payment methods. You can add new payment details if needed."
+      },
+      "notes": {
+        "title": "Notes",
+        "description": "Enter any additional notes about this payment. These notes will be visible and can include payment confirmation details, transaction references, or other relevant information."
+      },
+      "private_notes": {
+        "title": "Private Notes",
+        "description": "Enter private notes that will not be visible to others. These notes are for your internal use only and can include reminders, internal comments, or additional information about the payment."
+      }
+    },
+    "vendorForm": {
+      "name": {
+        "title": "Contact Name",
+        "description": "Enter the contact person's name for this vendor. This is the primary contact name and is a required field."
+      },
+      "display_name": {
+        "title": "Display Name",
+        "description": "Enter a display name for the vendor. This is how the vendor will appear in your vendor list and can be different from the contact name. This is a required field."
+      },
+      "email": {
+        "title": "Email Address",
+        "description": "Enter the vendor's email address. This will be used for communications and is a required field. Make sure to enter a valid email format."
+      },
+      "phone": {
+        "title": "Phone Number",
+        "description": "Enter the vendor's phone number with country code. This is optional but recommended for contact purposes."
+      },
+      "website": {
+        "title": "Website",
+        "description": "Enter the vendor's website URL if applicable. This is optional and used for reference purposes."
+      },
+      "billingCountry": {
+        "title": "Billing Country",
+        "description": "Select the country for the billing address. This is required and affects address formatting and tax calculations."
+      },
+      "billingState": {
+        "title": "Billing State/Province",
+        "description": "Select the state or province for the billing address. This is required and used for address validation and tax purposes."
+      },
+      "billingCity": {
+        "title": "Billing City",
+        "description": "Enter the city for the billing address. This is a required field and helps in address validation and shipping calculations."
+      },
+      "billingZip": {
+        "title": "Billing Postal/Pincode",
+        "description": "Enter the postal code or pincode for the billing address. This is required and helps in address validation and shipping calculations."
+      },
+      "billingAddress": {
+        "title": "Billing Address",
+        "description": "Enter the complete billing address including street name, building number, and any additional address details. This is a required field."
+      }
+    },
+    "shippingForm": {
+      "shippingStatus": {
+        "title": "Shipment Status",
+        "description": "Select the current status of the shipment. Choose 'Shipped' when the order has been dispatched, or 'To be shipped' if it's still pending. When status is set to 'Shipped', the shipping reference number becomes required."
+      },
+      "shippingRefNumber": {
+        "title": "Shipping Reference Number",
+        "description": "Enter the shipping reference number or tracking number provided by the shipping carrier. This is required when the shipment status is set to 'Shipped'. This number helps track the order during transit."
+      }
+    }
   }
 }
 

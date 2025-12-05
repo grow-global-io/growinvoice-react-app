@@ -13,6 +13,8 @@ import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { DateFormField } from "@shared/components/FormFields/DateFormField";
 import * as yup from "yup";
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
+import { FieldWithTooltip } from "@shared/components/FormFields/FieldWithTooltip";
+import { quotationFormTooltips } from "@shared/tooltips";
 import { Constants } from "@shared/constants";
 import FullFeaturedCrudGrid from "@shared/components/EditableProductListTable";
 import { type GridRowsProp } from "@mui/x-data-grid";
@@ -247,17 +249,22 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 							<Form>
 								<Grid container spacing={2}>
 									<Grid item xs={12} sm={4}>
-										<Field
-											name="customer_id"
-											label={t("quotationForm.customerName")}
-											component={AutocompleteField}
-											options={customerData?.data?.map((customer) => ({
-												value: customer.id,
-												label: customer.display_name,
-											}))}
-											loading={customerData.isLoading}
-											isRequired={true}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(quotationFormTooltips.customer_id.titleKey)}
+											tooltipDescription={t(quotationFormTooltips.customer_id.descriptionKey)}
+										>
+											<Field
+												name="customer_id"
+												label={t("quotationForm.customerName")}
+												component={AutocompleteField}
+												options={customerData?.data?.map((customer) => ({
+													value: customer.id,
+													label: customer.display_name,
+												}))}
+												loading={customerData.isLoading}
+												isRequired={true}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12} sm={4} alignItems={"center"} display={"flex"}>
 										<Button
@@ -271,61 +278,86 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 										</Button>
 									</Grid>
 									<Grid item xs={12} sm={4}>
-										<Field
-											name="currency_id"
-											label={t("quotationForm.currency")}
-											component={AutocompleteField}
-											loading={currencyList.isLoading || currencyList.isFetching}
-											options={currencyList?.data?.map((currency) => ({
-												value: currency.id,
-												label: `${currency.short_code} - ${currency.name}`,
-											}))}
-											isRequired={true}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(quotationFormTooltips.currency_id.titleKey)}
+											tooltipDescription={t(quotationFormTooltips.currency_id.descriptionKey)}
+										>
+											<Field
+												name="currency_id"
+												label={t("quotationForm.currency")}
+												component={AutocompleteField}
+												loading={currencyList.isLoading || currencyList.isFetching}
+												options={currencyList?.data?.map((currency) => ({
+													value: currency.id,
+													label: `${currency.short_code} - ${currency.name}`,
+												}))}
+												isRequired={true}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12} mb={3}>
 										<Divider />
 									</Grid>
 									<Grid item xs={12} sm={6} lg={4}>
-										<Field
-											name="quatation_number"
-											component={TextFormField}
-											label={t("quotationForm.number")}
-											InputProps={{
-												startAdornment: (
-													<InputAdornment position="start">
-														{quotationSettings?.data?.quotationPrefix ??
-															Constants?.quotationDefaultPrefix}{" "}
-														-
-													</InputAdornment>
-												),
-											}}
-											isRequired={true}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(quotationFormTooltips.quatation_number.titleKey)}
+											tooltipDescription={t(quotationFormTooltips.quatation_number.descriptionKey)}
+										>
+											<Field
+												name="quatation_number"
+												component={TextFormField}
+												label={t("quotationForm.number")}
+												InputProps={{
+													startAdornment: (
+														<InputAdornment position="start">
+															{quotationSettings?.data?.quotationPrefix ??
+																Constants?.quotationDefaultPrefix}{" "}
+															-
+														</InputAdornment>
+													),
+												}}
+												isRequired={true}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12} sm={6} lg={4}>
-										<Field
-											name="reference_number"
-											component={TextFormField}
-											label={t("quotationForm.referenceNumber")}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(quotationFormTooltips.reference_number.titleKey)}
+											tooltipDescription={t(quotationFormTooltips.reference_number.descriptionKey)}
+										>
+											<Field
+												name="reference_number"
+												component={TextFormField}
+												label={t("quotationForm.referenceNumber")}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12} sm={6} lg={4}>
-										<Field
-											name="date"
-											component={DateFormField}
-											label={t("quotationForm.date")}
-											isRequired={true}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(quotationFormTooltips.date.titleKey)}
+											tooltipDescription={t(quotationFormTooltips.date.descriptionKey)}
+										>
+											<Field
+												name="date"
+												component={DateFormField}
+												label={t("quotationForm.date")}
+												isRequired={true}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12} sm={6} lg={4}>
-										<Field
-											name="expiry_at"
-											component={DateFormField}
-											label={t("quotationForm.expiryDate")}
-											minDate={moment(formik?.values.date).add(1, "days").toDate()}
-											isRequired={true}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(quotationFormTooltips.expiry_at.titleKey)}
+											tooltipDescription={t(quotationFormTooltips.expiry_at.descriptionKey)}
+										>
+											<Field
+												name="expiry_at"
+												component={DateFormField}
+												label={t("quotationForm.expiryDate")}
+												minDate={moment(formik?.values.date).add(1, "days").toDate()}
+												isRequired={true}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12} mb={3}>
 										<Divider />
@@ -353,36 +385,51 @@ const CreateQuotation = ({ id }: { id?: string }) => {
 											},
 										}}
 									>
-										<Field
-											name="notes"
-											component={TextFormField}
-											label={t("quotationForm.notes")}
-											multiline
-											rows={5}
-										/>
-										<Field
-											name="private_notes"
-											component={TextFormField}
-											label={t("quotationForm.privateNotes")}
-											multiline
-											rows={5}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(quotationFormTooltips.notes.titleKey)}
+											tooltipDescription={t(quotationFormTooltips.notes.descriptionKey)}
+										>
+											<Field
+												name="notes"
+												component={TextFormField}
+												label={t("quotationForm.notes")}
+												multiline
+												rows={5}
+											/>
+										</FieldWithTooltip>
+										<FieldWithTooltip
+											tooltipTitle={t(quotationFormTooltips.private_notes.titleKey)}
+											tooltipDescription={t(quotationFormTooltips.private_notes.descriptionKey)}
+										>
+											<Field
+												name="private_notes"
+												component={TextFormField}
+												label={t("quotationForm.privateNotes")}
+												multiline
+												rows={5}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid item xs={12} sm={6}>
 										<SubtotalFooter formik={formik} />
 									</Grid>
 									<Grid item xs={12} sm={3.5}>
-										<Field
-											name="template_id"
-											label={t("quotationForm.template")}
-											component={AutocompleteField}
-											options={quotationTemplate?.data?.map((template) => ({
-												value: template.id,
-												label: template.name,
-											}))}
-											loading={quotationTemplate.isLoading}
-											isRequired={true}
-										/>
+										<FieldWithTooltip
+											tooltipTitle={t(quotationFormTooltips.template_id.titleKey)}
+											tooltipDescription={t(quotationFormTooltips.template_id.descriptionKey)}
+										>
+											<Field
+												name="template_id"
+												label={t("quotationForm.template")}
+												component={AutocompleteField}
+												options={quotationTemplate?.data?.map((template) => ({
+													value: template.id,
+													label: template.name,
+												}))}
+												loading={quotationTemplate.isLoading}
+												isRequired={true}
+											/>
+										</FieldWithTooltip>
 									</Grid>
 									<Grid
 										item

@@ -19,6 +19,7 @@ export const PhoneInputFormField: React.FC<
 		label?: string;
 		required?: boolean;
 		defaultCountry?: Country;
+		tooltipIcon?: React.ReactNode;
 	}
 > = ({ field, form, label, defaultCountry, ...props }) => {
 	const { t } = useTranslation();
@@ -27,9 +28,33 @@ export const PhoneInputFormField: React.FC<
 	return (
 		<FormControl fullWidth error={!!errorText}>
 			{label && (
-				<InputLabel sx={{ ml: -1.6 }} shrink htmlFor={field.name}>
-					<Typography variant="h4" color="text.primary">
+				<InputLabel
+					sx={{
+						ml: -1.6,
+						overflow: "visible",
+						whiteSpace: "nowrap",
+						maxWidth: "none",
+						width: "auto",
+						minWidth: "fit-content",
+					}}
+					shrink
+					htmlFor={field.name}
+				>
+					<Typography
+						variant="h4"
+						color="text.primary"
+						sx={{
+							display: "inline-flex",
+							alignItems: "center",
+							whiteSpace: "nowrap",
+							overflow: "visible",
+							maxWidth: "none",
+							width: "auto",
+							minWidth: "fit-content",
+						}}
+					>
 						{label?.toUpperCase()}
+						{props.tooltipIcon}
 					</Typography>
 				</InputLabel>
 			)}

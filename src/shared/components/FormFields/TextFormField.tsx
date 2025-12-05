@@ -19,6 +19,7 @@ export const TextFormField: React.FC<
 		backgroundColor?: string; // New prop for background color
 		marginWholeTop?: number;
 		onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
+		tooltipIcon?: React.ReactNode;
 	}
 > = ({ field, form, label, backgroundColor, isRequired, marginWholeTop, ...props }) => {
 	const { t } = useTranslation();
@@ -33,17 +34,48 @@ export const TextFormField: React.FC<
 		<FormControl
 			fullWidth
 			error={!!errorText}
-			sx={marginWholeTop ? { mt: marginWholeTop } : undefined}
+			sx={{
+				...(marginWholeTop ? { mt: marginWholeTop } : {}),
+				overflow: "visible",
+				"& .MuiInputLabel-root": {
+					overflow: "visible",
+					maxWidth: "none",
+				},
+			}}
 		>
 			{label && (
-				<InputLabel sx={{ ml: -1.6 }} shrink htmlFor={field.name}>
-					<Typography variant="h4" color="text.primary">
+				<InputLabel
+					sx={{
+						ml: -1.6,
+						overflow: "visible",
+						whiteSpace: "nowrap",
+						maxWidth: "none",
+						width: "auto",
+						minWidth: "fit-content",
+					}}
+					shrink
+					htmlFor={field.name}
+				>
+					<Typography
+						variant="h4"
+						color="text.primary"
+						sx={{
+							display: "inline-flex",
+							alignItems: "center",
+							whiteSpace: "nowrap",
+							overflow: "visible",
+							maxWidth: "none",
+							width: "auto",
+							minWidth: "fit-content",
+						}}
+					>
 						{label?.toUpperCase()}
 						{isRequired && (
 							<Typography variant="h5" color="error" component="span">
 								{" *"}
 							</Typography>
 						)}
+						{props.tooltipIcon}
 					</Typography>
 				</InputLabel>
 			)}

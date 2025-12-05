@@ -14,6 +14,7 @@ type DateFormFieldProps = {
 	onValueChange?: (_: string) => void;
 	disabled?: boolean;
 	isRequired?: boolean;
+	tooltipIcon?: React.ReactNode;
 };
 
 export const DateFormField: React.FC<FieldProps & DateFormFieldProps> = ({
@@ -37,14 +38,38 @@ export const DateFormField: React.FC<FieldProps & DateFormFieldProps> = ({
 		<Box sx={{ mt: 0.4 }}>
 			<LocalizationProvider dateAdapter={AdapterMoment}>
 				{label && (
-					<InputLabel shrink htmlFor={field.name}>
-						<Typography variant="h4" color="text.primary">
+					<InputLabel
+						sx={{
+							ml: -1.6,
+							overflow: "visible",
+							whiteSpace: "nowrap",
+							maxWidth: "none",
+							width: "auto",
+							minWidth: "fit-content",
+						}}
+						shrink
+						htmlFor={field.name}
+					>
+						<Typography
+							variant="h4"
+							color="text.primary"
+							sx={{
+								display: "inline-flex",
+								alignItems: "center",
+								whiteSpace: "nowrap",
+								overflow: "visible",
+								maxWidth: "none",
+								width: "auto",
+								minWidth: "fit-content",
+							}}
+						>
 							{label?.toUpperCase()}
 							{isRequired && (
 								<Typography variant="h5" color="error" component="span">
 									{" *"}
 								</Typography>
 							)}
+							{props.tooltipIcon}
 						</Typography>
 					</InputLabel>
 				)}

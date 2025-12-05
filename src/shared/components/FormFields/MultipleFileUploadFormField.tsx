@@ -26,8 +26,9 @@ const MultipleFileUploadFormField: React.FC<
 		label: string;
 		required?: boolean;
 		accept?: string;
+		tooltipIcon?: React.ReactNode;
 	}
-> = ({ field, form, label, accept = "image/*" }) => {
+> = ({ field, form, label, accept = "image/*", ...props }) => {
 	const { t } = useTranslation();
 	const [name, setName] = React.useState<string>("");
 	const [uploadProgress, setUploadProgress] = React.useState<Record<string, number>>({});
@@ -94,11 +95,45 @@ const MultipleFileUploadFormField: React.FC<
 	console.log(errorText, field.name, form.errors, form.touched);
 
 	return (
-		<FormControl fullWidth error={!!errorText}>
+		<FormControl
+			fullWidth
+			error={!!errorText}
+			sx={{
+				overflow: "visible",
+				"& .MuiInputLabel-root": {
+					overflow: "visible",
+					maxWidth: "none",
+				},
+			}}
+		>
 			{field.name && (
-				<InputLabel sx={{ ml: -1.6 }} shrink htmlFor={field.name}>
-					<Typography variant="h4" color="text.primary">
+				<InputLabel
+					sx={{
+						ml: -1.6,
+						overflow: "visible",
+						whiteSpace: "nowrap",
+						maxWidth: "none",
+						width: "auto",
+						minWidth: "fit-content",
+					}}
+					shrink
+					htmlFor={field.name}
+				>
+					<Typography
+						variant="h4"
+						color="text.primary"
+						sx={{
+							display: "inline-flex",
+							alignItems: "center",
+							whiteSpace: "nowrap",
+							overflow: "visible",
+							maxWidth: "none",
+							width: "auto",
+							minWidth: "fit-content",
+						}}
+					>
 						{label?.toUpperCase()}
+						{props.tooltipIcon}
 					</Typography>
 				</InputLabel>
 			)}
