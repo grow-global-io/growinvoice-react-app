@@ -14,7 +14,10 @@ export const SwitchFormField: React.FC<
 
 	return (
 		<FormControl error={!!errorText}>
-			<FormControlLabel control={<Switch {...field} {...props} />} label={label} />
+			<FormControlLabel
+				control={<Switch {...field} checked={field.value} {...props} />}
+				label={label}
+			/>
 			{errorText && <FormHelperText>{errorText}</FormHelperText>}
 		</FormControl>
 	);

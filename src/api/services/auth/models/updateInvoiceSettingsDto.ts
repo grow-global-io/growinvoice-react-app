@@ -15,6 +15,8 @@ export interface UpdateInvoiceSettingsDto {
 	dueNotice?: number;
 	/** @nullable */
 	footer?: string | null;
+	enableReminder?: boolean;
+	reminderInterval?: number;
 	invoiceHeadingType?: UpdateInvoiceSettingsDtoInvoiceHeadingType;
 	invoicePrefix?: string;
 	invoiceTemplateId?: string;
