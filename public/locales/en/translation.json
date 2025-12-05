@@ -949,7 +949,24 @@
     "profit": "Profit",
     "loss": "Loss",
     "selectDateRange": "Select Date Range",
-    "export": { "title": "Export", "csv": "Download as CSV", "excel": "Download as Excel" },
+    "export": {
+      "title": "Export",
+      "csv": "Download as CSV",
+      "excel": "Download as Excel",
+      "xml": "Download as XML",
+      "customerExport": {
+        "name": "Name",
+        "countryCode": "Country code",
+        "contactPerson": "Contact person",
+        "streetAddress": "Street address",
+        "streetAddressLine2": "Street address, line 2",
+        "postalCode": "Postal code",
+        "cityMunicipality": "City/municipality",
+        "phoneNumber": "Phone number",
+        "emailAddress": "Email address",
+        "numberOfShippingUnits": "Number of shipping units"
+      }
+    },
     "product": {
       "title": "Product Report",
       "productName": "Product Name",

@@ -952,7 +952,20 @@
     "export": {
       "title": "Eksport",
       "csv": "Lae alla CSV-na",
-      "excel": "Lae alla Excelina"
+      "excel": "Lae alla Excelina",
+      "xml": "Lae alla XML-ina",
+      "customerExport": {
+        "name": "Nimi",
+        "countryCode": "Riigi kood",
+        "contactPerson": "Kontaktisik",
+        "streetAddress": "Tänavaadress",
+        "streetAddressLine2": "Tänavaadress, rida 2",
+        "postalCode": "Postiindeks",
+        "cityMunicipality": "Linn/vald",
+        "phoneNumber": "Telefoninumber",
+        "emailAddress": "E-posti aadress",
+        "numberOfShippingUnits": "Tarneühikute arv"
+      }
     },
     "product": {
       "title": "Toote aruanne",
