@@ -28,34 +28,77 @@ import { type GetCustomerWithAddressDto } from "@api/services/models";
 import { useMemo, useState, useCallback } from "react";
 import React from "react";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
-import {
-	useJson2excelControllerCreate,
-	useJson2excelControllerCreateCsv,
-} from "@api/services/json2excel";
+import { useCurrencyControllerFindCountries } from "@api/services/currency";
+import * as XLSX from "xlsx";
 
 const CustomerTableList = () => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const CustomerData = useCustomerControllerFindAll();
+	const countryFindAll = useCurrencyControllerFindCountries();
 	const { updateCustomer } = useCreateCustomerStore.getState();
 	const removeCustomer = useCustomerControllerRemove();
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
 
 	// All hooks must be called before any conditional returns
-	// Prepare export data
+	// Prepare export data with the requested format (with translated column headers)
 	const exportData = useMemo(() => {
+		// Get translated column headers
+		const columnHeaders = {
+			name: t("report.export.customerExport.name", { defaultValue: "Name" }),
+			countryCode: t("report.export.customerExport.countryCode", { defaultValue: "Country code" }),
+			contactPerson: t("report.export.customerExport.contactPerson", {
+				defaultValue: "Contact person",
+			}),
+			streetAddress: t("report.export.customerExport.streetAddress", {
+				defaultValue: "Street address",
+			}),
+			streetAddressLine2: t("report.export.customerExport.streetAddressLine2", {
+				defaultValue: "Street address, line 2",
+			}),
+			postalCode: t("report.export.customerExport.postalCode", { defaultValue: "Postal code" }),
+			cityMunicipality: t("report.export.customerExport.cityMunicipality", {
+				defaultValue: "City/municipality",
+			}),
+			phoneNumber: t("report.export.customerExport.phoneNumber", { defaultValue: "Phone number" }),
+			emailAddress: t("report.export.customerExport.emailAddress", {
+				defaultValue: "Email address",
+			}),
+			numberOfShippingUnits: t("report.export.customerExport.numberOfShippingUnits", {
+				defaultValue: "Number of shipping units",
+			}),
+		};
+
 		return (
-			CustomerData?.data?.map((item) => ({
-				"Customer Name": item.name,
-				"Contact Email": item.email,
-				"Contact Number": item.phone,
-				"Total Invoices": item._count?.invoice,
-				"Total Amount Due's": item.totalDue,
-				"Customer Type": item.option,
-			})) ?? []
+			CustomerData?.data?.map((item) => {
+				// Prefer billing address, fallback to shipping address
+				const address = item.billingAddress || item.shippingAddress;
+
+				// Get country code from country_id
+				let countryCode = "";
+				if (address?.country_id && countryFindAll?.data) {
+					const country = countryFindAll.data.find((c) => c.id === address.country_id);
+					countryCode = country?.code || address?.country_name || "";
+				} else if (address?.country_name) {
+					countryCode = address.country_name;
+				}
+
+				return {
+					[columnHeaders.name]: item.name || "",
+					[columnHeaders.countryCode]: countryCode,
+					[columnHeaders.contactPerson]: item.display_name || item.name || "",
+					[columnHeaders.streetAddress]: address?.address || "",
+					[columnHeaders.streetAddressLine2]: "", // Not available in data structure
+					[columnHeaders.postalCode]: address?.zip || "",
+					[columnHeaders.cityMunicipality]: address?.city || "",
+					[columnHeaders.phoneNumber]: item.phone || "",
+					[columnHeaders.emailAddress]: item.email || "",
+					[columnHeaders.numberOfShippingUnits]: "", // Not available in data structure
+				};
+			}) ?? []
 		);
-	}, [CustomerData?.data]);
+	}, [CustomerData?.data, countryFindAll?.data, t]);
 
 	// Export functionality hooks
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -66,20 +109,96 @@ const CustomerTableList = () => {
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
-	const creatExcelFile = useJson2excelControllerCreate();
-	const creatCsvFile = useJson2excelControllerCreateCsv();
+	const handleCreatExcelFile = useCallback(() => {
+		try {
+			if (!exportData || exportData.length === 0) {
+				handleClose();
+				return;
+			}
 
-	const handleCreatExcelFile = useCallback(async () => {
-		const response = await creatExcelFile.mutateAsync({ data: exportData as any });
-		window.open(response?.link);
-		handleClose();
-	}, [creatExcelFile, exportData, handleClose]);
+			// Create a workbook and worksheet
+			const worksheet = XLSX.utils.json_to_sheet(exportData);
+			const workbook = XLSX.utils.book_new();
+			XLSX.utils.book_append_sheet(workbook, worksheet, "Customers");
 
-	const handleCreatCsvFile = useCallback(async () => {
-		const response = await creatCsvFile.mutateAsync({ data: exportData as any });
-		window.open(response?.link as string);
-		handleClose();
-	}, [creatCsvFile, exportData, handleClose]);
+			// Generate Excel file and download
+			const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+			const blob = new Blob([excelBuffer], {
+				type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+			});
+			const url = URL.createObjectURL(blob);
+			const link = document.createElement("a");
+			link.href = url;
+			link.download = `customers_export_${new Date().getTime()}.xlsx`;
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+			URL.revokeObjectURL(url);
+			handleClose();
+		} catch (error) {
+			console.error("Error generating Excel file:", error);
+			handleClose();
+		}
+	}, [exportData, handleClose]);
+
+	// Convert JSON data to CSV format (frontend generation to preserve translations)
+	const convertToCSV = useCallback((data: any[]): string => {
+		if (!data || data.length === 0) {
+			return "";
+		}
+
+		// Get all unique keys (column headers) from the data
+		const allKeys = new Set<string>();
+		data.forEach((item) => {
+			if (item && typeof item === "object") {
+				Object.keys(item).forEach((key) => allKeys.add(key));
+			}
+		});
+
+		const headers = Array.from(allKeys);
+
+		// Escape CSV values (handle commas, quotes, newlines)
+		const escapeCsvValue = (value: any): string => {
+			if (value === null || value === undefined) {
+				return "";
+			}
+			const stringValue = String(value);
+			// If value contains comma, quote, or newline, wrap in quotes and escape quotes
+			if (stringValue.includes(",") || stringValue.includes('"') || stringValue.includes("\n")) {
+				return `"${stringValue.replace(/"/g, '""')}"`;
+			}
+			return stringValue;
+		};
+
+		// Build CSV content
+		let csv = headers.map(escapeCsvValue).join(",") + "\n";
+
+		data.forEach((item) => {
+			const row = headers.map((header) => escapeCsvValue(item[header])).join(",");
+			csv += row + "\n";
+		});
+
+		return csv;
+	}, []);
+
+	const handleCreatCsvFile = useCallback(() => {
+		try {
+			const csvContent = convertToCSV(exportData);
+			const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+			const url = URL.createObjectURL(blob);
+			const link = document.createElement("a");
+			link.href = url;
+			link.download = `customers_export_${new Date().getTime()}.csv`;
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+			URL.revokeObjectURL(url);
+			handleClose();
+		} catch (error) {
+			console.error("Error generating CSV file:", error);
+			handleClose();
+		}
+	}, [exportData, convertToCSV, handleClose]);
 
 	// Convert JSON data to XML format
 	const convertToXML = (data: any[]): string => {

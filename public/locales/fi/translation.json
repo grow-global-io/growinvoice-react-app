@@ -954,7 +954,24 @@
     "profit": "Voitto",
     "loss": "Tappio",
     "selectDateRange": "Valitse ajanjakso",
-    "export": { "title": "Vie", "csv": "Lataa CSV", "excel": "Lataa Excel" },
+    "export": {
+      "title": "Vie",
+      "csv": "Lataa CSV",
+      "excel": "Lataa Excel",
+      "xml": "Lataa XML",
+      "customerExport": {
+        "name": "Nimi",
+        "countryCode": "Maatunnus",
+        "contactPerson": "Yhteyshenkilö",
+        "streetAddress": "Katuosoite",
+        "streetAddressLine2": "Katuosoite, rivi 2",
+        "postalCode": "Postinumero",
+        "cityMunicipality": "Kaupunki/kunta",
+        "phoneNumber": "Puhelinnumero",
+        "emailAddress": "Sähköpostiosoite",
+        "numberOfShippingUnits": "Toimitusyksiköiden määrä"
+      }
+    },
     "product": {
       "title": "Tuoteraportti",
       "productName": "Tuotteen nimi",
