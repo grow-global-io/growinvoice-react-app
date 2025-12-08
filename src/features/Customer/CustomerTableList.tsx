@@ -40,32 +40,20 @@ const CustomerTableList = () => {
 	const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
 
 	// All hooks must be called before any conditional returns
-	// Prepare export data with the requested format (with translated column headers)
+	// Prepare export data with the requested format (matching SampleExcel.xlsx template)
 	const allExportData = useMemo(() => {
-		// Get translated column headers
+		// Use exact column headers matching the template (English row)
 		const columnHeaders = {
-			name: t("report.export.customerExport.name", { defaultValue: "Name" }),
-			countryCode: t("report.export.customerExport.countryCode", { defaultValue: "Country code" }),
-			contactPerson: t("report.export.customerExport.contactPerson", {
-				defaultValue: "Contact person",
-			}),
-			streetAddress: t("report.export.customerExport.streetAddress", {
-				defaultValue: "Street address",
-			}),
-			streetAddressLine2: t("report.export.customerExport.streetAddressLine2", {
-				defaultValue: "Street address, line 2",
-			}),
-			postalCode: t("report.export.customerExport.postalCode", { defaultValue: "Postal code" }),
-			cityMunicipality: t("report.export.customerExport.cityMunicipality", {
-				defaultValue: "City/municipality",
-			}),
-			phoneNumber: t("report.export.customerExport.phoneNumber", { defaultValue: "Phone number" }),
-			emailAddress: t("report.export.customerExport.emailAddress", {
-				defaultValue: "Email address",
-			}),
-			numberOfShippingUnits: t("report.export.customerExport.numberOfShippingUnits", {
-				defaultValue: "Number of shipping units",
-			}),
+			name: "Name",
+			countryCode: "Country code",
+			contactPerson: "Contact person",
+			streetAddress: "Street address",
+			streetAddressLine2: "Street address, line 2",
+			postalCode: "Postal code",
+			cityMunicipality: "City/municipality",
+			phoneNumber: "Phone number",
+			emailAddress: "Email address",
+			numberOfShippingUnits: "Number of shipping units",
 		};
 
 		return (
@@ -97,7 +85,7 @@ const CustomerTableList = () => {
 				};
 			}) ?? []
 		);
-	}, [CustomerData?.data, countryFindAll?.data, t]);
+	}, [CustomerData?.data, countryFindAll?.data]);
 
 	// Filter export data based on selected rows
 	// If no rows are selected, export all data; otherwise export only selected rows
@@ -146,7 +134,12 @@ const CustomerTableList = () => {
 							</Typography>
 						)}
 					</Box>
-					<ExportToolbar exportData={exportData} fileName="customers" />
+					<ExportToolbar
+						exportData={exportData}
+						fileName="customers"
+						templatePath="/SampleExcel.xlsx"
+						useTemplate={true}
+					/>
 				</GridToolbarContainer>
 			</>
 		);

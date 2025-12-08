@@ -8,6 +8,8 @@ import * as XLSX from "xlsx";
 interface ExportToolbarProps {
 	exportData: any[];
 	fileName?: string;
+	templatePath?: string; // Path to template Excel file
+	useTemplate?: boolean; // Whether to use template for Excel export
 }
 
 /**
@@ -15,7 +17,12 @@ interface ExportToolbarProps {
  * Provides CSV, Excel, and XML export functionality
  * Can be used across different pages/components
  */
-export function ExportToolbar({ exportData, fileName = "export" }: ExportToolbarProps) {
+export function ExportToolbar({
+	exportData,
+	fileName = "export",
+	templatePath,
+	useTemplate = false,
+}: ExportToolbarProps) {
 	const { t } = useTranslation();
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
@@ -89,17 +96,65 @@ export function ExportToolbar({ exportData, fileName = "export" }: ExportToolbar
 	}, [exportData, convertToCSV, fileName, handleClose]);
 
 	// Handle Excel export
-	const handleCreatExcelFile = useCallback(() => {
+	const handleCreatExcelFile = useCallback(async () => {
 		try {
 			if (!exportData || exportData.length === 0) {
 				handleClose();
 				return;
 			}
 
-			// Create a workbook and worksheet
-			const worksheet = XLSX.utils.json_to_sheet(exportData);
-			const workbook = XLSX.utils.book_new();
-			XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
+			let workbook: XLSX.WorkBook;
+			let worksheet: XLSX.WorkSheet;
+
+			if (useTemplate && templatePath) {
+				// Load template file
+				try {
+					const response = await fetch(templatePath);
+					const arrayBuffer = await response.arrayBuffer();
+					workbook = XLSX.read(arrayBuffer, { type: "array" });
+					const sheetName = workbook.SheetNames[0];
+					worksheet = workbook.Sheets[sheetName];
+
+					// Convert template to array format to preserve header rows
+					const templateData = XLSX.utils.sheet_to_json(worksheet, {
+						header: 1,
+						defval: "",
+					}) as any[][];
+
+					// Prepare data rows in the correct order matching template columns
+					// Template columns: Name, Country code, Contact person, Street address, Street address line 2, Postal code, City/municipality, Phone number, Email address, Number of shipping units
+					const dataRows: any[][] = exportData.map((item) => [
+						item["Name"] || "",
+						item["Country code"] || "",
+						item["Contact person"] || "",
+						item["Street address"] || "",
+						item["Street address, line 2"] || "",
+						item["Postal code"] || "",
+						item["City/municipality"] || "",
+						item["Phone number"] || "",
+						item["Email address"] || "",
+						item["Number of shipping units"] || "",
+					]);
+
+					// Combine template headers (first 3 rows) with data rows
+					const allRows: any[][] = [...templateData, ...dataRows];
+
+					// Create new worksheet from combined data
+					worksheet = XLSX.utils.aoa_to_sheet(allRows);
+					workbook.Sheets[sheetName] = worksheet;
+				} catch (templateError) {
+					console.error("Error loading template, falling back to default:", templateError);
+					// Fallback to default export
+					worksheet = XLSX.utils.json_to_sheet(exportData);
+					workbook = XLSX.utils.book_new();
+					XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
+				}
+			} else {
+				// Default export without template
+				worksheet = XLSX.utils.json_to_sheet(exportData);
+				workbook = XLSX.utils.book_new();
+				XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
+			}
 
 			// Generate Excel file and download
 			const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
@@ -119,7 +174,7 @@ export function ExportToolbar({ exportData, fileName = "export" }: ExportToolbar
 			console.error("Error generating Excel file:", error);
 			handleClose();
 		}
-	}, [exportData, fileName, handleClose]);
+	}, [exportData, fileName, handleClose, useTemplate, templatePath]);
 
 	// Convert JSON data to XML format
 	const convertToXML = useCallback((data: any[]): string => {
