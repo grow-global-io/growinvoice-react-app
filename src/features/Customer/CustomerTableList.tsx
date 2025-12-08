@@ -25,7 +25,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { type GetCustomerWithAddressDto } from "@api/services/models";
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useState } from "react";
 import { useCurrencyControllerFindCountries } from "@api/services/currency";
 import { ExportToolbar } from "@shared/components/ExportToolbar";
 const CustomerTableList = () => {
@@ -37,10 +37,11 @@ const CustomerTableList = () => {
 	const { updateCustomer } = useCreateCustomerStore.getState();
 	const removeCustomer = useCustomerControllerRemove();
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
+	const [selectedRowIds, setSelectedRowIds] = useState<string[]>([]);
 
 	// All hooks must be called before any conditional returns
 	// Prepare export data with the requested format (with translated column headers)
-	const exportData = useMemo(() => {
+	const allExportData = useMemo(() => {
 		// Get translated column headers
 		const columnHeaders = {
 			name: t("report.export.customerExport.name", { defaultValue: "Name" }),
@@ -82,6 +83,7 @@ const CustomerTableList = () => {
 				}
 
 				return {
+					id: item.id, // Include ID for filtering
 					[columnHeaders.name]: item.name || "",
 					[columnHeaders.countryCode]: countryCode,
 					[columnHeaders.contactPerson]: item.display_name || item.name || "",
@@ -96,6 +98,19 @@ const CustomerTableList = () => {
 			}) ?? []
 		);
 	}, [CustomerData?.data, countryFindAll?.data, t]);
+
+	// Filter export data based on selected rows
+	// If no rows are selected, export all data; otherwise export only selected rows
+	const exportData = useMemo(() => {
+		if (selectedRowIds.length === 0) {
+			// No selection, export all (remove id field from export)
+			return allExportData.map(({ id, ...rest }) => rest);
+		}
+		// Export only selected rows (remove id field from export)
+		return allExportData
+			.filter((item) => selectedRowIds.includes(item.id))
+			.map(({ id, ...rest }) => rest);
+	}, [allExportData, selectedRowIds]);
 
 	// Combined toolbar with search and export
 	const CombinedToolbar = useCallback(() => {
@@ -114,6 +129,7 @@ const CustomerTableList = () => {
 						sx={{
 							display: "flex",
 							alignItems: "center",
+							gap: 2,
 						}}
 					>
 						<GridToolbarQuickFilter
@@ -121,12 +137,20 @@ const CustomerTableList = () => {
 							quickFilterParser={(input) => input.split(/\s+/).filter(Boolean)}
 							placeholder={t("common.search", { defaultValue: "Search" }) as string}
 						/>
+						{selectedRowIds.length > 0 && (
+							<Typography variant="body2" color="primary" sx={{ fontWeight: 500 }}>
+								{t("customer.export.selectedCount", {
+									defaultValue: "{{count}} selected",
+									count: selectedRowIds.length,
+								})}
+							</Typography>
+						)}
 					</Box>
 					<ExportToolbar exportData={exportData} fileName="customers" />
 				</GridToolbarContainer>
 			</>
 		);
-	}, [t, exportData]);
+	}, [t, exportData, selectedRowIds.length]);
 
 	const columns: GridColDef<GetCustomerWithAddressDto>[] = [
 		{
@@ -286,6 +310,11 @@ const CustomerTableList = () => {
 				autoHeight
 				rows={CustomerData?.data ?? []}
 				columns={columns}
+				checkboxSelection
+				rowSelectionModel={selectedRowIds}
+				onRowSelectionModelChange={(newSelection) => {
+					setSelectedRowIds(newSelection as string[]);
+				}}
 				slots={{
 					toolbar: CombinedToolbar,
 				}}
