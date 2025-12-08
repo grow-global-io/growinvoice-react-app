@@ -313,6 +313,9 @@
     "actions": {
       "deleteTitle": "Delete Customer",
       "deleteConfirm": "Are you sure you want to delete this customer?"
+    },
+    "export": {
+      "selectedCount": "{{count}} selected"
     }
   },
   "customerForm": {

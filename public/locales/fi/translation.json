@@ -313,6 +313,9 @@
     "actions": {
       "deleteTitle": "Poista asiakas",
       "deleteConfirm": "Haluatko varmasti poistaa tämän asiakkaan?"
+    },
+    "export": {
+      "selectedCount": "{{count}} valittu"
     }
   },
   "customerForm": {

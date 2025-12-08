@@ -313,6 +313,9 @@
     "actions": {
       "deleteTitle": "Kustuta klient",
       "deleteConfirm": "Kas oled kindel, et soovid selle kliendi kustutada?"
+    },
+    "export": {
+      "selectedCount": "{{count}} valitud"
     }
   },
   "customerForm": {
