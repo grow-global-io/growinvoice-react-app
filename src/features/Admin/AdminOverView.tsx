@@ -4,7 +4,7 @@ import { useQuotationControllerCountTotal } from "@api/services/quotation";
 import { useUserControllerUserCount } from "@api/services/users";
 import { Grid, Typography } from "@mui/material";
 import DashbaordCard from "@shared/components/DashbaordCard";
-import { FaFileInvoiceDollar, FaFileInvoice } from "react-icons/fa";
+import { FaFileInvoiceDollar, FaFileInvoice, FaEnvelope } from "react-icons/fa";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { useTranslation } from "react-i18next";
 
@@ -43,6 +43,13 @@ const AdminOverView = () => {
 			img: <FaPeopleGroup color="#fff" fontSize={"50px"} />,
 			BgColor: "custom.DashboardGreen",
 			navigateToPath: "/users/userlist",
+		},
+		{
+			value: "New",
+			name: "Promotional Emails",
+			img: <FaEnvelope color="#fff" fontSize={"40px"} />,
+			BgColor: "#F50057", // distinct color
+			navigateToPath: "/promotional-emails",
 		},
 	];
 	return (
