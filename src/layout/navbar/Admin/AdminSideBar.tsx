@@ -28,6 +28,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SupervisedUserCircleIcon from "@mui/icons-material/SupervisedUserCircle";
 import DescriptionIcon from "@mui/icons-material/Description";
 import PaymentIcon from "@mui/icons-material/Payment";
+import MailIcon from "@mui/icons-material/Mail";
 
 const drawerWidth = 240;
 const AdminSideBar = ({ children }: { children: React.ReactNode }) => {
@@ -92,6 +93,11 @@ const AdminSideBar = ({ children }: { children: React.ReactNode }) => {
 			path: "/plan-management",
 			icon: <PaymentIcon />,
 			menuName: "Plan Management",
+		},
+		{
+			path: "/promotional-emails",
+			icon: <MailIcon />,
+			menuName: "Promotional Emails",
 		},
 	];
 

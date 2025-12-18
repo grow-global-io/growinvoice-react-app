@@ -55,6 +55,7 @@ import PlansManagementList from "@features/Admin/PlansManagement/PlansManagement
 import BulkUploadCustomer from "@features/Customer/BulkUploadCustomer";
 import ReceiptListPage from "@pages/ReceiptListPage";
 import CreateReceiptPage from "@pages/CreateReceiptPage";
+import PromotionalEmailPage from "@features/Admin/PromotionalEmail/PromotionalEmailPage";
 
 export const unProtectedRoutes: Route[] = [
 	{
@@ -330,5 +331,9 @@ export const adminRoutes: Route[] = [
 	{
 		path: "/plan-management",
 		Component: PlansManagementList,
+	},
+	{
+		path: "/promotional-emails",
+		Component: PromotionalEmailPage,
 	},
 ];
