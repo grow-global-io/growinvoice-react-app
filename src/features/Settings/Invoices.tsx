@@ -17,6 +17,7 @@ import { type AddressExpressions, Constants } from "@shared/constants";
 import SettingFormHeading from "./SettingFormHeading";
 import { RichTextEditor } from "@shared/components/FormFields/RichTextEditor";
 import { CheckBoxFormField } from "@shared/components/FormFields/CheckBoxFormField";
+import { SwitchFormField } from "@shared/components/FormFields/SwitchFormField";
 import { useDialog } from "@shared/hooks/useDialog";
 import { useState } from "react";
 import { useAuthStore } from "@store/auth";
@@ -66,6 +67,8 @@ const Invoices = () => {
 		customerShippingAddressTemplate: invoiceSettings?.data?.customerShippingAddressTemplate ?? "",
 		user_id: user?.id ?? "",
 		invoiceTemplateId: invoiceSettings?.data?.invoiceTemplateId ?? "",
+		enableReminder: invoiceSettings?.data?.enableReminder ?? false,
+		reminderInterval: invoiceSettings?.data?.reminderInterval ?? 0,
 	};
 
 	const schema: yup.Schema<CreateInvoiceSettingsDto> = yup.object().shape({
@@ -86,6 +89,8 @@ const Invoices = () => {
 				t("settings.invoice.validation.invalidHeadingType"),
 			)
 			.required(t("settings.invoice.validation.invoiceHeadingTypeRequired")),
+		enableReminder: yup.boolean(),
+		reminderInterval: yup.number().max(30),
 	});
 
 	const handleSubmit = async (values: CreateInvoiceSettingsDto) => {
@@ -164,6 +169,24 @@ const Invoices = () => {
 											})}
 										</Typography>
 									</Box>
+								</Grid>
+								<Grid item xs={12}>
+									<Divider />
+								</Grid>
+								<Grid item xs={12} sm={6}>
+									<Box>
+										<Typography variant="h5">Enable Reminder</Typography>
+										<Field name="enableReminder" component={SwitchFormField} />
+									</Box>
+								</Grid>
+								<Grid item xs={12} sm={6}>
+									<Field
+										name="reminderInterval"
+										label="Reminder Interval"
+										component={TextFormField}
+										type="number"
+										inputProps={{ max: 30 }}
+									/>
 								</Grid>
 								<Grid item xs={12}>
 									<Field

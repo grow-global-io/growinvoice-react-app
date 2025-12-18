@@ -15,6 +15,8 @@ export interface CreateInvoiceSettingsDto {
 	dueNotice: number;
 	/** @nullable */
 	footer?: string | null;
+	enableReminder?: boolean;
+	reminderInterval?: number;
 	invoiceHeadingType?: CreateInvoiceSettingsDtoInvoiceHeadingType;
 	invoicePrefix: string;
 	invoiceTemplateId: string;
