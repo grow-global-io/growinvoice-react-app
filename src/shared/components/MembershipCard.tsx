@@ -154,7 +154,7 @@ const MembershipCard = ({ item }: { item: PlanWithFeaturesDto }) => {
 								<ListItemText
 									primary={
 										<Typography variant="h5" color={"secondary.dark"} fontWeight={500} ml={0}>
-											{item?.price === 0
+											{item?.price === 0 || plan?.count === 99999
 												? t("plans.unlimited", { defaultValue: "Unlimited" })
 												: plan?.count}{" "}
 											{t(`plans.features.${plan?.feature}`, { defaultValue: plan?.feature || "" })}
