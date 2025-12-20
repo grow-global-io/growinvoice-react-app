@@ -14,6 +14,15 @@ import React, { useRef } from "react";
 import GetStartedInitialScreen from "./GetStarted/GetStartedInitialScreen";
 import CurrencyUpdateForm from "./GetStarted/CurrencyUpdateForm";
 import CompanyUpdateForm from "./GetStarted/CompanyUpdateForm";
+import ProductTypeForm from "./GetStarted/ProductTypeForm";
+import NicheSelectionForm from "./GetStarted/NicheSelectionForm";
+import CatalogMethodForm from "./GetStarted/CatalogMethodForm";
+import PaymentMethodsForm from "./GetStarted/PaymentMethodsForm";
+import DeliveryOptionsForm from "./GetStarted/DeliveryOptionsForm";
+import InvoiceAutomationForm from "./GetStarted/InvoiceAutomationForm";
+import GSTTaxSettingsForm from "./GetStarted/GSTTaxSettingsForm";
+import StoreBrandingForm from "./GetStarted/StoreBrandingForm";
+import ConnectSocialsForm from "./GetStarted/ConnectSocialsForm";
 import * as Yup from "yup";
 import { Form, Formik, type FormikHelpers, type FormikProps } from "formik";
 import { type UpdateCurrencyCompanyDto } from "@api/services/models";
@@ -193,6 +202,15 @@ const GetStartedDialog = () => {
 		t("getStarted.steps.step2", { defaultValue: "Verification" }),
 		t("getStarted.steps.step3", { defaultValue: "Insurance" }),
 		t("getStarted.steps.step4", { defaultValue: "Payment" }),
+		t("getStarted.steps.step5", { defaultValue: "Products" }),
+		t("getStarted.steps.step6", { defaultValue: "Niche" }),
+		t("getStarted.steps.step7", { defaultValue: "Catalog" }),
+		t("getStarted.steps.step8", { defaultValue: "Payment Methods" }),
+		t("getStarted.steps.step9", { defaultValue: "Delivery" }),
+		t("getStarted.steps.step10", { defaultValue: "Invoice Automation" }),
+		t("getStarted.steps.step11", { defaultValue: "GST & Tax" }),
+		t("getStarted.steps.step12", { defaultValue: "Branding" }),
+		t("getStarted.steps.step13", { defaultValue: "Socials" }),
 	];
 
 	const handleNext = (value?: string) => {
@@ -211,7 +229,39 @@ const GetStartedDialog = () => {
 		setActiveStep((prevActiveStep) => prevActiveStep - 1);
 	};
 
-	const initialValues: UpdateCurrencyCompanyDto = {
+	interface ExtendedFormValues extends UpdateCurrencyCompanyDto {
+		productType?: string;
+		businessName?: string;
+		niches?: string[];
+		catalogMethod?: string;
+		paymentMethods?: string[];
+		enablePartialPayments?: boolean;
+		selfDelivery?: boolean;
+		deliveryPartners?: string[];
+		deliveryRegions?: string[];
+		pickupAddress?: string;
+		autoGenerateInvoices?: boolean;
+		invoicePrefix?: string;
+		startingNumber?: string;
+		invoiceFooterText?: string;
+		sendInvoiceOnOrderConfirmation?: boolean;
+		sendInvoiceOnPaymentCompletion?: boolean;
+		sendCopyToStoreEmail?: boolean;
+		gstRegistered?: boolean;
+		enableHsnSac?: boolean;
+		defaultTaxRate?: string;
+		storeLogo?: string;
+		storeName?: string;
+		tagline?: string;
+		primaryBrandColor?: string;
+		whatsappCommunityUrl?: string;
+		instagramHandle?: string;
+		facebookPageId?: string;
+		webhookUrl?: string;
+		storeOrPaymentGateway?: "store" | "paymentGateway" | "both" | "none";
+	}
+
+	const initialValues: ExtendedFormValues = {
 		address: "",
 		city: prefillCity || "",
 		companyName: user?.company?.[0]?.name ?? "",
@@ -222,15 +272,144 @@ const GetStartedDialog = () => {
 		state: prefillStateId || "",
 		vat: "",
 		zipCode: prefillZip || "",
+		productType: "",
+		businessName: "",
+		niches: [],
+		catalogMethod: "",
+		paymentMethods: [],
+		enablePartialPayments: false,
+		selfDelivery: false,
+		deliveryPartners: [],
+		deliveryRegions: [],
+		pickupAddress: "",
+		autoGenerateInvoices: true,
+		invoicePrefix: "INV-",
+		startingNumber: "1",
+		invoiceFooterText: "",
+		sendInvoiceOnOrderConfirmation: true,
+		sendInvoiceOnPaymentCompletion: false,
+		sendCopyToStoreEmail: true,
+		gstRegistered: false,
+		enableHsnSac: false,
+		defaultTaxRate: "",
+		storeLogo: "",
+		storeName: "",
+		tagline: "",
+		primaryBrandColor: "#9333ea",
+		whatsappCommunityUrl: "",
+		instagramHandle: "",
+		facebookPageId: "",
+		webhookUrl: "",
+		storeOrPaymentGateway: "none",
 	};
 
 	const handleSubmit = async (
-		values: typeof initialValues,
-		actions: FormikHelpers<typeof initialValues>,
+		values: ExtendedFormValues,
+		actions: FormikHelpers<ExtendedFormValues>,
 	) => {
 		actions.setSubmitting(true);
+		// Extract only UpdateCurrencyCompanyDto fields for the API call
+		const {
+			productType,
+			businessName,
+			niches,
+			catalogMethod,
+			paymentMethods,
+			enablePartialPayments,
+			selfDelivery,
+			deliveryPartners,
+			deliveryRegions,
+			pickupAddress,
+			autoGenerateInvoices,
+			invoicePrefix,
+			startingNumber,
+			invoiceFooterText,
+			sendInvoiceOnOrderConfirmation,
+			sendInvoiceOnPaymentCompletion,
+			sendCopyToStoreEmail,
+			gstRegistered,
+			enableHsnSac,
+			defaultTaxRate,
+			storeLogo,
+			storeName,
+			tagline,
+			primaryBrandColor,
+			whatsappCommunityUrl,
+			instagramHandle,
+			facebookPageId,
+			webhookUrl,
+			storeOrPaymentGateway,
+			...updateData
+		} = values;
+
+		// Log the additional fields (you can send these to a different endpoint if needed)
+		if (
+			productType ||
+			businessName ||
+			niches?.length ||
+			catalogMethod ||
+			paymentMethods?.length ||
+			enablePartialPayments ||
+			selfDelivery ||
+			deliveryPartners?.length ||
+			deliveryRegions?.length ||
+			pickupAddress ||
+			autoGenerateInvoices !== undefined ||
+			invoicePrefix ||
+			startingNumber ||
+			invoiceFooterText ||
+			sendInvoiceOnOrderConfirmation !== undefined ||
+			sendInvoiceOnPaymentCompletion !== undefined ||
+			sendCopyToStoreEmail !== undefined ||
+			gstRegistered !== undefined ||
+			enableHsnSac !== undefined ||
+			defaultTaxRate ||
+			storeLogo ||
+			storeName ||
+			tagline ||
+			primaryBrandColor ||
+			whatsappCommunityUrl ||
+			instagramHandle ||
+			facebookPageId ||
+			webhookUrl ||
+			storeOrPaymentGateway
+		) {
+			console.log("Additional onboarding data:", {
+				productType,
+				businessName,
+				niches,
+				catalogMethod,
+				paymentMethods,
+				enablePartialPayments,
+				selfDelivery,
+				deliveryPartners,
+				deliveryRegions,
+				pickupAddress,
+				autoGenerateInvoices,
+				invoicePrefix,
+				startingNumber,
+				invoiceFooterText,
+				sendInvoiceOnOrderConfirmation,
+				sendInvoiceOnPaymentCompletion,
+				sendCopyToStoreEmail,
+				gstRegistered,
+				enableHsnSac,
+				defaultTaxRate,
+				storeLogo,
+				storeName,
+				tagline,
+				primaryBrandColor,
+				whatsappCommunityUrl,
+				instagramHandle,
+				facebookPageId,
+				webhookUrl,
+				storeOrPaymentGateway,
+			});
+			// TODO: Send all additional fields to appropriate endpoint if needed
+		}
+
 		await updateUserData.mutateAsync({
-			data: values,
+			data: updateData,
 		});
 		const user = await authControllerStatus();
 		setUser(user);
@@ -267,6 +446,15 @@ const GetStartedDialog = () => {
 									{activeStep === 0 && <GetStartedInitialScreen />}
 									{activeStep === 1 && <CurrencyUpdateForm onGeoLoadingChange={setGeoLoading} />}
 									{activeStep === 2 && <CompanyUpdateForm onGeoLoadingChange={setGeoLoading} />}
+									{activeStep === 3 && <ProductTypeForm />}
+									{activeStep === 4 && <NicheSelectionForm />}
+									{activeStep === 5 && <CatalogMethodForm />}
+									{activeStep === 6 && <PaymentMethodsForm />}
+									{activeStep === 7 && <DeliveryOptionsForm />}
+									{activeStep === 8 && <InvoiceAutomationForm />}
+									{activeStep === 9 && <GSTTaxSettingsForm />}
+									{activeStep === 10 && <StoreBrandingForm />}
+									{activeStep === 11 && <ConnectSocialsForm />}
 								</Box>
 							</DialogContent>
 
@@ -291,7 +479,7 @@ const GetStartedDialog = () => {
 									{t("app.skip", { defaultValue: "Skip" })}
 								</Button>
 
-								{activeStep !== steps.length - 2 && (
+								{activeStep < steps.length - 2 && (
 									<Button
 										variant="contained"
 										disabled={geoLoading}
