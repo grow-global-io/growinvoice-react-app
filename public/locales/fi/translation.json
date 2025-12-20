@@ -1422,7 +1422,68 @@
       "step1": "Henkilötiedot",
       "step2": "Vahvistus",
       "step3": "Vakuutus",
-      "step4": "Maksu"
+      "step4": "Maksu",
+      "step5": "Tuotteet",
+      "step6": "Niche",
+      "step7": "Luettelo",
+      "step8": "Maksutavat",
+      "step9": "Toimitus",
+      "step10": "Laskun automatisointi",
+      "step11": "ALV ja vero",
+      "step12": "Brändäys",
+      "step13": "Ominaisuudet"
+    },
+    "branding": {
+      "title": "Brändää myymäläsi",
+      "subtitle": "Tee myymälästäsi ainutlaatuinen",
+      "storeLogo": "Myymälän logo",
+      "uploadLogo": "Lataa logosi",
+      "logoRecommendation": "Suositus: 512x512px, PNG tai SVG",
+      "logoMaxSize": "Maksimitiedostokoko: 2MB",
+      "logoMaxSizeError": "Tiedostokoon on oltava alle 2MB",
+      "storeName": "Myymälän nimi",
+      "storeNameLabel": "Myymälän nimi",
+      "storeNamePlaceholder": "Upea myymäläni",
+      "tagline": "Iskulause",
+      "taglineLabel": "Iskulause",
+      "taglinePlaceholder": "Laadukkaita tuotteita, nopea toimitus",
+      "taglineHelper": "Lyhyt kuvaus, joka näkyy myymälän nimen alla",
+      "primaryBrandColor": "Ensisijainen brändiväri",
+      "preview": "Esikatselu",
+      "previewStoreName": "Myymäläsi nimi",
+      "previewTagline": "Iskulauseesi tulee tähän"
+    },
+    "socials": {
+      "title": "Yhdistä sosiaalinen media",
+      "subtitle": "Tuo asiakkaita kaikkialta. Voit ohittaa ja määrittää myöhemmin.",
+      "whatsapp": {
+        "title": "WhatsApp-yhteisö",
+        "description": "Jaa päivityksiä asiakkaillesi heti",
+        "placeholder": "https://chat.whatsapp.com/..."
+      },
+      "instagram": {
+        "title": "Instagram",
+        "description": "Yhdistä live-ostoksiin ja tarinoihin",
+        "placeholder": "@myymälänimesi"
+      },
+      "facebook": {
+        "title": "Facebook-sivu",
+        "description": "Aja mainoksia ja mene live yleisöllesi",
+        "placeholder": "Sivusi tunnus tai URL"
+      },
+      "webhook": {
+        "title": "Webhook-URL (Zapier/n8n)",
+        "description": "Yhdistä Zapieriin, Makeen tai n8n:ään työnkulkusi automatisointiin",
+        "placeholder": "https://hooks.zapier.com/..."
+      },
+      "badge": {
+        "optional": "Valinnainen",
+        "advanced": "Edistynyt"
+      },
+      "links": {
+        "createWhatsApp": "Luo WhatsApp-yhteisö",
+        "setupInstagram": "Määritä Instagram Business"
+      }
     }
   },
   "plans": {

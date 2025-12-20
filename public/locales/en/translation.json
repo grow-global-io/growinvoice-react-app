@@ -1405,7 +1405,68 @@
       "step1": "Personal Inf.",
       "step2": "Verification",
       "step3": "Insurance",
-      "step4": "Payment"
+      "step4": "Payment",
+      "step5": "Products",
+      "step6": "Niche",
+      "step7": "Catalog",
+      "step8": "Payment Methods",
+      "step9": "Delivery",
+      "step10": "Invoice Automation",
+      "step11": "GST & Tax",
+      "step12": "Branding",
+      "step13": "Features"
+    },
+    "branding": {
+      "title": "Brand your store",
+      "subtitle": "Make your store uniquely yours",
+      "storeLogo": "Store Logo",
+      "uploadLogo": "Upload your logo",
+      "logoRecommendation": "Recommended: 512x512px, PNG or SVG",
+      "logoMaxSize": "Max file size: 2MB",
+      "logoMaxSizeError": "File size must be less than 2MB",
+      "storeName": "Store Name",
+      "storeNameLabel": "Store Name",
+      "storeNamePlaceholder": "My Awesome Store",
+      "tagline": "Tagline",
+      "taglineLabel": "Tagline",
+      "taglinePlaceholder": "Quality products, delivered fast",
+      "taglineHelper": "A short description that appears below your store name",
+      "primaryBrandColor": "Primary Brand Color",
+      "preview": "Preview",
+      "previewStoreName": "Your Store Name",
+      "previewTagline": "Your tagline goes here"
+    },
+    "socials": {
+      "title": "Connect Your Socials",
+      "subtitle": "Bring customers from everywhere. You can skip and configure later.",
+      "whatsapp": {
+        "title": "WhatsApp Community",
+        "description": "Share updates with your customers instantly",
+        "placeholder": "https://chat.whatsapp.com/..."
+      },
+      "instagram": {
+        "title": "Instagram",
+        "description": "Connect for live shopping & stories",
+        "placeholder": "@yourstorename"
+      },
+      "facebook": {
+        "title": "Facebook Page",
+        "description": "Run ads & go live to your audience",
+        "placeholder": "Your Page ID or URL"
+      },
+      "webhook": {
+        "title": "Webhook URL (Zapier/n8n)",
+        "description": "Connect to Zapier, Make, or n8n to automate your workflow",
+        "placeholder": "https://hooks.zapier.com/..."
+      },
+      "badge": {
+        "optional": "Optional",
+        "advanced": "Advanced"
+      },
+      "links": {
+        "createWhatsApp": "Create WhatsApp Community",
+        "setupInstagram": "Set up Instagram Business"
+      }
     }
   },
   "plans": {

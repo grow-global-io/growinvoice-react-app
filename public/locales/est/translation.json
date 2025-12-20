@@ -1400,7 +1400,68 @@
       "step1": "Isiklik info",
       "step2": "Kinnitamine",
       "step3": "Kindlustus",
-      "step4": "Makse"
+      "step4": "Makse",
+      "step5": "Tooted",
+      "step6": "Nišš",
+      "step7": "Kataloog",
+      "step8": "Makseviisid",
+      "step9": "Kohaletoimetamine",
+      "step10": "Arve automatiseerimine",
+      "step11": "KM ja maks",
+      "step12": "Brändimine",
+      "step13": "Funktsioonid"
+    },
+    "branding": {
+      "title": "Brändi oma pood",
+      "subtitle": "Tee oma poest ainulaadne",
+      "storeLogo": "Poe logo",
+      "uploadLogo": "Laadi oma logo üles",
+      "logoRecommendation": "Soovitus: 512x512px, PNG või SVG",
+      "logoMaxSize": "Maksimaalne failisuurus: 2MB",
+      "logoMaxSizeError": "Failisuurus peab olema alla 2MB",
+      "storeName": "Poe nimi",
+      "storeNameLabel": "Poe nimi",
+      "storeNamePlaceholder": "Minu vinge pood",
+      "tagline": "Slogan",
+      "taglineLabel": "Slogan",
+      "taglinePlaceholder": "Kvaliteetsed tooted, kiire kohaletoimetamine",
+      "taglineHelper": "Lühike kirjeldus, mis kuvatakse poe nime all",
+      "primaryBrandColor": "Peamine brändivärv",
+      "preview": "Eelvaade",
+      "previewStoreName": "Sinu poe nimi",
+      "previewTagline": "Sinu slogan tuleb siia"
+    },
+    "socials": {
+      "title": "Ühenda oma sotsiaalmeedia",
+      "subtitle": "Too kliente igalt poolt. Saad vahele jätta ja hiljem seadistada.",
+      "whatsapp": {
+        "title": "WhatsApp kogukond",
+        "description": "Jaga uuendusi oma klientidega kohe",
+        "placeholder": "https://chat.whatsapp.com/..."
+      },
+      "instagram": {
+        "title": "Instagram",
+        "description": "Ühenda reaalajas ostlemise ja lugudega",
+        "placeholder": "@sinupoenimi"
+      },
+      "facebook": {
+        "title": "Facebook leht",
+        "description": "Käivita reklaame ja mine otseülekandesse oma vaatajaskonnale",
+        "placeholder": "Sinu lehe ID või URL"
+      },
+      "webhook": {
+        "title": "Webhook URL (Zapier/n8n)",
+        "description": "Ühenda Zapieriga, Make'iga või n8n'iga oma töövoo automatiseerimiseks",
+        "placeholder": "https://hooks.zapier.com/..."
+      },
+      "badge": {
+        "optional": "Valikuline",
+        "advanced": "Täpsem"
+      },
+      "links": {
+        "createWhatsApp": "Loo WhatsApp kogukond",
+        "setupInstagram": "Seadista Instagram Business"
+      }
     }
   },
   "plans": {
