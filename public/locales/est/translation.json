@@ -842,6 +842,43 @@
       "userIdRequired": "Kasutaja ID on kohustuslik"
     }
   },
+  "shippingServices": {
+    "title": "Kohaletoimetamise teenused",
+    "add": "Lisa kohaletoimetamise teenus",
+    "enabled": "Lubatud",
+    "disabled": "Keelatud",
+    "table": {
+      "service": "Teenus",
+      "status": "Olek",
+      "action": "Toiming",
+      "edit": "Muuda"
+    },
+    "actions": {
+      "deleteTitle": "Kustuta see kohaletoimetamise teenus?",
+      "deleteConfirm": "Kas oled kindel, et soovid selle kohaletoimetamise teenuse kustutada?"
+    },
+    "form": {
+      "title": "Lisa kohaletoimetamise teenus",
+      "serviceType": "Teenuse tüüp",
+      "email": "E-post",
+      "emailPlaceholder": "Sisesta e-post",
+      "apiPassword": "API parool",
+      "apiPasswordPlaceholder": "Sisesta API parool",
+      "key": "Võti",
+      "keyPlaceholder": "Sisesta võti",
+      "secret": "Salajane",
+      "secretPlaceholder": "Sisesta salajane",
+      "submit": "Saada"
+    },
+    "validation": {
+      "typeRequired": "Teenuse tüüp on kohustuslik",
+      "emailRequired": "E-post on kohustuslik",
+      "emailInvalid": "E-post peab olema kehtiv",
+      "passwordRequired": "API parool on kohustuslik",
+      "passwordInvalid": "API parool peab olema kehtiv",
+      "userIdRequired": "Kasutaja ID on kohustuslik"
+    }
+  },
   "payment": {
     "title": "Maksed",
     "create": "Loo makse",
@@ -1054,6 +1091,7 @@
       "productUnit": "Toote ühik",
       "paymentDetails": "Makse andmed",
       "gatewayDetails": "Makseviisi andmed",
+      "shippingServices": "Kohaletoimetamise teenused",
       "hsnCode": "HSN kood",
       "taxTypes": "Maksu tüübid",
       "apiCredentials": "API mandaadid"

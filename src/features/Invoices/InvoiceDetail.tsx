@@ -16,7 +16,7 @@ import {
 	SendOutlined,
 } from "@mui/icons-material";
 
-import { Box, Chip, Typography, useMediaQuery } from "@mui/material";
+import { Box, Chip, Dialog, DialogContent, Typography, useMediaQuery } from "@mui/material";
 import Loader from "@shared/components/Loader";
 import NoDataFound from "@shared/components/NoDataFound";
 import { useNavigate } from "react-router-dom";
@@ -51,6 +51,7 @@ import { translateInvoiceHtml } from "@shared/utils/invoiceTemplateTranslator";
 import { useEuropeanCountryDetection } from "@shared/hooks/useEuropeanCountryDetection";
 // import filesaver from "file-saver";
 import { LoaderService } from "@shared/services/LoaderService";
+import ShiprocketTracking from "@features/Store/ShiprocketTracking";
 
 const styles = {
 	width: { xs: "100%", sm: "auto" },
@@ -77,6 +78,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 	const [moreAnchorEl, setMoreAnchorEl] = useState<null | HTMLElement>(null);
 	const [menuIconAnchorEl, setMenuIconAnchorEl] = useState<null | HTMLElement>(null);
 	const iframeRef = useRef<HTMLIFrameElement | null>(null);
+	const [openShiprocketTrack, setOpenShiprocketTrack] = useState(false);
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
 	const isMobile = useMediaQuery("(max-width:800px)");
 	const { user } = useAuthStore();
@@ -201,6 +203,12 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 				setShareInvoiceId(invoiceId);
 				handleClickOpen();
 				handleCloseAll();
+			},
+		},
+		{
+			name: t("shiprocket.track.openDialog", { defaultValue: "Track Shipment" }),
+			func: () => {
+				setOpenShiprocketTrack(true);
 			},
 		},
 		{
@@ -554,19 +562,19 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 							}}
 						/>
 						{user && (
-						<Button
-							variant="contained"
-							onClick={async () => {
-								console.log("Sending payment receipt for invoice ID:", invoiceId);
-								await sendInvoice.mutateAsync({
-									params: {
-										id: invoiceId,
-									},
-								});
-							}}
-						>
+							<Button
+								variant="contained"
+								onClick={async () => {
+									console.log("Sending payment receipt for invoice ID:", invoiceId);
+									await sendInvoice.mutateAsync({
+										params: {
+											id: invoiceId,
+										},
+									});
+								}}
+							>
 								{t("invoice.detail.sendPaymentReceipt", { defaultValue: "Send Payment Receipt" })}
-						</Button>
+							</Button>
 						)}
 						{getInvoiceData?.data?.paid_status !== "Paid" && (
 							<>
@@ -625,6 +633,14 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 								{t("invoice.detail.paymentWithRazorpay", { defaultValue: "Payment With Razorpay" })}
 							</Button>
 						)}
+
+						<Button
+							sx={{ ml: 1, mt: { xs: 1, lg: 0 } }}
+							variant="outlined"
+							onClick={() => setOpenShiprocketTrack(true)}
+						>
+							{t("shiprocket.track.openDialog", { defaultValue: "Track Shipment" })}
+						</Button>
 					</Box>
 				)}
 			</Box>
@@ -689,6 +705,18 @@ ${t("invoice.detail.feedbackRequest", { defaultValue: "Your feedback is essentia
 						);
 					})}
 			</Menu>
+
+			{/* Shiprocket tracking dialog */}
+			<Dialog
+				open={openShiprocketTrack}
+				onClose={() => setOpenShiprocketTrack(false)}
+				maxWidth="md"
+				fullWidth
+			>
+				<DialogContent>
+					<ShiprocketTracking />
+				</DialogContent>
+			</Dialog>
 
 			{!isMobile ? (
 				<Box

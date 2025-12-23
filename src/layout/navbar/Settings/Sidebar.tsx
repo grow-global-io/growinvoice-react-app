@@ -49,6 +49,10 @@ const Sidebar = ({ children }: { children: React.ReactNode }) => {
 			path: "/setting/gatewaydetails",
 		},
 		{
+			menuName: t("settings.menu.shippingServices", { defaultValue: "Shipping Services" }),
+			path: "/setting/shippingservices",
+		},
+		{
 			menuName: t("settings.menu.hsnCode", { defaultValue: "HSN Code" }),
 			path: "/setting/hsncode",
 		},

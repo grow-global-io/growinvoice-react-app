@@ -30,6 +30,7 @@ import PaymentsListPage from "@pages/PaymentsListPage";
 import VendorsListPage from "@pages/VendorsListPage";
 import PaymentDetailsPage from "@pages/PaymentDetailsPage";
 import GateWayDetailsPage from "@pages/GateWayDetailsPage";
+import ShippingServicesPage from "@pages/ShippingServicesPage";
 import PaymentSuccessPage from "@pages/PaymentSuccessPage";
 import PlansPage from "@pages/PlansPage";
 import CreateExpensesPage from "@pages/CreateExpensesPage";
@@ -268,6 +269,10 @@ export const protectedRoutes: Route[] = [
 	{
 		path: "/setting/gatewaydetails",
 		Component: GateWayDetailsPage,
+	},
+	{
+		path: "/setting/shippingservices",
+		Component: ShippingServicesPage,
 	},
 	{
 		path: "/payment/success",
