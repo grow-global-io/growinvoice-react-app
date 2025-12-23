@@ -1,4 +1,4 @@
-import { Box, Typography, TextField, Card, CardContent, Chip, Link } from "@mui/material";
+import { Box, Typography, Card, CardContent, Chip, Link } from "@mui/material";
 import { Field, useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 import type { UpdateCurrencyCompanyDto } from "@api/services/models";
@@ -18,7 +18,7 @@ interface ExtendedFormValues extends UpdateCurrencyCompanyDto {
 
 const ConnectSocialsForm = () => {
 	const { t } = useTranslation();
-	const { values } = useFormikContext<ExtendedFormValues>();
+	useFormikContext<ExtendedFormValues>();
 
 	const socialCards = [
 		{

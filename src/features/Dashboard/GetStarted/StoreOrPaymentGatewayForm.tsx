@@ -7,7 +7,7 @@ import {
 	FormControl,
 	FormLabel,
 } from "@mui/material";
-import { Field, useFormikContext } from "formik";
+import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 import type { UpdateCurrencyCompanyDto } from "@api/services/models";
 
