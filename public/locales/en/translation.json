@@ -842,6 +842,43 @@
       "userIdRequired": "user id is required"
     }
   },
+  "shippingServices": {
+    "title": "Shipping Services",
+    "add": "Add Shipping Service",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "table": {
+      "service": "Service",
+      "status": "Status",
+      "action": "Action",
+      "edit": "Edit"
+    },
+    "actions": {
+      "deleteTitle": "Delete this Shipping Service?",
+      "deleteConfirm": "Are you sure you want to delete this Shipping Service?"
+    },
+    "form": {
+      "title": "Add Shipping Service",
+      "serviceType": "Service Type",
+      "email": "Email",
+      "emailPlaceholder": "Enter Email",
+      "apiPassword": "API Password",
+      "apiPasswordPlaceholder": "Enter API Password",
+      "key": "Key",
+      "keyPlaceholder": "Enter Key",
+      "secret": "Secret",
+      "secretPlaceholder": "Enter Secret",
+      "submit": "Submit"
+    },
+    "validation": {
+      "typeRequired": "Service type is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Email should be valid",
+      "passwordRequired": "API Password is required",
+      "passwordInvalid": "API Password should be valid",
+      "userIdRequired": "user id is required"
+    }
+  },
   "payment": {
     "title": "Payments",
     "create": "Create Payment",
@@ -1048,6 +1085,7 @@
       "membership": "Membership",
       "receipt": "Receipt",
       "createReceipt": "Create Receipt",
+      "shippingServices": "Shipping Services",
       "company": "Company",
       "invoices": "Invoices",
       "quotation": "Quotation",
