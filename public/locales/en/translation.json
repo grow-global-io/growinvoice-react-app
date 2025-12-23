@@ -1467,6 +1467,10 @@
         "createWhatsApp": "Create WhatsApp Community",
         "setupInstagram": "Set up Instagram Business"
       }
+    },
+    "thankYou": {
+      "title": "Thank You!",
+      "message": "You've successfully completed the onboarding process. Your account is now set up and ready to use!"
     }
   },
   "plans": {

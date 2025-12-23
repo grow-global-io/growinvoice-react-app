@@ -23,6 +23,7 @@ import InvoiceAutomationForm from "./GetStarted/InvoiceAutomationForm";
 import GSTTaxSettingsForm from "./GetStarted/GSTTaxSettingsForm";
 import StoreBrandingForm from "./GetStarted/StoreBrandingForm";
 import ConnectSocialsForm from "./GetStarted/ConnectSocialsForm";
+import ThankYouForm from "./GetStarted/ThankYouForm";
 import * as Yup from "yup";
 import { Form, Formik, type FormikHelpers, type FormikProps } from "formik";
 import { type UpdateCurrencyCompanyDto } from "@api/services/models";
@@ -70,12 +71,15 @@ const CustomStepperBox = styled(Box)(() => ({
 
 const GetStartedDialog = () => {
 	const { t, i18n: i18nInstance } = useTranslation();
-	const { open, handleClose } = useGetStartedDialogStore();
+	const { open, handleClose, handleOpen } = useGetStartedDialogStore();
 	const formikRef = useRef<FormikProps<UpdateCurrencyCompanyDto>>(null);
-	const { user, setUser } = useAuthStore();
+	const { user, setUser, isGetStartedDialogOpen } = useAuthStore();
 	const updateUserData = useUserControllerUpdateCurrencyCompany();
 	const [activeStep, setActiveStep] = React.useState(0);
 	const [geoLoading, setGeoLoading] = React.useState(false);
+	const [justSubmitted, setJustSubmitted] = React.useState(false);
+	const [isSubmittingState, setIsSubmittingState] = React.useState(false);
+	const [userDismissed, setUserDismissed] = React.useState(false);
 
 	// Preload currency/country/state by IP
 	const currencyList = useCurrencyControllerFindAll();
@@ -89,6 +93,16 @@ const GetStartedDialog = () => {
 	const [prefillCity, setPrefillCity] = useState<string>("");
 	const [prefillZip, setPrefillZip] = useState<string>("");
 	const [prefetchDone, setPrefetchDone] = useState(false);
+
+	// Auto-open dialog if onboarding is incomplete (but don't reopen if just submitted or user dismissed)
+	useEffect(() => {
+		const shouldOpen = isGetStartedDialogOpen();
+		if (shouldOpen && !open && !justSubmitted && !userDismissed) {
+			handleOpen();
+		}
+		// Only check when user data changes or dialog state changes
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [user?.company, open, justSubmitted, userDismissed]);
 
 	// Kick off IP-based preload on mount (and when lists ready); use preloaded store if present
 	useEffect(() => {
@@ -214,6 +228,7 @@ const GetStartedDialog = () => {
 	];
 
 	const handleNext = (value?: string) => {
+		// Validate currency on step 1
 		if (!value && activeStep === 1) {
 			formikRef.current?.setFieldError(
 				"currency_id",
@@ -222,11 +237,68 @@ const GetStartedDialog = () => {
 			formikRef.current?.setFieldTouched("currency_id", true);
 			return;
 		}
+
+		// Validate required fields on step 2 (Company form)
+		if (activeStep === 2) {
+			const values = formikRef.current?.values;
+			let hasError = false;
+
+			// Validate country
+			if (!values?.country || values.country.trim() === "") {
+				formikRef.current?.setFieldError(
+					"country",
+					t("getStarted.company.countryRequired", { defaultValue: "Country is required" }),
+				);
+				formikRef.current?.setFieldTouched("country", true);
+				hasError = true;
+			}
+
+			// Validate state
+			if (!values?.state || values.state.trim() === "") {
+				formikRef.current?.setFieldError(
+					"state",
+					t("getStarted.company.stateRequired", { defaultValue: "State is required" }),
+				);
+				formikRef.current?.setFieldTouched("state", true);
+				hasError = true;
+			}
+
+			// Validate zipCode
+			if (!values?.zipCode || values.zipCode.trim() === "") {
+				formikRef.current?.setFieldError(
+					"zipCode",
+					t("getStarted.company.zipCodeRequired", { defaultValue: "Zip Code is required" }),
+				);
+				formikRef.current?.setFieldTouched("zipCode", true);
+				hasError = true;
+			}
+
+			// Validate address
+			if (!values?.address || values.address.trim() === "") {
+				formikRef.current?.setFieldError(
+					"address",
+					t("getStarted.company.addressRequired", { defaultValue: "Address is required" }),
+				);
+				formikRef.current?.setFieldTouched("address", true);
+				hasError = true;
+			}
+
+			if (hasError) {
+				return;
+			}
+		}
+
 		setActiveStep((prevActiveStep) => prevActiveStep + 1);
 	};
 
 	const handleBack = () => {
 		setActiveStep((prevActiveStep) => prevActiveStep - 1);
+	};
+
+	const handleSkip = () => {
+		if (activeStep < steps.length - 1) {
+			setActiveStep((prevActiveStep) => prevActiveStep + 1);
+		}
 	};
 
 	interface ExtendedFormValues extends UpdateCurrencyCompanyDto {
@@ -303,10 +375,25 @@ const GetStartedDialog = () => {
 		storeOrPaymentGateway: "none",
 	};
 
+	// Ensure dialog closes after successful submission
+	useEffect(() => {
+		if (justSubmitted && open) {
+			const timer = setTimeout(() => {
+				handleClose();
+				setJustSubmitted(false);
+			}, 200);
+			return () => clearTimeout(timer);
+		}
+	}, [justSubmitted, open, handleClose]);
+
 	const handleSubmit = async (
 		values: ExtendedFormValues,
 		actions: FormikHelpers<ExtendedFormValues>,
 	) => {
+		if (isSubmittingState) {
+			return;
+		}
+		setIsSubmittingState(true);
 		actions.setSubmitting(true);
 		// Extract only UpdateCurrencyCompanyDto fields for the API call
 		const {
@@ -374,52 +461,42 @@ const GetStartedDialog = () => {
 			webhookUrl ||
 			storeOrPaymentGateway
 		) {
-			console.log("Additional onboarding data:", {
-				productType,
-				businessName,
-				niches,
-				catalogMethod,
-				paymentMethods,
-				enablePartialPayments,
-				selfDelivery,
-				deliveryPartners,
-				deliveryRegions,
-				pickupAddress,
-				autoGenerateInvoices,
-				invoicePrefix,
-				startingNumber,
-				invoiceFooterText,
-				sendInvoiceOnOrderConfirmation,
-				sendInvoiceOnPaymentCompletion,
-				sendCopyToStoreEmail,
-				gstRegistered,
-				enableHsnSac,
-				defaultTaxRate,
-				storeLogo,
-				storeName,
-				tagline,
-				primaryBrandColor,
-				whatsappCommunityUrl,
-				instagramHandle,
-				facebookPageId,
-				webhookUrl,
-				storeOrPaymentGateway,
-			});
+			// Additional onboarding data is available but not sent to API yet
 			// TODO: Send all additional fields to appropriate endpoint if needed
 		}
 
-		await updateUserData.mutateAsync({
-			data: updateData,
-		});
-		const user = await authControllerStatus();
-		setUser(user);
+		try {
+			await updateUserData.mutateAsync({
+				data: updateData,
+			});
+			const user = await authControllerStatus();
+			setUser(user);
+			setJustSubmitted(true);
+			// Move to the thank you step (step 12) instead of using justSubmitted state
+			setActiveStep(12);
+			// Close dialog after showing thank you message for 2 seconds
+			setTimeout(() => {
+				actions.resetForm();
+				handleClose();
+				setActiveStep(0);
+				setJustSubmitted(false);
+			}, 2000);
+		} catch (error) {
+			console.error("Error submitting form:", error);
+			// Don't close the dialog on error, let user retry
+		} finally {
+			actions.setSubmitting(false);
+			setIsSubmittingState(false);
+		}
+	};
+
+	const handleDialogClose = () => {
+		setUserDismissed(true);
 		handleClose();
-		actions.resetForm();
-		actions.setSubmitting(false);
 	};
 
 	return (
-		<Dialog open={open} onClose={handleClose} fullWidth maxWidth={"sm"}>
+		<Dialog open={open} onClose={handleDialogClose} fullWidth maxWidth={"sm"}>
 			<Formik
 				innerRef={formikRef}
 				initialValues={initialValues}
@@ -427,35 +504,46 @@ const GetStartedDialog = () => {
 				onSubmit={handleSubmit}
 				autoComplete="off"
 			>
-				{({ submitForm, values }) => {
+				{({ submitForm, values, isSubmitting, errors, touched }) => {
 					return (
 						<Form>
-							<DialogContent dividers style={{ maxHeight: "70vh", overflowY: "auto" }}>
-								<CustomStepperBox>
-									<Stepper
-										activeStep={activeStep}
-										alternativeLabel
-										connector={<CustomStepConnector />}
-									>
-										{steps.map((label) => (
-											<Step key={label}></Step>
-										))}
-									</Stepper>
-								</CustomStepperBox>
-								<Box textAlign={"center"} pt={3}>
-									{activeStep === 0 && <GetStartedInitialScreen />}
-									{activeStep === 1 && <CurrencyUpdateForm onGeoLoadingChange={setGeoLoading} />}
-									{activeStep === 2 && <CompanyUpdateForm onGeoLoadingChange={setGeoLoading} />}
-									{activeStep === 3 && <ProductTypeForm />}
-									{activeStep === 4 && <NicheSelectionForm />}
-									{activeStep === 5 && <CatalogMethodForm />}
-									{activeStep === 6 && <PaymentMethodsForm />}
-									{activeStep === 7 && <DeliveryOptionsForm />}
-									{activeStep === 8 && <InvoiceAutomationForm />}
-									{activeStep === 9 && <GSTTaxSettingsForm />}
-									{activeStep === 10 && <StoreBrandingForm />}
-									{activeStep === 11 && <ConnectSocialsForm />}
-								</Box>
+							<DialogContent
+								dividers
+								style={{ maxHeight: "70vh", overflowY: "auto", minHeight: "400px" }}
+							>
+								{justSubmitted || activeStep > 11 ? (
+									<ThankYouForm />
+								) : (
+									<>
+										<CustomStepperBox>
+											<Stepper
+												activeStep={activeStep}
+												alternativeLabel
+												connector={<CustomStepConnector />}
+											>
+												{steps.map((label) => (
+													<Step key={label}></Step>
+												))}
+											</Stepper>
+										</CustomStepperBox>
+										<Box textAlign={"center"} pt={3}>
+											{activeStep === 0 && <GetStartedInitialScreen />}
+											{activeStep === 1 && (
+												<CurrencyUpdateForm onGeoLoadingChange={setGeoLoading} />
+											)}
+											{activeStep === 2 && <CompanyUpdateForm onGeoLoadingChange={setGeoLoading} />}
+											{activeStep === 3 && <ProductTypeForm />}
+											{activeStep === 4 && <NicheSelectionForm />}
+											{activeStep === 5 && <CatalogMethodForm />}
+											{activeStep === 6 && <PaymentMethodsForm />}
+											{activeStep === 7 && <DeliveryOptionsForm />}
+											{activeStep === 8 && <InvoiceAutomationForm />}
+											{activeStep === 9 && <GSTTaxSettingsForm />}
+											{activeStep === 10 && <StoreBrandingForm />}
+											{activeStep === 11 && <ConnectSocialsForm />}
+										</Box>
+									</>
+								)}
 							</DialogContent>
 
 							<DialogActions
@@ -473,13 +561,13 @@ const GetStartedDialog = () => {
 								<Button
 									variant="outlined"
 									color="warning"
-									onClick={handleClose}
-									disabled={geoLoading}
+									onClick={handleSkip}
+									disabled={geoLoading || activeStep >= steps.length - 1}
 								>
 									{t("app.skip", { defaultValue: "Skip" })}
 								</Button>
 
-								{activeStep < steps.length - 2 && (
+								{activeStep < steps.length - 1 && (
 									<Button
 										variant="contained"
 										disabled={geoLoading}
@@ -490,9 +578,47 @@ const GetStartedDialog = () => {
 										{t("app.next", { defaultValue: "Next" })}
 									</Button>
 								)}
-								{activeStep === steps.length - 2 && (
-									<Button variant="contained" onClick={submitForm} disabled={geoLoading}>
-										{t("app.finish", { defaultValue: "Finish" })}
+								{activeStep === 11 && !justSubmitted && activeStep <= 11 && (
+									<Button
+										type="button"
+										variant="contained"
+										onClick={(e) => {
+											e.preventDefault();
+											e.stopPropagation();
+											if (isSubmittingState || isSubmitting) {
+												return;
+											}
+
+											// On the last step, submit even if there are validation errors
+											// This allows users to finish the onboarding even if they skipped some fields
+											if (Object.keys(errors).length > 0) {
+												// Manually call handleSubmit to bypass validation
+												handleSubmit(values, {
+													setSubmitting: (isSubmitting: boolean) => {
+														formikRef.current?.setSubmitting(isSubmitting);
+													},
+													resetForm: () => {
+														formikRef.current?.resetForm();
+													},
+												} as FormikHelpers<ExtendedFormValues>).catch((err) => {
+													console.error("Submit form error:", err);
+												});
+											} else {
+												submitForm().catch((err) => {
+													console.error("Submit form error:", err);
+												});
+											}
+										}}
+										disabled={geoLoading || isSubmitting || isSubmittingState}
+									>
+										{isSubmitting || isSubmittingState
+											? t("app.loading", { defaultValue: "Loading..." })
+											: t("app.finish", { defaultValue: "Finish" })}
+									</Button>
+								)}
+								{justSubmitted && (
+									<Button variant="contained" onClick={handleClose}>
+										{t("app.close", { defaultValue: "Close" })}
 									</Button>
 								)}
 							</DialogActions>
