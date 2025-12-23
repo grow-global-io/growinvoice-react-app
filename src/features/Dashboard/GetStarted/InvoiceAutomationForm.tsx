@@ -1,10 +1,4 @@
-import {
-	Box,
-	Typography,
-	Switch,
-	FormControlLabel,
-	TextField,
-} from "@mui/material";
+import { Box, Typography, Switch, FormControlLabel } from "@mui/material";
 import { Field, useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 import type { UpdateCurrencyCompanyDto } from "@api/services/models";
@@ -181,9 +175,7 @@ const InvoiceAutomationForm = () => {
 						control={
 							<Switch
 								checked={values.sendInvoiceOnOrderConfirmation ?? true}
-								onChange={(e) =>
-									setFieldValue("sendInvoiceOnOrderConfirmation", e.target.checked)
-								}
+								onChange={(e) => setFieldValue("sendInvoiceOnOrderConfirmation", e.target.checked)}
 								color="primary"
 							/>
 						}
@@ -219,9 +211,7 @@ const InvoiceAutomationForm = () => {
 						control={
 							<Switch
 								checked={values.sendInvoiceOnPaymentCompletion ?? false}
-								onChange={(e) =>
-									setFieldValue("sendInvoiceOnPaymentCompletion", e.target.checked)
-								}
+								onChange={(e) => setFieldValue("sendInvoiceOnPaymentCompletion", e.target.checked)}
 								color="primary"
 							/>
 						}
@@ -299,4 +289,3 @@ const InvoiceAutomationForm = () => {
 };
 
 export default InvoiceAutomationForm;
-

@@ -504,7 +504,7 @@ const GetStartedDialog = () => {
 				onSubmit={handleSubmit}
 				autoComplete="off"
 			>
-				{({ submitForm, values, isSubmitting, errors, touched }) => {
+				{({ submitForm, values, isSubmitting, errors }) => {
 					return (
 						<Form>
 							<DialogContent
