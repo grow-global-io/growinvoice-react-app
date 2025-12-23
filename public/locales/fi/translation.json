@@ -1484,6 +1484,10 @@
         "createWhatsApp": "Luo WhatsApp-yhteisö",
         "setupInstagram": "Määritä Instagram Business"
       }
+    },
+    "thankYou": {
+      "title": "Kiitos!",
+      "message": "Olet onnistuneesti suorittanut aloitusprosessin. Tilisi on nyt valmis käyttöön!"
     }
   },
   "plans": {

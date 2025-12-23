@@ -1462,6 +1462,10 @@
         "createWhatsApp": "Loo WhatsApp kogukond",
         "setupInstagram": "Seadista Instagram Business"
       }
+    },
+    "thankYou": {
+      "title": "Täname!",
+      "message": "Oled edukalt lõpetanud alustamisprotsessi. Sinu konto on nüüd valmis kasutamiseks!"
     }
   },
   "plans": {

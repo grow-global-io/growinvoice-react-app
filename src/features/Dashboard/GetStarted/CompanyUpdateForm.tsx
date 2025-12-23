@@ -128,6 +128,7 @@ const CompanyUpdateForm = ({
 						component={AutocompleteField}
 						options={countryFindAll?.data?.map((item) => ({ label: item.name, value: item.id }))}
 						loading={countryFindAll.isLoading}
+						isRequired={true}
 					/>
 				</Grid>
 				<Grid item xs={12} sm={6}>
@@ -140,6 +141,7 @@ const CompanyUpdateForm = ({
 							value: item.id,
 						}))}
 						loading={statesFindAllByCountry.isLoading}
+						isRequired={true}
 					/>
 				</Grid>
 				<Grid item xs={12} sm={6}>
@@ -154,6 +156,7 @@ const CompanyUpdateForm = ({
 						name="zipCode"
 						label={t("getStarted.company.zipCode", { defaultValue: "Zip Code" })}
 						component={TextFormField}
+						isRequired={true}
 					/>
 				</Grid>
 				<Grid item xs={12} sm={6}>
@@ -161,6 +164,7 @@ const CompanyUpdateForm = ({
 						name="address"
 						label={t("getStarted.company.address", { defaultValue: "Address" })}
 						component={TextFormField}
+						isRequired={true}
 						multiline
 						rows={3}
 					/>
