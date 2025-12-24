@@ -1,5 +1,5 @@
 import { Box, Typography, Grid, Card, CardContent } from "@mui/material";
-import { Field, useFormikContext } from "formik";
+import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 import type { UpdateCurrencyCompanyDto } from "@api/services/models";
 import StoreIcon from "@mui/icons-material/Store";
@@ -8,7 +8,6 @@ import RestaurantIcon from "@mui/icons-material/Restaurant";
 import DevicesIcon from "@mui/icons-material/Devices";
 import SpaIcon from "@mui/icons-material/Spa";
 import CategoryIcon from "@mui/icons-material/Category";
-import { TextFormField } from "@shared/components/FormFields/TextFormField";
 
 interface ExtendedFormValues extends UpdateCurrencyCompanyDto {
 	productType?: string;
@@ -108,22 +107,6 @@ const ProductTypeForm = () => {
 					);
 				})}
 			</Grid>
-			<Box mt={4}>
-				<Field
-					name="businessName"
-					label={t("getStarted.productType.businessName", { defaultValue: "Business Name" })}
-					component={TextFormField}
-					isRequired={true}
-					placeholder={t("getStarted.productType.businessNamePlaceholder", {
-						defaultValue: "Enter your business name",
-					})}
-				/>
-				<Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: "block" }}>
-					{t("getStarted.productType.businessNameHelper", {
-						defaultValue: "This will appear on your storefront and invoices",
-					})}
-				</Typography>
-			</Box>
 		</Box>
 	);
 };

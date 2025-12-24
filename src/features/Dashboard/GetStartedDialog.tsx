@@ -19,7 +19,7 @@ import NicheSelectionForm from "./GetStarted/NicheSelectionForm";
 import CatalogMethodForm from "./GetStarted/CatalogMethodForm";
 import PaymentMethodsForm from "./GetStarted/PaymentMethodsForm";
 import DeliveryOptionsForm from "./GetStarted/DeliveryOptionsForm";
-import InvoiceAutomationForm from "./GetStarted/InvoiceAutomationForm";
+// import InvoiceAutomationForm from "./GetStarted/InvoiceAutomationForm"; // Commented out - step disabled
 import GSTTaxSettingsForm from "./GetStarted/GSTTaxSettingsForm";
 import StoreBrandingForm from "./GetStarted/StoreBrandingForm";
 import ConnectSocialsForm from "./GetStarted/ConnectSocialsForm";
@@ -31,6 +31,7 @@ import { useAuthStore } from "@store/auth";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { useUserControllerUpdateCurrencyCompany } from "@api/services/users";
 import { authControllerStatus } from "@api/services/auth";
+import { useStoreControllerCreateUpdateStore } from "@api/services/store";
 import { useGetStartedDialogStore } from "@store/useGetStartedDialog";
 import { useTranslation } from "react-i18next";
 import {
@@ -75,6 +76,7 @@ const GetStartedDialog = () => {
 	const formikRef = useRef<FormikProps<UpdateCurrencyCompanyDto>>(null);
 	const { user, setUser, isGetStartedDialogOpen } = useAuthStore();
 	const updateUserData = useUserControllerUpdateCurrencyCompany();
+	const createUpdateStore = useStoreControllerCreateUpdateStore();
 	const [activeStep, setActiveStep] = React.useState(0);
 	const [geoLoading, setGeoLoading] = React.useState(false);
 	const [justSubmitted, setJustSubmitted] = React.useState(false);
@@ -221,7 +223,7 @@ const GetStartedDialog = () => {
 		t("getStarted.steps.step7", { defaultValue: "Catalog" }),
 		t("getStarted.steps.step8", { defaultValue: "Payment Methods" }),
 		t("getStarted.steps.step9", { defaultValue: "Delivery" }),
-		t("getStarted.steps.step10", { defaultValue: "Invoice Automation" }),
+		// t("getStarted.steps.step10", { defaultValue: "Invoice Automation" }), // Commented out - step disabled
 		t("getStarted.steps.step11", { defaultValue: "GST & Tax" }),
 		t("getStarted.steps.step12", { defaultValue: "Branding" }),
 		t("getStarted.steps.step13", { defaultValue: "Socials" }),
@@ -324,6 +326,7 @@ const GetStartedDialog = () => {
 		defaultTaxRate?: string;
 		storeLogo?: string;
 		storeName?: string;
+		storeLinkSlug?: string;
 		tagline?: string;
 		primaryBrandColor?: string;
 		whatsappCommunityUrl?: string;
@@ -366,6 +369,7 @@ const GetStartedDialog = () => {
 		defaultTaxRate: "",
 		storeLogo: "",
 		storeName: "",
+		storeLinkSlug: "",
 		tagline: "",
 		primaryBrandColor: "#9333ea",
 		whatsappCommunityUrl: "",
@@ -419,6 +423,7 @@ const GetStartedDialog = () => {
 			defaultTaxRate,
 			storeLogo,
 			storeName,
+			storeLinkSlug,
 			tagline,
 			primaryBrandColor,
 			whatsappCommunityUrl,
@@ -453,6 +458,7 @@ const GetStartedDialog = () => {
 			defaultTaxRate ||
 			storeLogo ||
 			storeName ||
+			storeLinkSlug ||
 			tagline ||
 			primaryBrandColor ||
 			whatsappCommunityUrl ||
@@ -466,14 +472,38 @@ const GetStartedDialog = () => {
 		}
 
 		try {
+			// Map storeLogo to logo field if provided
+			const finalUpdateData = {
+				...updateData,
+				...(storeLogo && { logo: storeLogo }),
+			};
+
 			await updateUserData.mutateAsync({
-				data: updateData,
+				data: finalUpdateData,
 			});
+
+			// Submit store link slug if provided
+			if (storeLinkSlug) {
+				try {
+					await createUpdateStore.mutateAsync({
+						data: {
+							storeName: storeLinkSlug,
+						},
+					});
+					// Refetch user data to get updated storeName
+					const updatedUser = await authControllerStatus();
+					setUser(updatedUser);
+				} catch (storeError) {
+					console.error("Error saving store name:", storeError);
+					// Don't fail the entire submission if store name fails
+				}
+			}
+
 			const user = await authControllerStatus();
 			setUser(user);
 			setJustSubmitted(true);
-			// Move to the thank you step (step 12) instead of using justSubmitted state
-			setActiveStep(12);
+			// Move to the thank you step (step 11) instead of using justSubmitted state
+			setActiveStep(11);
 			// Close dialog after showing thank you message for 2 seconds
 			setTimeout(() => {
 				actions.resetForm();
@@ -511,7 +541,7 @@ const GetStartedDialog = () => {
 								dividers
 								style={{ maxHeight: "70vh", overflowY: "auto", minHeight: "400px" }}
 							>
-								{justSubmitted || activeStep > 11 ? (
+								{justSubmitted || activeStep > 10 ? (
 									<ThankYouForm />
 								) : (
 									<>
@@ -526,7 +556,7 @@ const GetStartedDialog = () => {
 												))}
 											</Stepper>
 										</CustomStepperBox>
-										<Box textAlign={"center"} pt={3}>
+										<Box textAlign={"left"} pt={3}>
 											{activeStep === 0 && <GetStartedInitialScreen />}
 											{activeStep === 1 && (
 												<CurrencyUpdateForm onGeoLoadingChange={setGeoLoading} />
@@ -537,10 +567,11 @@ const GetStartedDialog = () => {
 											{activeStep === 5 && <CatalogMethodForm />}
 											{activeStep === 6 && <PaymentMethodsForm />}
 											{activeStep === 7 && <DeliveryOptionsForm />}
-											{activeStep === 8 && <InvoiceAutomationForm />}
-											{activeStep === 9 && <GSTTaxSettingsForm />}
-											{activeStep === 10 && <StoreBrandingForm />}
-											{activeStep === 11 && <ConnectSocialsForm />}
+											{/* {activeStep === 8 && <InvoiceAutomationForm />} */}{" "}
+											{/* Commented out - step disabled */}
+											{activeStep === 8 && <GSTTaxSettingsForm />}
+											{activeStep === 9 && <StoreBrandingForm />}
+											{activeStep === 10 && <ConnectSocialsForm />}
 										</Box>
 									</>
 								)}
@@ -578,7 +609,7 @@ const GetStartedDialog = () => {
 										{t("app.next", { defaultValue: "Next" })}
 									</Button>
 								)}
-								{activeStep === 11 && !justSubmitted && activeStep <= 11 && (
+								{activeStep === 10 && !justSubmitted && activeStep <= 10 && (
 									<Button
 										type="button"
 										variant="contained"

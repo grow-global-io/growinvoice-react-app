@@ -1,3 +1,4 @@
+import React from "react";
 import { Box, Typography, Grid, Card, CardContent, Chip } from "@mui/material";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
@@ -60,24 +61,30 @@ const CatalogMethodForm = () => {
 			</Typography>
 			<Grid container spacing={2} mt={1}>
 				{catalogMethods.map((method) => {
-					const Icon = method.icon;
+					const Icon = method.icon as React.ComponentType<{ sx?: any }>;
 					const isSelected = values.catalogMethod === method.id;
+					const isComingSoon = method.id === "ai";
 					return (
 						<Grid item xs={12} sm={6} key={method.id}>
 							<Card
 								sx={{
-									cursor: "pointer",
+									cursor: isComingSoon ? "not-allowed" : "pointer",
 									border: isSelected ? 2 : 1,
 									borderColor: isSelected ? "primary.main" : "grey.300",
 									boxShadow: isSelected ? 3 : 1,
 									"&:hover": {
-										borderColor: "primary.main",
-										boxShadow: 3,
+										borderColor: isComingSoon ? "grey.300" : "primary.main",
+										boxShadow: isComingSoon ? 1 : 3,
 									},
 									height: "100%",
 									position: "relative",
+									opacity: isComingSoon ? 0.95 : 1,
 								}}
-								onClick={() => setFieldValue("catalogMethod", method.id)}
+								onClick={() => {
+									if (!isComingSoon) {
+										setFieldValue("catalogMethod", method.id);
+									}
+								}}
 							>
 								{method.badge && (
 									<Chip
@@ -90,6 +97,7 @@ const CatalogMethodForm = () => {
 											right: 8,
 											fontSize: "0.7rem",
 											height: 20,
+											zIndex: 1,
 										}}
 									/>
 								)}
@@ -108,6 +116,38 @@ const CatalogMethodForm = () => {
 										{method.description}
 									</Typography>
 								</CardContent>
+								{isComingSoon && (
+									<Box
+										sx={{
+											position: "absolute",
+											top: 0,
+											left: 0,
+											right: 0,
+											bottom: 0,
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "center",
+											background:
+												"linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.6))",
+											backdropFilter: "blur(1px)",
+											borderRadius: 1,
+											zIndex: 2,
+										}}
+									>
+										<Typography
+											variant="h6"
+											fontWeight={700}
+											color="primary.main"
+											sx={{
+												textTransform: "uppercase",
+												letterSpacing: 1.5,
+												textShadow: "0 1px 3px rgba(255, 255, 255, 0.9)",
+											}}
+										>
+											{t("common.comingSoon", { defaultValue: "Coming Soon" })}
+										</Typography>
+									</Box>
+								)}
 							</Card>
 						</Grid>
 					);

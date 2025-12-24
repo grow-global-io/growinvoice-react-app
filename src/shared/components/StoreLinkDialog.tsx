@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useStoreLinkStore } from "../../store/storeLinkStore";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -55,6 +55,15 @@ const StoreLinkDialog = () => {
 
 	const url = `${window.location.origin}/store/${user?.data?.storeName}`;
 	const [copied, setCopied] = useState(false);
+
+	// Refetch user data when dialog opens to ensure we have the latest storeName
+	useEffect(() => {
+		if (open) {
+			user?.refetch();
+			refecthUser();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [open]);
 
 	const handleCopyClick = async () => {
 		try {

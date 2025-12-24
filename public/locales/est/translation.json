@@ -879,6 +879,45 @@
       "userIdRequired": "Kasutaja ID on kohustuslik"
     }
   },
+  "pickupAddress": {
+    "title": "Kättesaamise aadress",
+    "add": "Lisa kättesaamise aadress",
+    "table": {
+      "address": "Aadress",
+      "city": "Linn",
+      "state": "Maakond",
+      "country": "Riik",
+      "zipCode": "Postiindeks",
+      "action": "Toiming",
+      "edit": "Muuda"
+    },
+    "actions": {
+      "deleteTitle": "Kustuta see kättesaamise aadress?",
+      "deleteConfirm": "Kas oled kindel, et soovid selle kättesaamise aadressi kustutada?"
+    },
+    "form": {
+      "title": "Lisa kättesaamise aadress",
+      "address": "Aadress",
+      "city": "Linn",
+      "state": "Maakond",
+      "country": "Riik",
+      "zipCode": "Postiindeks",
+      "submit": "Salvesta"
+    },
+    "validation": {
+      "addressRequired": "Aadress on kohustuslik",
+      "cityRequired": "Linn on kohustuslik",
+      "stateRequired": "Maakond on kohustuslik",
+      "countryRequired": "Riik on kohustuslik",
+      "zipCodeRequired": "Postiindeks on kohustuslik"
+    },
+    "success": {
+      "saved": "Kättesaamise aadress salvestatud edukalt"
+    },
+    "error": {
+      "saveFailed": "Kättesaamise aadressi salvestamine ebaõnnestus"
+    }
+  },
   "payment": {
     "title": "Maksed",
     "create": "Loo makse",
@@ -1457,6 +1496,10 @@
       "logoRecommendation": "Soovitus: 512x512px, PNG või SVG",
       "logoMaxSize": "Maksimaalne failisuurus: 2MB",
       "logoMaxSizeError": "Failisuurus peab olema alla 2MB",
+      "storeLink": "Poe link",
+      "storeLinkLabel": "Poe nimi",
+      "storeLinkPlaceholder": "Sisesta oma poe nimi",
+      "storeLinkHelper": "See on sinu poe URL: /store/sinu-poe-nimi",
       "storeName": "Poe nimi",
       "storeNameLabel": "Poe nimi",
       "storeNamePlaceholder": "Minu vinge pood",
