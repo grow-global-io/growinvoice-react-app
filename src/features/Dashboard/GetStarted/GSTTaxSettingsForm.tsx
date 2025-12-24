@@ -1,19 +1,31 @@
 import {
 	Box,
 	Typography,
-	Grid,
-	Card,
-	CardContent,
 	Switch,
 	FormControlLabel,
 	Alert,
+	Button,
+	Dialog,
+	DialogContent,
+	DialogTitle,
+	IconButton,
+	Divider,
 } from "@mui/material";
-import { useFormikContext } from "formik";
+import { Field, useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 import type { UpdateCurrencyCompanyDto } from "@api/services/models";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import InfoIcon from "@mui/icons-material/Info";
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
+import { useTaxcodeControllerFindAll } from "@api/services/tax-code";
+import { useDialog } from "@shared/hooks/useDialog";
+import CreateTaxes from "@features/ProductTaxes/CreateTaxes";
+import { useQueryClient } from "@tanstack/react-query";
+import { getTaxcodeControllerFindAllQueryKey } from "@api/services/tax-code";
 
 interface ExtendedFormValues extends UpdateCurrencyCompanyDto {
 	gstRegistered?: boolean;
@@ -21,17 +33,12 @@ interface ExtendedFormValues extends UpdateCurrencyCompanyDto {
 	defaultTaxRate?: string;
 }
 
-const taxRates = [
-	{ id: "0", label: "0% GST", value: 0 },
-	{ id: "5", label: "5% GST", value: 5 },
-	{ id: "12", label: "12% GST", value: 12 },
-	{ id: "18", label: "18% GST", value: 18 },
-	{ id: "28", label: "28% GST", value: 28 },
-];
-
 const GSTTaxSettingsForm = () => {
 	const { t } = useTranslation();
 	const { setFieldValue, values } = useFormikContext<ExtendedFormValues>();
+	const taxCodes = useTaxcodeControllerFindAll();
+	const queryClient = useQueryClient();
+	const { handleClickOpen, handleClose, open } = useDialog();
 
 	return (
 		<Box>
@@ -61,13 +68,13 @@ const GSTTaxSettingsForm = () => {
 			>
 				<Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
 					<CheckCircleIcon sx={{ fontSize: 32, color: "success.main" }} />
-					<Box>
-						<Typography variant="h6" fontWeight={600}>
+					<Box sx={{ textAlign: "left" }}>
+						<Typography variant="h6" fontWeight={600} textAlign="left">
 							{t("getStarted.gstTax.gstRegistered", {
 								defaultValue: "GST Registered Business",
 							})}
 						</Typography>
-						<Typography variant="body2" color="text.secondary">
+						<Typography variant="body2" color="text.secondary" textAlign="left">
 							{t("getStarted.gstTax.gstRegisteredDescription", {
 								defaultValue: "Enable if you have a GST registration number",
 							})}
@@ -101,13 +108,13 @@ const GSTTaxSettingsForm = () => {
 			>
 				<Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
 					<CalculateIcon sx={{ fontSize: 32, color: "primary.main" }} />
-					<Box>
-						<Typography variant="h6" fontWeight={600}>
+					<Box sx={{ textAlign: "left" }}>
+						<Typography variant="h6" fontWeight={600} textAlign="left">
 							{t("getStarted.gstTax.enableHsnSac", {
 								defaultValue: "Enable HSN/SAC Codes",
 							})}
 						</Typography>
-						<Typography variant="body2" color="text.secondary">
+						<Typography variant="body2" color="text.secondary" textAlign="left">
 							{t("getStarted.gstTax.enableHsnSacDescription", {
 								defaultValue: "Add tax classification codes to products",
 							})}
@@ -128,46 +135,77 @@ const GSTTaxSettingsForm = () => {
 
 			{/* Default Tax Rate */}
 			<Box mt={4}>
-				<Typography variant="h6" fontWeight={600} mb={1}>
-					{t("getStarted.gstTax.defaultTaxRate", {
-						defaultValue: "Default Tax Rate",
-					})}
-				</Typography>
-				<Typography variant="body2" color="text.secondary" mb={2}>
+				<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
+					<Typography variant="h6" fontWeight={600} textAlign="left">
+						{t("getStarted.gstTax.defaultTaxRate", {
+							defaultValue: "Default Tax Rate",
+						})}
+					</Typography>
+					<Button size="small" variant="outlined" startIcon={<AddIcon />} onClick={handleClickOpen}>
+						{t("getStarted.gstTax.addTax", { defaultValue: "Add Tax" })}
+					</Button>
+				</Box>
+				<Typography variant="body2" color="text.secondary" mb={2} textAlign="left">
 					{t("getStarted.gstTax.defaultTaxRateDescription", {
 						defaultValue: "You can set different rates per product later",
 					})}
 				</Typography>
-				<Grid container spacing={2}>
-					{taxRates.map((rate) => {
-						const isSelected = values.defaultTaxRate === rate.id;
-						return (
-							<Grid item xs={6} sm={4} md={2.4} key={rate.id}>
-								<Card
-									sx={{
-										cursor: "pointer",
-										border: isSelected ? 2 : 1,
-										borderColor: isSelected ? "primary.main" : "grey.300",
-										boxShadow: isSelected ? 3 : 1,
-										"&:hover": {
-											borderColor: "primary.main",
-											boxShadow: 3,
-										},
-										height: "100%",
-									}}
-									onClick={() => setFieldValue("defaultTaxRate", rate.id)}
-								>
-									<CardContent sx={{ textAlign: "center", p: 2 }}>
-										<Typography variant="body1" fontWeight={600}>
-											{rate.label}
-										</Typography>
-									</CardContent>
-								</Card>
-							</Grid>
-						);
+				<Field
+					name="defaultTaxRate"
+					label={t("getStarted.gstTax.defaultTaxRateLabel", {
+						defaultValue: "Select Default Tax Rate",
 					})}
-				</Grid>
+					component={AutocompleteField}
+					options={
+						taxCodes?.data?.map((tax) => ({
+							label: `${tax.name} (${tax.percentage}%)`,
+							value: tax.id,
+						})) || []
+					}
+					loading={taxCodes.isLoading || taxCodes.isFetching}
+					placeholder={t("getStarted.gstTax.defaultTaxRatePlaceholder", {
+						defaultValue: "Select a tax rate",
+					})}
+				/>
 			</Box>
+			<Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+				<DialogTitle>
+					<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+						<Typography
+							variant="h4"
+							sx={{
+								display: "flex",
+								alignItems: "center",
+								gap: 1,
+							}}
+						>
+							<DescriptionOutlinedIcon /> {t("tax.form.title", { defaultValue: "New Tax" })}
+						</Typography>
+						<IconButton
+							sx={{
+								color: "secondary.dark",
+							}}
+							onClick={handleClose}
+						>
+							<CloseIcon />
+						</IconButton>
+					</Box>
+				</DialogTitle>
+				<Divider />
+				<DialogContent>
+					<Box sx={{ mb: 2, mt: 2 }}>
+						<CreateTaxes
+							handleClose={() => {
+								handleClose();
+								// Refresh tax codes list after creating a new tax
+								queryClient.refetchQueries({
+									queryKey: getTaxcodeControllerFindAllQueryKey(),
+								});
+							}}
+						/>
+					</Box>
+				</DialogContent>
+			</Dialog>
 
 			{/* Info Box */}
 			<Alert

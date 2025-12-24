@@ -176,13 +176,6 @@ const CompanyUpdateForm = ({
 						component={TextFormField}
 					/>
 				</Grid>
-				<Grid item xs={12} sm={6}>
-					<Field
-						name="logo"
-						label={t("getStarted.company.logo", { defaultValue: "Logo" })}
-						component={FileUploadFormField}
-					/>
-				</Grid>
 			</Grid>
 		</Box>
 	);

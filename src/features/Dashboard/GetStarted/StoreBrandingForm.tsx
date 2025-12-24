@@ -1,20 +1,19 @@
-import { Box, Typography, IconButton, Avatar, Popover } from "@mui/material";
+import { Box, Typography, IconButton, Avatar, Popover, Button } from "@mui/material";
 import { Field, useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 import type { UpdateCurrencyCompanyDto } from "@api/services/models";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
-import TextFieldsIcon from "@mui/icons-material/TextFields";
 import PaletteIcon from "@mui/icons-material/Palette";
 import AddIcon from "@mui/icons-material/Add";
+import LinkIcon from "@mui/icons-material/Link";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { useUploadControllerUploadFile } from "@api/services/upload";
-import { useState, useRef } from "react";
-import type React from "react";
+import React, { useState, useRef } from "react";
 import { SketchPicker, type ColorResult } from "react-color";
 
 interface ExtendedFormValues extends UpdateCurrencyCompanyDto {
 	storeLogo?: string;
 	storeName?: string;
+	storeLinkSlug?: string;
 	tagline?: string;
 	primaryBrandColor?: string;
 }
@@ -37,6 +36,8 @@ const StoreBrandingForm = () => {
 	const [colorPickerOpen, setColorPickerOpen] = useState(false);
 	const colorPickerAnchor = useRef<HTMLButtonElement>(null);
 	const { mutateAsync: uploadFile, isPending: isUploading } = useUploadControllerUploadFile();
+	const [fileSizeError, setFileSizeError] = useState<boolean>(false);
+	const [docTypeError, setDocTypeError] = useState<boolean>(false);
 
 	const allColors = [...defaultColors, ...customColors];
 
@@ -62,15 +63,23 @@ const StoreBrandingForm = () => {
 	};
 
 	const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+		setDocTypeError(false);
+		setFileSizeError(false);
 		if (!event.target.files || !event.target.files[0]) return;
 		const file = event.target.files[0];
 		const maxSizeInBytes = 2 * 1024 * 1024; // 2MB
+
+		if (
+			file.type !== "image/png" &&
+			file.type !== "image/jpeg" &&
+			file.type !== "image/jpg" &&
+			file.type !== "image/svg+xml"
+		) {
+			setDocTypeError(true);
+			return;
+		}
 		if (file.size > maxSizeInBytes) {
-			alert(
-				t("getStarted.branding.logoMaxSizeError", {
-					defaultValue: "File size must be less than 2MB",
-				}),
-			);
+			setFileSizeError(true);
 			return;
 		}
 		try {
@@ -85,14 +94,25 @@ const StoreBrandingForm = () => {
 		}
 	};
 
+	// Get initial letter for avatar
+	const getInitial = () => {
+		if (values.storeLinkSlug) {
+			return values.storeLinkSlug[0]?.toUpperCase() || "S";
+		}
+		if (values.companyName) {
+			return values.companyName[0]?.toUpperCase() || "S";
+		}
+		return "S";
+	};
+
 	return (
 		<Box>
-			<Typography variant="h3" textAlign="center">
+			<Typography variant="h3" textAlign="left">
 				{t("getStarted.branding.title", {
 					defaultValue: "Brand your store",
 				})}
 			</Typography>
-			<Typography variant="h6" my={2} color={"secondary.dark"} fontWeight={500} textAlign="center">
+			<Typography variant="h6" my={2} color={"secondary.dark"} fontWeight={500} textAlign="left">
 				{t("getStarted.branding.subtitle", {
 					defaultValue: "Make your store uniquely yours",
 				})}
@@ -100,116 +120,99 @@ const StoreBrandingForm = () => {
 
 			{/* Store Logo */}
 			<Box mt={3}>
-				<Typography variant="h6" fontWeight={600} mb={2}>
+				<Typography variant="h4" color="text.primary" sx={{ mb: 2, fontWeight: 500 }}>
 					{t("getStarted.branding.storeLogo", {
 						defaultValue: "Store Logo",
-					})}
+					}).toUpperCase()}
+					<Typography variant="h5" color="error" component="span">
+						{" *"}
+					</Typography>
 				</Typography>
-				<Box sx={{ display: "flex", gap: 3, alignItems: "flex-start" }}>
-					<Box
-						component="label"
+				<Box
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						gap: 3,
+						mt: 2.5,
+					}}
+				>
+					<Avatar
 						sx={{
-							width: 120,
-							height: 120,
+							width: 100,
+							height: 100,
+							bgcolor: values.primaryBrandColor || defaultColors[1],
+							fontSize: 40,
+							fontWeight: "bold",
 							border: 2,
-							borderColor: "grey.300",
-							borderStyle: "dashed",
-							borderRadius: 2,
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-							cursor: "pointer",
-							position: "relative",
-							overflow: "hidden",
-							"&:hover": {
-								borderColor: "primary.main",
-							},
+							borderColor: "grey.200",
 						}}
+						src={values.storeLogo || undefined}
 					>
-						{values.storeLogo ? (
-							<Box
-								component="img"
-								src={values.storeLogo}
-								alt="Store Logo"
-								sx={{
-									width: "100%",
-									height: "100%",
-									objectFit: "cover",
-								}}
+						{!values.storeLogo && getInitial()}
+					</Avatar>
+					<Box sx={{ flex: 1 }}>
+						<Button variant="outlined" component="label" disabled={isUploading} sx={{ mb: 1 }}>
+							{t("app.uploadFile", { defaultValue: "Upload File" })}
+							<input
+								type="file"
+								hidden
+								accept="image/png,image/jpeg,image/jpg,image/svg+xml"
+								onChange={handleLogoUpload}
 							/>
-						) : (
-							<UploadFileIcon sx={{ fontSize: 40, color: "grey.400" }} />
+						</Button>
+						<Box sx={{ mt: 1.5 }}>
+							<Typography variant="body2" color="text.secondary" mb={0.5}>
+								{t("getStarted.branding.logoRecommendation", {
+									defaultValue: "Recommended: 512x512px, PNG or SVG",
+								})}
+							</Typography>
+							<Typography variant="body2" color="text.secondary">
+								{t("getStarted.branding.logoMaxSize", {
+									defaultValue: "Max file size: 2MB",
+								})}
+							</Typography>
+						</Box>
+						{fileSizeError && (
+							<Typography variant="caption" color="error" sx={{ mt: 1, display: "block" }}>
+								{t("getStarted.branding.logoMaxSizeError", {
+									defaultValue: "Maximum file size is 2MB",
+								})}
+							</Typography>
 						)}
-						<input
-							type="file"
-							accept="image/png,image/svg+xml,image/jpeg"
-							onChange={handleLogoUpload}
-							style={{ display: "none" }}
-							disabled={isUploading}
-						/>
-					</Box>
-					<Box>
-						<Typography variant="body1" fontWeight={500} mb={1}>
-							{t("getStarted.branding.uploadLogo", {
-								defaultValue: "Upload your logo",
-							})}
-						</Typography>
-						<Typography variant="body2" color="text.secondary" mb={0.5}>
-							{t("getStarted.branding.logoRecommendation", {
-								defaultValue: "Recommended: 512x512px, PNG or SVG",
-							})}
-						</Typography>
-						<Typography variant="body2" color="text.secondary">
-							{t("getStarted.branding.logoMaxSize", {
-								defaultValue: "Max file size: 2MB",
-							})}
-						</Typography>
+						{docTypeError && (
+							<Typography variant="caption" color="error" sx={{ mt: 1, display: "block" }}>
+								{t("upload.errors.invalidType", {
+									defaultValue: "Only .png, .jpg, .jpeg, .svg files are allowed",
+								})}
+							</Typography>
+						)}
 					</Box>
 				</Box>
 			</Box>
 
-			{/* Store Name */}
+			{/* Store Link */}
 			<Box mt={4}>
 				<Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
-					<TextFieldsIcon sx={{ fontSize: 24, color: "primary.main" }} />
+					<LinkIcon sx={{ fontSize: 24, color: "primary.main" }} />
 					<Typography variant="h6" fontWeight={600}>
-						{t("getStarted.branding.storeName", {
-							defaultValue: "Store Name",
+						{t("getStarted.branding.storeLink", {
+							defaultValue: "Store Link",
 						})}
 					</Typography>
 				</Box>
 				<Field
-					name="storeName"
-					label={t("getStarted.branding.storeNameLabel", {
+					name="storeLinkSlug"
+					label={t("getStarted.branding.storeLinkLabel", {
 						defaultValue: "Store Name",
 					})}
 					component={TextFormField}
-					placeholder={t("getStarted.branding.storeNamePlaceholder", {
-						defaultValue: "My Awesome Store",
-					})}
-				/>
-			</Box>
-
-			{/* Tagline */}
-			<Box mt={3}>
-				<Typography variant="h6" fontWeight={600} mb={2}>
-					{t("getStarted.branding.tagline", {
-						defaultValue: "Tagline",
-					})}
-				</Typography>
-				<Field
-					name="tagline"
-					label={t("getStarted.branding.taglineLabel", {
-						defaultValue: "Tagline",
-					})}
-					component={TextFormField}
-					placeholder={t("getStarted.branding.taglinePlaceholder", {
-						defaultValue: "Quality products, delivered fast",
+					placeholder={t("getStarted.branding.storeLinkPlaceholder", {
+						defaultValue: "Enter your store name",
 					})}
 				/>
 				<Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: "block" }}>
-					{t("getStarted.branding.taglineHelper", {
-						defaultValue: "A short description that appears below your store name",
+					{t("getStarted.branding.storeLinkHelper", {
+						defaultValue: "This will be your store URL: /store/your-store-name",
 					})}
 				</Typography>
 			</Box>
@@ -318,24 +321,20 @@ const StoreBrandingForm = () => {
 						sx={{
 							width: 64,
 							height: 64,
-							bgcolor: values.primaryBrandColor || defaultColors[0],
+							bgcolor: values.primaryBrandColor || defaultColors[1],
 							fontSize: 32,
 							fontWeight: "bold",
 						}}
+						src={values.storeLogo || undefined}
 					>
-						{values.storeName?.[0]?.toUpperCase() || "S"}
+						{!values.storeLogo && getInitial()}
 					</Avatar>
 					<Box>
 						<Typography variant="h6" fontWeight={600}>
-							{values.storeName ||
+							{values.storeLinkSlug ||
+								values.companyName ||
 								t("getStarted.branding.previewStoreName", {
 									defaultValue: "Your Store Name",
-								})}
-						</Typography>
-						<Typography variant="body2" color="text.secondary">
-							{values.tagline ||
-								t("getStarted.branding.previewTagline", {
-									defaultValue: "Your tagline goes here",
 								})}
 						</Typography>
 					</Box>

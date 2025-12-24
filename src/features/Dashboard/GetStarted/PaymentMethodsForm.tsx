@@ -111,11 +111,11 @@ const PaymentMethodsForm = () => {
 											color: isSelected ? "primary.main" : "grey.600",
 										}}
 									/>
-									<Box>
-										<Typography variant="h6" fontWeight={600}>
+									<Box sx={{ textAlign: "left" }}>
+										<Typography variant="h6" fontWeight={600} textAlign="left">
 											{method.title}
 										</Typography>
-										<Typography variant="body2" color="text.secondary">
+										<Typography variant="body2" color="text.secondary" textAlign="left">
 											{method.description}
 										</Typography>
 									</Box>
@@ -133,13 +133,13 @@ const PaymentMethodsForm = () => {
 					alignItems: "center",
 				}}
 			>
-				<Box>
-					<Typography variant="h6" fontWeight={600}>
+				<Box sx={{ textAlign: "left" }}>
+					<Typography variant="h6" fontWeight={600} textAlign="left">
 						{t("getStarted.paymentMethods.partialPayments", {
 							defaultValue: "Enable partial payments",
 						})}
 					</Typography>
-					<Typography variant="body2" color="text.secondary">
+					<Typography variant="body2" color="text.secondary" textAlign="left">
 						{t("getStarted.paymentMethods.partialPaymentsDescription", {
 							defaultValue: "Allow customers to pay a deposit upfront",
 						})}

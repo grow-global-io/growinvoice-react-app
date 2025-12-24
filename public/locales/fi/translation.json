@@ -884,6 +884,45 @@
       "userIdRequired": "Käyttäjätunnus on pakollinen"
     }
   },
+  "pickupAddress": {
+    "title": "Nouto-osoite",
+    "add": "Lisää nouto-osoite",
+    "table": {
+      "address": "Osoite",
+      "city": "Kaupunki",
+      "state": "Osavaltio",
+      "country": "Maa",
+      "zipCode": "Postinumero",
+      "action": "Toiminnot",
+      "edit": "Muokkaa"
+    },
+    "actions": {
+      "deleteTitle": "Poista tämä nouto-osoite?",
+      "deleteConfirm": "Haluatko varmasti poistaa tämän nouto-osoitteen?"
+    },
+    "form": {
+      "title": "Lisää nouto-osoite",
+      "address": "Osoite",
+      "city": "Kaupunki",
+      "state": "Osavaltio",
+      "country": "Maa",
+      "zipCode": "Postinumero",
+      "submit": "Tallenna"
+    },
+    "validation": {
+      "addressRequired": "Osoite on pakollinen",
+      "cityRequired": "Kaupunki on pakollinen",
+      "stateRequired": "Osavaltio on pakollinen",
+      "countryRequired": "Maa on pakollinen",
+      "zipCodeRequired": "Postinumero on pakollinen"
+    },
+    "success": {
+      "saved": "Nouto-osoite tallennettu onnistuneesti"
+    },
+    "error": {
+      "saveFailed": "Nouto-osoitteen tallennus epäonnistui"
+    }
+  },
   "payment": {
     "title": "Maksut",
     "create": "Luo maksu",
@@ -1479,6 +1518,10 @@
       "logoRecommendation": "Suositus: 512x512px, PNG tai SVG",
       "logoMaxSize": "Maksimitiedostokoko: 2MB",
       "logoMaxSizeError": "Tiedostokoon on oltava alle 2MB",
+      "storeLink": "Myymälän linkki",
+      "storeLinkLabel": "Myymälän nimi",
+      "storeLinkPlaceholder": "Syötä myymäläsi nimi",
+      "storeLinkHelper": "Tämä on myymäläsi URL: /store/myymäläsi-nimi",
       "storeName": "Myymälän nimi",
       "storeNameLabel": "Myymälän nimi",
       "storeNamePlaceholder": "Upea myymäläni",

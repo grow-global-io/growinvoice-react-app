@@ -1,4 +1,15 @@
-import { Box, Typography, Grid, Card, CardContent, Switch, FormControlLabel } from "@mui/material";
+import React, { useState } from "react";
+import {
+	Box,
+	Typography,
+	Grid,
+	Card,
+	CardContent,
+	Switch,
+	FormControlLabel,
+	Button,
+	Link,
+} from "@mui/material";
 import { Field, useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 import type { UpdateCurrencyCompanyDto } from "@api/services/models";
@@ -10,13 +21,17 @@ import DeliveryDiningIcon from "@mui/icons-material/DeliveryDining";
 import BoltIcon from "@mui/icons-material/Bolt";
 import BugReportIcon from "@mui/icons-material/BugReport";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import { TextFormField } from "@shared/components/FormFields/TextFormField";
+import AddIcon from "@mui/icons-material/Add";
+import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
+import { Dialog } from "@mui/material";
+import PickupAddressForm from "../../Settings/ShippingServices/PickupAddressForm";
 
 interface ExtendedFormValues extends UpdateCurrencyCompanyDto {
 	selfDelivery?: boolean;
 	deliveryPartners?: string[];
 	deliveryRegions?: string[];
 	pickupAddress?: string;
+	pickupAddressId?: string;
 }
 
 const deliveryPartners = [
@@ -86,6 +101,11 @@ const DeliveryOptionsForm = () => {
 	const { setFieldValue, values } = useFormikContext<ExtendedFormValues>();
 	const selectedPartners = values.deliveryPartners || [];
 	const selectedRegions = values.deliveryRegions || [];
+	const [openPickupDialog, setOpenPickupDialog] = useState(false);
+
+	// TODO: Replace with actual API call when backend is ready
+	// const pickupAddresses = usePickupAddressControllerFindAll();
+	const pickupAddresses: Array<{ id: string; label: string; value: string }> = [];
 
 	const handleTogglePartner = (partnerId: string) => {
 		const currentPartners = selectedPartners;
@@ -139,11 +159,11 @@ const DeliveryOptionsForm = () => {
 			>
 				<Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
 					<LocalShippingIcon sx={{ fontSize: 32, color: "success.main" }} />
-					<Box>
-						<Typography variant="h6" fontWeight={600}>
+					<Box sx={{ textAlign: "left" }}>
+						<Typography variant="h6" fontWeight={600} textAlign="left">
 							{t("getStarted.delivery.selfDelivery", { defaultValue: "Self Delivery" })}
 						</Typography>
-						<Typography variant="body2" color="text.secondary">
+						<Typography variant="body2" color="text.secondary" textAlign="left">
 							{t("getStarted.delivery.selfDeliveryDescription", {
 								defaultValue: "Handle deliveries yourself",
 							})}
@@ -171,23 +191,30 @@ const DeliveryOptionsForm = () => {
 				</Typography>
 				<Grid container spacing={2}>
 					{deliveryPartners.map((partner) => {
-						const Icon = partner.icon;
+						const Icon = partner.icon as React.ComponentType<{ sx?: any }>;
 						const isSelected = selectedPartners.includes(partner.id);
+						const isComingSoon = partner.id !== "shiprocket";
 						return (
 							<Grid item xs={6} sm={4} key={partner.id}>
 								<Card
 									sx={{
-										cursor: "pointer",
+										cursor: isComingSoon ? "not-allowed" : "pointer",
 										border: isSelected ? 2 : 1,
 										borderColor: isSelected ? "primary.main" : "grey.300",
 										boxShadow: isSelected ? 3 : 1,
 										"&:hover": {
-											borderColor: "primary.main",
-											boxShadow: 3,
+											borderColor: isComingSoon ? "grey.300" : "primary.main",
+											boxShadow: isComingSoon ? 1 : 3,
 										},
 										height: "100%",
+										position: "relative",
+										opacity: isComingSoon ? 0.95 : 1,
 									}}
-									onClick={() => handleTogglePartner(partner.id)}
+									onClick={() => {
+										if (!isComingSoon) {
+											handleTogglePartner(partner.id);
+										}
+									}}
 								>
 									<CardContent sx={{ textAlign: "center", p: 2 }}>
 										<Icon
@@ -201,6 +228,38 @@ const DeliveryOptionsForm = () => {
 											{partner.title}
 										</Typography>
 									</CardContent>
+									{isComingSoon && (
+										<Box
+											sx={{
+												position: "absolute",
+												top: 0,
+												left: 0,
+												right: 0,
+												bottom: 0,
+												display: "flex",
+												alignItems: "center",
+												justifyContent: "center",
+												background:
+													"linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.6))",
+												backdropFilter: "blur(1px)",
+												borderRadius: 1,
+												zIndex: 2,
+											}}
+										>
+											<Typography
+												variant="body2"
+												fontWeight={700}
+												color="primary.main"
+												sx={{
+													textTransform: "uppercase",
+													letterSpacing: 1,
+													textShadow: "0 1px 3px rgba(255, 255, 255, 0.9)",
+												}}
+											>
+												{t("common.comingSoon", { defaultValue: "Coming Soon" })}
+											</Typography>
+										</Box>
+									)}
 								</Card>
 							</Grid>
 						);
@@ -254,29 +313,63 @@ const DeliveryOptionsForm = () => {
 
 			{/* Pickup Address */}
 			<Box mt={4}>
-				<Typography variant="h6" fontWeight={600} mb={2}>
-					{t("getStarted.delivery.pickupAddress", {
-						defaultValue: "Pickup Address",
-					})}
-				</Typography>
+				<Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+					<Typography variant="h6" fontWeight={600}>
+						{t("getStarted.delivery.pickupAddress", {
+							defaultValue: "Pickup Address",
+						})}
+					</Typography>
+					<Button
+						size="small"
+						variant="outlined"
+						startIcon={<AddIcon />}
+						onClick={() => setOpenPickupDialog(true)}
+					>
+						{t("pickupAddress.add", { defaultValue: "Add Pickup Address" })}
+					</Button>
+				</Box>
 				<Field
-					name="pickupAddress"
+					name="pickupAddressId"
 					label={t("getStarted.delivery.pickupAddressLabel", {
-						defaultValue: "Pickup Address",
+						defaultValue: "Select Pickup Address",
 					})}
-					component={TextFormField}
+					component={AutocompleteField}
+					options={pickupAddresses}
 					placeholder={t("getStarted.delivery.pickupAddressPlaceholder", {
-						defaultValue: "Enter your warehouse/store address",
+						defaultValue: "Select or enter pickup address",
 					})}
-					multiline
-					rows={3}
 				/>
 				<Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: "block" }}>
 					{t("getStarted.delivery.pickupAddressHelper", {
 						defaultValue: "This is where delivery partners will pick up orders from",
 					})}
 				</Typography>
+				<Typography variant="caption" color="primary" sx={{ mt: 0.5, display: "block" }}>
+					<Link
+						href="/setting/shippingservices"
+						target="_blank"
+						underline="hover"
+						sx={{ cursor: "pointer" }}
+					>
+						{t("getStarted.delivery.managePickupAddresses", {
+							defaultValue: "Manage pickup addresses in Settings",
+						})}
+					</Link>
+				</Typography>
 			</Box>
+			<Dialog
+				open={openPickupDialog}
+				onClose={() => setOpenPickupDialog(false)}
+				fullWidth
+				maxWidth="sm"
+			>
+				<PickupAddressForm
+					handleClose={() => {
+						setOpenPickupDialog(false);
+						// TODO: Refresh pickup addresses list after adding
+					}}
+				/>
+			</Dialog>
 		</Box>
 	);
 };

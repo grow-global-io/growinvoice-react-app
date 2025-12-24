@@ -879,6 +879,45 @@
       "userIdRequired": "user id is required"
     }
   },
+  "pickupAddress": {
+    "title": "Pickup Address",
+    "add": "Add Pickup Address",
+    "table": {
+      "address": "Address",
+      "city": "City",
+      "state": "State",
+      "country": "Country",
+      "zipCode": "Zip Code",
+      "action": "Action",
+      "edit": "Edit"
+    },
+    "actions": {
+      "deleteTitle": "Delete this Pickup Address?",
+      "deleteConfirm": "Are you sure you want to delete this Pickup Address?"
+    },
+    "form": {
+      "title": "Add Pickup Address",
+      "address": "Address",
+      "city": "City",
+      "state": "State",
+      "country": "Country",
+      "zipCode": "Zip Code",
+      "submit": "Save"
+    },
+    "validation": {
+      "addressRequired": "Address is required",
+      "cityRequired": "City is required",
+      "stateRequired": "State is required",
+      "countryRequired": "Country is required",
+      "zipCodeRequired": "Zip Code is required"
+    },
+    "success": {
+      "saved": "Pickup address saved successfully"
+    },
+    "error": {
+      "saveFailed": "Failed to save pickup address"
+    }
+  },
   "payment": {
     "title": "Payments",
     "create": "Create Payment",
@@ -1462,6 +1501,10 @@
       "logoRecommendation": "Recommended: 512x512px, PNG or SVG",
       "logoMaxSize": "Max file size: 2MB",
       "logoMaxSizeError": "File size must be less than 2MB",
+      "storeLink": "Store Link",
+      "storeLinkLabel": "Store Name",
+      "storeLinkPlaceholder": "Enter your store name",
+      "storeLinkHelper": "This will be your store URL: /store/your-store-name",
       "storeName": "Store Name",
       "storeNameLabel": "Store Name",
       "storeNamePlaceholder": "My Awesome Store",
@@ -1505,6 +1548,20 @@
         "createWhatsApp": "Create WhatsApp Community",
         "setupInstagram": "Set up Instagram Business"
       }
+    },
+    "delivery": {
+      "title": "Configure delivery options",
+      "subtitle": "Set up how you'll deliver products to customers",
+      "selfDelivery": "Self Delivery",
+      "selfDeliveryDescription": "Handle deliveries yourself",
+      "thirdPartyPartners": "Third-party Delivery Partners",
+      "whereDeliver": "Where do you deliver?",
+      "pickupAddress": "Pickup Address",
+      "pickupAddressLabel": "Select Pickup Address",
+      "pickupAddressManual": "Or enter address manually",
+      "pickupAddressPlaceholder": "Enter your warehouse/store address",
+      "pickupAddressHelper": "This is where delivery partners will pick up orders from",
+      "managePickupAddresses": "Manage pickup addresses in Settings"
     },
     "thankYou": {
       "title": "Thank You!",
