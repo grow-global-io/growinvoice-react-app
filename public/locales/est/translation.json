@@ -65,6 +65,7 @@
   "dashboard": {
     "rollUpAiStore": "Roll UP AI pood",
     "aiAssistant": "AI Assistent",
+    "ledgerInfo": "Pearaamatu info",
     "noWidgetsFound": "Ühtegi töölauda ei leitud",
     "deleteData": "Kustuta andmed",
     "deleteConfirm": "Kas oled kindel, et soovid need andmed kustutada?",
@@ -1960,5 +1961,42 @@
         "description": "Sisestage saatmise pakkuja poolt esitatud saatmise viitenumber või jälgimisnumber. See on kohustuslik, kui saatmise olek on seatud 'Saadetud'. See number aitab tellimust jälgida transpordi ajal."
       }
     }
+  },
+  "ledger": {
+    "title": "Pearaamatu informatsioon",
+    "whatIsLedger": "Mis on pearaamat?",
+    "ledgerDescription": "Pearaamat on raamat, kuhu ettevõte, pank jne. kirjutab maksnud ja saadud raha. See pakub üksikasjalikku kronoloogilist kirjet kõigist finantstehingutest, aidates teil jälgida oma äri finantsseisundit ja säilitada täpseid raamatupidamistietoja.",
+    "description": "Kirjeldus",
+    "selectDateRange": "Vali kuupäevavahemik",
+    "totalReceived": "Kokku saadud",
+    "totalPaid": "Kokku makstud",
+    "netBalance": "Netosaldo",
+    "currentBalance": "Praegune saldo",
+    "profit": "Kasum",
+    "userInfo": "Kasutaja teave",
+    "companyName": "Ettevõtte nimi",
+    "email": "E-post",
+    "currency": "Valuuta",
+    "phone": "Telefon",
+    "notAvailable": "Pole saadaval",
+    "ledgerEntries": "Pearaamatu kanded",
+    "date": "Kuupäev",
+    "description": "Kirjeldus",
+    "received": "Saadud",
+    "paid": "Makstud",
+    "balance": "Saldo",
+    "noEntries": "Valitud kuupäevavahemiku kohta ei leitud pearaamatu kandeid.",
+    "reportTitle": "Üldine pearaamatu aruanne",
+    "dateRange": "Kuupäevavahemik",
+    "dateGenerated": "Aruanne loodud",
+    "address": "Aadress",
+    "download": "Laadi alla",
+    "downloadPDF": "Laadi alla PDF-na",
+    "downloadCSV": "Laadi alla CSV-na",
+    "downloadExcel": "Laadi alla Excelina",
+    "downloadXML": "Laadi alla XML-na",
+    "invoicePayment": "Arve makse",
+    "expense": "Kulu",
+    "paymentReceived": "Makse saadud"
   }
 }

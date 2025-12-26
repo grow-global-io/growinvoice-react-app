@@ -65,6 +65,7 @@
   "dashboard": {
     "rollUpAiStore": "Luo verkkokauppa",
     "aiAssistant": "AI-avustaja",
+    "ledgerInfo": "Päiväkirjatiedot",
     "noWidgetsFound": "Yhteenveto-työkaluja ei löytynyt",
     "deleteData": "Poista tiedot",
     "deleteConfirm": "Haluatko varmasti poistaa nämä tiedot?",
@@ -1982,5 +1983,42 @@
         "description": "Anna toimittajan toimittama toimitusviitenumero tai seurantanumero. Tämä on pakollinen, kun toimituksen tila on asetettu 'Lähetetty'. Tämä numero auttaa seuraamaan tilausta kuljetuksen aikana."
       }
     }
+  },
+  "ledger": {
+    "title": "Päiväkirjatiedot",
+    "whatIsLedger": "Mikä on päiväkirja?",
+    "ledgerDescription": "Päiväkirja on kirja, johon yritys, pankki jne. kirjaa maksamansa ja saamansa rahat. Se tarjoaa yksityiskohtaisen kronologisen kirjanpidon kaikista taloudellisista tapahtumista, auttaen sinua seuraamaan yrityksesi taloudellista terveyttä ja ylläpitämään tarkkoja kirjanpitotietoja.",
+    "description": "Kuvaus",
+    "selectDateRange": "Valitse päivämääräalue",
+    "totalReceived": "Yhteensä saatu",
+    "totalPaid": "Yhteensä maksettu",
+    "netBalance": "Nettosaldo",
+    "currentBalance": "Nykyinen saldo",
+    "profit": "Voitto",
+    "userInfo": "Käyttäjätiedot",
+    "companyName": "Yrityksen nimi",
+    "email": "Sähköposti",
+    "currency": "Valuutta",
+    "phone": "Puhelin",
+    "notAvailable": "Ei saatavilla",
+    "ledgerEntries": "Päiväkirjamerkinnät",
+    "date": "Päivämäärä",
+    "description": "Kuvaus",
+    "received": "Saatu",
+    "paid": "Maksettu",
+    "balance": "Saldo",
+    "noEntries": "Valitulle päivämääräalueelle ei löytynyt päiväkirjamerkintöjä.",
+    "reportTitle": "Yleinen päiväkirjaraportti",
+    "dateRange": "Päivämääräalue",
+    "dateGenerated": "Raportti luotu",
+    "address": "Osoite",
+    "download": "Lataa",
+    "downloadPDF": "Lataa PDF-tiedostona",
+    "downloadCSV": "Lataa CSV-tiedostona",
+    "downloadExcel": "Lataa Excel-tiedostona",
+    "downloadXML": "Lataa XML-tiedostona",
+    "invoicePayment": "Laskun maksu",
+    "expense": "Kulu",
+    "paymentReceived": "Maksu vastaanotettu"
   }
 }

@@ -65,6 +65,7 @@
   "dashboard": {
     "rollUpAiStore": "Roll UP AI Store",
     "aiAssistant": "AI Assistant",
+    "ledgerInfo": "Ledger Info",
     "noWidgetsFound": "No Dashboard Widgets Found",
     "deleteData": "Delete Data",
     "deleteConfirm": "Are you sure you want to delete this data?",
@@ -1979,6 +1980,43 @@
         "description": "Enter the shipping reference number or tracking number provided by the shipping carrier. This is required when the shipment status is set to 'Shipped'. This number helps track the order during transit."
       }
     }
+  },
+  "ledger": {
+    "title": "Ledger Information",
+    "whatIsLedger": "What is a Ledger?",
+    "ledgerDescription": "A ledger is a book in which a company, bank, etc. records the money it has paid and received. It provides a detailed chronological record of all financial transactions, helping you track your business's financial health and maintain accurate accounting records.",
+    "description": "Description",
+    "selectDateRange": "Select Date Range",
+    "totalReceived": "Total Received",
+    "totalPaid": "Total Paid",
+    "netBalance": "Net Balance",
+    "currentBalance": "Current Balance",
+    "profit": "Profit",
+    "userInfo": "User Information",
+    "companyName": "Company Name",
+    "email": "Email",
+    "currency": "Currency",
+    "phone": "Phone",
+    "notAvailable": "Not Available",
+    "ledgerEntries": "Ledger Entries",
+    "date": "Date",
+    "description": "Description",
+    "received": "Received",
+    "paid": "Paid",
+    "balance": "Balance",
+    "noEntries": "No ledger entries found for the selected date range.",
+    "reportTitle": "General Ledger Report",
+    "dateRange": "Date Range",
+    "dateGenerated": "Date Generated",
+    "address": "Address",
+    "download": "Download",
+    "downloadPDF": "Download as PDF",
+    "downloadCSV": "Download as CSV",
+    "downloadExcel": "Download as Excel",
+    "downloadXML": "Download as XML",
+    "invoicePayment": "Invoice Payment",
+    "expense": "Expense",
+    "paymentReceived": "Payment Received"
   }
 }
 

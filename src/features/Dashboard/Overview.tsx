@@ -44,7 +44,7 @@ const Overview = () => {
 			<ExpensesSummary />
 			<Grid container spacing={2} mt={1}>
 				<Grid item xs={12} textAlign={"right"}>
-					<Box display={"flex"} justifyContent={"flex-end"} mb={2}>
+					<Box display={"flex"} justifyContent={"flex-end"} gap={2} mb={2} flexWrap="wrap">
 						<Button variant="contained" color="secondary" onClick={() => navigate("/ai-store")}>
 							{t("dashboard.rollUpAiStore", { defaultValue: "Roll UP AI Store" })}
 						</Button>
@@ -56,6 +56,15 @@ const Overview = () => {
 							}}
 						>
 							{t("dashboard.aiAssistant", { defaultValue: "AI Assistant" })}
+						</Button>
+						<Button
+							variant="contained"
+							color="primary"
+							onClick={() => {
+								navigate("/ledger");
+							}}
+						>
+							{t("dashboard.ledgerInfo", { defaultValue: "Ledger Info" })}
 						</Button>
 					</Box>
 				</Grid>
