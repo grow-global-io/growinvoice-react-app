@@ -55,11 +55,19 @@ export function DateCalander({
 			fullWidth
 			value={displayValue}
 			placeholder="Date range will be displayed here"
-			disabled
 			onClick={() => {
 				if (setDisplayToday) {
-					setDisplayToday(false);
+					setDisplayToday(true);
 				}
+			}}
+			InputProps={{
+				readOnly: true,
+			}}
+			sx={{
+				cursor: "pointer",
+				"& .MuiInputBase-input": {
+					cursor: "pointer",
+				},
 			}}
 		/>
 	);
