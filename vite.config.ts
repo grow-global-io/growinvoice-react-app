@@ -32,7 +32,7 @@ export default defineConfig({
 			workbox: {
 				// Pre-cache app shell files
 				globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
-				maximumFileSizeToCacheInBytes: 6 * 1024 * 1024, // 6 MB
+				maximumFileSizeToCacheInBytes: 8 * 1024 * 1024, // 8 MB (increased to accommodate 6.63 MB bundle)
 				runtimeCaching: [
 					{
 						// API: NetworkFirst (5 min expiry, 10s timeout)
