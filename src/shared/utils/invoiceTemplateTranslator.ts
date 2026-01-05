@@ -3,10 +3,24 @@
  * Replaces English labels with translated versions based on current locale
  */
 
-export const translateInvoiceHtml = (html: string, t: (key: string) => string): string => {
+export const translateInvoiceHtml = (
+	html: string,
+	t: (key: string) => string,
+	isEuropeanTemplate?: boolean,
+): string => {
 	if (!html) return html;
 
 	let translatedHtml = html;
+
+	// Detect if template is European by checking HTML content for European indicators
+	// Also check for European bank details, EUR currency, or other European-specific patterns
+	const isEuropean =
+		isEuropeanTemplate !== undefined
+			? isEuropeanTemplate
+			: /european|eur\b|euro/i.test(html) ||
+				/recipient['\u2019\u2018\u0027]s\s+european\s+bank\s+details/i.test(html) ||
+				/iban|bic|swift/i.test(html) ||
+				/html.*european.*template/i.test(html.toLowerCase());
 
 	// First, handle mixed-language text that might come from backend
 	// Replace "Recipient's Käteinen Details" with proper translation
@@ -187,6 +201,60 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 		{
 			key: "invoice.template.unit",
 			value: t("invoice.template.unit"),
+		},
+		{
+			key: "invoice.template.receipt",
+			value: t("invoice.template.receipt"),
+		},
+		// Handle customer type translation keys that backend might insert (PascalCase format)
+		{
+			key: "CustomerForm.Type.PrivateCustomer",
+			value: t("customerForm.type.privateCustomer") || "Private Customer",
+		},
+		{
+			key: "CustomerForm.Type.BusinessCustomer",
+			value: t("customerForm.type.businessCustomer") || "Business Customer",
+		},
+		{
+			key: "CustomerForm.Type.Freelancer",
+			value: t("customerForm.type.freelancer") || "Freelancer",
+		},
+		{
+			key: "CustomerForm.Type.BusinessWithGST",
+			value: isEuropean
+				? t("customerForm.type.businessCustomer") || "Business Customer"
+				: t("customerForm.type.businessWithGST") || "Business with GST",
+		},
+		{
+			key: "CustomerForm.Type.BusinessWithoutGST",
+			value: isEuropean
+				? t("customerForm.type.privateCustomer") || "Private Customer"
+				: t("customerForm.type.businessWithoutGST") || "Business without GST",
+		},
+		// Also handle camelCase format (in case backend uses that)
+		{
+			key: "customerForm.type.privateCustomer",
+			value: t("customerForm.type.privateCustomer") || "Private Customer",
+		},
+		{
+			key: "customerForm.type.businessCustomer",
+			value: t("customerForm.type.businessCustomer") || "Business Customer",
+		},
+		{
+			key: "customerForm.type.freelancer",
+			value: t("customerForm.type.freelancer") || "Freelancer",
+		},
+		{
+			key: "customerForm.type.businessWithGST",
+			value: isEuropean
+				? t("customerForm.type.businessCustomer") || "Business Customer"
+				: t("customerForm.type.businessWithGST") || "Business with GST",
+		},
+		{
+			key: "customerForm.type.businessWithoutGST",
+			value: isEuropean
+				? t("customerForm.type.privateCustomer") || "Private Customer"
+				: t("customerForm.type.businessWithoutGST") || "Business without GST",
 		},
 		{
 			key: "invoice.template.receipt",
@@ -683,25 +751,34 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			english: /\bFreelancer\b/gi,
 			translation: t("customerForm.type.freelancer") || "Freelancer",
 		},
-		// Match "Business with GST" (various formats)
+		// For European templates: Use "Private Customer" and "Business Customer" instead of GST labels
+		// Match "Business with GST" (various formats) - for European templates, show "Business Customer"
 		{
 			english: /\bBusiness\s+with\s+GST\b/gi,
-			translation: t("customerForm.type.businessWithGST") || "Business with GST",
+			translation: isEuropean
+				? t("customerForm.type.businessCustomer") || "Business Customer"
+				: t("customerForm.type.businessWithGST") || "Business with GST",
 		},
-		// Match "BusinessWithGST" (camelCase format)
+		// Match "BusinessWithGST" (camelCase format) - for European templates, show "Business Customer"
 		{
 			english: /\bBusinessWithGST\b/gi,
-			translation: t("customerForm.type.businessWithGST") || "Business with GST",
+			translation: isEuropean
+				? t("customerForm.type.businessCustomer") || "Business Customer"
+				: t("customerForm.type.businessWithGST") || "Business with GST",
 		},
-		// Match "Business without GST" (various formats)
+		// Match "Business without GST" (various formats) - for European templates, show "Private Customer"
 		{
 			english: /\bBusiness\s+without\s+GST\b/gi,
-			translation: t("customerForm.type.businessWithoutGST") || "Business without GST",
+			translation: isEuropean
+				? t("customerForm.type.privateCustomer") || "Private Customer"
+				: t("customerForm.type.businessWithoutGST") || "Business without GST",
 		},
-		// Match "BusinessWithoutGST" (camelCase format)
+		// Match "BusinessWithoutGST" (camelCase format) - for European templates, show "Private Customer"
 		{
 			english: /\bBusinessWithoutGST\b/gi,
-			translation: t("customerForm.type.businessWithoutGST") || "Business without GST",
+			translation: isEuropean
+				? t("customerForm.type.privateCustomer") || "Private Customer"
+				: t("customerForm.type.businessWithoutGST") || "Business without GST",
 		},
 		{ english: /Terms\s*&\s*Conditions:/gi, translation: t("invoice.template.termsConditions") },
 
@@ -751,6 +828,44 @@ export const translateInvoiceHtml = (html: string, t: (key: string) => string): 
 			translatedHtml = translatedHtml.replace(english, translation);
 		}
 	});
+
+	// Additional direct replacements for European templates - catch any remaining instances
+	// Re-check if European (in case detection improved after processing)
+	const isEuropeanFinal =
+		isEuropean ||
+		/european|eur\b|euro/i.test(translatedHtml) ||
+		/recipient['\u2019\u2018\u0027]s\s+european\s+bank\s+details/i.test(translatedHtml) ||
+		/iban|bic|swift/i.test(translatedHtml);
+
+	if (isEuropeanFinal) {
+		// Replace "Business without GST" with "Private Customer" (case-insensitive, handle various spacing)
+		// Use multiple patterns to catch all variations
+		translatedHtml = translatedHtml.replace(
+			/\bBusiness\s+without\s+GST\b/gi,
+			t("customerForm.type.privateCustomer") || "Private Customer",
+		);
+		translatedHtml = translatedHtml.replace(
+			/\bBusinessWithoutGST\b/gi,
+			t("customerForm.type.privateCustomer") || "Private Customer",
+		);
+		translatedHtml = translatedHtml.replace(
+			/Business\s*without\s*GST/gi,
+			t("customerForm.type.privateCustomer") || "Private Customer",
+		);
+		// Replace "Business with GST" with "Business Customer" (case-insensitive, handle various spacing)
+		translatedHtml = translatedHtml.replace(
+			/\bBusiness\s+with\s+GST\b/gi,
+			t("customerForm.type.businessCustomer") || "Business Customer",
+		);
+		translatedHtml = translatedHtml.replace(
+			/\bBusinessWithGST\b/gi,
+			t("customerForm.type.businessCustomer") || "Business Customer",
+		);
+		translatedHtml = translatedHtml.replace(
+			/Business\s*with\s*GST/gi,
+			t("customerForm.type.businessCustomer") || "Business Customer",
+		);
+	}
 
 	// Final post-processing: Catch any remaining instances
 	// This is a safety net to ensure we catch everything

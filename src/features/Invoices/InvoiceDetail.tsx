@@ -123,7 +123,8 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			let html = getHtmlText?.data ?? "";
 
 			// Translate the invoice HTML content after HSN removal
-			const translatedHtml = translateInvoiceHtml(html, t);
+			// Pass isEuropeanCountry to use appropriate customer type labels
+			const translatedHtml = translateInvoiceHtml(html, t, isEuropeanCountry || false);
 
 			iframe.srcdoc = translatedHtml;
 		}
