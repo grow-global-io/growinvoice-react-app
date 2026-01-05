@@ -47,6 +47,7 @@ import VendorsPage from "@pages/VendorsPage";
 import CustomerInvoicesPage from "@pages/CustomerInvoicesPage";
 import StorePage from "@pages/StorePage";
 import LedgerPage from "@pages/LedgerPage";
+import InventoryPage from "@pages/InventoryPage";
 import StoreSearchPage from "./features/Store/StoreSearchPage";
 import RollUpForm from "@features/AIStore/RollUpForm";
 import StoreUrlVerify from "@features/AIStore/StoreUrlVerify";
@@ -122,6 +123,10 @@ export const protectedRoutes: Route[] = [
 	{
 		path: "/product/createproduct",
 		Component: CreateProductPage,
+	},
+	{
+		path: "/inventory",
+		Component: InventoryPage,
 	},
 	{
 		path: "/customer/customerlist",

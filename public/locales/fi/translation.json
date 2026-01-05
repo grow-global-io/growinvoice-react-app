@@ -2020,5 +2020,50 @@
     "invoicePayment": "Laskun maksu",
     "expense": "Kulu",
     "paymentReceived": "Maksu vastaanotettu"
+  },
+  "inventory": {
+    "title": "Varastonhallinta",
+    "addStock": "Lisää varastoa",
+    "stockList": "Varastoluettelo",
+    "noStock": "Varastomerkintöjä ei löytynyt. Lisää tuotteita varastonhallintaan.",
+    "table": {
+      "product": "Tuote",
+      "quantity": "Määrä",
+      "status": "Tila",
+      "threshold": "Matalan varaston kynnysarvo",
+      "lastUpdated": "Viimeksi päivitetty",
+      "actions": "Toiminnot"
+    },
+    "status": {
+      "available": "Saatavilla",
+      "partiallyAvailable": "Osittain saatavilla",
+      "unavailable": "Ei saatavilla"
+    },
+    "summary": {
+      "totalProducts": "Tuotteita yhteensä",
+      "available": "Saatavilla",
+      "partiallyAvailable": "Osittain saatavilla",
+      "unavailable": "Ei saatavilla"
+    },
+    "actions": {
+      "edit": "Muokkaa varastoa",
+      "delete": "Poista"
+    },
+    "dialog": {
+      "editTitle": "Muokkaa varastoa",
+      "addTitle": "Lisää varastoa",
+      "product": "Tuote",
+      "currentStock": "Nykyinen varasto",
+      "operation": "Toiminto",
+      "quantity": "Määrä",
+      "amount": "Summa",
+      "lowStockThreshold": "Matalan varaston kynnysarvo",
+      "thresholdHelper": "Hälytys, kun varasto putoaa tämän tason alle"
+    },
+    "operation": {
+      "add": "Lisää varastoa",
+      "subtract": "Vähennä varastoa",
+      "set": "Aseta varasto"
+    }
   }
 }

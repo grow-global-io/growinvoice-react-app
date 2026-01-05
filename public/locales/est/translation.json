@@ -472,9 +472,7 @@
       "paymentWithGrowlimitless": "Makse Growlimitless kaudu",
       "paymentWithRazorpay": "Makse Razorpay kaudu",
       "noInvoiceFound": "Arveid ei leitud",
-      "invoicesSentSuccessfully": "Arved saadetud klientidele edukalt"
-    },
-    "detail": {
+      "invoicesSentSuccessfully": "Arved saadetud klientidele edukalt",
       "downloadUpiQr": "Laadi UPI QR alla",
       "pleaseAcceptTerms": "Selle arve vaatamisega kinnitate, et kuvatud andmeid töödeldakse {companyName} poolt {customerName} nimel arvelduse ja arvestuse eesmärgil kohaldatavate andmekaitse seaduste (GDPR) kohaselt."
     },
@@ -1966,7 +1964,6 @@
     "title": "Pearaamatu informatsioon",
     "whatIsLedger": "Mis on pearaamat?",
     "ledgerDescription": "Pearaamat on raamat, kuhu ettevõte, pank jne. kirjutab maksnud ja saadud raha. See pakub üksikasjalikku kronoloogilist kirjet kõigist finantstehingutest, aidates teil jälgida oma äri finantsseisundit ja säilitada täpseid raamatupidamistietoja.",
-    "description": "Kirjeldus",
     "selectDateRange": "Vali kuupäevavahemik",
     "totalReceived": "Kokku saadud",
     "totalPaid": "Kokku makstud",
@@ -1998,5 +1995,50 @@
     "invoicePayment": "Arve makse",
     "expense": "Kulu",
     "paymentReceived": "Makse saadud"
+  },
+  "inventory": {
+    "title": "Laoseisu haldus",
+    "addStock": "Lisa laoseis",
+    "stockList": "Laoseisu loend",
+    "noStock": "Laoseisu kirjeid ei leitud. Lisa tooted laoseisu haldamiseks.",
+    "table": {
+      "product": "Toode",
+      "quantity": "Kogus",
+      "status": "Olek",
+      "threshold": "Madala laoseisu lävi",
+      "lastUpdated": "Viimati uuendatud",
+      "actions": "Tegevused"
+    },
+    "status": {
+      "available": "Saadaval",
+      "partiallyAvailable": "Osaliselt saadaval",
+      "unavailable": "Pole saadaval"
+    },
+    "summary": {
+      "totalProducts": "Tooteid kokku",
+      "available": "Saadaval",
+      "partiallyAvailable": "Osaliselt saadaval",
+      "unavailable": "Pole saadaval"
+    },
+    "actions": {
+      "edit": "Muuda laoseisu",
+      "delete": "Kustuta"
+    },
+    "dialog": {
+      "editTitle": "Muuda laoseisu",
+      "addTitle": "Lisa laoseis",
+      "product": "Toode",
+      "currentStock": "Praegune laoseis",
+      "operation": "Tegevus",
+      "quantity": "Kogus",
+      "amount": "Summa",
+      "lowStockThreshold": "Madala laoseisu lävi",
+      "thresholdHelper": "Hoiatus, kui laoseis langeb selle taseme alla"
+    },
+    "operation": {
+      "add": "Lisa laoseis",
+      "subtract": "Vähenda laoseisu",
+      "set": "Määra laoseis"
+    }
   }
 }

@@ -37,6 +37,7 @@ import NotificationMain from "@features/Notification/NotificationMain";
 import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined";
 import { FaFileInvoice } from "react-icons/fa6";
 import SignalCellularAltOutlinedIcon from "@mui/icons-material/SignalCellularAltOutlined";
+import Inventory2Icon from "@mui/icons-material/Inventory2";
 import { useQueryClient } from "@tanstack/react-query";
 import { useStoreLinkStore } from "@store/storeLinkStore";
 import NewReleasesIcon from "@mui/icons-material/NewReleases";
@@ -143,6 +144,12 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 			path: "/product/productlist",
 			icon: <StoreIcon />,
 			menuName: t("product.title"),
+			menuItems: [],
+		},
+		{
+			path: "/inventory",
+			icon: <Inventory2Icon />,
+			menuName: t("nav.inventory", { defaultValue: "Inventory" }),
 			menuItems: [],
 		},
 		// New My Orders menu (shown above Invoices)

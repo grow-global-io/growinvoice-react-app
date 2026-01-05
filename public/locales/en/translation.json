@@ -60,7 +60,9 @@
     "profile": "My Profile",
     "logout": "Logout",
     "login": "Login",
-    "register": "Register"
+    "register": "Register",
+    "inventory": "Inventory",
+    "ledgerInfo": "Ledger Info"
   },
   "dashboard": {
     "rollUpAiStore": "Roll UP AI Store",
@@ -2017,6 +2019,51 @@
     "invoicePayment": "Invoice Payment",
     "expense": "Expense",
     "paymentReceived": "Payment Received"
+  },
+  "inventory": {
+    "title": "Inventory Management",
+    "addStock": "Add Stock",
+    "stockList": "Stock List",
+    "noStock": "No stock entries found. Add products to manage inventory.",
+    "table": {
+      "product": "Product",
+      "quantity": "Quantity",
+      "status": "Status",
+      "threshold": "Low Stock Threshold",
+      "lastUpdated": "Last Updated",
+      "actions": "Actions"
+    },
+    "status": {
+      "available": "Available",
+      "partiallyAvailable": "Partially Available",
+      "unavailable": "Unavailable"
+    },
+    "summary": {
+      "totalProducts": "Total Products",
+      "available": "Available",
+      "partiallyAvailable": "Partially Available",
+      "unavailable": "Unavailable"
+    },
+    "actions": {
+      "edit": "Edit Stock",
+      "delete": "Delete"
+    },
+    "dialog": {
+      "editTitle": "Edit Stock",
+      "addTitle": "Add Stock",
+      "product": "Product",
+      "currentStock": "Current Stock",
+      "operation": "Operation",
+      "quantity": "Quantity",
+      "amount": "Amount",
+      "lowStockThreshold": "Low Stock Threshold",
+      "thresholdHelper": "Alert when stock falls below this level"
+    },
+    "operation": {
+      "add": "Add Stock",
+      "subtract": "Subtract Stock",
+      "set": "Set Stock"
+    }
   }
 }
 
