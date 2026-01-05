@@ -1109,7 +1109,12 @@ const CreateInvoice = ({
 													params: { lang: "en" }, // Always request English from backend, frontend will translate
 												});
 												// Translate the invoice HTML content before setting it
-												const translatedHtml = translateInvoiceHtml(data as string, t);
+												// Pass isEuropeanCountry to use appropriate customer type labels
+												const translatedHtml = translateInvoiceHtml(
+													data as string,
+													t,
+													isEuropeanCountry || false,
+												);
 												setPreviewString(translatedHtml);
 												handleClickOpenInvoicePreview();
 											}}

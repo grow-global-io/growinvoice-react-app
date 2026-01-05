@@ -364,7 +364,9 @@
     "type": {
       "freelancer": "Freelancer",
       "businessWithGST": "Business with GST",
-      "businessWithoutGST": "Business without GST"
+      "businessWithoutGST": "Business without GST",
+      "privateCustomer": "Private Customer",
+      "businessCustomer": "Business Customer"
     }
   },
   "receipt": {
@@ -2018,7 +2020,16 @@
     "downloadXML": "Download as XML",
     "invoicePayment": "Invoice Payment",
     "expense": "Expense",
-    "paymentReceived": "Payment Received"
+    "paymentReceived": "Payment Received",
+    "salesReport": "Sales Report",
+    "noSalesData": "No sales data found for the selected date range.",
+    "salesReportDate": "Date",
+    "salesReportProductName": "Sold Product Name",
+    "salesReportQuantity": "Quantity",
+    "salesReportStockPrice": "Product Stock Price",
+    "salesReportSellingPrice": "Selling Price",
+    "salesReportProfitAmount": "Profit Amount",
+    "salesReportProfitPercent": "Profit Percent"
   },
   "inventory": {
     "title": "Inventory Management",
