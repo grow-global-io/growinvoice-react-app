@@ -9,11 +9,14 @@ import {
 	Menu,
 	MenuItem,
 	Divider,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
 } from "@mui/material";
-import "react-modern-calendar-datepicker/lib/DatePicker.css";
-import { useState, useMemo, useEffect, useRef } from "react";
-import { type DayRange } from "@hassanmojab/react-modern-calendar-datepicker";
-import DatePicker from "@hassanmojab/react-modern-calendar-datepicker";
+import { useState, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@store/auth";
 import { convertUtcToFormat, parseDateStringToFormat } from "@shared/formatter";
@@ -26,7 +29,10 @@ import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { useReportsControllerGetProfitLossReports } from "@api/services/reports";
 import { usePaymentsControllerFindAll } from "@api/services/payments";
 import Loader from "@shared/components/Loader";
-import { useReportsControllerGetProfitLossRange } from "@api/services/reports";
+import { useReportsControllerGetProductReports } from "@api/services/reports";
+import { useInventoryControllerFindAll } from "@api/services/inventory";
+import { useProductControllerFindAll } from "@api/services/product";
+import type { InventoryListResponse } from "@api/services/inventory";
 import { LoaderService } from "@shared/services/LoaderService";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -36,51 +42,18 @@ import moment from "moment";
 const Ledger = () => {
 	const { t } = useTranslation();
 	const { user } = useAuthStore();
-	const [dayRange, setDayRange] = useState<DayRange>({
-		from: null,
-		to: null,
-	});
 
-	// Get date range from API
-	const dateRange = useReportsControllerGetProfitLossRange();
+	// Set to today's date (both from and to are today)
+	const today = useMemo(() => {
+		const now = new Date();
+		const year = now.getFullYear();
+		const month = String(now.getMonth() + 1).padStart(2, "0");
+		const day = String(now.getDate()).padStart(2, "0");
+		return `${year}-${month}-${day}`;
+	}, []);
 
-	// Initialize date range from API
-	useEffect(() => {
-		if (dateRange?.data?.start && dateRange?.data?.end && !dayRange.from && !dayRange.to) {
-			setDayRange({
-				from: {
-					day: parseInt(parseDateStringToFormat(dateRange.data.start, "DD")),
-					month: parseInt(parseDateStringToFormat(dateRange.data.start, "MM")),
-					year: parseInt(parseDateStringToFormat(dateRange.data.start, "YYYY")),
-				},
-				to: {
-					day: parseInt(parseDateStringToFormat(dateRange.data.end, "DD")),
-					month: parseInt(parseDateStringToFormat(dateRange.data.end, "MM")),
-					year: parseInt(parseDateStringToFormat(dateRange.data.end, "YYYY")),
-				},
-			});
-		}
-	}, [dateRange?.data]);
-
-	const fromDate = useMemo(() => {
-		if (dayRange.from) {
-			return convertUtcToFormat(
-				`${dayRange.from.year}-${dayRange.from.month}-${dayRange.from.day}`,
-				"iso",
-			);
-		}
-		return "";
-	}, [dayRange.from]);
-
-	const toDate = useMemo(() => {
-		if (dayRange.to) {
-			return convertUtcToFormat(
-				`${dayRange.to.year}-${dayRange.to.month}-${dayRange.to.day}`,
-				"iso",
-			);
-		}
-		return "";
-	}, [dayRange.to]);
+	const fromDate = today;
+	const toDate = today;
 
 	// Fetch data from APIs
 	const profitLossData = useReportsControllerGetProfitLossReports(
@@ -96,6 +69,25 @@ const Ledger = () => {
 	);
 
 	const paymentsData = usePaymentsControllerFindAll();
+
+	// Fetch invoice products with details for profit/loss calculation
+	const invoiceProductsQuery = useReportsControllerGetProductReports(
+		{
+			end: toDate,
+			start: fromDate,
+		},
+		{
+			query: {
+				enabled: true,
+			},
+		},
+	);
+
+	// Fetch inventory for cost prices
+	const inventoryQuery = useInventoryControllerFindAll();
+
+	// Fetch products for priceBook (selling prices)
+	const productsQuery = useProductControllerFindAll();
 
 	// Combine all data into ledger entries
 	const ledgerEntries = useMemo(() => {
@@ -202,6 +194,116 @@ const Ledger = () => {
 	}, [filteredEntries]);
 
 	const netBalance = totalReceived - totalPaid;
+
+	// Calculate profit/loss table data from invoice products
+	const profitLossTableData = useMemo(() => {
+		if (!invoiceProductsQuery?.data || !inventoryQuery?.data || !productsQuery?.data) return [];
+
+		const inventoryMap = new Map();
+		const inventoryResponse = inventoryQuery.data as InventoryListResponse | undefined;
+		const inventoryEntries = Array.isArray(inventoryResponse?.data)
+			? inventoryResponse.data
+			: Array.isArray(inventoryResponse)
+				? inventoryResponse
+				: [];
+
+		// Create inventory map for quick lookup (productId -> cost price)
+		// TODO: When backend adds costPrice to inventory, use it here
+		// For now, we'll use product priceBook as fallback
+		inventoryEntries.forEach((entry) => {
+			inventoryMap.set(entry.productId, {
+				hasInventory: true,
+				// costPrice will be set from product priceBook below
+			});
+		});
+
+		// Create product priceBook map for cost/selling price lookup
+		const productPriceMap = new Map();
+		productsQuery.data?.forEach((product: any) => {
+			if (product.priceBook && product.priceBook.length > 0) {
+				// Use first priceBook entry as default
+				const priceBook = product.priceBook[0];
+				productPriceMap.set(product.id, {
+					costPrice: priceBook.price || 0, // Using price as cost for now
+					sellingPrice: priceBook.sellPrice || priceBook.price || 0,
+				});
+			}
+		});
+
+		const profitLossRows: Array<{
+			id: string;
+			date: string;
+			productName: string;
+			quantity: number;
+			costPrice: number;
+			soldPrice: number;
+			profitAmount: number;
+			profitPercent: number;
+		}> = [];
+
+		// Process each invoice product
+		// invoiceProductsQuery.data contains InvoiceProducts[] with invoice and product relations
+		(invoiceProductsQuery.data as any[]).forEach((invoiceProduct: any) => {
+			const invoice = invoiceProduct.invoice;
+			if (!invoice) return;
+
+			const invoiceDate = invoice.date || invoice.createdAt || "";
+
+			// Filter by date range (already filtered by API, but double-check)
+			if (fromDate && toDate) {
+				const date = new Date(invoiceDate);
+				const from = new Date(fromDate);
+				const to = new Date(toDate);
+				if (date < from || date > to) {
+					return; // Skip if outside date range
+				}
+			}
+
+			const productId = invoiceProduct.product_id;
+			const product = invoiceProduct.product;
+			const productName = product?.name || "Unknown Product";
+			const quantity = invoiceProduct.quantity || 0;
+			const soldPrice = invoiceProduct.price || 0; // Actual price used (handles inline changes)
+
+			// Get cost price: from inventory if exists, otherwise from product priceBook
+			// The invoice product price is the actual sold price (handles inline price changes)
+			let costPrice = 0;
+
+			// First try to get from product priceBook (this is the stock/cost price)
+			if (productPriceMap.has(productId)) {
+				costPrice = productPriceMap.get(productId).costPrice || 0;
+			}
+
+			// TODO: When backend adds costPrice to inventory, prioritize inventory cost price:
+			// if (inventoryMap.has(productId)) {
+			//   costPrice = inventoryMap.get(productId).costPrice || costPrice;
+			// }
+
+			// Calculate profit
+			const profitAmount = (soldPrice - costPrice) * quantity;
+			const profitPercent = costPrice > 0 ? ((soldPrice - costPrice) / costPrice) * 100 : 0;
+
+			profitLossRows.push({
+				id: `profit-${invoice.id}-${invoiceProduct.id}`,
+				date: invoiceDate,
+				productName,
+				quantity,
+				costPrice,
+				soldPrice,
+				profitAmount,
+				profitPercent,
+			});
+		});
+
+		// Sort by date
+		profitLossRows.sort((a, b) => {
+			const dateA = new Date(a.date).getTime();
+			const dateB = new Date(b.date).getTime();
+			return dateA - dateB;
+		});
+
+		return profitLossRows;
+	}, [invoiceProductsQuery?.data, inventoryQuery?.data, productsQuery?.data, fromDate, toDate]);
 
 	// Download functionality
 	const [downloadAnchorEl, setDownloadAnchorEl] = useState<null | HTMLElement>(null);
@@ -325,9 +427,9 @@ const Ledger = () => {
 
 			let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
 			xml += "<LedgerReport>\n";
-			xml += `  <ReportTitle>General Ledger Report</ReportTitle>\n`;
+			xml += `  <ReportTitle>Today's Ledger Report</ReportTitle>\n`;
 			xml += `  <CompanyName>${escapeXml(user?.company?.[0]?.name || "")}</CompanyName>\n`;
-			xml += `  <DateRange>${escapeXml(formatDateDisplay(fromDate))} - ${escapeXml(formatDateDisplay(toDate))}</DateRange>\n`;
+			xml += `  <Date>${escapeXml(formatDateDisplay(fromDate))} (Today)</Date>\n`;
 			xml += `  <DateGenerated>${escapeXml(dateGenerated)}</DateGenerated>\n`;
 			xml += "  <Entries>\n";
 
@@ -409,7 +511,15 @@ const Ledger = () => {
 	};
 
 	// Show loader while data is being fetched
-	if ((profitLossData?.isLoading || profitLossData?.isFetching) && fromDate && toDate) {
+	if (
+		(profitLossData?.isLoading ||
+			profitLossData?.isFetching ||
+			invoiceProductsQuery?.isLoading ||
+			inventoryQuery?.isLoading ||
+			productsQuery?.isLoading) &&
+		fromDate &&
+		toDate
+	) {
 		return <Loader />;
 	}
 
@@ -430,7 +540,7 @@ const Ledger = () => {
 				{/* PDF Report Header */}
 				<Box sx={{ mb: 3, textAlign: "center" }}>
 					<Typography variant="h4" fontWeight={700} mb={1}>
-						{t("ledger.reportTitle", { defaultValue: "General Ledger Report" })}
+						{t("ledger.todaysReport", { defaultValue: "Today's Ledger Report" })}
 					</Typography>
 					<Typography variant="body1" mb={1}>
 						<strong>{t("ledger.companyName", { defaultValue: "Company" })}:</strong>{" "}
@@ -450,8 +560,8 @@ const Ledger = () => {
 					</Typography>
 					<Divider sx={{ my: 2 }} />
 					<Typography variant="body1" mb={1}>
-						<strong>{t("ledger.dateRange", { defaultValue: "Date Range" })}:</strong>{" "}
-						{formatDateDisplay(fromDate)} - {formatDateDisplay(toDate)}
+						<strong>{t("ledger.date", { defaultValue: "Date" })}:</strong>{" "}
+						{formatDateDisplay(fromDate)} ({t("ledger.today", { defaultValue: "Today" })})
 					</Typography>
 					<Typography variant="body1" mb={1}>
 						<strong>{t("ledger.dateGenerated", { defaultValue: "Date Generated" })}:</strong>{" "}
@@ -550,32 +660,8 @@ const Ledger = () => {
 				<Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
 					<AccountBalanceIcon sx={{ fontSize: 40, color: "primary.main" }} />
 					<Typography variant="h3" fontWeight={500} textTransform="capitalize">
-						{t("ledger.title", { defaultValue: "Ledger Information" })}
+						{t("ledger.todaysReport", { defaultValue: "Today's Ledger Report" })}
 					</Typography>
-				</Box>
-				<Box sx={{ width: { xs: "100%", md: "300px" } }}>
-					<Typography variant="h6" fontWeight={500} textTransform="capitalize" mb={1}>
-						{t("ledger.selectDateRange", { defaultValue: "Select Date Range" })}
-					</Typography>
-					<Box
-						sx={{
-							position: "relative",
-							"& .DatePicker": {
-								width: "100%",
-							},
-							"& .DatePicker__input": {
-								width: "100%",
-								cursor: "pointer",
-							},
-						}}
-					>
-						<DatePicker
-							value={dayRange}
-							onChange={setDayRange}
-							shouldHighlightWeekends
-							locale="en"
-						/>
-					</Box>
 				</Box>
 			</Box>
 
@@ -585,7 +671,7 @@ const Ledger = () => {
 					<Grid container spacing={2}>
 						<Grid item xs={12}>
 							<Typography variant="h5" fontWeight={600} mb={2} textAlign="center">
-								{t("ledger.reportTitle", { defaultValue: "General Ledger Report" })}
+								{t("ledger.todaysReport", { defaultValue: "Today's Ledger Report" })}
 							</Typography>
 						</Grid>
 						<Grid item xs={12} md={6}>
@@ -614,8 +700,8 @@ const Ledger = () => {
 						</Grid>
 						<Grid item xs={12} md={6}>
 							<Typography variant="body2" color="text.secondary">
-								<strong>{t("ledger.dateRange", { defaultValue: "Date Range" })}:</strong>{" "}
-								{formatDateDisplay(fromDate)} - {formatDateDisplay(toDate)}
+								<strong>{t("ledger.date", { defaultValue: "Date" })}:</strong>{" "}
+								{formatDateDisplay(fromDate)} ({t("ledger.today", { defaultValue: "Today" })})
 							</Typography>
 						</Grid>
 						<Grid item xs={12} md={6}>
@@ -696,8 +782,8 @@ const Ledger = () => {
 				</Grid>
 			</Grid>
 
-			{/* User Info */}
-			<Card sx={{ mb: 3 }}>
+			{/* User Info - Hidden */}
+			{/* <Card sx={{ mb: 3 }}>
 				<CardContent>
 					<Typography variant="h6" fontWeight={600} mb={2}>
 						{t("ledger.userInfo", { defaultValue: "User Information" })}
@@ -739,10 +825,10 @@ const Ledger = () => {
 						</Grid>
 					</Grid>
 				</CardContent>
-			</Card>
+			</Card> */}
 
-			{/* Ledger Entries Table */}
-			<Card>
+			{/* Ledger Entries Table - Hidden */}
+			{/* <Card>
 				<CardContent>
 					<Box
 						sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}
@@ -902,10 +988,135 @@ const Ledger = () => {
 						</Paper>
 					)}
 				</CardContent>
+			</Card> */}
+
+			{/* Profit/Loss Table */}
+			<Card sx={{ mt: 3 }}>
+				<CardContent>
+					<Typography variant="h6" fontWeight={600} mb={2}>
+						{t("ledger.profitLossTable", { defaultValue: "Profit & Loss Report" })}
+					</Typography>
+					{profitLossTableData.length === 0 ? (
+						<Box sx={{ textAlign: "center", py: 4 }}>
+							<Typography variant="body1" color="text.secondary">
+								{t("ledger.noProfitLossData", {
+									defaultValue: "No profit/loss data found Today.",
+								})}
+							</Typography>
+						</Box>
+					) : (
+						<TableContainer component={Paper} variant="outlined">
+							<Table>
+								<TableHead>
+									<TableRow sx={{ backgroundColor: "#f5f5f5" }}>
+										<TableCell>
+											<Typography variant="subtitle2" fontWeight={600}>
+												{t("ledger.profitLoss.date", { defaultValue: "Date" })}
+											</Typography>
+										</TableCell>
+										<TableCell>
+											<Typography variant="subtitle2" fontWeight={600}>
+												{t("ledger.profitLoss.productName", {
+													defaultValue: "Sold Product Name",
+												})}
+											</Typography>
+										</TableCell>
+										<TableCell align="right">
+											<Typography variant="subtitle2" fontWeight={600}>
+												{t("ledger.profitLoss.quantity", { defaultValue: "Quantity" })}
+											</Typography>
+										</TableCell>
+										<TableCell align="right">
+											<Typography variant="subtitle2" fontWeight={600}>
+												{t("ledger.profitLoss.costPrice", {
+													defaultValue: "Product Cost Price",
+												})}
+											</Typography>
+										</TableCell>
+										<TableCell align="right">
+											<Typography variant="subtitle2" fontWeight={600}>
+												{t("ledger.profitLoss.soldPrice", {
+													defaultValue: "Product Sold Price",
+												})}
+											</Typography>
+										</TableCell>
+										<TableCell align="right">
+											<Typography variant="subtitle2" fontWeight={600}>
+												{t("ledger.profitLoss.profitAmount", {
+													defaultValue: "Profit Amount",
+												})}
+											</Typography>
+										</TableCell>
+										<TableCell align="right">
+											<Typography variant="subtitle2" fontWeight={600}>
+												{t("ledger.profitLoss.profitPercent", {
+													defaultValue: "Profit Percent",
+												})}
+											</Typography>
+										</TableCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{profitLossTableData.map((row) => (
+										<TableRow key={row.id} hover>
+											<TableCell>
+												<Typography variant="body2">
+													{parseDateStringToFormat(row.date, "MM/DD/YYYY")}
+												</Typography>
+											</TableCell>
+											<TableCell>
+												<Typography variant="body2" fontWeight={500}>
+													{row.productName}
+												</Typography>
+											</TableCell>
+											<TableCell align="right">
+												<Typography variant="body2">{row.quantity}</Typography>
+											</TableCell>
+											<TableCell align="right">
+												<Typography variant="body2">
+													{currencyFormatter(row.costPrice, user?.currency?.short_code)}
+												</Typography>
+											</TableCell>
+											<TableCell align="right">
+												<Typography variant="body2" fontWeight={500}>
+													{currencyFormatter(row.soldPrice, user?.currency?.short_code)}
+												</Typography>
+											</TableCell>
+											<TableCell align="right">
+												<Typography
+													variant="body2"
+													fontWeight={600}
+													color={row.profitAmount >= 0 ? "success.main" : "error.main"}
+												>
+													{currencyFormatter(row.profitAmount, user?.currency?.short_code)}
+												</Typography>
+											</TableCell>
+											<TableCell align="right">
+												<Typography
+													variant="body2"
+													fontWeight={600}
+													color={row.profitPercent >= 0 ? "success.main" : "error.main"}
+													sx={{
+														backgroundColor: row.profitPercent >= 0 ? "#e8f5e9" : "#ffebee",
+														padding: "4px 8px",
+														borderRadius: "4px",
+														display: "inline-block",
+													}}
+												>
+													{row.profitPercent.toFixed(2)}%
+												</Typography>
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+						</TableContainer>
+					)}
+				</CardContent>
 			</Card>
 
-			{/* Info Card */}
-			<Card sx={{ mt: 3 }}>
+			{/* Info Card - Hidden */}
+			{/* <Card sx={{ mt: 3 }}>
 				<CardContent>
 					<Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
 						<BookIcon sx={{ fontSize: 28, color: "primary.main" }} />
@@ -920,7 +1131,7 @@ const Ledger = () => {
 						})}
 					</Typography>
 				</CardContent>
-			</Card>
+			</Card> */}
 		</Box>
 	);
 };
