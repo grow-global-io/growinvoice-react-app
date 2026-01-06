@@ -15,10 +15,13 @@ import {
 	Menu,
 	MenuItem,
 } from "@mui/material";
+import "react-modern-calendar-datepicker/lib/DatePicker.css";
 import { useMemo, useState, useRef } from "react";
+import { type DayRange } from "@hassanmojab/react-modern-calendar-datepicker";
+import DatePicker from "@hassanmojab/react-modern-calendar-datepicker";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@store/auth";
-import { parseDateStringToFormat } from "@shared/formatter";
+import { convertUtcToFormat, parseDateStringToFormat } from "@shared/formatter";
 import { currencyFormatter } from "@shared/formatter";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import BookIcon from "@mui/icons-material/Book";
@@ -42,17 +45,42 @@ const Ledger = () => {
 	const { t } = useTranslation();
 	const { user } = useAuthStore();
 
-	// Set to today's date (both from and to are today)
-	const today = useMemo(() => {
+	// Date range state (defaults to today)
+	const [dayRange, setDayRange] = useState<DayRange>(() => {
 		const now = new Date();
-		const year = now.getFullYear();
-		const month = String(now.getMonth() + 1).padStart(2, "0");
-		const day = String(now.getDate()).padStart(2, "0");
-		return `${year}-${month}-${day}`;
-	}, []);
+		return {
+			from: {
+				day: now.getDate(),
+				month: now.getMonth() + 1,
+				year: now.getFullYear(),
+			},
+			to: {
+				day: now.getDate(),
+				month: now.getMonth() + 1,
+				year: now.getFullYear(),
+			},
+		};
+	});
 
-	const fromDate = today;
-	const toDate = today;
+	const fromDate = useMemo(() => {
+		if (dayRange.from) {
+			return convertUtcToFormat(
+				`${dayRange.from.year}-${dayRange.from.month}-${dayRange.from.day}`,
+				"iso",
+			);
+		}
+		return "";
+	}, [dayRange.from]);
+
+	const toDate = useMemo(() => {
+		if (dayRange.to) {
+			return convertUtcToFormat(
+				`${dayRange.to.year}-${dayRange.to.month}-${dayRange.to.day}`,
+				"iso",
+			);
+		}
+		return "";
+	}, [dayRange.to]);
 
 	// Fetch data from APIs
 	const profitLossData = useReportsControllerGetProfitLossReports(
@@ -438,9 +466,13 @@ const Ledger = () => {
 
 			let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
 			xml += "<ProfitLossReport>\n";
-			xml += `  <ReportTitle>Today's Profit & Loss Report</ReportTitle>\n`;
+			xml += `  <ReportTitle>Profit & Loss Report</ReportTitle>\n`;
 			xml += `  <CompanyName>${escapeXml(user?.company?.[0]?.name || "")}</CompanyName>\n`;
-			xml += `  <Date>${escapeXml(formatDateDisplay(fromDate))} (Today)</Date>\n`;
+			xml += `  <DateRange>${escapeXml(
+				fromDate === toDate
+					? `${formatDateDisplay(fromDate)} (Today)`
+					: `${formatDateDisplay(fromDate)} - ${formatDateDisplay(toDate)}`,
+			)}</DateRange>\n`;
 			xml += `  <DateGenerated>${escapeXml(dateGenerated)}</DateGenerated>\n`;
 			xml += "  <Entries>\n";
 
@@ -525,13 +557,11 @@ const Ledger = () => {
 
 	// Show loader while data is being fetched
 	if (
-		(profitLossData?.isLoading ||
-			profitLossData?.isFetching ||
-			invoiceProductsQuery?.isLoading ||
-			inventoryQuery?.isLoading ||
-			productsQuery?.isLoading) &&
-		fromDate &&
-		toDate
+		profitLossData?.isLoading ||
+		profitLossData?.isFetching ||
+		invoiceProductsQuery?.isLoading ||
+		inventoryQuery?.isLoading ||
+		productsQuery?.isLoading
 	) {
 		return <Loader />;
 	}
@@ -553,7 +583,7 @@ const Ledger = () => {
 				{/* PDF Report Header */}
 				<Box sx={{ mb: 3, textAlign: "center" }}>
 					<Typography variant="h4" fontWeight={700} mb={1}>
-						{t("ledger.todaysReport", { defaultValue: "Today's Ledger Report" })}
+						{t("ledger.reportTitle", { defaultValue: "Ledger Report" })}
 					</Typography>
 					<Typography variant="body1" mb={1}>
 						<strong>{t("ledger.companyName", { defaultValue: "Company" })}:</strong>{" "}
@@ -572,8 +602,10 @@ const Ledger = () => {
 						<strong>{t("ledger.phone", { defaultValue: "Phone" })}:</strong> {user?.phone || ""}
 					</Typography>
 					<Typography variant="body1" mb={1}>
-						<strong>{t("ledger.date", { defaultValue: "Date" })}:</strong>{" "}
-						{formatDateDisplay(fromDate)} ({t("ledger.today", { defaultValue: "Today" })})
+						<strong>{t("ledger.dateRange", { defaultValue: "Date Range" })}:</strong>{" "}
+						{fromDate === toDate
+							? `${formatDateDisplay(fromDate)} (${t("ledger.today", { defaultValue: "Today" })})`
+							: `${formatDateDisplay(fromDate)} - ${formatDateDisplay(toDate)}`}
 					</Typography>
 					<Typography variant="body1" mb={1}>
 						<strong>{t("ledger.dateGenerated", { defaultValue: "Date Generated" })}:</strong>{" "}
@@ -703,8 +735,32 @@ const Ledger = () => {
 				<Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
 					<AccountBalanceIcon sx={{ fontSize: 40, color: "primary.main" }} />
 					<Typography variant="h3" fontWeight={500} textTransform="capitalize">
-						{t("ledger.todaysReport", { defaultValue: "Today's Ledger Report" })}
+						{t("ledger.reportTitle", { defaultValue: "Ledger Report" })}
 					</Typography>
+				</Box>
+				<Box sx={{ width: { xs: "100%", md: "320px" } }}>
+					<Typography variant="h6" fontWeight={500} textTransform="capitalize" mb={1}>
+						{t("ledger.selectDateRange", { defaultValue: "Select Date Range" })}
+					</Typography>
+					<Box
+						sx={{
+							position: "relative",
+							"& .DatePicker": {
+								width: "100%",
+							},
+							"& .DatePicker__input": {
+								width: "100%",
+								cursor: "pointer",
+							},
+						}}
+					>
+						<DatePicker
+							value={dayRange}
+							onChange={setDayRange}
+							shouldHighlightWeekends
+							locale="en"
+						/>
+					</Box>
 				</Box>
 			</Box>
 
@@ -714,7 +770,7 @@ const Ledger = () => {
 					<Grid container spacing={2}>
 						<Grid item xs={12}>
 							<Typography variant="h5" fontWeight={600} mb={2} textAlign="center">
-								{t("ledger.todaysReport", { defaultValue: "Today's Ledger Report" })}
+								{t("ledger.reportTitle", { defaultValue: "Ledger Report" })}
 							</Typography>
 						</Grid>
 						<Grid item xs={12} md={6}>
@@ -743,8 +799,10 @@ const Ledger = () => {
 						</Grid>
 						<Grid item xs={12} md={6}>
 							<Typography variant="body2" color="text.secondary">
-								<strong>{t("ledger.date", { defaultValue: "Date" })}:</strong>{" "}
-								{formatDateDisplay(fromDate)} ({t("ledger.today", { defaultValue: "Today" })})
+								<strong>{t("ledger.dateRange", { defaultValue: "Date Range" })}:</strong>{" "}
+								{fromDate === toDate
+									? `${formatDateDisplay(fromDate)} (${t("ledger.today", { defaultValue: "Today" })})`
+									: `${formatDateDisplay(fromDate)} - ${formatDateDisplay(toDate)}`}
 							</Typography>
 						</Grid>
 						<Grid item xs={12} md={6}>
