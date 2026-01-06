@@ -1,4 +1,14 @@
-import { Box, Grid, Typography, IconButton, Button, Divider } from "@mui/material";
+import {
+	Box,
+	Grid,
+	Typography,
+	IconButton,
+	Button,
+	Divider,
+	TextField,
+	InputLabel,
+	FormControl,
+} from "@mui/material";
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { TextFormField } from "@shared/components/FormFields/TextFormField";
 import { Constants } from "@shared/constants";
@@ -173,7 +183,7 @@ const ProductForm = () => {
 			priceBook: Array<{
 				currency_id: string;
 				price: number;
-				sellPrice?: number;
+				sellPrice?: number | null;
 				shippingCharges?: number;
 			}>;
 		},
@@ -186,13 +196,14 @@ const ProductForm = () => {
 			return;
 		}
 		action.setSubmitting(true);
-		// Remove sellPrice from priceBook before sending to API (API only accepts currency_id and price)
+		// Include sellPrice in priceBook when sending to API
 		const transformedValues = {
 			...values,
 			hsnCode_id: values.hsnCode_id === "" ? null : values.hsnCode_id,
-			priceBook: values.priceBook.map(({ currency_id, price, shippingCharges }) => ({
+			priceBook: values.priceBook.map(({ currency_id, price, sellPrice, shippingCharges }) => ({
 				currency_id,
 				price,
+				sellPrice: sellPrice !== null && sellPrice !== undefined ? sellPrice : undefined,
 				shippingCharges,
 			})),
 		};
@@ -240,19 +251,26 @@ const ProductForm = () => {
 			user_id: user?.id ?? "",
 			priceBook:
 				editValues?.priceBook?.map((price) => {
-					// Calculate sellPrice from price and tax if editing
-					const taxPercentage =
-						taxCodes?.data
-							?.filter((t) => editValues?.tax?.map((tax: any) => tax.tax_id).includes(t.id))
-							?.map((t) => t.percentage)
-							?.reduce((acc, curr) => acc + curr, 0) ?? 0;
-					const calculatedSellPrice = parseFloat(
-						(price.price + (price.price * taxPercentage) / 100).toFixed(2),
-					);
+					// Use saved sellPrice if available, otherwise calculate from price and tax
+					let sellPriceValue: number | undefined;
+					if (price.sellPrice !== null && price.sellPrice !== undefined) {
+						// Use saved sellPrice from backend
+						sellPriceValue = price.sellPrice;
+					} else {
+						// Calculate sellPrice from price and tax if not saved (backward compatibility)
+						const taxPercentage =
+							taxCodes?.data
+								?.filter((t) => editValues?.tax?.map((tax: any) => tax.tax_id).includes(t.id))
+								?.map((t) => t.percentage)
+								?.reduce((acc, curr) => acc + curr, 0) ?? 0;
+						sellPriceValue = parseFloat(
+							(price.price + (price.price * taxPercentage) / 100).toFixed(2),
+						);
+					}
 					return {
 						currency_id: price.currency_id,
 						price: price.price,
-						sellPrice: calculatedSellPrice,
+						sellPrice: sellPriceValue,
 						shippingCharges: price.shippingCharges ?? 0,
 					};
 				}) ?? [],
@@ -579,38 +597,15 @@ const ProductForm = () => {
 																		?.map((t) => t.percentage)
 																		?.reduce((acc, curr) => acc + curr, 0) ?? 0;
 
-																// Recalculate sellPrice when tax changes (if stock price exists)
-																const currentStockPrice =
-																	typeof values.priceBook[index]?.price === "number"
-																		? values.priceBook[index]?.price
-																		: parseFloat(String(values.priceBook[index]?.price || 0)) || 0;
-																if (currentStockPrice > 0) {
-																	const calculatedSellPrice =
-																		taxPercentage > 0
-																			? parseFloat(
-																					(currentStockPrice * (1 + taxPercentage / 100)).toFixed(
-																						2,
-																					),
-																				)
-																			: parseFloat(currentStockPrice.toFixed(2));
-																	// Only update if different to avoid infinite loops
-																	const priceBookItem = values.priceBook[index] as any;
-																	const currentSellPrice =
-																		parseFloat(String(priceBookItem?.sellPrice || 0)) || 0;
-																	if (Math.abs(calculatedSellPrice - currentSellPrice) > 0.01) {
-																		setFieldValue(
-																			`priceBook.${index}.sellPrice`,
-																			calculatedSellPrice,
-																		);
-																	}
-																}
+																// Don't auto-recalculate sellPrice when tax changes
+																// Selling price is now independent and user-controlled
+																// Final price will be calculated and displayed separately
 
-																// Handler for Stock Price change
+																// Handler for Stock Price change - no longer auto-calculates selling price
 																const handleStockPriceChange = (value: string) => {
 																	// Allow empty values during editing
 																	if (value === "" || value === null || value === undefined) {
 																		setFieldValue(`priceBook.${index}.price`, "");
-																		setFieldValue(`priceBook.${index}.sellPrice`, "");
 																		return;
 																	}
 																	const parsedValue = parseFloat(value);
@@ -618,23 +613,15 @@ const ProductForm = () => {
 																		return; // Don't update if not a valid number
 																	}
 																	const newStockPrice = parseFloat(parsedValue.toFixed(2)); // Round to 2 decimal places
-																	// Calculate sell price: Stock Price * (1 + tax percentage / 100)
-																	const newSellPrice =
-																		taxPercentage > 0
-																			? parseFloat(
-																					(newStockPrice * (1 + taxPercentage / 100)).toFixed(2),
-																				)
-																			: newStockPrice;
 																	setFieldValue(`priceBook.${index}.price`, newStockPrice);
-																	setFieldValue(`priceBook.${index}.sellPrice`, newSellPrice);
+																	// Don't auto-calculate selling price - let user set it independently
 																};
 
-																// Handler for Selling Price change
+																// Handler for Selling Price change - independent, doesn't affect stock price
 																const handleSellPriceChange = (value: string) => {
 																	// Allow empty values during editing
 																	if (value === "" || value === null || value === undefined) {
 																		setFieldValue(`priceBook.${index}.sellPrice`, "");
-																		setFieldValue(`priceBook.${index}.price`, "");
 																		return;
 																	}
 																	const parsedValue = parseFloat(value);
@@ -642,16 +629,19 @@ const ProductForm = () => {
 																		return; // Don't update if not a valid number
 																	}
 																	const newSellPrice = parseFloat(parsedValue.toFixed(2)); // Round to 2 decimal places
-																	// Calculate stock price: Selling Price / (1 + tax percentage / 100)
-																	const newStockPrice =
-																		taxPercentage > 0
-																			? parseFloat(
-																					(newSellPrice / (1 + taxPercentage / 100)).toFixed(2),
-																				)
-																			: newSellPrice;
 																	setFieldValue(`priceBook.${index}.sellPrice`, newSellPrice);
-																	setFieldValue(`priceBook.${index}.price`, newStockPrice);
+																	// Don't auto-calculate stock price - selling price is independent
 																};
+
+																// Calculate Final Price (Selling Price + Tax) - non-editable display
+																const currentSellPrice =
+																	parseFloat(String(values.priceBook[index]?.sellPrice || 0)) || 0;
+																const finalPrice =
+																	taxPercentage > 0 && currentSellPrice > 0
+																		? parseFloat(
+																				(currentSellPrice * (1 + taxPercentage / 100)).toFixed(2),
+																			)
+																		: currentSellPrice;
 
 																return (
 																	<Box
@@ -716,7 +706,7 @@ const ProductForm = () => {
 																			<Grid item xs={1}>
 																				{/* Empty space for delete button positioning */}
 																			</Grid>
-																			{/* Second Row: Selling Price and Shipping Price */}
+																			{/* Second Row: Selling Price and Final Price */}
 																			<Grid item xs={6} sx={{ overflow: "visible" }}>
 																				<FieldWithTooltip
 																					tooltipTitle={t(productFormTooltips.sellPrice.titleKey)}
@@ -742,6 +732,94 @@ const ProductForm = () => {
 																			</Grid>
 																			<Grid item xs={5} sx={{ overflow: "visible" }}>
 																				<FieldWithTooltip
+																					tooltipTitle={t("productForm.finalPrice", {
+																						defaultValue: "Final Price (with tax)",
+																					})}
+																					tooltipDescription={t(
+																						"productForm.finalPriceDescription",
+																						{
+																							defaultValue:
+																								"Final price including tax. This is calculated automatically from Selling Price + Tax.",
+																						},
+																					)}
+																				>
+																					<FormControl
+																						fullWidth
+																						sx={{
+																							mt: -0.1,
+																							overflow: "visible",
+																							"& .MuiInputLabel-root": {
+																								overflow: "visible",
+																								maxWidth: "none",
+																							},
+																						}}
+																					>
+																						<InputLabel
+																							shrink
+																							sx={{
+																								ml: -1.6,
+																								overflow: "visible",
+																								whiteSpace: "nowrap",
+																								maxWidth: "none",
+																								width: "auto",
+																								minWidth: "fit-content",
+																							}}
+																						>
+																							<Typography
+																								variant="h4"
+																								color="text.primary"
+																								sx={{
+																									display: "inline-flex",
+																									alignItems: "center",
+																									whiteSpace: "nowrap",
+																									overflow: "visible",
+																									maxWidth: "none",
+																									width: "auto",
+																									minWidth: "fit-content",
+																								}}
+																							>
+																								{t("productForm.finalPrice", {
+																									defaultValue: "Final Price",
+																								}).toUpperCase()}
+																							</Typography>
+																						</InputLabel>
+																						<TextField
+																							value={finalPrice > 0 ? finalPrice.toFixed(2) : ""}
+																							disabled
+																							fullWidth
+																							variant="outlined"
+																							sx={{
+																								"& .MuiOutlinedInput-root": {
+																									backgroundColor: "action.hover",
+																									"& fieldset": {
+																										borderColor: "divider",
+																									},
+																									"&:hover fieldset": {
+																										borderColor: "divider",
+																									},
+																									"&.Mui-disabled": {
+																										backgroundColor: "action.hover",
+																										"& fieldset": {
+																											borderColor: "divider",
+																										},
+																									},
+																								},
+																								"& .MuiInputBase-input": {
+																									cursor: "not-allowed",
+																									color: "text.primary",
+																									fontSize: "1rem",
+																								},
+																							}}
+																						/>
+																					</FormControl>
+																				</FieldWithTooltip>
+																			</Grid>
+																			<Grid item xs={1}>
+																				{/* Empty space for delete button positioning */}
+																			</Grid>
+																			{/* Third Row: Shipping Price */}
+																			<Grid item xs={6} sx={{ overflow: "visible" }}>
+																				<FieldWithTooltip
 																					tooltipTitle={t(
 																						productFormTooltips.shippingCharges.titleKey,
 																					)}
@@ -753,11 +831,16 @@ const ProductForm = () => {
 																						name={`priceBook.${index}.shippingCharges`}
 																						type="number"
 																						isRequired={false}
-																						label={"Shipping Price"}
+																						label={t("productForm.shippingPrice", {
+																							defaultValue: "Shipping Price",
+																						})}
 																						component={TextFormField}
 																						marginWholeTop={-0.1}
 																					/>
 																				</FieldWithTooltip>
+																			</Grid>
+																			<Grid item xs={5}>
+																				{/* Empty space */}
 																			</Grid>
 																			<Grid item xs={1}>
 																				{/* Empty space for delete button positioning */}

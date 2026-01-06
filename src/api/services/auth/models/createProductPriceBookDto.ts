@@ -9,5 +9,7 @@
 export interface CreateProductPriceBookDto {
 	currency_id: string;
 	price: number;
+	/** @nullable */
+	sellPrice?: number | null;
 	shippingCharges?: number;
 }
