@@ -5,21 +5,20 @@ import {
 	Grid,
 	Typography,
 	Paper,
-	Button,
-	Menu,
-	MenuItem,
-	Divider,
 	Table,
 	TableBody,
 	TableCell,
 	TableContainer,
 	TableHead,
 	TableRow,
+	Button,
+	Menu,
+	MenuItem,
 } from "@mui/material";
-import { useState, useMemo, useRef } from "react";
+import { useMemo, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@store/auth";
-import { convertUtcToFormat, parseDateStringToFormat } from "@shared/formatter";
+import { parseDateStringToFormat } from "@shared/formatter";
 import { currencyFormatter } from "@shared/formatter";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import BookIcon from "@mui/icons-material/Book";
@@ -33,11 +32,11 @@ import { useReportsControllerGetProductReports } from "@api/services/reports";
 import { useInventoryControllerFindAll } from "@api/services/inventory";
 import { useProductControllerFindAll } from "@api/services/product";
 import type { InventoryListResponse } from "@api/services/inventory";
-import { LoaderService } from "@shared/services/LoaderService";
+import moment from "moment";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import * as XLSX from "xlsx";
-import moment from "moment";
+import { LoaderService } from "@shared/services/LoaderService";
 
 const Ledger = () => {
 	const { t } = useTranslation();
@@ -305,6 +304,15 @@ const Ledger = () => {
 		return profitLossRows;
 	}, [invoiceProductsQuery?.data, inventoryQuery?.data, productsQuery?.data, fromDate, toDate]);
 
+	// Format date for display
+	const formatDateDisplay = (date: string) => {
+		if (!date) return "";
+		return moment(date).format("MMM DD, YYYY");
+	};
+
+	// Get current date and time
+	const dateGenerated = moment().format("MMM DD, YYYY, hh:mm A");
+
 	// Download functionality
 	const [downloadAnchorEl, setDownloadAnchorEl] = useState<null | HTMLElement>(null);
 	const downloadMenuOpen = Boolean(downloadAnchorEl);
@@ -318,25 +326,18 @@ const Ledger = () => {
 		setDownloadAnchorEl(null);
 	};
 
-	// Format date for display
-	const formatDateDisplay = (date: string) => {
-		if (!date) return "";
-		return moment(date).format("MMM DD, YYYY");
-	};
-
-	// Get current date and time
-	const dateGenerated = moment().format("MMM DD, YYYY, hh:mm A");
-
-	// Prepare export data
+	// Prepare export data for profit/loss table
 	const exportData = useMemo(() => {
-		return filteredEntries.map((entry) => ({
-			Date: parseDateStringToFormat(entry.date, "MM/DD/YYYY"),
-			Description: entry.description,
-			Received: entry.type === "received" ? entry.amount : "",
-			Paid: entry.type === "paid" ? entry.amount : "",
-			Balance: entry.balance,
+		return profitLossTableData.map((row) => ({
+			Date: parseDateStringToFormat(row.date, "MM/DD/YYYY"),
+			"Sold Product Name": row.productName,
+			Quantity: row.quantity,
+			"Product Cost Price": row.costPrice,
+			"Product Sold Price": row.soldPrice,
+			"Profit Amount": row.profitAmount,
+			"Profit Percent": `${row.profitPercent.toFixed(2)}%`,
 		}));
-	}, [filteredEntries]);
+	}, [profitLossTableData]);
 
 	// CSV Export
 	const handleDownloadCSV = () => {
@@ -346,16 +347,26 @@ const Ledger = () => {
 				return;
 			}
 
-			const headers = ["Date", "Description", "Received", "Paid", "Balance"];
+			const headers = [
+				"Date",
+				"Sold Product Name",
+				"Quantity",
+				"Product Cost Price",
+				"Product Sold Price",
+				"Profit Amount",
+				"Profit Percent",
+			];
 			let csv = headers.join(",") + "\n";
 
 			exportData.forEach((item) => {
 				const row = [
 					item.Date || "",
-					`"${(item.Description || "").replace(/"/g, '""')}"`,
-					item.Received || "",
-					item.Paid || "",
-					item.Balance || "",
+					`"${(item["Sold Product Name"] || "").replace(/"/g, '""')}"`,
+					item.Quantity || "",
+					item["Product Cost Price"] || "",
+					item["Product Sold Price"] || "",
+					item["Profit Amount"] || "",
+					item["Profit Percent"] || "",
 				].join(",");
 				csv += row + "\n";
 			});
@@ -364,7 +375,7 @@ const Ledger = () => {
 			const url = URL.createObjectURL(blob);
 			const link = document.createElement("a");
 			link.href = url;
-			link.download = `Ledger_Report_${moment().format("YYYY-MM-DD")}.csv`;
+			link.download = `Profit_Loss_Report_${moment().format("YYYY-MM-DD")}.csv`;
 			document.body.appendChild(link);
 			link.click();
 			document.body.removeChild(link);
@@ -386,7 +397,7 @@ const Ledger = () => {
 
 			const worksheet = XLSX.utils.json_to_sheet(exportData);
 			const workbook = XLSX.utils.book_new();
-			XLSX.utils.book_append_sheet(workbook, worksheet, "Ledger Report");
+			XLSX.utils.book_append_sheet(workbook, worksheet, "Profit & Loss Report");
 
 			const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
 			const blob = new Blob([excelBuffer], {
@@ -395,7 +406,7 @@ const Ledger = () => {
 			const url = URL.createObjectURL(blob);
 			const link = document.createElement("a");
 			link.href = url;
-			link.download = `Ledger_Report_${moment().format("YYYY-MM-DD")}.xlsx`;
+			link.download = `Profit_Loss_Report_${moment().format("YYYY-MM-DD")}.xlsx`;
 			document.body.appendChild(link);
 			link.click();
 			document.body.removeChild(link);
@@ -426,8 +437,8 @@ const Ledger = () => {
 			};
 
 			let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
-			xml += "<LedgerReport>\n";
-			xml += `  <ReportTitle>Today's Ledger Report</ReportTitle>\n`;
+			xml += "<ProfitLossReport>\n";
+			xml += `  <ReportTitle>Today's Profit & Loss Report</ReportTitle>\n`;
 			xml += `  <CompanyName>${escapeXml(user?.company?.[0]?.name || "")}</CompanyName>\n`;
 			xml += `  <Date>${escapeXml(formatDateDisplay(fromDate))} (Today)</Date>\n`;
 			xml += `  <DateGenerated>${escapeXml(dateGenerated)}</DateGenerated>\n`;
@@ -436,21 +447,23 @@ const Ledger = () => {
 			exportData.forEach((item, index) => {
 				xml += `    <Entry id="${index + 1}">\n`;
 				xml += `      <Date>${escapeXml(item.Date)}</Date>\n`;
-				xml += `      <Description>${escapeXml(item.Description)}</Description>\n`;
-				xml += `      <Received>${escapeXml(item.Received)}</Received>\n`;
-				xml += `      <Paid>${escapeXml(item.Paid)}</Paid>\n`;
-				xml += `      <Balance>${escapeXml(item.Balance)}</Balance>\n`;
+				xml += `      <SoldProductName>${escapeXml(item["Sold Product Name"])}</SoldProductName>\n`;
+				xml += `      <Quantity>${escapeXml(item.Quantity)}</Quantity>\n`;
+				xml += `      <ProductCostPrice>${escapeXml(item["Product Cost Price"])}</ProductCostPrice>\n`;
+				xml += `      <ProductSoldPrice>${escapeXml(item["Product Sold Price"])}</ProductSoldPrice>\n`;
+				xml += `      <ProfitAmount>${escapeXml(item["Profit Amount"])}</ProfitAmount>\n`;
+				xml += `      <ProfitPercent>${escapeXml(item["Profit Percent"])}</ProfitPercent>\n`;
 				xml += "    </Entry>\n";
 			});
 
 			xml += "  </Entries>\n";
-			xml += "</LedgerReport>";
+			xml += "</ProfitLossReport>";
 
 			const blob = new Blob([xml], { type: "application/xml" });
 			const url = URL.createObjectURL(blob);
 			const link = document.createElement("a");
 			link.href = url;
-			link.download = `Ledger_Report_${moment().format("YYYY-MM-DD")}.xml`;
+			link.download = `Profit_Loss_Report_${moment().format("YYYY-MM-DD")}.xml`;
 			document.body.appendChild(link);
 			link.click();
 			document.body.removeChild(link);
@@ -501,7 +514,7 @@ const Ledger = () => {
 				yPosition -= pdfPageHeight;
 			}
 
-			pdf.save(`Ledger_Report_${moment().format("YYYY-MM-DD")}.pdf`);
+			pdf.save(`Profit_Loss_Report_${moment().format("YYYY-MM-DD")}.pdf`);
 		} catch (error) {
 			console.error("Error generating PDF:", error);
 		} finally {
@@ -528,7 +541,7 @@ const Ledger = () => {
 			{/* Hidden section for PDF export */}
 			<Box
 				ref={pdfExportRef}
-				id="tm_download_section"
+				id="profit_loss_download_section"
 				sx={{
 					position: "absolute",
 					left: "-9999px",
@@ -558,7 +571,6 @@ const Ledger = () => {
 					<Typography variant="body1" mb={1}>
 						<strong>{t("ledger.phone", { defaultValue: "Phone" })}:</strong> {user?.phone || ""}
 					</Typography>
-					<Divider sx={{ my: 2 }} />
 					<Typography variant="body1" mb={1}>
 						<strong>{t("ledger.date", { defaultValue: "Date" })}:</strong>{" "}
 						{formatDateDisplay(fromDate)} ({t("ledger.today", { defaultValue: "Today" })})
@@ -569,76 +581,107 @@ const Ledger = () => {
 					</Typography>
 				</Box>
 
-				{/* PDF Report Content */}
+				{/* PDF Profit/Loss Table */}
 				<Box>
-					{/* Summary */}
-					<Grid container spacing={2} mb={3}>
-						<Grid item xs={6}>
-							<Typography variant="body2">
-								<strong>{t("ledger.totalReceived", { defaultValue: "Total Received" })}:</strong>{" "}
-								{currencyFormatter(totalReceived, user?.currency?.short_code)}
-							</Typography>
-						</Grid>
-						<Grid item xs={6}>
-							<Typography variant="body2">
-								<strong>{t("ledger.totalPaid", { defaultValue: "Total Paid" })}:</strong>{" "}
-								{currencyFormatter(totalPaid, user?.currency?.short_code)}
-							</Typography>
-						</Grid>
-						<Grid item xs={6}>
-							<Typography variant="body2">
-								<strong>{t("ledger.netBalance", { defaultValue: "Net Balance" })}:</strong>{" "}
-								{currencyFormatter(netBalance, user?.currency?.short_code)}
-							</Typography>
-						</Grid>
-						<Grid item xs={6}>
-							<Typography variant="body2">
-								<strong>{t("ledger.profit", { defaultValue: "Profit" })}:</strong>{" "}
-								{currencyFormatter(netBalance, user?.currency?.short_code)}
-							</Typography>
-						</Grid>
-					</Grid>
-
-					{/* Ledger Entries Table */}
+					<Typography variant="h5" fontWeight={600} mb={2} textAlign="center">
+						{t("ledger.profitLossTable", { defaultValue: "Profit & Loss Report" })}
+					</Typography>
 					<table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
 						<thead>
 							<tr style={{ backgroundColor: "#f5f5f5" }}>
-								<th style={{ padding: "8px", textAlign: "left", borderBottom: "2px solid #ddd" }}>
-									{t("ledger.date", { defaultValue: "Date" })}
+								<th
+									style={{
+										padding: "8px",
+										textAlign: "left",
+										borderBottom: "2px solid #ddd",
+										border: "1px solid #ddd",
+									}}
+								>
+									Date
 								</th>
-								<th style={{ padding: "8px", textAlign: "left", borderBottom: "2px solid #ddd" }}>
-									{t("ledger.description", { defaultValue: "Description" })}
+								<th
+									style={{
+										padding: "8px",
+										textAlign: "left",
+										borderBottom: "2px solid #ddd",
+										border: "1px solid #ddd",
+									}}
+								>
+									Sold Product Name
 								</th>
-								<th style={{ padding: "8px", textAlign: "right", borderBottom: "2px solid #ddd" }}>
-									{t("ledger.received", { defaultValue: "Received" })}
+								<th
+									style={{
+										padding: "8px",
+										textAlign: "right",
+										borderBottom: "2px solid #ddd",
+										border: "1px solid #ddd",
+									}}
+								>
+									Quantity
 								</th>
-								<th style={{ padding: "8px", textAlign: "right", borderBottom: "2px solid #ddd" }}>
-									{t("ledger.paid", { defaultValue: "Paid" })}
+								<th
+									style={{
+										padding: "8px",
+										textAlign: "right",
+										borderBottom: "2px solid #ddd",
+										border: "1px solid #ddd",
+									}}
+								>
+									Product Cost Price
 								</th>
-								<th style={{ padding: "8px", textAlign: "right", borderBottom: "2px solid #ddd" }}>
-									{t("ledger.balance", { defaultValue: "Balance" })}
+								<th
+									style={{
+										padding: "8px",
+										textAlign: "right",
+										borderBottom: "2px solid #ddd",
+										border: "1px solid #ddd",
+									}}
+								>
+									Product Sold Price
+								</th>
+								<th
+									style={{
+										padding: "8px",
+										textAlign: "right",
+										borderBottom: "2px solid #ddd",
+										border: "1px solid #ddd",
+									}}
+								>
+									Profit Amount
+								</th>
+								<th
+									style={{
+										padding: "8px",
+										textAlign: "right",
+										borderBottom: "2px solid #ddd",
+										border: "1px solid #ddd",
+									}}
+								>
+									Profit Percent
 								</th>
 							</tr>
 						</thead>
 						<tbody>
-							{filteredEntries.map((entry) => (
-								<tr key={entry.id} style={{ borderBottom: "1px solid #eee" }}>
-									<td style={{ padding: "8px" }}>
-										{parseDateStringToFormat(entry.date, "MM/DD/YYYY")}
+							{profitLossTableData.map((row) => (
+								<tr key={row.id} style={{ borderBottom: "1px solid #eee" }}>
+									<td style={{ padding: "8px", border: "1px solid #ddd" }}>
+										{parseDateStringToFormat(row.date, "MM/DD/YYYY")}
 									</td>
-									<td style={{ padding: "8px" }}>{entry.description}</td>
-									<td style={{ padding: "8px", textAlign: "right" }}>
-										{entry.type === "received"
-											? currencyFormatter(entry.amount, user?.currency?.short_code)
-											: "-"}
+									<td style={{ padding: "8px", border: "1px solid #ddd" }}>{row.productName}</td>
+									<td style={{ padding: "8px", textAlign: "right", border: "1px solid #ddd" }}>
+										{row.quantity}
 									</td>
-									<td style={{ padding: "8px", textAlign: "right" }}>
-										{entry.type === "paid"
-											? currencyFormatter(entry.amount, user?.currency?.short_code)
-											: "-"}
+									<td style={{ padding: "8px", textAlign: "right", border: "1px solid #ddd" }}>
+										{currencyFormatter(row.costPrice, user?.currency?.short_code)}
 									</td>
-									<td style={{ padding: "8px", textAlign: "right" }}>
-										{currencyFormatter(entry.balance, user?.currency?.short_code)}
+									<td style={{ padding: "8px", textAlign: "right", border: "1px solid #ddd" }}>
+										{currencyFormatter(row.soldPrice, user?.currency?.short_code)}
+									</td>
+									<td style={{ padding: "8px", textAlign: "right", border: "1px solid #ddd" }}>
+										{currencyFormatter(row.profitAmount, user?.currency?.short_code)}
+									</td>
+									<td style={{ padding: "8px", textAlign: "right", border: "1px solid #ddd" }}>
+										{row.profitPercent.toFixed(2)}%
 									</td>
 								</tr>
 							))}
@@ -993,9 +1036,41 @@ const Ledger = () => {
 			{/* Profit/Loss Table */}
 			<Card sx={{ mt: 3 }}>
 				<CardContent>
-					<Typography variant="h6" fontWeight={600} mb={2}>
-						{t("ledger.profitLossTable", { defaultValue: "Profit & Loss Report" })}
-					</Typography>
+					<Box
+						sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}
+					>
+						<Typography variant="h6" fontWeight={600}>
+							{t("ledger.profitLossTable", { defaultValue: "Profit & Loss Report" })}
+						</Typography>
+						<Box>
+							<Button
+								variant="contained"
+								startIcon={<FileDownloadOutlinedIcon />}
+								onClick={handleDownloadClick}
+								size="small"
+							>
+								{t("ledger.download", { defaultValue: "Download" })}
+							</Button>
+							<Menu
+								anchorEl={downloadAnchorEl}
+								open={downloadMenuOpen}
+								onClose={handleDownloadClose}
+							>
+								<MenuItem onClick={handleDownloadPDF} sx={{ pr: 6 }}>
+									{t("ledger.downloadPDF", { defaultValue: "Download as PDF" })}
+								</MenuItem>
+								<MenuItem onClick={handleDownloadCSV} sx={{ pr: 6 }}>
+									{t("ledger.downloadCSV", { defaultValue: "Download as CSV" })}
+								</MenuItem>
+								<MenuItem onClick={handleDownloadExcel} sx={{ pr: 6 }}>
+									{t("ledger.downloadExcel", { defaultValue: "Download as Excel" })}
+								</MenuItem>
+								<MenuItem onClick={handleDownloadXML} sx={{ pr: 6 }}>
+									{t("ledger.downloadXML", { defaultValue: "Download as XML" })}
+								</MenuItem>
+							</Menu>
+						</Box>
+					</Box>
 					{profitLossTableData.length === 0 ? (
 						<Box sx={{ textAlign: "center", py: 4 }}>
 							<Typography variant="body1" color="text.secondary">
