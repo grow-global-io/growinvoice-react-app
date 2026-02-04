@@ -442,7 +442,12 @@
     },
     "actions": {
       "deleteTitle": "Kustuta arve",
-      "deleteConfirm": "Kas oled kindel, et soovid selle arve kustutada?"
+      "deleteConfirm": "Kas oled kindel, et soovid selle arve kustutada?",
+      "cloneSelected": "Klooni valitud",
+      "cloneInvoice": "Klooni arve",
+      "cloneSuccess": "Arve(d) kloonitud. Uue(d) arve number(id): {{newInvoiceNumbers}}",
+      "cloneSuccessDetail": "Arve kloonitud. Uus arve number: {{newInvoiceNumber}}",
+      "cloneError": "Arve(de) kloonamine ebaõnnestus. Proovi uuesti."
     },
     "share": {
       "copied": "Kopeeritud!",

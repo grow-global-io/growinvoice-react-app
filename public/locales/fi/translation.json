@@ -448,7 +448,12 @@
     },
     "actions": {
       "deleteTitle": "Poista lasku",
-      "deleteConfirm": "Haluatko varmasti poistaa tämän laskun?"
+      "deleteConfirm": "Haluatko varmasti poistaa tämän laskun?",
+      "cloneSelected": "Kloonaa valitut",
+      "cloneInvoice": "Kloonaa lasku",
+      "cloneSuccess": "Lasku(t) kloonattu. Uusi(t) laskunumero(t): {{newInvoiceNumbers}}",
+      "cloneSuccessDetail": "Lasku kloonattu. Uusi laskunumero: {{newInvoiceNumber}}",
+      "cloneError": "Laskujen kloonaaminen epäonnistui. Yritä uudelleen."
     },
     "share": {
       "copied": "Kopioitu!",

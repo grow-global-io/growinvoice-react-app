@@ -26,7 +26,13 @@ import {
 	useInvoiceControllerInvoicePublicFindOne,
 	useInvoiceControllerSendInvoicePaymentReceiptManually,
 	useInvoiceControllerTest,
+	useInvoiceControllerCreate,
+	getInvoiceControllerFindAllQueryKey,
+	getInvoiceControllerFindDueInvoicesQueryKey,
+	getInvoiceControllerFindPaidInvoicesQueryKey,
 } from "@api/services/invoice";
+import { useQueryClient } from "@tanstack/react-query";
+import { buildClonePayload } from "./utils/cloneInvoice";
 import DownloadIcon from "@mui/icons-material/Download";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -93,6 +99,8 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 		handleRedirectGllPayment,
 	} = useInvoiceHook();
 	const { setOpenPaymentFormWithInvoiceId } = useCreatePaymentStore.getState();
+	const createInvoice = useInvoiceControllerCreate();
+	const queryClient = useQueryClient();
 
 	const getHtmlText = useInvoiceControllerTest(invoiceId ?? "", {
 		query: {
@@ -192,6 +200,41 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 		});
 	};
 
+	const handleCloneInvoice = async () => {
+		const invoice = getInvoiceData?.data;
+		if (!invoice) return;
+		try {
+			LoaderService.instance.showLoader();
+			const payload = buildClonePayload(invoice);
+			const result = await createInvoice.mutateAsync({ data: payload });
+			const created = result?.result?.[0];
+			const newInvoiceNumber = created?.invoice_number;
+			await queryClient.refetchQueries({ queryKey: getInvoiceControllerFindAllQueryKey() });
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerFindDueInvoicesQueryKey(),
+			});
+			await queryClient.refetchQueries({
+				queryKey: getInvoiceControllerFindPaidInvoicesQueryKey(),
+			});
+			handleCloseAll();
+			AlertService.instance.successMessage(
+				t("invoice.actions.cloneSuccessDetail", {
+					defaultValue: "Invoice cloned successfully. New invoice number: {{newInvoiceNumber}}",
+					newInvoiceNumber: newInvoiceNumber ?? "",
+				}),
+			);
+		} catch (error) {
+			console.error("Error cloning invoice:", error);
+			AlertService.instance.errorMessage(
+				t("invoice.actions.cloneError", {
+					defaultValue: "Failed to clone invoice. Please try again.",
+				}),
+			);
+		} finally {
+			LoaderService.instance.hideLoader();
+		}
+	};
+
 	const { handleClickOpen, handleClose, open } = useDialog();
 
 	const { handleClickOpen: handleQrOpen, handleClose: handleQrClose, open: openQr } = useDialog();
@@ -224,6 +267,12 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			func: async () => {
 				await handleMailedSent(invoiceId);
 				handleCloseAll();
+			},
+		},
+		{
+			name: t("invoice.actions.cloneInvoice", { defaultValue: "Clone invoice" }),
+			func: async () => {
+				await handleCloneInvoice();
 			},
 		},
 		...(user?.isAdmin
