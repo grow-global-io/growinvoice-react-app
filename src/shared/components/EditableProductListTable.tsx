@@ -290,13 +290,15 @@ export default function FullFeaturedCrudGrid({
 			minWidth: 100,
 			editable: true,
 			preProcessEditCellProps: (params) => {
-				const hasError = params.props.value < 1;
+				const rawValue = params.props.value as number | string;
+				const numericValue = Number(rawValue);
+				const hasError = Number.isNaN(numericValue) || numericValue <= 0;
 				return { ...params.props, error: hasError };
 			},
 			renderEditCell: (params) => {
 				const onChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
-					const value = parseInt(event.target.value, 10);
-					if (value < 1) {
+					const value = parseFloat(event.target.value || "0");
+					if (Number.isNaN(value) || value <= 0) {
 						setErrorText(
 							t("invoiceForm.validation.quantityMin", {
 								defaultValue: "Quantity should be greater than 0",
