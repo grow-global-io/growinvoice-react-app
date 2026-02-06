@@ -29,6 +29,10 @@ import {
 	useProductControllerCreate,
 	useProductControllerUpdate,
 } from "@api/services/product";
+import {
+	useInventoryControllerCreate,
+	getInventoryControllerFindAllQueryKey,
+} from "@api/services/inventory";
 import { useProductunitControllerFindAll } from "@api/services/productunit";
 import { useHsncodeControllerFindAll } from "@api/services/hsncode";
 import { useTaxcodeControllerFindAll } from "@api/services/tax-code";
@@ -107,6 +111,7 @@ const schema = yup.object({
 		)
 		.required(() => i18n.t("productForm.validation.priceBookRequired"))
 		.min(1, () => i18n.t("productForm.validation.priceBookAtLeastOne")),
+	initialStock: yup.number().min(0).nullable().optional(),
 });
 
 // Helper component to auto-select first tax when taxes load asynchronously
@@ -170,6 +175,7 @@ const ProductForm = () => {
 	const queryClient = useQueryClient();
 	const { user, isGetStartedDialogOpen } = useAuthStore();
 	const createProduct = useProductControllerCreate();
+	const createInventory = useInventoryControllerCreate();
 	const { setOpenProductForm, editValues } = useCreateProductStore.getState();
 	const productUnit = useProductunitControllerFindAll();
 	const hsnCodes = useHsncodeControllerFindAll();
@@ -196,11 +202,18 @@ const ProductForm = () => {
 			return;
 		}
 		action.setSubmitting(true);
-		// Include sellPrice in priceBook when sending to API
+		const initialStock =
+			typeof (values as { initialStock?: number }).initialStock === "number"
+				? (values as { initialStock?: number }).initialStock
+				: undefined;
+		// Include sellPrice in priceBook when sending to API (omit initialStock from payload)
+		const { initialStock: _omit, ...restValues } = values as CreateProductWithTaxDto & {
+			initialStock?: number;
+		};
 		const transformedValues = {
-			...values,
-			hsnCode_id: values.hsnCode_id === "" ? null : values.hsnCode_id,
-			priceBook: values.priceBook.map(({ currency_id, price, sellPrice, shippingCharges }) => ({
+			...restValues,
+			hsnCode_id: restValues.hsnCode_id === "" ? null : restValues.hsnCode_id,
+			priceBook: restValues.priceBook.map(({ currency_id, price, sellPrice, shippingCharges }) => ({
 				currency_id,
 				price,
 				sellPrice: sellPrice !== null && sellPrice !== undefined ? sellPrice : undefined,
@@ -213,9 +226,31 @@ const ProductForm = () => {
 				data: transformedValues,
 			});
 		} else {
-			await createProduct.mutateAsync({
+			const result = await createProduct.mutateAsync({
 				data: transformedValues,
 			});
+			const createdId = result?.result?.id;
+			if (
+				createdId &&
+				initialStock != null &&
+				!Number.isNaN(initialStock) &&
+				Number(initialStock) > 0
+			) {
+				try {
+					await createInventory.mutateAsync({
+						data: {
+							productId: createdId,
+							operation: "set",
+							quantity: Number(initialStock),
+						},
+					});
+					await queryClient.invalidateQueries({
+						queryKey: getInventoryControllerFindAllQueryKey(),
+					});
+				} catch (err) {
+					console.error("Failed to create initial stock:", err);
+				}
+			}
 		}
 		action.resetForm();
 		queryClient.invalidateQueries({
@@ -276,6 +311,7 @@ const ProductForm = () => {
 				}) ?? [],
 			images: editValues?.images ?? [],
 			includeStore: editValues?.includeStore ?? false,
+			initialStock: undefined as number | undefined,
 		}),
 		[editValues, initialTaxValues, user?.id, taxCodes?.data],
 	);
@@ -873,25 +909,40 @@ const ProductForm = () => {
 																{t("productForm.noPriceBook")}
 															</Typography>
 														)}
-														<Button
-															variant="outlined"
-															startIcon={<AddIcon />}
-															onClick={() => {
-																// Calculate initial sellPrice based on current tax
-																arrayHelpers.push({
-																	currency_id: "",
-																	price: "",
-																	sellPrice: "",
-																});
-															}}
-														>
-															{t("productForm.addPrice")}
-														</Button>
-													</>
+										<Button
+											variant="outlined"
+											startIcon={<AddIcon />}
+											onClick={() => {
+												// Calculate initial sellPrice based on current tax
+												arrayHelpers.push({
+													currency_id: "",
+													price: "",
+													sellPrice: "",
+												});
+											}}
+										>
+											{t("productForm.addPrice")}
+										</Button>
+									</>
 												)}
 											/>
 										</Box>
 									</Grid>
+
+									{!editValues && (
+										<Grid item xs={12}>
+											<Field
+												name="initialStock"
+												component={TextFormField}
+												label={t("productForm.initialStock", {
+													defaultValue: "Initial stock (optional)",
+												})}
+												type="number"
+												isRequired={false}
+												inputProps={{ min: 0, step: 1 }}
+											/>
+										</Grid>
+									)}
 
 									<Grid item xs={12} mt={2}>
 										<FieldWithTooltip
