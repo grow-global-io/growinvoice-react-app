@@ -27,7 +27,7 @@ const updateSW = registerSW({
 	},
 	onOfflineReady() {
 		// This replaces your 'config.onSuccess(registration)'
-		console.log("App is ready to work offline.");
+		console.log("App is ready to work offline. n");
 	},
 });
 
