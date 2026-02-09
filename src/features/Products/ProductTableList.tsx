@@ -5,12 +5,16 @@ import {
 	DialogActions,
 	DialogContent,
 	DialogTitle,
-	MenuItem,
 	TextField,
 	Tooltip,
 	Typography,
 } from "@mui/material";
-import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import {
+	DataGrid,
+	type GridColDef,
+	GridActionsCellItem,
+	type GridActionsCellItemProps,
+} from "@mui/x-data-grid";
 import {
 	getProductControllerFindAllQueryKey,
 	useProductControllerFindAll,
@@ -192,80 +196,83 @@ const ProductTableList = () => {
 			minWidth: 184,
 			type: "actions",
 			getActions: (params) => {
-				const actions: React.ReactNode[] = [];
+				const actions: React.ReactElement<GridActionsCellItemProps>[] = [];
+				const openDeleteConfirm = () => {
+					handleOpen({
+						title: t("product.actions.deleteTitle", { defaultValue: "Delete Product" }),
+						message: t("product.actions.deleteConfirm", {
+							defaultValue: "Are you sure you want to delete this product?",
+						}),
+						onConfirm: async () => {
+							await removeProduct.mutateAsync({ id: params.row.id });
+							queryClient.invalidateQueries({
+								queryKey: getProductControllerFindAllQueryKey(),
+							});
+						},
+						onCancel: () => cleanUp(),
+						confirmButtonText: t("common.delete", { defaultValue: "Delete" }),
+					});
+				};
 				if (canHaveStock(params.row)) {
 					actions.push(
-						<Tooltip
-							title={t("product.table.updateStock", { defaultValue: "Update stock" })}
+						<GridActionsCellItem
 							key={`stock-${params.row?.id}`}
-						>
-							<Box>
-								<CustomIconButton
-									src={Inventory2Icon}
-									onClick={() => handleOpenStockDialog(params.row)}
-								/>
-							</Box>
-						</Tooltip>,
+							icon={
+								<Tooltip title={t("product.table.updateStock", { defaultValue: "Update stock" })}>
+									<Box>
+										<CustomIconButton src={Inventory2Icon} />
+									</Box>
+								</Tooltip>
+							}
+							label={t("product.table.updateStock", { defaultValue: "Update stock" })}
+							onClick={() => handleOpenStockDialog(params.row)}
+						/>,
 					);
 				}
 				actions.push(
-					<Tooltip
-						title={t("product.table.viewProduct", { defaultValue: "View Product" })}
+					<GridActionsCellItem
 						key={`view-${params.row?.id}`}
-					>
-						<Box>
-							<CustomIconButton
-								src={VisibilityIcon}
-								onClick={() => {
-									setSelectedProduct(params.row);
-									handleClickOpen();
-								}}
-							/>
-						</Box>
-					</Tooltip>,
-					<Tooltip
-						title={t("product.table.editProduct", { defaultValue: "Edit Product" })}
+						icon={
+							<Tooltip title={t("product.table.viewProduct", { defaultValue: "View Product" })}>
+								<Box>
+									<CustomIconButton src={VisibilityIcon} />
+								</Box>
+							</Tooltip>
+						}
+						label={t("product.table.viewProduct", { defaultValue: "View Product" })}
+						onClick={() => {
+							setSelectedProduct(params.row);
+							handleClickOpen();
+						}}
+					/>,
+					<GridActionsCellItem
 						key={`edit-${params.row?.id}`}
-					>
-						<Box>
-							<CustomIconButton
-								src={EditIcon}
-								onClick={() => {
-									updateProduct(params.row);
-								}}
-							/>
-						</Box>
-					</Tooltip>,
-					<Tooltip
-						title={t("product.table.deleteProduct", { defaultValue: "Delete Product" })}
+						icon={
+							<Tooltip title={t("product.table.editProduct", { defaultValue: "Edit Product" })}>
+								<Box>
+									<CustomIconButton src={EditIcon} />
+								</Box>
+							</Tooltip>
+						}
+						label={t("product.table.editProduct", { defaultValue: "Edit Product" })}
+						onClick={() => updateProduct(params.row)}
+					/>,
+					<GridActionsCellItem
 						key={`delete-${params.row?.id}`}
-					>
-						<Box>
-							<CustomIconButton
-								src={DeleteIcon}
-								buttonType="delete"
-								iconColor="error"
-								onClick={async () => {
-									handleOpen({
-										title: t("product.actions.deleteTitle", { defaultValue: "Delete Product" }),
-										message: t("product.actions.deleteConfirm", {
-											defaultValue: "Are you sure you want to delete this product?",
-										}),
-										onConfirm: async () => {
-											await removeProduct.mutateAsync({ id: params.row.id });
-											queryClient.invalidateQueries({
-												queryKey: getProductControllerFindAllQueryKey(),
-											});
-										},
-										onCancel: () => {
-											cleanUp();
-										},
-										confirmButtonText: t("common.delete", { defaultValue: "Delete" }),
-									});
-								}}
-							/>
-						</Box>
-					</Tooltip>,
+						icon={
+							<Tooltip title={t("product.table.deleteProduct", { defaultValue: "Delete Product" })}>
+								<Box>
+									<CustomIconButton
+										src={DeleteIcon}
+										buttonType="delete"
+										iconColor="error"
+									/>
+								</Box>
+							</Tooltip>
+						}
+						label={t("product.table.deleteProduct", { defaultValue: "Delete Product" })}
+						onClick={openDeleteConfirm}
+					/>,
 				);
 				return actions;
 			},
@@ -276,7 +283,7 @@ const ProductTableList = () => {
 		return <Loader />;
 	return (
 		<Box>
-			<DataGrid autoHeight rows={productList?.data} columns={columns} />
+			<DataGrid autoHeight rows={productList?.data ?? []} columns={columns} />
 			<ProductDialog product={selectedProduct} handleClose={handleClose} open={open} />
 			<Dialog open={stockDialogOpen} onClose={handleCloseStockDialog} maxWidth="sm" fullWidth>
 				<DialogTitle>
