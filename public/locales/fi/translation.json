@@ -64,6 +64,7 @@
   },
   "dashboard": {
     "rollUpAiStore": "Luo verkkokauppa",
+    "yourAi": "Oma AI",
     "aiAssistant": "AI-avustaja",
     "ledgerInfo": "Päiväkirjatiedot",
     "noWidgetsFound": "Yhteenveto-työkaluja ei löytynyt",
@@ -75,6 +76,22 @@
       "estimates": "Arviot",
       "dueAmount": "Erääntynyt summa"
     }
+  },
+  "yourAi": {
+    "greeting": "Lähetä viesti, lataa kuva tai käytä ääntä. Vasta kaikkeen, mitä jaat.",
+    "placeholder": "Kirjoita viesti...",
+    "attachImage": "Liitä kuva",
+    "attachFile": "Liitä tiedosto",
+    "voice": "Äänisyöttö",
+    "voiceNotSupported": "Äänisyöttö ei ole tuettu tässä selaimessa.",
+    "whatInImages": "Mitä näet näissä kuvissa?",
+    "imageTooLarge": "Kuva on liian suuri. Lataa alle 2 Mt kuva.",
+    "thinking": "Ajattelen...",
+    "errorReply": "Anteeksi, en voinut käsitellä sitä. Yritä uudelleen.",
+    "viewInvoice": "Näytä lasku",
+    "createdCustomerAndInvoice": "Loimme asiakkaan **{{customerName}}** ja laskun **{{invoiceNumber}}**. Voit tarkastella sitä Laskut -listasta tai alla olevan linkin kautta.",
+    "createFromImageFailed": "Asiakkaan tai laskun luominen kuvasta ei onnistunut. Tarkista, että Maksutiedot, Laskumalli ja Tuoteyksiköt on asetettu.",
+    "createInvoiceSetupRequired": "Luodaksesi laskun kuvasta, aseta Maksutiedot, Laskumalli, Valuutta ja vähintään yksi Tuoteyksikkö Asetuksissa."
   },
   "aiAssistant": {
     "greeting": "Hei! Miten voin auttaa sinua tänään?",

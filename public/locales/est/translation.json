@@ -64,6 +64,7 @@
   },
   "dashboard": {
     "rollUpAiStore": "Roll UP AI pood",
+    "yourAi": "Sinu AI",
     "aiAssistant": "AI Assistent",
     "ledgerInfo": "Pearaamatu info",
     "noWidgetsFound": "Ühtegi töölauda ei leitud",
@@ -75,6 +76,22 @@
       "estimates": "Pakkumised",
       "dueAmount": "Tasumata summa"
     }
+  },
+  "yourAi": {
+    "greeting": "Saada sõnum, laadi üles pilt või kasuta häält. Vastan kõigele, mida jagad.",
+    "placeholder": "Sisesta sõnum...",
+    "attachImage": "Lisa pilt",
+    "attachFile": "Lisa fail",
+    "voice": "Häälesisend",
+    "voiceNotSupported": "Häälesisend ei ole selles brauseris toetatud.",
+    "whatInImages": "Mida sa nendes piltides näed?",
+    "imageTooLarge": "Pilt on liiga suur. Laadi üles kuni 2 MB pilt.",
+    "thinking": "Mõtlen...",
+    "errorReply": "Vabandust, seda ei õnnestunud töödelda. Proovi uuesti.",
+    "viewInvoice": "Vaata arvet",
+    "createdCustomerAndInvoice": "Lõin kliendi **{{customerName}}** ja arve **{{invoiceNumber}}**. Saad vaadata arveid nimekirjast või alloleva lingi kaudu.",
+    "createFromImageFailed": "Kliendi või arve loomine pildi põhjal ebaõnnestus. Kontrolli, et Makse andmed, Arve mall ja Toote ühikud on seadistatud.",
+    "createInvoiceSetupRequired": "Arve loomiseks pildi põhjal seadista palun Makse andmed, Arve mall, Valuuta ja vähemalt üks Toote ühik Seadetes."
   },
   "aiAssistant": {
     "greeting": "Tere! Kuidas saan täna aidata?",

@@ -73,6 +73,7 @@ import { LoaderService } from "@shared/services/LoaderService";
 import { toast } from "react-toastify";
 import { setSuppressSuccessMessages } from "@shared/services/InterceptorService";
 import { useEuropeanCountryDetection } from "@shared/hooks/useEuropeanCountryDetection";
+import type { AiInvoicePrefill } from "./types/aiInvoicePrefill";
 
 export type OmitCreateInvoiceProductsExtended = Omit<
 	OmitCreateInvoiceProductsDto,
@@ -84,16 +85,20 @@ export type OmitCreateInvoiceProductsExtended = Omit<
 	isEditble?: boolean;
 	taxes?: string[];
 	discount?: number;
+	/** Optional display name fallback (used when product list hasn't loaded yet) */
+	product_name?: string;
 };
 
 const CreateInvoice = ({
 	id,
 	customerId,
 	isReceipt = false,
+	aiPrefill,
 }: {
 	id?: string;
 	customerId?: string;
 	isReceipt?: boolean;
+	aiPrefill?: AiInvoicePrefill;
 }) => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
@@ -136,7 +141,7 @@ const CreateInvoice = ({
 	};
 
 	useEffect(() => {
-		if (invoiceFindOne.isSuccess) {
+		if (invoiceFindOne.isSuccess && !aiPrefill) {
 			setRows(
 				invoiceFindOne?.data?.product?.map((product) => ({
 					id: product?.id,
@@ -153,7 +158,37 @@ const CreateInvoice = ({
 				})) ?? [],
 			);
 		}
-	}, [invoiceFindOne.isSuccess || invoiceFindOne?.isRefetching]);
+	}, [invoiceFindOne.isSuccess, invoiceFindOne?.isRefetching, aiPrefill]);
+
+	// Apply AI prefill rows when navigating from Your AI with extracted invoice data
+	useEffect(() => {
+		if (!aiPrefill || id) return;
+		const rowsPayload = aiPrefill.rows?.length
+			? aiPrefill.rows.map((r) => ({
+					id: r.id,
+					product_id: r.product_id,
+					product_name: r.product_name,
+					quantity: r.quantity,
+					price: r.price,
+					total: r.total,
+					taxes: r.taxes ?? [],
+					discount: r.discount ?? 0,
+					isNew: true,
+					isEditPosible: false,
+					isEditble: true,
+				}))
+			: [];
+		const apply = () => {
+			if (rowsPayload.length) setRows(rowsPayload);
+		};
+		apply();
+		const t1 = setTimeout(apply, 100);
+		const t2 = setTimeout(apply, 400);
+		return () => {
+			clearTimeout(t1);
+			clearTimeout(t2);
+		};
+	}, [aiPrefill, id]);
 
 	// Pre-select customer when customerId is provided (only for new invoices)
 	const getInitialCustomerIds = () => {
@@ -165,7 +200,7 @@ const CreateInvoice = ({
 		return [];
 	};
 
-	const initialValues = {
+	const baseInitialValues = {
 		currency_id: invoiceFindOne?.data?.currency_id ?? user?.currency_id ?? "",
 		customer_ids: getInitialCustomerIds(),
 		user_id: user?.id ?? "",
@@ -199,6 +234,35 @@ const CreateInvoice = ({
 			invoiceFindOne?.data?.template_id ?? invoiceSettings?.data?.invoiceTemplateId ?? "",
 	};
 
+	const initialValues =
+		aiPrefill && !id
+			? {
+					...baseInitialValues,
+					customer_ids:
+						aiPrefill.customer_ids?.length > 0 ? aiPrefill.customer_ids : baseInitialValues.customer_ids,
+					paymentId: aiPrefill.paymentId || baseInitialValues.paymentId,
+					template_id: aiPrefill.template_id || baseInitialValues.template_id,
+					currency_id: aiPrefill.currency_id || baseInitialValues.currency_id,
+					date: aiPrefill.date || baseInitialValues.date,
+					due_date: aiPrefill.due_date || baseInitialValues.due_date,
+					invoice_number: aiPrefill.invoice_number || baseInitialValues.invoice_number,
+					reference_number: aiPrefill.reference_number ?? baseInitialValues.reference_number,
+					notes: aiPrefill.notes ?? baseInitialValues.notes,
+					sub_total: aiPrefill.sub_total ?? baseInitialValues.sub_total,
+					total: aiPrefill.total ?? baseInitialValues.total,
+					paid_amount: aiPrefill.paid_amount ?? baseInitialValues.paid_amount,
+					due_amount: aiPrefill.due_amount ?? baseInitialValues.due_amount,
+					product: aiPrefill.rows.map((r) => ({
+						product_id: r.product_id,
+						quantity: r.quantity,
+						price: r.price,
+						total: r.total,
+						taxes: r.taxes ?? [],
+						discount: r.discount ?? 0,
+					})),
+				}
+			: baseInitialValues;
+
 	// Set customer in form when customer data loads and customerId is provided
 	useEffect(() => {
 		if (!id && customerId && customerData?.data && formikRef.current) {
@@ -215,6 +279,46 @@ const CreateInvoice = ({
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [customerData?.data, customerId, id]);
+
+	// When coming from AI prefill: sync customer selection once customer list has loaded (so Autocomplete shows selection)
+	useEffect(() => {
+		if (!id && aiPrefill?.customer_ids?.length && customerData?.data && formikRef.current) {
+			const validIds = aiPrefill.customer_ids.filter((cid) =>
+				customerData.data?.some((c) => c.id === cid),
+			);
+			if (validIds.length > 0) {
+				const current = formikRef.current.values as { customer_ids?: string[] };
+				if (
+					!current.customer_ids?.length ||
+					validIds.some((id) => !current.customer_ids?.includes(id))
+				) {
+					formikRef.current.setFieldValue("customer_ids", validIds);
+				}
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [customerData?.data, aiPrefill?.customer_ids, id]);
+
+	// Delayed sync so Autocomplete options are loaded and can display the selected customer
+	useEffect(() => {
+		if (id || !aiPrefill?.customer_ids?.length || !customerData?.data) return;
+		const sync = () => {
+			if (!formikRef.current) return;
+			const validIds = aiPrefill.customer_ids.filter((cid) =>
+				customerData.data?.some((c) => c.id === cid),
+			);
+			if (validIds.length > 0) {
+				formikRef.current.setFieldValue("customer_ids", validIds);
+			}
+		};
+		sync();
+		const t1 = setTimeout(sync, 150);
+		const t2 = setTimeout(sync, 500);
+		return () => {
+			clearTimeout(t1);
+			clearTimeout(t2);
+		};
+	}, [id, aiPrefill?.customer_ids, customerData?.data]);
 
 	const updateInitialValues = {
 		...initialValues,
@@ -445,39 +549,47 @@ const CreateInvoice = ({
 			/>
 			<Box sx={{ mb: 2, mt: 2 }}>
 				<Formik
+					key={id ?? (aiPrefill ? "with-ai-prefill" : "new")}
 					initialValues={id ? updateInitialValues : initialValues}
 					validationSchema={id ? updateSchema : schema}
 					onSubmit={handleSubmit}
 					innerRef={formikRef}
 				>
 					{(formik) => {
-						// Effect to handle geolocation-based template selection
+						// Effect to handle geolocation-based template selection + default Europe template when from AI prefill
 						useEffect(() => {
-							// Only proceed if geolocation is detected
+							const europeanTemplates = invoiceTemplateFindAll?.data?.filter(
+								(template) =>
+									template.name?.toLowerCase().includes("european") ||
+									template.name?.toLowerCase().includes("eur") ||
+									template.name?.toLowerCase().includes("europe"),
+							);
+							// When from AI prefill with no template set, default to first European template
+							if (aiPrefill && europeanTemplates?.length && !formik.values.template_id) {
+								formik.setFieldValue("template_id", europeanTemplates[0].id);
+								return;
+							}
+							// Only proceed if geolocation is detected for non-AI flow
 							if (isEuropeanCountry === null) return;
 
-							if (isEuropeanCountry) {
-								// If user is in Europe, find and set European template
-								const europeanTemplates = invoiceTemplateFindAll?.data?.filter(
-									(template) =>
-										template.name?.toLowerCase().includes("european") ||
-										template.name?.toLowerCase().includes("eur"),
+							if (isEuropeanCountry && europeanTemplates && europeanTemplates.length > 0) {
+								const currentTemplate = invoiceTemplateFindAll?.data?.find(
+									(t) => t.id === formik.values.template_id,
 								);
-								if (europeanTemplates && europeanTemplates.length > 0) {
-									const currentTemplate = invoiceTemplateFindAll?.data?.find(
-										(t) => t.id === formik.values.template_id,
-									);
-									const isCurrentTemplateEuropean =
-										currentTemplate?.name?.toLowerCase().includes("european") ||
-										currentTemplate?.name?.toLowerCase().includes("eur");
-									// Only set if current template is not European
-									if (!isCurrentTemplateEuropean) {
-										formik.setFieldValue("template_id", europeanTemplates[0].id);
-									}
+								const isCurrentTemplateEuropean =
+									currentTemplate?.name?.toLowerCase().includes("european") ||
+									currentTemplate?.name?.toLowerCase().includes("eur") ||
+									currentTemplate?.name?.toLowerCase().includes("europe");
+								if (!isCurrentTemplateEuropean) {
+									formik.setFieldValue("template_id", europeanTemplates[0].id);
 								}
 							}
-							// If user is not in Europe, show all templates (no filtering needed)
-						}, [isEuropeanCountry, invoiceTemplateFindAll?.data, formik.values.template_id]);
+						}, [
+							isEuropeanCountry,
+							invoiceTemplateFindAll?.data,
+							formik.values.template_id,
+							aiPrefill,
+						]);
 
 						// Compute available customer options for preview
 						const previewCustomerOptions = formik?.values?.customer_ids
