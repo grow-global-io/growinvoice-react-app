@@ -23,6 +23,7 @@ jobs:
           echo "VITE_FIREBASE_MEASUREMENT_ID=G-SH0S2QYNFJ" >> .env
           echo "VITE_GOOGLE_CLIENT_ID=670948856097-7msclnm7mjvenq6gepcpfpbav7d5l3tu.apps.googleusercontent.com" >> .env
           echo "VITE_GOOGLE_CLIENT_SECRET=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" >> .env
+          echo "VITE_OPENAI_API_KEY=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" >> .env
       - name: 📦 Upload .env File
         uses: actions/upload-artifact@v4
         with:
