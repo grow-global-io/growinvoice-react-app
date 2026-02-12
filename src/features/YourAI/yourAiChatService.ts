@@ -72,6 +72,17 @@ async function sendOpenAiDirect(payload: YourAiChatRequest): Promise<YourAiChatR
 	return { content };
 }
 
+/** True when running on localhost so we can use direct OpenAI; production must use backend (CORS blocks direct). */
+function isLocalOrigin(): boolean {
+	if (typeof window === "undefined") return false;
+	try {
+		const origin = window.location?.origin ?? "";
+		return /^https?:\/\/localhost(:\d+)?$/i.test(origin) || /^https?:\/\/127\.0\.0\.1(:\d+)?$/i.test(origin);
+	} catch {
+		return false;
+	}
+}
+
 export async function sendYourAiChat(payload: YourAiChatRequest): Promise<YourAiChatResponse> {
 	try {
 		const res = await authInstance<YourAiChatResponse>({
@@ -82,12 +93,13 @@ export async function sendYourAiChat(payload: YourAiChatRequest): Promise<YourAi
 		});
 		return res as YourAiChatResponse;
 	} catch (e) {
-		// Backend may not implement /api/openai/chat (404/501); fall back to client-side OpenAI
+		// Backend may not implement /api/openai/chat (404/501). Only fall back to client OpenAI on
+		// localhost; in production (e.g. go.growinvoice.com) direct calls hit CORS and fail.
 		const err = e as { response?: { status?: number }; status?: number; message?: string };
 		const status = err?.response?.status ?? err?.status;
 		const isNotFound =
 			status === 404 || status === 501 || (err?.message?.includes?.("404") ?? false);
-		if (isNotFound) {
+		if (isNotFound && isLocalOrigin()) {
 			try {
 				return await sendOpenAiDirect(payload);
 			} catch (directErr) {
@@ -97,6 +109,11 @@ export async function sendYourAiChat(payload: YourAiChatRequest): Promise<YourAi
 						: "OpenAI request failed. Set VITE_OPENAI_API_KEY in .env to use the chat.";
 				throw new Error(msg);
 			}
+		}
+		if (isNotFound) {
+			throw new Error(
+				"AI chat is not available. The server must provide /api/openai/chat. Please contact support or try again later.",
+			);
 		}
 		throw e;
 	}
@@ -165,10 +182,84 @@ Return ONLY valid JSON, no markdown or explanation. Use this exact structure:
 }
 IMPORTANT: bill_to = the party receiving the invoice (customer we will create). from = the seller/issuer (do not use for customer). If the invoice only has one party, put the recipient in bill_to. For line_items, extract every item/row. Ensure totals and amounts are numbers.`;
 
-/** Call OpenAI with image to extract invoice data as JSON. Uses client-side API key. */
+/** Normalize backend or raw OpenAI response to ExtractedInvoiceData (bill_to/customer + line_items). */
+function parseExtractionResponse(obj: Record<string, unknown>): ExtractedInvoiceData {
+	const billTo = obj.bill_to as Record<string, unknown> | undefined;
+	const legacyCustomer = obj.customer as Record<string, unknown> | undefined;
+	const cust = billTo ?? legacyCustomer;
+	if (!obj || typeof cust !== "object" || !Array.isArray(obj.line_items)) {
+		throw new Error("Extracted data missing bill_to/customer or line_items.");
+	}
+	const customer: ExtractedCustomer = {
+		name: typeof cust.name === "string" ? cust.name : "Imported Customer",
+		email: typeof cust.email === "string" ? cust.email : null,
+		phone: typeof cust.phone === "string" ? cust.phone : null,
+		address: typeof cust.address === "string" ? cust.address : null,
+		city: typeof cust.city === "string" ? cust.city : null,
+		state: typeof cust.state === "string" ? cust.state : null,
+		zip: typeof cust.zip === "string" ? cust.zip : null,
+		country_name: typeof cust.country_name === "string" ? cust.country_name : null,
+	};
+	const line_items = (obj.line_items as Array<Record<string, unknown>>).map((item) => ({
+		description: typeof item.description === "string" ? item.description : "Item",
+		quantity: typeof item.quantity === "number" ? item.quantity : 1,
+		unit_price: typeof item.unit_price === "number" ? item.unit_price : typeof item.total === "number" ? item.total : 0,
+		total: typeof item.total === "number" ? item.total : typeof item.unit_price === "number" ? item.unit_price * (typeof item.quantity === "number" ? item.quantity : 1) : 0,
+	}));
+	const subtotal = typeof obj.subtotal === "number" ? obj.subtotal : null;
+	const total = typeof obj.total === "number" ? obj.total : (line_items.length ? line_items.reduce((s, i) => s + i.total, 0) : null);
+	return {
+		customer,
+		invoice_number: typeof obj.invoice_number === "string" ? obj.invoice_number : null,
+		date: typeof obj.date === "string" ? obj.date : null,
+		due_date: typeof obj.due_date === "string" ? obj.due_date : null,
+		line_items,
+		subtotal,
+		total,
+		tax_amount: typeof obj.tax_amount === "number" ? obj.tax_amount : null,
+		currency_code: typeof obj.currency_code === "string" ? obj.currency_code : null,
+		notes: typeof obj.notes === "string" ? obj.notes : null,
+	};
+}
+
+/** Call backend for extraction when available; otherwise (localhost only) call OpenAI directly. */
 export async function extractInvoiceDataFromImage(
 	imageBase64: string[],
 ): Promise<ExtractedInvoiceData> {
+	// 1) Try backend first (production and dev)
+	try {
+		const res = await authInstance<Record<string, unknown>>({
+			url: "/api/openai/extract-invoice",
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			data: { imageBase64 },
+		});
+		if (res && typeof res === "object") {
+			if (res.customer && Array.isArray(res.line_items)) {
+				return parseExtractionResponse(res);
+			}
+			// Backend might return raw OpenAI shape with choices[0].message.content
+			const raw = (res as { choices?: Array<{ message?: { content?: string } }> })?.choices?.[0]?.message?.content;
+			if (typeof raw === "string") {
+				const parsed = JSON.parse(raw) as Record<string, unknown>;
+				return parseExtractionResponse(parsed);
+			}
+		}
+		throw new Error("Unexpected extraction response from server.");
+	} catch (e) {
+		const err = e as { response?: { status?: number }; status?: number; message?: string };
+		const status = err?.response?.status ?? err?.status;
+		const isNotFound = status === 404 || status === 501 || err?.message?.includes?.("404");
+		if (!isNotFound) throw e;
+		// 2) Backend not implemented: use direct OpenAI only on localhost (CORS blocks in production)
+		if (!isLocalOrigin()) {
+			throw new Error(
+				"Image extraction is not available. The server must provide POST /api/openai/extract-invoice. See BACKEND_OPENAI_SETUP.md.",
+			);
+		}
+	}
+
+	// 3) Localhost fallback: call OpenAI from client
 	const apiKey = import.meta.env.VITE_OPENAI_API_KEY as string | undefined;
 	if (!apiKey) throw new Error("VITE_OPENAI_API_KEY is not set.");
 	const content: Array<{ type: "text"; text: string } | { type: "image_url"; image_url: { url: string } }> = [
@@ -206,42 +297,5 @@ export async function extractInvoiceDataFromImage(
 	} catch {
 		throw new Error("AI did not return valid JSON. Please try again.");
 	}
-	const obj = parsed as Record<string, unknown>;
-	// Use bill_to (invoice recipient) only; ignore "from" (seller) - we only create the "to" customer
-	const billTo = obj.bill_to as Record<string, unknown> | undefined;
-	const legacyCustomer = obj.customer as Record<string, unknown> | undefined;
-	const cust = billTo ?? legacyCustomer;
-	if (!obj || typeof cust !== "object" || !Array.isArray(obj.line_items)) {
-		throw new Error("Extracted data missing bill_to/customer or line_items.");
-	}
-	const customer: ExtractedCustomer = {
-		name: typeof cust.name === "string" ? cust.name : "Imported Customer",
-		email: typeof cust.email === "string" ? cust.email : null,
-		phone: typeof cust.phone === "string" ? cust.phone : null,
-		address: typeof cust.address === "string" ? cust.address : null,
-		city: typeof cust.city === "string" ? cust.city : null,
-		state: typeof cust.state === "string" ? cust.state : null,
-		zip: typeof cust.zip === "string" ? cust.zip : null,
-		country_name: typeof cust.country_name === "string" ? cust.country_name : null,
-	};
-	const line_items = (obj.line_items as Array<Record<string, unknown>>).map((item) => ({
-		description: typeof item.description === "string" ? item.description : "Item",
-		quantity: typeof item.quantity === "number" ? item.quantity : 1,
-		unit_price: typeof item.unit_price === "number" ? item.unit_price : typeof item.total === "number" ? item.total : 0,
-		total: typeof item.total === "number" ? item.total : typeof item.unit_price === "number" ? item.unit_price * (typeof item.quantity === "number" ? item.quantity : 1) : 0,
-	}));
-	const subtotal = typeof obj.subtotal === "number" ? obj.subtotal : null;
-	const total = typeof obj.total === "number" ? obj.total : (line_items.length ? line_items.reduce((s, i) => s + i.total, 0) : null);
-	return {
-		customer,
-		invoice_number: typeof obj.invoice_number === "string" ? obj.invoice_number : null,
-		date: typeof obj.date === "string" ? obj.date : null,
-		due_date: typeof obj.due_date === "string" ? obj.due_date : null,
-		line_items,
-		subtotal,
-		total,
-		tax_amount: typeof obj.tax_amount === "number" ? obj.tax_amount : null,
-		currency_code: typeof obj.currency_code === "string" ? obj.currency_code : null,
-		notes: typeof obj.notes === "string" ? obj.notes : null,
-	};
+	return parseExtractionResponse(parsed as Record<string, unknown>);
 }
