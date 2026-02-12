@@ -28,7 +28,9 @@ import { useCreateVendorsStore } from "@store/createVendorsStore";
 import AddIcon from "@mui/icons-material/Add";
 import { useTranslation } from "react-i18next";
 
-const CreateExpense = ({ id }: { id?: string }) => {
+import type { AiExpensePrefill } from "./types/aiExpensePrefill";
+
+const CreateExpense = ({ id, aiPrefill }: { id?: string; aiPrefill?: AiExpensePrefill }) => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const vendorsData = useVendorsControllerFindAll();
@@ -42,7 +44,7 @@ const CreateExpense = ({ id }: { id?: string }) => {
 		},
 	});
 
-	const initialValues: CreateExpensesDto = {
+	const baseInitialValues: CreateExpensesDto = {
 		receipt_url: ExpensesFindOne?.data?.receipt_url ?? "",
 		category: ExpensesFindOne?.data?.category ?? "Travel",
 		vendor_id: ExpensesFindOne?.data?.vendor_id ?? "",
@@ -52,6 +54,16 @@ const CreateExpense = ({ id }: { id?: string }) => {
 		currency_id: ExpensesFindOne?.data?.currency_id ?? user?.currency_id ?? "",
 		notes: ExpensesFindOne?.data?.notes ?? "",
 	};
+
+	// When navigating from Your AI with extracted expense data, merge prefill into base values (only for new expenses)
+	const initialValues: CreateExpensesDto =
+		aiPrefill && !id
+			? {
+					...baseInitialValues,
+					...aiPrefill,
+					user_id: user?.id ?? baseInitialValues.user_id,
+				}
+			: baseInitialValues;
 
 	const schema: yup.Schema<CreateExpensesDto> = yup.object({
 		receipt_url: yup.string(),

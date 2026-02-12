@@ -281,7 +281,8 @@ export default function FullFeaturedCrudGrid({
 			},
 			renderCell: (params) => {
 				const productName = productList?.data?.find((product) => product.id === params.value)?.name;
-				return <Typography>{productName}</Typography>;
+				const fallbackName = (params.row as { product_name?: string })?.product_name;
+				return <Typography>{productName ?? fallbackName ?? ""}</Typography>;
 			},
 		},
 		{

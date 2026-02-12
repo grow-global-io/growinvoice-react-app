@@ -24,6 +24,7 @@ import QuotationDetailPage from "@pages/QuotationDetailPage";
 import InvoiceTemplatePage from "@pages/InvoiceTemplatePage";
 import OrdersPage from "@pages/OrdersPage";
 import DashboardPage from "@pages/DashboardPage";
+import YourAIPage from "@pages/YourAIPage";
 import QuotationSettingsPage from "@pages/QuotationSettingsPage";
 import QuotationTemplatePage from "@pages/QuotationTemplatePage";
 import PaymentsListPage from "@pages/PaymentsListPage";
@@ -246,6 +247,10 @@ export const protectedRoutes: Route[] = [
 	{
 		path: "/dashboard",
 		Component: DashboardPage,
+	},
+	{
+		path: "/your-ai",
+		Component: YourAIPage,
 	},
 	{
 		path: "/setting/quotation",

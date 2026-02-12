@@ -51,18 +51,14 @@ const Overview = () => {
 						<Button
 							variant="contained"
 							color="primary"
-							onClick={() => {
-								navigate("/dashboard");
-							}}
+							onClick={() => navigate("/your-ai")}
 						>
 							{t("dashboard.aiAssistant", { defaultValue: "AI Assistant" })}
 						</Button>
 						<Button
 							variant="contained"
 							color="primary"
-							onClick={() => {
-								navigate("/ledger");
-							}}
+							onClick={() => navigate("/ledger")}
 						>
 							{t("dashboard.ledgerInfo", { defaultValue: "Ledger Info" })}
 						</Button>

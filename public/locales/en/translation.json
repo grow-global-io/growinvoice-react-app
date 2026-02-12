@@ -66,6 +66,7 @@
   },
   "dashboard": {
     "rollUpAiStore": "Roll UP AI Store",
+    "yourAi": "Your AI",
     "aiAssistant": "AI Assistant",
     "ledgerInfo": "Ledger Info",
     "noWidgetsFound": "No Dashboard Widgets Found",
@@ -77,6 +78,29 @@
       "estimates": "Estimates",
       "dueAmount": "Due Amount"
     }
+  },
+  "yourAi": {
+    "greeting": "Send a message, upload an image, or use voice. I'll respond to everything you share.",
+    "placeholder": "Type a message...",
+    "attachImage": "Attach image",
+    "attachFile": "Attach file",
+    "voice": "Voice input",
+    "voiceNotSupported": "Voice input is not supported in this browser.",
+    "whatInImages": "What do you see in these images?",
+    "imageTooLarge": "Image is too large. Please upload an image smaller than 2 MB.",
+    "thinking": "Thinking...",
+    "errorReply": "Sorry, I couldn't process that. Please try again.",
+    "viewInvoice": "View invoice",
+    "createdCustomerAndInvoice": "I've created the customer **{{customerName}}** and invoice **{{invoiceNumber}}**. You can view it in your Invoices list or use the link below.",
+    "createFromImageFailed": "I couldn't create the customer or invoice from the image. Please check that Payment details, Invoice template, and Product units are set up, then try again.",
+    "createInvoiceSetupRequired": "To create an invoice from an image, please set up Payment details, Invoice template, Currency, and at least one Product unit in Settings first.",
+    "invoiceExtractedMissing": "I've extracted the invoice data. To open the Create Invoice page I need: {{missing}}. Reply **Use first** to use your first option for each, or add them in Settings and tell me when ready.",
+    "useFirstOption": "Use first",
+    "takingYouToCreateInvoice": "Taking you to the Create Invoice page with the data we collected. You can review and save there.",
+    "missingProductUnit": "Product unit",
+    "missingPaymentDetails": "Payment details",
+    "missingInvoiceTemplate": "Invoice template",
+    "missingCurrency": "Currency"
   },
   "aiAssistant": {
     "greeting": "Hey! How can I help you today?",

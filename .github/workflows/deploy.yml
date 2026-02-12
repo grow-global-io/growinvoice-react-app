@@ -12,17 +12,28 @@ jobs:
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
 
-      # create .env file
+      # create .env file from GitHub Secrets (Settings → Secrets and variables → Actions)
       - name: 📄 Create .env File
+        env:
+          VITE_APP_BASE_URL: ${{ secrets.VITE_APP_BASE_URL }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+          VITE_FIREBASE_MEASUREMENT_ID: ${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}
+          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+          VITE_GOOGLE_CLIENT_SECRET: ${{ secrets.VITE_GOOGLE_CLIENT_SECRET }}
+          VITE_OPENAI_API_KEY: ${{ secrets.VITE_OPENAI_API_KEY }}
         run: |
-          echo "VITE_APP_BASE_URL=https://api-dev.growinvoice.com" > .env
-          echo "VITE_FIREBASE_PROJECT_ID=growinvoice-957bc" >> .env
-          echo "VITE_FIREBASE_API_KEY=AIzaSyBQNfsPslDOa9at0zbCx3iFxCs66flfJVw" >> .env
-          echo "VITE_FIREBASE_MESSAGING_SENDER_ID=1009012687487" >> .env
-          echo "VITE_FIREBASE_APP_ID=1:1009012687487:web:00390aec097f131269b54a" >> .env
-          echo "VITE_FIREBASE_MEASUREMENT_ID=G-SH0S2QYNFJ" >> .env
-          echo "VITE_GOOGLE_CLIENT_ID=670948856097-7msclnm7mjvenq6gepcpfpbav7d5l3tu.apps.googleusercontent.com" >> .env
-          echo "VITE_GOOGLE_CLIENT_SECRET=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" >> .env
+          echo "VITE_APP_BASE_URL=$VITE_APP_BASE_URL" > .env
+          echo "VITE_FIREBASE_PROJECT_ID=$VITE_FIREBASE_PROJECT_ID" >> .env
+          echo "VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY" >> .env
+          echo "VITE_FIREBASE_MESSAGING_SENDER_ID=$VITE_FIREBASE_MESSAGING_SENDER_ID" >> .env
+          echo "VITE_FIREBASE_APP_ID=$VITE_FIREBASE_APP_ID" >> .env
+          echo "VITE_FIREBASE_MEASUREMENT_ID=$VITE_FIREBASE_MEASUREMENT_ID" >> .env
+          echo "VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID" >> .env
+          echo "VITE_GOOGLE_CLIENT_SECRET=$VITE_GOOGLE_CLIENT_SECRET" >> .env
+          echo "VITE_OPENAI_API_KEY=$VITE_OPENAI_API_KEY" >> .env
       - name: 📦 Upload .env File
         uses: actions/upload-artifact@v4
         with:
