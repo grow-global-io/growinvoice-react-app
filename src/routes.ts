@@ -58,6 +58,7 @@ import PlansManagementList from "@features/Admin/PlansManagement/PlansManagement
 import BulkUploadCustomer from "@features/Customer/BulkUploadCustomer";
 import ReceiptListPage from "@pages/ReceiptListPage";
 import CreateReceiptPage from "@pages/CreateReceiptPage";
+import BulkUploadInvoicePage from "@pages/BulkUploadInvoicePage";
 import PromotionalEmailPage from "@features/Admin/PromotionalEmail/PromotionalEmailPage";
 
 export const unProtectedRoutes: Route[] = [
@@ -147,6 +148,10 @@ export const protectedRoutes: Route[] = [
 	{
 		path: "/invoice/createinvoice",
 		Component: CreateInvoicePage,
+	},
+	{
+		path: "/invoice/bulk-upload",
+		Component: BulkUploadInvoicePage,
 	},
 	{
 		path: "/invoice/invoicedetails/:id",

@@ -1,0 +1,3 @@
+invoice_number,date,due_date,currency_code,customer_email,product_name,quantity,price,tax_id,notes
+INV-001,2023-10-27,2023-11-27,USD,customer1@example.com,Product A,2,50,,Thanks for your business!
+INV-002,2023-10-28,2023-11-28,EUR,customer2@example.com,Product B,1,100,,Please pay by the due date.
