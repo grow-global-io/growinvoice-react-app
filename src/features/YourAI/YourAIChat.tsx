@@ -41,11 +41,16 @@ import { useInvoicesettingsControllerFindFirst } from "@api/services/invoicesett
 import { useCurrencyControllerFindAll } from "@api/services/currency";
 import {
 	CreateCustomerWithAddressDtoOption,
+	CreateInvoiceWithProductsRecurring,
 	CreateProductWithTaxDtoType,
+    CreateExpensesDtoCategory,
 } from "@api/services/models";
 import { http } from "@shared/axios";
 import { useQueryClient } from "@tanstack/react-query";
 import moment from "moment";
+import { useInvoiceControllerCreate } from "@api/services/invoice";
+import { useExpensesControllerCreate } from "@api/services/expenses";
+import { formatDateToIso } from "@shared/formatter";
 
 interface UiMessage {
 	id: string;
@@ -137,6 +142,8 @@ export default function YourAIChat() {
 	const paymentDetails = usePaymentdetailsControllerFindAll();
 	const invoiceSettings = useInvoicesettingsControllerFindFirst();
 	const currencies = useCurrencyControllerFindAll();
+    const createExpenses = useExpensesControllerCreate();
+    const createInvoice = useInvoiceControllerCreate();
 
 	/** Normalize for matching: trim and lowercase */
 	const norm = (s: string) => (s ?? "").trim().toLowerCase();
@@ -147,6 +154,16 @@ export default function YourAIChat() {
 			if (!list?.length) return null;
 			const n = norm(name);
 			const e = email ? norm(email) : "";
+
+            // 1. Try to find by Email first (if provided)
+            if (e) {
+                const emailMatch = list.find((c) => {
+                     const custEmail = (c as { email?: string | null }).email;
+                     return custEmail && norm(custEmail) === e;
+                });
+                if (emailMatch) return (emailMatch as { id: string }).id;
+            }
+
 			const match = list.find((c) => {
 				const sameName =
 					norm((c as { display_name?: string; name?: string }).display_name ?? "") === n ||
@@ -395,6 +412,298 @@ export default function YourAIChat() {
 		clearAttachments();
 		setLoading(true);
 
+		// If user asked to create INVOICE from the image: extract and navigate to Create Invoice with prefill
+		if (hasImages && isCreateFromInvoiceIntent(content) && user?.id) {
+			let extracted: ExtractedInvoiceData;
+			try {
+				extracted = await extractInvoiceDataFromImage(userMsg.imageBase64!);
+			} catch (extractErr) {
+				const msg = extractErr instanceof Error ? extractErr.message : "Extraction failed";
+				AlertService.instance?.errorMessage(msg);
+				setMessages((prev) => [
+					...prev,
+					{
+						id: `assistant-extract-err-${Date.now()}`,
+						role: "assistant",
+						content: t("yourAi.createFromImageFailed", {
+							defaultValue:
+								"I couldn't extract data from the image. Please try again with a clearer image.",
+						}),
+					},
+				]);
+				setLoading(false);
+				return;
+			}
+
+			try {
+				const unitId = await getOrCreatePcUnitId();
+				const paymentId = paymentDetails.data?.[0]?.id ?? "";
+				const templateId = invoiceSettings?.data?.invoiceTemplateId ?? "";
+				const invoiceCurrencyCode = extracted.currency_code?.toUpperCase?.() ?? "";
+				const currencyId =
+					invoiceCurrencyCode === "EUR"
+						? ((
+								currencies.data as
+									| Array<{ id: string; short_code?: string; code?: string }>
+									| undefined
+							)?.find(
+								(c) =>
+									(c.short_code ?? "").toUpperCase() === "EUR" ||
+									(c.code ?? "").toUpperCase() === "EUR",
+							)?.id ?? "")
+						: invoiceCurrencyCode === "INR"
+							? ((
+									currencies.data as
+										| Array<{ id: string; short_code?: string; code?: string }>
+										| undefined
+								)?.find(
+									(c) =>
+										(c.short_code ?? "").toUpperCase() === "INR" ||
+										(c.code ?? "").toUpperCase() === "INR",
+								)?.id ?? "")
+							: "";
+
+				let customerId =
+					findExistingCustomerId(extracted.customer.name, extracted.customer.email) ?? null;
+
+                // If not found locally, try refetching the list in case it's stale
+                if (!customerId) {
+                    try {
+                        const { data: freshData } = await customersList.refetch();
+                         if (freshData?.length) {
+                             const n = norm(extracted.customer.name);
+                             const e = extracted.customer.email ? norm(extracted.customer.email) : "";
+                             
+                             // 1. Try by email
+                             if (e) {
+                                 const match = (freshData as any[]).find(c => c.email && norm(c.email) === e);
+                                 if (match) customerId = match.id;
+                             }
+                             // 2. Try by name if still not found
+                             if (!customerId) {
+                                  const match = (freshData as any[]).find(c => {
+                                      const name1 = norm(c.display_name ?? "");
+                                      const name2 = norm(c.name ?? "");
+                                      return (name1 === n || name2 === n) && (!e || (c.email ? norm(c.email) === e : true));
+                                 });
+                                 if (match) customerId = match.id;
+                             }
+                         }
+                    } catch (refetchErr) {
+                        console.warn("Failed to refetch customers", refetchErr);
+                    }
+                }
+
+				if (!customerId) {
+                    const randomEmail = `noemail.user-${Date.now()}@gmail.com`;
+                    const customerEmail = extracted.customer.email ?? randomEmail;
+
+					try {
+						const customerRes = await createCustomer.mutateAsync({
+							data: {
+								user_id: user.id,
+								name: extracted.customer.name,
+								display_name: extracted.customer.name,
+								option: CreateCustomerWithAddressDtoOption.Individual,
+								email: customerEmail,
+								phone: extracted.customer.phone ?? null,
+								...(currencyId && { currencies_id: currencyId }),
+								...(extracted.customer.address &&
+									extracted.customer.city &&
+									extracted.customer.zip && {
+										billingDetails: {
+											address: extracted.customer.address,
+											city: extracted.customer.city,
+											zip: extracted.customer.zip,
+											state_name: extracted.customer.state ?? undefined,
+											country_name: extracted.customer.country_name ?? undefined,
+										},
+									}),
+							},
+						});
+						customerId = customerRes?.result?.id ?? null;
+					} catch (err: any) {
+                        // If customer already exists, try to find it again after refreshing list
+                        if (err?.message?.includes("already exists") || err?.response?.data?.message?.includes("already exists")) {
+                             await queryClient.invalidateQueries({ queryKey: getCustomerControllerFindAllQueryKey() });
+                             // We need to wait a bit or just re-read from the cache if invalidate triggers refetch? 
+                             // invalidateQueries triggers a refetch in background. 
+                             // To get the updated data immediately is tricky without 'await queryClient.fetchQuery'.
+                             // But createCustomer failing implies it IS in the backend. 
+                             
+                             // Let's try to fetch all again or just use the findExistingCustomerId if the list updated?
+                             // Since we can't easily force-wait for the hook state to update here without refactoring,
+                             // we might be better off just falling back to prefill if we can't find it.
+                             
+                             // However, usually "already exists" means we SHOULD find it.
+                             // Let's fall back to prefill, but with a specific message?
+                             // actually, let's just let the outer catch handle it, but maybe log it.
+                             console.warn("Customer exists but was not found locally. Falling back.", err);
+                             throw err; 
+                        }
+						throw err;
+					}
+				}
+				if (!customerId) throw new Error("Customer creation did not return an id.");
+
+				const prefillRows: AiInvoicePrefill["rows"] = [];
+				if (unitId && currencyId && extracted.line_items.length > 0) {
+					for (let i = 0; i < extracted.line_items.length; i++) {
+						const line = extracted.line_items[i];
+						const itemName = line.description || `Item ${i + 1}`;
+						let pid = findExistingProductId(itemName);
+						if (!pid) {
+							const productRes = await createProduct.mutateAsync({
+								data: {
+									user_id: user.id,
+									name: itemName,
+									type: CreateProductWithTaxDtoType.Goods,
+									unit_id: unitId,
+									priceBook: [{ currency_id: currencyId, price: line.unit_price }],
+								},
+							});
+							pid = (productRes as any)?.data?.id ?? (productRes as any)?.result?.id ?? "";
+						}
+						if (pid) {
+							prefillRows.push({
+								id: `row-${i}-${Date.now()}`,
+								product_id: pid,
+								product_name: itemName,
+								quantity: line.quantity,
+								price: line.unit_price,
+								total: line.total,
+							});
+						}
+					}
+				}
+
+				const invDate =
+					extracted.date && moment(extracted.date).isValid()
+						? moment(extracted.date).format("YYYY-MM-DD")
+						: moment().format("YYYY-MM-DD");
+				const dueDate = moment(invDate).add(1, "day").format("YYYY-MM-DD");
+				const totalAmount =
+					extracted.total ?? extracted.line_items.reduce((s, i) => s + i.total, 0);
+				const invNumber = extracted.invoice_number || `INV-${Date.now()}`;
+
+				await createInvoice.mutateAsync({
+					data: {
+						customer_ids: [customerId],
+						paymentId: paymentId ?? "",
+						template_id: templateId ?? "",
+						currency_id: currencyId ?? "",
+						date: formatDateToIso(invDate),
+						due_date: formatDateToIso(dueDate),
+						invoice_number: invNumber,
+						reference_number: invNumber,
+						notes: extracted.notes ?? "",
+						sub_total: extracted.subtotal ?? totalAmount,
+						total: totalAmount,
+						paid_amount: 0,
+						due_amount: totalAmount,
+						user_id: user.id,
+						recurring: CreateInvoiceWithProductsRecurring.Daily, // Default, user can change later if needed or we can enhance AI to detect
+						is_recurring: false,
+						product: prefillRows.map(row => ({
+							product_id: row.product_id,
+							quantity: row.quantity,
+							price: row.price,
+							total: row.total,
+							taxes: [],
+							discount: 0
+						}))
+					}
+				});
+
+				setPendingInvoiceFromAi(null);
+				await queryClient.invalidateQueries({ queryKey: getCustomerControllerFindAllQueryKey() });
+				await queryClient.invalidateQueries({ queryKey: getProductControllerFindAllQueryKey() });
+				setMessages((prev) => [
+					...prev,
+					{
+						id: `assistant-redirect-${Date.now()}`,
+						role: "assistant",
+						content: t("yourAi.invoiceCreated", {
+							defaultValue:
+								"I've created the invoice for you. Taking you to the Invoices list.",
+						}),
+					},
+				]);
+				navigate("/invoice/invoicelist");
+
+			} catch (err) {
+				console.error("Auto-invoice creation failed, falling back to prefill", err);
+
+				// Proceed with partial prefill
+				const invDate =
+					extracted.date && moment(extracted.date).isValid()
+						? moment(extracted.date).format("YYYY-MM-DD")
+						: moment().format("YYYY-MM-DD");
+				const dueDate = moment(invDate).add(1, "day").format("YYYY-MM-DD");
+				const totalAmount =
+					extracted.total ?? extracted.line_items.reduce((s, i) => s + i.total, 0);
+				const invNumber = extracted.invoice_number || `INV-${Date.now()}`;
+				const paymentId = paymentDetails.data?.[0]?.id ?? "";
+				const templateId = invoiceSettings?.data?.invoiceTemplateId ?? "";
+				const invoiceCurrencyCode = extracted.currency_code?.toUpperCase?.() ?? "";
+				const currencyId =
+					invoiceCurrencyCode === "EUR"
+						? ((
+								currencies.data as
+									| Array<{ id: string; short_code?: string; code?: string }>
+									| undefined
+							)?.find(
+								(c) =>
+									(c.short_code ?? "").toUpperCase() === "EUR" ||
+									(c.code ?? "").toUpperCase() === "EUR",
+							)?.id ?? "")
+						: invoiceCurrencyCode === "INR"
+							? ((
+									currencies.data as
+										| Array<{ id: string; short_code?: string; code?: string }>
+										| undefined
+								)?.find(
+									(c) =>
+										(c.short_code ?? "").toUpperCase() === "INR" ||
+										(c.code ?? "").toUpperCase() === "INR",
+								)?.id ?? "")
+							: "";
+				const partialPrefill: AiInvoicePrefill = {
+					customer_ids: [],
+					paymentId: paymentId ?? "",
+					template_id: templateId ?? "",
+					currency_id: currencyId ?? "",
+					date: invDate,
+					due_date: dueDate,
+					invoice_number: invNumber,
+					reference_number: invNumber,
+					notes: "",
+					sub_total: extracted.subtotal ?? totalAmount,
+					total: totalAmount,
+					paid_amount: 0,
+					due_amount: totalAmount,
+					rows: [],
+				};
+				setPendingInvoiceFromAi(null);
+				await queryClient.invalidateQueries({ queryKey: getCustomerControllerFindAllQueryKey() });
+				await queryClient.invalidateQueries({ queryKey: getProductControllerFindAllQueryKey() });
+				setMessages((prev) => [
+					...prev,
+					{
+						id: `assistant-redirect-${Date.now()}`,
+						role: "assistant",
+						content: t("yourAi.takingYouToCreateInvoice", {
+							defaultValue:
+								"I couldn't complete the automatic creation. Taking you to the Create Invoice page with the data I could collect.",
+						}),
+					},
+				]);
+				navigate("/invoice/createinvoice", { state: { fromAiPrefill: partialPrefill } });
+			}
+			setLoading(false);
+			return;
+		}
+
 		// If user is replying to "missing invoice settings", treat as "Use first" or wait for Settings
 		if (pendingInvoiceFromAi && user?.id) {
 			const reply = text.trim().toLowerCase();
@@ -473,7 +782,7 @@ export default function YourAIChat() {
 										priceBook: [{ currency_id: currencyId, price: line.unit_price }],
 									},
 								});
-								pid = productRes?.result?.id ?? "";
+								pid = (productRes as any)?.data?.id ?? (productRes as any)?.result?.id ?? "";
 							}
 							if (pid) {
 								prefillRows.push({
@@ -497,39 +806,81 @@ export default function YourAIChat() {
 						extracted.total ?? extracted.line_items.reduce((s, i) => s + i.total, 0);
 					const invNumber = extracted.invoice_number || `INV-${Date.now()}`;
 
-					const prefill: AiInvoicePrefill = {
-						customer_ids: [customerId],
-						paymentId: paymentId ?? "",
-						template_id: templateId ?? "",
-						currency_id: currencyId ?? "",
-						date: invDate,
-						due_date: dueDate,
-						invoice_number: invNumber,
-						reference_number: invNumber,
-						notes: extracted.notes ?? "",
-						sub_total: extracted.subtotal ?? totalAmount,
-						total: totalAmount,
-						paid_amount: 0,
-						due_amount: totalAmount,
-						rows: prefillRows,
-					};
-					setPendingInvoiceFromAi(null);
-					await queryClient.invalidateQueries({ queryKey: getCustomerControllerFindAllQueryKey() });
-					await queryClient.invalidateQueries({ queryKey: getProductControllerFindAllQueryKey() });
-					setMessages((prev) => [
-						...prev,
-						{
-							id: `assistant-redirect-${Date.now()}`,
-							role: "assistant",
-							content: t("yourAi.takingYouToCreateInvoice", {
-								defaultValue:
-									"Taking you to the Create Invoice page with the data we collected. You can add any missing details there.",
-							}),
-						},
-					]);
-					navigate("/invoice/createinvoice", { state: { fromAiPrefill: prefill } });
+					try {
+						await createInvoice.mutateAsync({
+							data: {
+								customer_ids: [customerId],
+								paymentId: paymentId ?? "",
+								template_id: templateId ?? "",
+								currency_id: currencyId ?? "",
+								date: formatDateToIso(invDate),
+								due_date: formatDateToIso(dueDate),
+								invoice_number: invNumber,
+								reference_number: invNumber,
+								notes: extracted.notes ?? "",
+								sub_total: extracted.subtotal ?? totalAmount,
+								total: totalAmount,
+								paid_amount: 0,
+								due_amount: totalAmount,
+								user_id: user.id,
+								recurring: CreateInvoiceWithProductsRecurring.Daily, // Default, user can change later if needed or we can enhance AI to detect
+								is_recurring: false,
+								product: prefillRows.map(row => ({
+									product_id: row.product_id,
+									quantity: row.quantity,
+									price: row.price,
+									total: row.total,
+									taxes: [],
+									discount: 0
+								}))
+							}
+						});
+
+						setPendingInvoiceFromAi(null);
+						await queryClient.invalidateQueries({ queryKey: getCustomerControllerFindAllQueryKey() });
+						await queryClient.invalidateQueries({ queryKey: getProductControllerFindAllQueryKey() });
+						setMessages((prev) => [
+							...prev,
+							{
+								id: `assistant-redirect-${Date.now()}`,
+								role: "assistant",
+								content: t("yourAi.invoiceCreated", {
+									defaultValue:
+										"I've created the invoice for you. Taking you to the Invoices list.",
+								}),
+							},
+						]);
+						navigate("/invoice/invoicelist");
+					} catch (err) {
+						const msg = err instanceof Error ? err.message : "Invoice creation failed";
+                        
+                        // If the error is about existing customer, don't show the scary alert, just fallback gracefully
+                        const isDuplicateCustomer = msg.toLowerCase().includes("already exists");
+                        if (!isDuplicateCustomer) {
+						    AlertService.instance?.errorMessage(msg);
+                        }
+
+						setMessages((prev) => [
+							...prev,
+							{
+								id: `assistant-create-err-inv-${Date.now()}`,
+								role: "assistant",
+								content: isDuplicateCustomer 
+                                    ? "I found a customer with that email already exists but I couldn't link it automatically. Taking you to the page to verify."
+                                    : "Sorry, I couldn't create the invoice automatically. Please try again.",
+							},
+						]);
+					}
 				} catch {
-					// Proceed with partial prefill
+					// Proceed with partial prefill or error handling if creation fails
+					// Since we are automating, if main creation fails, we might just show error,
+					// but falling back to manual creation page with prefill is a good safety net.
+					// For now, let's keep the fallback to prefill if something critical (like customer creation) fails
+					// OR if the user wants to manually verify.
+
+					// Actually, the requirement says "completely create the Invoice... and land the user in the invoice page".
+					// If creation fails, falling back to create page with pre-fill is the best UX.
+
 					const invDate =
 						extracted.date && moment(extracted.date).isValid()
 							? moment(extracted.date).format("YYYY-MM-DD")
@@ -589,7 +940,7 @@ export default function YourAIChat() {
 							role: "assistant",
 							content: t("yourAi.takingYouToCreateInvoice", {
 								defaultValue:
-									"Taking you to the Create Invoice page with the data we collected. You can add any missing details there.",
+									"I couldn't complete the automatic creation. Taking you to the Create Invoice page with the data I could collect.",
 							}),
 						},
 					]);
@@ -702,7 +1053,7 @@ export default function YourAIChat() {
 								(c.code ?? "").toUpperCase() === "INR",
 						)?.id ?? "";
 				} else {
-					expenseCurrencyId = "";
+					expenseCurrencyId = user.currency_id ?? "";
 				}
 
 				let receiptUrl = "";
@@ -716,18 +1067,46 @@ export default function YourAIChat() {
 					}
 				}
 
-				const expensePrefill = {
-					vendor_id: vendorId || "",
-					expenseDate,
-					amount,
-					currency_id: expenseCurrencyId,
-					notes: extractedExpense.notes ?? "",
-					receipt_url: receiptUrl,
-				};
+                try {
+                    await createExpenses.mutateAsync({
+                        data: {
+                            receipt_url: receiptUrl,
+                            category: CreateExpensesDtoCategory.Travel, // Defaulting to Travel if category is not extracted, user can update later
+                            vendor_id: vendorId || "",
+                            user_id: user.id,
+                            expenseDate: formatDateToIso(expenseDate),
+                            amount: amount,
+                            currency_id: expenseCurrencyId,
+                            notes: extractedExpense.notes ?? "",
+                        }
+                    });
+                    
+                    setMessages((prev) => [
+						...prev,
+						{
+							id: `assistant-redirect-expense-${Date.now()}`,
+							role: "assistant",
+							content: t("yourAi.expenseCreated", {
+								defaultValue:
+									"I've created the expense for you. Taking you to the Expenses list.",
+							}),
+						},
+					]);
 
-				navigate("/expenses/createexpenses", {
-					state: { fromAiExpensePrefill: expensePrefill },
-				});
+                    navigate("/expenses/expenseslist");
+                } catch (err) {
+                    const msg = err instanceof Error ? err.message : "Expense creation failed";
+                    AlertService.instance?.errorMessage(msg);
+                     setMessages((prev) => [
+						...prev,
+						{
+							id: `assistant-create-err-${Date.now()}`,
+							role: "assistant",
+							content: "Sorry, I couldn't create the expense automatically. Please try again.",
+						},
+					]);
+                }
+				
 				setLoading(false);
 				return;
 			}

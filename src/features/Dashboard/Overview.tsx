@@ -58,6 +58,13 @@ const Overview = () => {
 						<Button
 							variant="contained"
 							color="primary"
+							onClick={() => navigate("/invoice/bulk-upload")}
+						>
+							{t("dashboard.bulkUploadInvoice", { defaultValue: "Upload Excel for Invoice" })}
+						</Button>
+						<Button
+							variant="contained"
+							color="primary"
 							onClick={() => navigate("/ledger")}
 						>
 							{t("dashboard.ledgerInfo", { defaultValue: "Ledger Info" })}
