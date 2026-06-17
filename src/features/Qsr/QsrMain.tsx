@@ -37,7 +37,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { useTranslation } from "react-i18next";
 import { useProductControllerFindAll } from "@api/services/product";
-import { useCustomerControllerFindAll, useCustomerControllerCreate } from "@api/services/customer";
+import { useCustomerControllerFindAll, useCustomerControllerCreate, getCustomerControllerFindAllQueryKey } from "@api/services/customer";
 import { usePaymentdetailsControllerFindAll } from "@api/services/paymentdetails";
 import { useCurrencyControllerFindAll } from "@api/services/currency";
 import { useInvoiceControllerCreate, useInvoiceControllerTest } from "@api/services/invoice";
@@ -270,11 +270,12 @@ const QsrMain = () => {
 					option: "Individual", // default option
 					fromStore: false,
 					user_id: user?.id || "",
+					currencies_id: user?.currency_id || "",
 				},
 			});
 			if (result?.result?.id) {
 				AlertService.instance.successMessage("Customer added successfully!");
-				queryClient.invalidateQueries({ queryKey: ["customer"] });
+				queryClient.invalidateQueries({ queryKey: getCustomerControllerFindAllQueryKey() });
 				setSelectedCustomerId(result.result.id);
 				setCustomerFormOpen(false);
 				setCustomerName("");
@@ -283,6 +284,7 @@ const QsrMain = () => {
 			}
 		} catch (err) {
 			console.error("Failed to create customer:", err);
+			AlertService.instance.errorMessage("Failed to create customer");
 		}
 	};
 
