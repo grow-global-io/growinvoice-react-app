@@ -161,9 +161,7 @@ function InvoiceTableFooterWithClone(props: React.ComponentProps<typeof GridFoot
 		) : null;
 	const PaginationComponent = rootProps.slots.pagination;
 	const paginationElement =
-		rootProps.pagination &&
-		!rootProps.hideFooterPagination &&
-		PaginationComponent ? (
+		rootProps.pagination && !rootProps.hideFooterPagination && PaginationComponent ? (
 			<PaginationComponent {...rootProps.slotProps?.pagination} />
 		) : null;
 
@@ -196,7 +194,7 @@ const InvoiceTableDueList = ({ customerId }: { customerId?: string | null }) => 
 				const invoice = await invoiceControllerFindOne(id);
 				const payload = buildClonePayload(invoice);
 				const result = await createInvoice.mutateAsync({ data: payload });
-				const created = result?.result?.[0];
+				const created = (result?.result as any)?.[0];
 				if (created?.invoice_number) newInvoiceNumbers.push(created.invoice_number);
 			}
 			await queryClient.refetchQueries({ queryKey: getInvoiceControllerFindAllQueryKey() });
@@ -206,7 +204,8 @@ const InvoiceTableDueList = ({ customerId }: { customerId?: string | null }) => 
 			setRowSelectionModel([]);
 			AlertService.instance.successMessage(
 				t("invoice.actions.cloneSuccess", {
-					defaultValue: "Invoice(s) cloned successfully. New invoice number(s): {{newInvoiceNumbers}}",
+					defaultValue:
+						"Invoice(s) cloned successfully. New invoice number(s): {{newInvoiceNumbers}}",
 					newInvoiceNumbers: newInvoiceNumbers.join(", "),
 				}),
 			);

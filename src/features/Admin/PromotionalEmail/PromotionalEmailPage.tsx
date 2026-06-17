@@ -3,9 +3,11 @@ import { Formik, Form, Field, ErrorMessage, getIn } from "formik";
 import * as Yup from "yup";
 import { useAuthStore } from "@store/auth";
 import {
-	useMailControllerPromotional,
+	useMailControllerSendPromotionalMail,
+} from "@api/services/mail";
+import {
 	type SendPromotionalMailDto,
-} from "@api/services/promotionalMail";
+} from "@api/services/models";
 import {
 	Box,
 	Button,
@@ -119,7 +121,7 @@ const generatePromotionalEmailTemplate = () => `<!DOCTYPE html>
 const PromotionalEmailPage = () => {
 	const { user } = useAuthStore();
 	const navigate = useNavigate();
-	const { mutate: sendMail, isPending } = useMailControllerPromotional();
+	const { mutate: sendMail, isPending } = useMailControllerSendPromotionalMail();
 	const [isUploading, setIsUploading] = useState(false);
 
 	const { data: users, isLoading: isLoadingUsers } = useUserControllerGetUsersList();
@@ -356,7 +358,7 @@ const PromotionalEmailPage = () => {
 													</code>
 												</Typography>
 												<List sx={{ mt: 2, maxWidth: 800, mx: "auto" }}>
-													{values.attachments.map((file, index) => (
+													{values.attachments.map((file: any, index: number) => (
 														<ListItem
 															key={index}
 															sx={{

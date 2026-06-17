@@ -27,15 +27,20 @@ const OPENAI_CHAT_URL = "https://api.openai.com/v1/chat/completions";
 function buildOpenAiMessages(
 	messages: ChatMessagePayload[],
 	imageBase64?: string[],
-): Array<{ role: string; content: string | Array<{ type: "text"; text: string } | { type: "image_url"; image_url: { url: string } }> }> {
+): Array<{
+	role: string;
+	content:
+		| string
+		| Array<{ type: "text"; text: string } | { type: "image_url"; image_url: { url: string } }>;
+}> {
 	if (!messages.length) return [];
 	const out = messages.map((m) => ({ role: m.role, content: m.content }));
 	if (imageBase64?.length && out.length > 0) {
 		const last = out[out.length - 1];
 		if (last.role === "user" && typeof last.content === "string") {
-			const parts: Array<{ type: "text"; text: string } | { type: "image_url"; image_url: { url: string } }> = [
-				{ type: "text", text: last.content || "What do you see in these images?" },
-			];
+			const parts: Array<
+				{ type: "text"; text: string } | { type: "image_url"; image_url: { url: string } }
+			> = [{ type: "text", text: last.content || "What do you see in these images?" }];
 			for (const b64 of imageBase64) {
 				const mime = b64.startsWith("/9j/") ? "image/jpeg" : "image/png";
 				parts.push({ type: "image_url", image_url: { url: `data:${mime};base64,${b64}` } });
@@ -43,13 +48,21 @@ function buildOpenAiMessages(
 			(last as unknown as { content: typeof parts }).content = parts;
 		}
 	}
-	return out as Array<{ role: string; content: string | Array<{ type: "text"; text: string } | { type: "image_url"; image_url: { url: string } }> }>;
+	return out as Array<{
+		role: string;
+		content:
+			| string
+			| Array<{ type: "text"; text: string } | { type: "image_url"; image_url: { url: string } }>;
+	}>;
 }
 
 /** Call OpenAI from the client (uses VITE_OPENAI_API_KEY). For production, use backend. */
 async function sendOpenAiDirect(payload: YourAiChatRequest): Promise<YourAiChatResponse> {
 	const apiKey = import.meta.env.VITE_OPENAI_API_KEY as string | undefined;
-	if (!apiKey) throw new Error("VITE_OPENAI_API_KEY is not set. Add it to .env or use a backend /api/openai/chat.");
+	if (!apiKey)
+		throw new Error(
+			"VITE_OPENAI_API_KEY is not set. Add it to .env or use a backend /api/openai/chat.",
+		);
 	const messages = buildOpenAiMessages(payload.messages, payload.imageBase64);
 	const res = await fetch(OPENAI_CHAT_URL, {
 		method: "POST",
@@ -77,7 +90,10 @@ function isLocalOrigin(): boolean {
 	if (typeof window === "undefined") return false;
 	try {
 		const origin = window.location?.origin ?? "";
-		return /^https?:\/\/localhost(:\d+)?$/i.test(origin) || /^https?:\/\/127\.0\.0\.1(:\d+)?$/i.test(origin);
+		return (
+			/^https?:\/\/localhost(:\d+)?$/i.test(origin) ||
+			/^https?:\/\/127\.0\.0\.1(:\d+)?$/i.test(origin)
+		);
 	} catch {
 		return false;
 	}
@@ -203,11 +219,26 @@ function parseExtractionResponse(obj: Record<string, unknown>): ExtractedInvoice
 	const line_items = (obj.line_items as Array<Record<string, unknown>>).map((item) => ({
 		description: typeof item.description === "string" ? item.description : "Item",
 		quantity: typeof item.quantity === "number" ? item.quantity : 1,
-		unit_price: typeof item.unit_price === "number" ? item.unit_price : typeof item.total === "number" ? item.total : 0,
-		total: typeof item.total === "number" ? item.total : typeof item.unit_price === "number" ? item.unit_price * (typeof item.quantity === "number" ? item.quantity : 1) : 0,
+		unit_price:
+			typeof item.unit_price === "number"
+				? item.unit_price
+				: typeof item.total === "number"
+					? item.total
+					: 0,
+		total:
+			typeof item.total === "number"
+				? item.total
+				: typeof item.unit_price === "number"
+					? item.unit_price * (typeof item.quantity === "number" ? item.quantity : 1)
+					: 0,
 	}));
 	const subtotal = typeof obj.subtotal === "number" ? obj.subtotal : null;
-	const total = typeof obj.total === "number" ? obj.total : (line_items.length ? line_items.reduce((s, i) => s + i.total, 0) : null);
+	const total =
+		typeof obj.total === "number"
+			? obj.total
+			: line_items.length
+				? line_items.reduce((s, i) => s + i.total, 0)
+				: null;
 	return {
 		customer,
 		invoice_number: typeof obj.invoice_number === "string" ? obj.invoice_number : null,
@@ -239,7 +270,8 @@ export async function extractInvoiceDataFromImage(
 				return parseExtractionResponse(res);
 			}
 			// Backend might return raw OpenAI shape with choices[0].message.content
-			const raw = (res as { choices?: Array<{ message?: { content?: string } }> })?.choices?.[0]?.message?.content;
+			const raw = (res as { choices?: Array<{ message?: { content?: string } }> })?.choices?.[0]
+				?.message?.content;
 			if (typeof raw === "string") {
 				const parsed = JSON.parse(raw) as Record<string, unknown>;
 				return parseExtractionResponse(parsed);
@@ -262,8 +294,13 @@ export async function extractInvoiceDataFromImage(
 	// 3) Localhost fallback: call OpenAI from client
 	const apiKey = import.meta.env.VITE_OPENAI_API_KEY as string | undefined;
 	if (!apiKey) throw new Error("VITE_OPENAI_API_KEY is not set.");
-	const content: Array<{ type: "text"; text: string } | { type: "image_url"; image_url: { url: string } }> = [
-		{ type: "text", text: "Extract all invoice data from this image. Return only the JSON object." },
+	const content: Array<
+		{ type: "text"; text: string } | { type: "image_url"; image_url: { url: string } }
+	> = [
+		{
+			type: "text",
+			text: "Extract all invoice data from this image. Return only the JSON object.",
+		},
 	];
 	for (const b64 of imageBase64) {
 		const mime = b64.startsWith("/9j/") ? "image/jpeg" : "image/png";

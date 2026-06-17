@@ -11,7 +11,11 @@ import { useAuthStore } from "@store/auth";
 import { AlertService } from "@shared/services/AlertService";
 import { useInvoiceControllerCreate } from "@api/services/invoice";
 import { LoaderService } from "@shared/services/LoaderService";
-import { CreateCustomerWithAddressDtoOption, CreateInvoiceWithProductsRecurring, CreateProductWithTaxDtoType } from "@api/services/models";
+import {
+	CreateCustomerWithAddressDtoOption,
+	CreateInvoiceWithProductsRecurring,
+	CreateProductWithTaxDtoType,
+} from "@api/services/models";
 import { formatDateToIso } from "@shared/formatter";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
@@ -29,12 +33,12 @@ const BulkUploadInvoice = () => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
-	
+
 	const currencyList = useCurrencyControllerFindAll();
 	const customerList = useCustomerControllerFindAll();
 	const productList = useProductControllerFindAll();
 	const productUnits = useProductunitControllerFindAll();
-	
+
 	const invoiceCreate = useInvoiceControllerCreate();
 	const customerCreate = useCustomerControllerCreate();
 	const productCreate = useProductControllerCreate();
@@ -86,9 +90,9 @@ const BulkUploadInvoice = () => {
 
 	const handleUpload = async () => {
 		LoaderService.instance.showLoader();
-		
+
 		const updatedRows = [...rows];
-		
+
 		for (let i = 0; i < updatedRows.length; i++) {
 			const row = updatedRows[i];
 			if (row.status === "uploaded") continue;
@@ -96,7 +100,9 @@ const BulkUploadInvoice = () => {
 			try {
 				// 1. Get Currency
 				const currency = currencyList.data?.find(
-					(c) => norm(c.short_code ?? "") === norm(row.currency_code) || norm(c.code ?? "") === norm(row.currency_code),
+					(c) =>
+						norm(c.short_code ?? "") === norm(row.currency_code) ||
+						norm(c.code ?? "") === norm(row.currency_code),
 				);
 				if (!currency) throw new Error(`Currency ${row.currency_code} not found in system.`);
 
@@ -114,18 +120,17 @@ const BulkUploadInvoice = () => {
 							email: row.customer_email,
 							option: CreateCustomerWithAddressDtoOption.Individual,
 							currencies_id: currency.id,
-						}
+						},
 					});
 					customer = custRes?.result as any;
 					await queryClient.invalidateQueries({ queryKey: getCustomerControllerFindAllQueryKey() });
 				}
 
-				if (!customer || !customer.id) throw new Error(`Failed to identify customer ${row.customer_email}`);
+				if (!customer || !customer.id)
+					throw new Error(`Failed to identify customer ${row.customer_email}`);
 
 				// 3. Get or Create Product
-				let product = productList.data?.find(
-					(p) => norm(p.name ?? "") === norm(row.product_name),
-				);
+				let product = productList.data?.find((p) => norm(p.name ?? "") === norm(row.product_name));
 
 				if (!product) {
 					const unitId = productUnits.data?.[0]?.id ?? ""; // Fallback to first unit
@@ -136,26 +141,31 @@ const BulkUploadInvoice = () => {
 							type: CreateProductWithTaxDtoType.Goods,
 							unit_id: unitId,
 							priceBook: [{ currency_id: currency.id, price: row.price }],
-						}
+						},
 					});
 					product = (prodRes as any)?.data || (prodRes as any)?.result || prodRes;
 					await queryClient.invalidateQueries({ queryKey: getProductControllerFindAllQueryKey() });
 				}
 
-				if (!product || !product.id) throw new Error(`Failed to identify product ${row.product_name}`);
+				if (!product || !product.id)
+					throw new Error(`Failed to identify product ${row.product_name}`);
 
 				// Ensure dates are parsed properly, fallback to today if invalid
 				const parsedDate = moment(row.date, ["YYYY-MM-DD", "DD/MM/YYYY", "MM/DD/YYYY"]);
-				const finalDate = parsedDate.isValid() ? parsedDate.format("YYYY-MM-DD") : moment().format("YYYY-MM-DD");
-				
+				const finalDate = parsedDate.isValid()
+					? parsedDate.format("YYYY-MM-DD")
+					: moment().format("YYYY-MM-DD");
+
 				const parsedDueDate = moment(row.due_date, ["YYYY-MM-DD", "DD/MM/YYYY", "MM/DD/YYYY"]);
-				const finalDueDate = parsedDueDate.isValid() ? parsedDueDate.format("YYYY-MM-DD") : moment(finalDate).add(1, 'day').format("YYYY-MM-DD");
+				const finalDueDate = parsedDueDate.isValid()
+					? parsedDueDate.format("YYYY-MM-DD")
+					: moment(finalDate).add(1, "day").format("YYYY-MM-DD");
 
 				// 4. Get Tax Mapping
 				let finalTaxId = undefined;
 				if (row.tax_id && row.tax_id.trim() !== "") {
 					const mappedTax = taxCodes.data?.find(
-						(t) => t.id === row.tax_id?.trim() || norm(t.name || "") === norm(row.tax_id || "")
+						(t) => t.id === row.tax_id?.trim() || norm(t.name || "") === norm(row.tax_id || ""),
 					);
 					if (mappedTax) {
 						finalTaxId = mappedTax.id;
@@ -165,7 +175,8 @@ const BulkUploadInvoice = () => {
 				}
 
 				// 5. Create Invoice
-				const defaultTemplateId = invoiceSettings?.data?.invoiceTemplateId || invoiceTemplateFindAll?.data?.[0]?.id || "";
+				const defaultTemplateId =
+					invoiceSettings?.data?.invoiceTemplateId || invoiceTemplateFindAll?.data?.[0]?.id || "";
 				if (!defaultTemplateId) throw new Error("No invoice template found in the system.");
 
 				const invoiceData = {
@@ -201,20 +212,26 @@ const BulkUploadInvoice = () => {
 				updatedRows[i] = { ...row, status: "uploaded", reason: "" };
 			} catch (err: any) {
 				console.error("Upload error for row", i, err);
-				updatedRows[i] = { ...row, status: "error", reason: err.response?.data?.message || err.message };
+				updatedRows[i] = {
+					...row,
+					status: "error",
+					reason: err.response?.data?.message || err.message,
+				};
 			}
 			setRows([...updatedRows]);
 		}
 
 		LoaderService.instance.hideLoader();
-		if (updatedRows.every(r => r.status === "uploaded")) {
+		if (updatedRows.every((r) => r.status === "uploaded")) {
 			AlertService.instance.successMessage("All invoices uploaded successfully");
 			setTimeout(() => {
 				queryClient.invalidateQueries();
 				navigate("/invoice/invoicelist");
 			}, 2000);
 		} else {
-			AlertService.instance.errorMessage("Some invoices failed to upload. Please check the status.");
+			AlertService.instance.errorMessage(
+				"Some invoices failed to upload. Please check the status.",
+			);
 		}
 	};
 
@@ -222,7 +239,9 @@ const BulkUploadInvoice = () => {
 		<Box p={3}>
 			<Grid container spacing={2} alignItems="center" mb={3}>
 				<Grid item xs={12} md={6}>
-					<Typography variant="h4">{t("invoice.bulkUploadTitle", { defaultValue: "Bulk Upload Invoices" })}</Typography>
+					<Typography variant="h4">
+						{t("invoice.bulkUploadTitle", { defaultValue: "Bulk Upload Invoices" })}
+					</Typography>
 				</Grid>
 				<Grid item xs={12} md={6} textAlign="right">
 					<Button
@@ -262,10 +281,12 @@ const BulkUploadInvoice = () => {
 					<DataGrid rows={rows} columns={columns} pageSizeOptions={[10, 25, 50]} />
 				</Box>
 			)}
-			
+
 			{errors.length > 0 && (
 				<Box mt={2}>
-					<Typography color="error" variant="h6">Errors in file:</Typography>
+					<Typography color="error" variant="h6">
+						Errors in file:
+					</Typography>
 					{errors.map((e, idx) => (
 						<Typography key={idx} color="error" variant="body2">
 							Row {e.id}: {e.error.message}

@@ -48,11 +48,7 @@ const Overview = () => {
 						<Button variant="contained" color="secondary" onClick={() => navigate("/ai-store")}>
 							{t("dashboard.rollUpAiStore", { defaultValue: "Roll UP AI Store" })}
 						</Button>
-						<Button
-							variant="contained"
-							color="primary"
-							onClick={() => navigate("/your-ai")}
-						>
+						<Button variant="contained" color="primary" onClick={() => navigate("/your-ai")}>
 							{t("dashboard.aiAssistant", { defaultValue: "AI Assistant" })}
 						</Button>
 						<Button
@@ -62,11 +58,7 @@ const Overview = () => {
 						>
 							{t("dashboard.bulkUploadInvoice", { defaultValue: "Upload Excel for Invoice" })}
 						</Button>
-						<Button
-							variant="contained"
-							color="primary"
-							onClick={() => navigate("/ledger")}
-						>
+						<Button variant="contained" color="primary" onClick={() => navigate("/ledger")}>
 							{t("dashboard.ledgerInfo", { defaultValue: "Ledger Info" })}
 						</Button>
 					</Box>

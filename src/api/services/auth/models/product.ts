@@ -20,6 +20,7 @@ export interface Product {
 	hsnCode_id: string | null;
 	id: string;
 	images: string[];
+	includeQsr: boolean;
 	includeStore: boolean;
 	isExist: boolean;
 	name: string;

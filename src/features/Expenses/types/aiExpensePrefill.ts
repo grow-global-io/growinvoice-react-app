@@ -8,4 +8,3 @@ export type AiExpensePrefill = Partial<CreateExpensesDto> & {
 	/** Human-readable vendor name so CreateExpense can auto-select it when the list loads */
 	vendor_name?: string;
 };
-

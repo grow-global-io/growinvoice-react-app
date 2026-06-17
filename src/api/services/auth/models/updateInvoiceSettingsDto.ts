@@ -13,6 +13,7 @@ export interface UpdateInvoiceSettingsDto {
 	customerBillingAddressTemplate?: string;
 	customerShippingAddressTemplate?: string;
 	dueNotice?: number;
+	enableReminder?: boolean;
 	/** @nullable */
 	footer?: string | null;
 	invoiceHeadingType?: UpdateInvoiceSettingsDtoInvoiceHeadingType;
@@ -21,5 +22,6 @@ export interface UpdateInvoiceSettingsDto {
 	/** @nullable */
 	notes?: string | null;
 	overDueNotice?: number;
+	reminderInterval?: number;
 	user_id?: string;
 }

@@ -11,6 +11,8 @@ export interface PaymentDetailsDto {
 	/** @nullable */
 	account_no: string | null;
 	/** @nullable */
+	bankName: string | null;
+	/** @nullable */
 	bicNumber: string | null;
 	createdAt: string;
 	/** @nullable */

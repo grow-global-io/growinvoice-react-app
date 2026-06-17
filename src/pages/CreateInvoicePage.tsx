@@ -8,13 +8,7 @@ const CreateInvoicePage = () => {
 	const location = useLocation();
 	const customerId = searchParams.get("customerId");
 	const aiPrefill = (location.state as { fromAiPrefill?: AiInvoicePrefill } | null)?.fromAiPrefill;
-	return (
-		<CreateInvoice
-			id={id}
-			customerId={customerId ?? undefined}
-			aiPrefill={aiPrefill}
-		/>
-	);
+	return <CreateInvoice id={id} customerId={customerId ?? undefined} aiPrefill={aiPrefill} />;
 };
 
 export default CreateInvoicePage;

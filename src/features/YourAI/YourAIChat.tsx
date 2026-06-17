@@ -43,7 +43,7 @@ import {
 	CreateCustomerWithAddressDtoOption,
 	CreateInvoiceWithProductsRecurring,
 	CreateProductWithTaxDtoType,
-    CreateExpensesDtoCategory,
+	CreateExpensesDtoCategory,
 } from "@api/services/models";
 import { http } from "@shared/axios";
 import { useQueryClient } from "@tanstack/react-query";
@@ -142,8 +142,8 @@ export default function YourAIChat() {
 	const paymentDetails = usePaymentdetailsControllerFindAll();
 	const invoiceSettings = useInvoicesettingsControllerFindFirst();
 	const currencies = useCurrencyControllerFindAll();
-    const createExpenses = useExpensesControllerCreate();
-    const createInvoice = useInvoiceControllerCreate();
+	const createExpenses = useExpensesControllerCreate();
+	const createInvoice = useInvoiceControllerCreate();
 
 	/** Normalize for matching: trim and lowercase */
 	const norm = (s: string) => (s ?? "").trim().toLowerCase();
@@ -155,14 +155,14 @@ export default function YourAIChat() {
 			const n = norm(name);
 			const e = email ? norm(email) : "";
 
-            // 1. Try to find by Email first (if provided)
-            if (e) {
-                const emailMatch = list.find((c) => {
-                     const custEmail = (c as { email?: string | null }).email;
-                     return custEmail && norm(custEmail) === e;
-                });
-                if (emailMatch) return (emailMatch as { id: string }).id;
-            }
+			// 1. Try to find by Email first (if provided)
+			if (e) {
+				const emailMatch = list.find((c) => {
+					const custEmail = (c as { email?: string | null }).email;
+					return custEmail && norm(custEmail) === e;
+				});
+				if (emailMatch) return (emailMatch as { id: string }).id;
+			}
 
 			const match = list.find((c) => {
 				const sameName =
@@ -330,18 +330,15 @@ export default function YourAIChat() {
 		setAttachedReceiptFile(null);
 	};
 
-	const uploadReceiptFile = useCallback(
-		async (file: File): Promise<string> => {
-			const formData = new FormData();
-			formData.append("file", file);
-			const res = await http.post("/api/upload", formData, {
-				headers: { "Content-Type": "multipart/form-data" },
-			});
-			const data = res.data as { link?: string; result?: { link?: string } };
-			return data.link ?? data.result?.link ?? "";
-		},
-		[],
-	);
+	const uploadReceiptFile = useCallback(async (file: File): Promise<string> => {
+		const formData = new FormData();
+		formData.append("file", file);
+		const res = await http.post("/api/upload", formData, {
+			headers: { "Content-Type": "multipart/form-data" },
+		});
+		const data = res.data as { link?: string; result?: { link?: string } };
+		return data.link ?? data.result?.link ?? "";
+	}, []);
 
 	const startListening = () => {
 		if (!SpeechRecognition) {
@@ -466,37 +463,39 @@ export default function YourAIChat() {
 				let customerId =
 					findExistingCustomerId(extracted.customer.name, extracted.customer.email) ?? null;
 
-                // If not found locally, try refetching the list in case it's stale
-                if (!customerId) {
-                    try {
-                        const { data: freshData } = await customersList.refetch();
-                         if (freshData?.length) {
-                             const n = norm(extracted.customer.name);
-                             const e = extracted.customer.email ? norm(extracted.customer.email) : "";
-                             
-                             // 1. Try by email
-                             if (e) {
-                                 const match = (freshData as any[]).find(c => c.email && norm(c.email) === e);
-                                 if (match) customerId = match.id;
-                             }
-                             // 2. Try by name if still not found
-                             if (!customerId) {
-                                  const match = (freshData as any[]).find(c => {
-                                      const name1 = norm(c.display_name ?? "");
-                                      const name2 = norm(c.name ?? "");
-                                      return (name1 === n || name2 === n) && (!e || (c.email ? norm(c.email) === e : true));
-                                 });
-                                 if (match) customerId = match.id;
-                             }
-                         }
-                    } catch (refetchErr) {
-                        console.warn("Failed to refetch customers", refetchErr);
-                    }
-                }
+				// If not found locally, try refetching the list in case it's stale
+				if (!customerId) {
+					try {
+						const { data: freshData } = await customersList.refetch();
+						if (freshData?.length) {
+							const n = norm(extracted.customer.name);
+							const e = extracted.customer.email ? norm(extracted.customer.email) : "";
+
+							// 1. Try by email
+							if (e) {
+								const match = (freshData as any[]).find((c) => c.email && norm(c.email) === e);
+								if (match) customerId = match.id;
+							}
+							// 2. Try by name if still not found
+							if (!customerId) {
+								const match = (freshData as any[]).find((c) => {
+									const name1 = norm(c.display_name ?? "");
+									const name2 = norm(c.name ?? "");
+									return (
+										(name1 === n || name2 === n) && (!e || (c.email ? norm(c.email) === e : true))
+									);
+								});
+								if (match) customerId = match.id;
+							}
+						}
+					} catch (refetchErr) {
+						console.warn("Failed to refetch customers", refetchErr);
+					}
+				}
 
 				if (!customerId) {
-                    const randomEmail = `noemail.user-${Date.now()}@gmail.com`;
-                    const customerEmail = extracted.customer.email ?? randomEmail;
+					const randomEmail = `noemail.user-${Date.now()}@gmail.com`;
+					const customerEmail = extracted.customer.email ?? randomEmail;
 
 					try {
 						const customerRes = await createCustomer.mutateAsync({
@@ -523,24 +522,29 @@ export default function YourAIChat() {
 						});
 						customerId = customerRes?.result?.id ?? null;
 					} catch (err: any) {
-                        // If customer already exists, try to find it again after refreshing list
-                        if (err?.message?.includes("already exists") || err?.response?.data?.message?.includes("already exists")) {
-                             await queryClient.invalidateQueries({ queryKey: getCustomerControllerFindAllQueryKey() });
-                             // We need to wait a bit or just re-read from the cache if invalidate triggers refetch? 
-                             // invalidateQueries triggers a refetch in background. 
-                             // To get the updated data immediately is tricky without 'await queryClient.fetchQuery'.
-                             // But createCustomer failing implies it IS in the backend. 
-                             
-                             // Let's try to fetch all again or just use the findExistingCustomerId if the list updated?
-                             // Since we can't easily force-wait for the hook state to update here without refactoring,
-                             // we might be better off just falling back to prefill if we can't find it.
-                             
-                             // However, usually "already exists" means we SHOULD find it.
-                             // Let's fall back to prefill, but with a specific message?
-                             // actually, let's just let the outer catch handle it, but maybe log it.
-                             console.warn("Customer exists but was not found locally. Falling back.", err);
-                             throw err; 
-                        }
+						// If customer already exists, try to find it again after refreshing list
+						if (
+							err?.message?.includes("already exists") ||
+							err?.response?.data?.message?.includes("already exists")
+						) {
+							await queryClient.invalidateQueries({
+								queryKey: getCustomerControllerFindAllQueryKey(),
+							});
+							// We need to wait a bit or just re-read from the cache if invalidate triggers refetch?
+							// invalidateQueries triggers a refetch in background.
+							// To get the updated data immediately is tricky without 'await queryClient.fetchQuery'.
+							// But createCustomer failing implies it IS in the backend.
+
+							// Let's try to fetch all again or just use the findExistingCustomerId if the list updated?
+							// Since we can't easily force-wait for the hook state to update here without refactoring,
+							// we might be better off just falling back to prefill if we can't find it.
+
+							// However, usually "already exists" means we SHOULD find it.
+							// Let's fall back to prefill, but with a specific message?
+							// actually, let's just let the outer catch handle it, but maybe log it.
+							console.warn("Customer exists but was not found locally. Falling back.", err);
+							throw err;
+						}
 						throw err;
 					}
 				}
@@ -604,15 +608,15 @@ export default function YourAIChat() {
 						user_id: user.id,
 						recurring: CreateInvoiceWithProductsRecurring.Daily, // Default, user can change later if needed or we can enhance AI to detect
 						is_recurring: false,
-						product: prefillRows.map(row => ({
+						product: prefillRows.map((row) => ({
 							product_id: row.product_id,
 							quantity: row.quantity,
 							price: row.price,
 							total: row.total,
 							taxes: [],
-							discount: 0
-						}))
-					}
+							discount: 0,
+						})),
+					},
 				});
 
 				setPendingInvoiceFromAi(null);
@@ -624,13 +628,11 @@ export default function YourAIChat() {
 						id: `assistant-redirect-${Date.now()}`,
 						role: "assistant",
 						content: t("yourAi.invoiceCreated", {
-							defaultValue:
-								"I've created the invoice for you. Taking you to the Invoices list.",
+							defaultValue: "I've created the invoice for you. Taking you to the Invoices list.",
 						}),
 					},
 				]);
 				navigate("/invoice/invoicelist");
-
 			} catch (err) {
 				console.error("Auto-invoice creation failed, falling back to prefill", err);
 
@@ -825,20 +827,24 @@ export default function YourAIChat() {
 								user_id: user.id,
 								recurring: CreateInvoiceWithProductsRecurring.Daily, // Default, user can change later if needed or we can enhance AI to detect
 								is_recurring: false,
-								product: prefillRows.map(row => ({
+								product: prefillRows.map((row) => ({
 									product_id: row.product_id,
 									quantity: row.quantity,
 									price: row.price,
 									total: row.total,
 									taxes: [],
-									discount: 0
-								}))
-							}
+									discount: 0,
+								})),
+							},
 						});
 
 						setPendingInvoiceFromAi(null);
-						await queryClient.invalidateQueries({ queryKey: getCustomerControllerFindAllQueryKey() });
-						await queryClient.invalidateQueries({ queryKey: getProductControllerFindAllQueryKey() });
+						await queryClient.invalidateQueries({
+							queryKey: getCustomerControllerFindAllQueryKey(),
+						});
+						await queryClient.invalidateQueries({
+							queryKey: getProductControllerFindAllQueryKey(),
+						});
 						setMessages((prev) => [
 							...prev,
 							{
@@ -853,21 +859,21 @@ export default function YourAIChat() {
 						navigate("/invoice/invoicelist");
 					} catch (err) {
 						const msg = err instanceof Error ? err.message : "Invoice creation failed";
-                        
-                        // If the error is about existing customer, don't show the scary alert, just fallback gracefully
-                        const isDuplicateCustomer = msg.toLowerCase().includes("already exists");
-                        if (!isDuplicateCustomer) {
-						    AlertService.instance?.errorMessage(msg);
-                        }
+
+						// If the error is about existing customer, don't show the scary alert, just fallback gracefully
+						const isDuplicateCustomer = msg.toLowerCase().includes("already exists");
+						if (!isDuplicateCustomer) {
+							AlertService.instance?.errorMessage(msg);
+						}
 
 						setMessages((prev) => [
 							...prev,
 							{
 								id: `assistant-create-err-inv-${Date.now()}`,
 								role: "assistant",
-								content: isDuplicateCustomer 
-                                    ? "I found a customer with that email already exists but I couldn't link it automatically. Taking you to the page to verify."
-                                    : "Sorry, I couldn't create the invoice automatically. Please try again.",
+								content: isDuplicateCustomer
+									? "I found a customer with that email already exists but I couldn't link it automatically. Taking you to the page to verify."
+									: "Sorry, I couldn't create the invoice automatically. Please try again.",
 							},
 						]);
 					}
@@ -1007,11 +1013,11 @@ export default function YourAIChat() {
 									extractedExpense.customer.address &&
 									extractedExpense.customer.city &&
 									extractedExpense.customer.zip
-										? {
+										? ({
 												address: extractedExpense.customer.address,
 												city: extractedExpense.customer.city,
 												zip: extractedExpense.customer.zip,
-											} as any
+											} as any)
 										: undefined,
 							},
 						});
@@ -1033,21 +1039,28 @@ export default function YourAIChat() {
 						: moment().format("YYYY-MM-DD");
 
 				const amount =
-					extractedExpense.total ??
-					extractedExpense.line_items.reduce((s, i) => s + i.total, 0);
+					extractedExpense.total ?? extractedExpense.line_items.reduce((s, i) => s + i.total, 0);
 
 				const expenseCurrencyCode = extractedExpense.currency_code?.toUpperCase?.() ?? "";
 				let expenseCurrencyId = "";
 				if (expenseCurrencyCode === "EUR") {
 					expenseCurrencyId =
-						(currencies.data as Array<{ id: string; short_code?: string; code?: string }> | undefined)?.find(
+						(
+							currencies.data as
+								| Array<{ id: string; short_code?: string; code?: string }>
+								| undefined
+						)?.find(
 							(c) =>
 								(c.short_code ?? "").toUpperCase() === "EUR" ||
 								(c.code ?? "").toUpperCase() === "EUR",
 						)?.id ?? "";
 				} else if (expenseCurrencyCode === "INR") {
 					expenseCurrencyId =
-						(currencies.data as Array<{ id: string; short_code?: string; code?: string }> | undefined)?.find(
+						(
+							currencies.data as
+								| Array<{ id: string; short_code?: string; code?: string }>
+								| undefined
+						)?.find(
 							(c) =>
 								(c.short_code ?? "").toUpperCase() === "INR" ||
 								(c.code ?? "").toUpperCase() === "INR",
@@ -1061,43 +1074,41 @@ export default function YourAIChat() {
 					try {
 						receiptUrl = await uploadReceiptFile(attachedReceiptFile);
 					} catch (uploadErr) {
-						const msg =
-							uploadErr instanceof Error ? uploadErr.message : "Receipt upload failed";
+						const msg = uploadErr instanceof Error ? uploadErr.message : "Receipt upload failed";
 						AlertService.instance?.errorMessage(msg);
 					}
 				}
 
-                try {
-                    await createExpenses.mutateAsync({
-                        data: {
-                            receipt_url: receiptUrl,
-                            category: CreateExpensesDtoCategory.Travel, // Defaulting to Travel if category is not extracted, user can update later
-                            vendor_id: vendorId || "",
-                            user_id: user.id,
-                            expenseDate: formatDateToIso(expenseDate),
-                            amount: amount,
-                            currency_id: expenseCurrencyId,
-                            notes: extractedExpense.notes ?? "",
-                        }
-                    });
-                    
-                    setMessages((prev) => [
+				try {
+					await createExpenses.mutateAsync({
+						data: {
+							receipt_url: receiptUrl,
+							category: CreateExpensesDtoCategory.Travel, // Defaulting to Travel if category is not extracted, user can update later
+							vendor_id: vendorId || "",
+							user_id: user.id,
+							expenseDate: formatDateToIso(expenseDate),
+							amount: amount,
+							currency_id: expenseCurrencyId,
+							notes: extractedExpense.notes ?? "",
+						},
+					});
+
+					setMessages((prev) => [
 						...prev,
 						{
 							id: `assistant-redirect-expense-${Date.now()}`,
 							role: "assistant",
 							content: t("yourAi.expenseCreated", {
-								defaultValue:
-									"I've created the expense for you. Taking you to the Expenses list.",
+								defaultValue: "I've created the expense for you. Taking you to the Expenses list.",
 							}),
 						},
 					]);
 
-                    navigate("/expenses/expenseslist");
-                } catch (err) {
-                    const msg = err instanceof Error ? err.message : "Expense creation failed";
-                    AlertService.instance?.errorMessage(msg);
-                     setMessages((prev) => [
+					navigate("/expenses/expenseslist");
+				} catch (err) {
+					const msg = err instanceof Error ? err.message : "Expense creation failed";
+					AlertService.instance?.errorMessage(msg);
+					setMessages((prev) => [
 						...prev,
 						{
 							id: `assistant-create-err-${Date.now()}`,
@@ -1105,8 +1116,8 @@ export default function YourAIChat() {
 							content: "Sorry, I couldn't create the expense automatically. Please try again.",
 						},
 					]);
-                }
-				
+				}
+
 				setLoading(false);
 				return;
 			}

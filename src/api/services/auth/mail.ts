@@ -11,7 +11,7 @@ import type {
 	UseMutationOptions,
 	UseMutationResult,
 } from "@tanstack/react-query";
-import type { SendMailDto, SuccessResponseDto } from "./models";
+import type { SendMailDto, SendPromotionalMailDto, SuccessResponseDto } from "./models";
 import { authInstance } from "../../instances/authInstance";
 import type { ErrorType } from "../../instances/authInstance";
 
@@ -77,6 +77,73 @@ export const useMailControllerSendMail = <
 	TContext
 > => {
 	const mutationOptions = getMailControllerSendMailMutationOptions(options);
+
+	return useMutation(mutationOptions);
+};
+export const mailControllerSendPromotionalMail = (
+	sendPromotionalMailDto: SendPromotionalMailDto,
+) => {
+	return authInstance<SuccessResponseDto | void>({
+		url: `/api/mail/promotional`,
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		data: sendPromotionalMailDto,
+	});
+};
+
+export const getMailControllerSendPromotionalMailMutationOptions = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof mailControllerSendPromotionalMail>>,
+		TError,
+		{ data: SendPromotionalMailDto },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof mailControllerSendPromotionalMail>>,
+	TError,
+	{ data: SendPromotionalMailDto },
+	TContext
+> => {
+	const { mutation: mutationOptions } = options ?? {};
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof mailControllerSendPromotionalMail>>,
+		{ data: SendPromotionalMailDto }
+	> = (props) => {
+		const { data } = props ?? {};
+
+		return mailControllerSendPromotionalMail(data);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type MailControllerSendPromotionalMailMutationResult = NonNullable<
+	Awaited<ReturnType<typeof mailControllerSendPromotionalMail>>
+>;
+export type MailControllerSendPromotionalMailMutationBody = SendPromotionalMailDto;
+export type MailControllerSendPromotionalMailMutationError = ErrorType<unknown>;
+
+export const useMailControllerSendPromotionalMail = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof mailControllerSendPromotionalMail>>,
+		TError,
+		{ data: SendPromotionalMailDto },
+		TContext
+	>;
+}): UseMutationResult<
+	Awaited<ReturnType<typeof mailControllerSendPromotionalMail>>,
+	TError,
+	{ data: SendPromotionalMailDto },
+	TContext
+> => {
+	const mutationOptions = getMailControllerSendPromotionalMailMutationOptions(options);
 
 	return useMutation(mutationOptions);
 };

@@ -1300,6 +1300,7 @@
     }
   },
   "store": {
+    "cartTitle": "Cart",
     "link": "Store Link",
     "create": "Create Store",
     "updateStoreName": "Update Store Name",

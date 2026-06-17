@@ -18,73 +18,60 @@ import type {
 	UseQueryOptions,
 	UseQueryResult,
 } from "@tanstack/react-query";
+import type {
+	BulkUpdateInventoryDto,
+	CreateInventoryDto,
+	InventoryControllerBulkUpdate200,
+	InventoryControllerCreate201,
+	InventoryControllerFindAll200,
+	InventoryControllerFindAllParams,
+	InventoryControllerFindByProductId200,
+	InventoryControllerUpdate200,
+	SuccessResponseDto,
+	UpdateInventoryDto,
+} from "./models";
 import { authInstance } from "../../instances/authInstance";
 import type { ErrorType } from "../../instances/authInstance";
 
-// Inventory DTOs
-export interface InventoryDto {
-	id: string;
-	productId: string;
-	productName: string;
-	quantity: number;
-	lowStockThreshold: number;
-	lastUpdated: string;
-	unit: string;
-	status: "available" | "partially_available" | "unavailable";
-	user_id: string;
-	createdAt: string;
-	updatedAt: string;
-}
-
-export interface CreateInventoryDto {
-	productId: string;
-	quantity?: number;
-	lowStockThreshold?: number;
-	operation?: "add" | "subtract" | "set";
-	amount?: number;
-}
-
-export interface UpdateInventoryDto {
-	quantity?: number;
-	lowStockThreshold?: number;
-	operation?: "add" | "subtract" | "set";
-	amount?: number;
-}
-
-export interface SuccessResponseDto {
-	message: string;
-}
-
-// Response type for inventory list
-export interface InventoryListResponse {
-	data: InventoryDto[];
-	message: string;
-}
-
-// API Functions
-export const inventoryControllerFindAll = (signal?: AbortSignal) => {
-	return authInstance<InventoryListResponse>({ url: `/api/inventory`, method: "GET", signal });
+/**
+ * @summary Get all inventory entries
+ */
+export const inventoryControllerFindAll = (
+	params?: InventoryControllerFindAllParams,
+	signal?: AbortSignal,
+) => {
+	return authInstance<InventoryControllerFindAll200>({
+		url: `/api/inventory`,
+		method: "GET",
+		params,
+		signal,
+	});
 };
 
-export const getInventoryControllerFindAllQueryKey = () => {
-	return [`/api/inventory`] as const;
+export const getInventoryControllerFindAllQueryKey = (
+	params?: InventoryControllerFindAllParams,
+) => {
+	return [`/api/inventory`, ...(params ? [params] : [])] as const;
 };
 
 export const getInventoryControllerFindAllQueryOptions = <
 	TData = Awaited<ReturnType<typeof inventoryControllerFindAll>>,
 	TError = ErrorType<unknown>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof inventoryControllerFindAll>>, TError, TData>
-	>;
-}) => {
+>(
+	params?: InventoryControllerFindAllParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof inventoryControllerFindAll>>, TError, TData>
+		>;
+	},
+) => {
 	const { query: queryOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getInventoryControllerFindAllQueryKey();
+	const queryKey = queryOptions?.queryKey ?? getInventoryControllerFindAllQueryKey(params);
 
 	const queryFn: QueryFunction<Awaited<ReturnType<typeof inventoryControllerFindAll>>> = ({
 		signal,
-	}) => inventoryControllerFindAll(signal);
+	}) => inventoryControllerFindAll(params, signal);
 
 	return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
 		Awaited<ReturnType<typeof inventoryControllerFindAll>>,
@@ -101,53 +88,68 @@ export type InventoryControllerFindAllQueryError = ErrorType<unknown>;
 export function useInventoryControllerFindAll<
 	TData = Awaited<ReturnType<typeof inventoryControllerFindAll>>,
 	TError = ErrorType<unknown>,
->(options: {
-	query: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof inventoryControllerFindAll>>, TError, TData>
-	> &
-		Pick<
-			DefinedInitialDataOptions<
-				Awaited<ReturnType<typeof inventoryControllerFindAll>>,
-				TError,
-				TData
-			>,
-			"initialData"
-		>;
-}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+>(
+	params: undefined | InventoryControllerFindAllParams,
+	options: {
+		query: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof inventoryControllerFindAll>>, TError, TData>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof inventoryControllerFindAll>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
 export function useInventoryControllerFindAll<
 	TData = Awaited<ReturnType<typeof inventoryControllerFindAll>>,
 	TError = ErrorType<unknown>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof inventoryControllerFindAll>>, TError, TData>
-	> &
-		Pick<
-			UndefinedInitialDataOptions<
-				Awaited<ReturnType<typeof inventoryControllerFindAll>>,
-				TError,
-				TData
-			>,
-			"initialData"
-		>;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+>(
+	params?: InventoryControllerFindAllParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof inventoryControllerFindAll>>, TError, TData>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof inventoryControllerFindAll>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 export function useInventoryControllerFindAll<
 	TData = Awaited<ReturnType<typeof inventoryControllerFindAll>>,
 	TError = ErrorType<unknown>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof inventoryControllerFindAll>>, TError, TData>
-	>;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+>(
+	params?: InventoryControllerFindAllParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof inventoryControllerFindAll>>, TError, TData>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+/**
+ * @summary Get all inventory entries
+ */
 
 export function useInventoryControllerFindAll<
 	TData = Awaited<ReturnType<typeof inventoryControllerFindAll>>,
 	TError = ErrorType<unknown>,
->(options?: {
-	query?: Partial<
-		UseQueryOptions<Awaited<ReturnType<typeof inventoryControllerFindAll>>, TError, TData>
-	>;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-	const queryOptions = getInventoryControllerFindAllQueryOptions(options);
+>(
+	params?: InventoryControllerFindAllParams,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof inventoryControllerFindAll>>, TError, TData>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+	const queryOptions = getInventoryControllerFindAllQueryOptions(params, options);
 
 	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
@@ -156,20 +158,11 @@ export function useInventoryControllerFindAll<
 	return query;
 }
 
-export const inventoryControllerFindByProductId = (productId: string, signal?: AbortSignal) => {
-	return authInstance<InventoryDto>({
-		url: `/api/inventory/product/${productId}`,
-		method: "GET",
-		signal,
-	});
-};
-
-export const getInventoryControllerFindByProductIdQueryKey = (productId: string) => {
-	return [`/api/inventory/product/${productId}`] as const;
-};
-
+/**
+ * @summary Create or update inventory entry
+ */
 export const inventoryControllerCreate = (createInventoryDto: CreateInventoryDto) => {
-	return authInstance<InventoryDto>({
+	return authInstance<InventoryControllerCreate201>({
 		url: `/api/inventory`,
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
@@ -213,6 +206,9 @@ export type InventoryControllerCreateMutationResult = NonNullable<
 export type InventoryControllerCreateMutationBody = CreateInventoryDto;
 export type InventoryControllerCreateMutationError = ErrorType<unknown>;
 
+/**
+ * @summary Create or update inventory entry
+ */
 export const useInventoryControllerCreate = <
 	TError = ErrorType<unknown>,
 	TContext = unknown,
@@ -233,9 +229,131 @@ export const useInventoryControllerCreate = <
 
 	return useMutation(mutationOptions);
 };
+/**
+ * @summary Get inventory entry by product ID
+ */
+export const inventoryControllerFindByProductId = (productId: string, signal?: AbortSignal) => {
+	return authInstance<InventoryControllerFindByProductId200>({
+		url: `/api/inventory/product/${productId}`,
+		method: "GET",
+		signal,
+	});
+};
 
+export const getInventoryControllerFindByProductIdQueryKey = (productId: string) => {
+	return [`/api/inventory/product/${productId}`] as const;
+};
+
+export const getInventoryControllerFindByProductIdQueryOptions = <
+	TData = Awaited<ReturnType<typeof inventoryControllerFindByProductId>>,
+	TError = ErrorType<unknown>,
+>(
+	productId: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof inventoryControllerFindByProductId>>, TError, TData>
+		>;
+	},
+) => {
+	const { query: queryOptions } = options ?? {};
+
+	const queryKey =
+		queryOptions?.queryKey ?? getInventoryControllerFindByProductIdQueryKey(productId);
+
+	const queryFn: QueryFunction<Awaited<ReturnType<typeof inventoryControllerFindByProductId>>> = ({
+		signal,
+	}) => inventoryControllerFindByProductId(productId, signal);
+
+	return { queryKey, queryFn, enabled: !!productId, ...queryOptions } as UseQueryOptions<
+		Awaited<ReturnType<typeof inventoryControllerFindByProductId>>,
+		TError,
+		TData
+	> & { queryKey: QueryKey };
+};
+
+export type InventoryControllerFindByProductIdQueryResult = NonNullable<
+	Awaited<ReturnType<typeof inventoryControllerFindByProductId>>
+>;
+export type InventoryControllerFindByProductIdQueryError = ErrorType<unknown>;
+
+export function useInventoryControllerFindByProductId<
+	TData = Awaited<ReturnType<typeof inventoryControllerFindByProductId>>,
+	TError = ErrorType<unknown>,
+>(
+	productId: string,
+	options: {
+		query: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof inventoryControllerFindByProductId>>, TError, TData>
+		> &
+			Pick<
+				DefinedInitialDataOptions<
+					Awaited<ReturnType<typeof inventoryControllerFindByProductId>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useInventoryControllerFindByProductId<
+	TData = Awaited<ReturnType<typeof inventoryControllerFindByProductId>>,
+	TError = ErrorType<unknown>,
+>(
+	productId: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof inventoryControllerFindByProductId>>, TError, TData>
+		> &
+			Pick<
+				UndefinedInitialDataOptions<
+					Awaited<ReturnType<typeof inventoryControllerFindByProductId>>,
+					TError,
+					TData
+				>,
+				"initialData"
+			>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useInventoryControllerFindByProductId<
+	TData = Awaited<ReturnType<typeof inventoryControllerFindByProductId>>,
+	TError = ErrorType<unknown>,
+>(
+	productId: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof inventoryControllerFindByProductId>>, TError, TData>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+/**
+ * @summary Get inventory entry by product ID
+ */
+
+export function useInventoryControllerFindByProductId<
+	TData = Awaited<ReturnType<typeof inventoryControllerFindByProductId>>,
+	TError = ErrorType<unknown>,
+>(
+	productId: string,
+	options?: {
+		query?: Partial<
+			UseQueryOptions<Awaited<ReturnType<typeof inventoryControllerFindByProductId>>, TError, TData>
+		>;
+	},
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+	const queryOptions = getInventoryControllerFindByProductIdQueryOptions(productId, options);
+
+	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+	query.queryKey = queryOptions.queryKey;
+
+	return query;
+}
+
+/**
+ * @summary Update inventory entry
+ */
 export const inventoryControllerUpdate = (id: string, updateInventoryDto: UpdateInventoryDto) => {
-	return authInstance<InventoryDto>({
+	return authInstance<InventoryControllerUpdate200>({
 		url: `/api/inventory/${id}`,
 		method: "PUT",
 		headers: { "Content-Type": "application/json" },
@@ -279,6 +397,9 @@ export type InventoryControllerUpdateMutationResult = NonNullable<
 export type InventoryControllerUpdateMutationBody = UpdateInventoryDto;
 export type InventoryControllerUpdateMutationError = ErrorType<unknown>;
 
+/**
+ * @summary Update inventory entry
+ */
 export const useInventoryControllerUpdate = <
 	TError = ErrorType<unknown>,
 	TContext = unknown,
@@ -299,7 +420,9 @@ export const useInventoryControllerUpdate = <
 
 	return useMutation(mutationOptions);
 };
-
+/**
+ * @summary Delete inventory entry
+ */
 export const inventoryControllerRemove = (id: string) => {
 	return authInstance<SuccessResponseDto>({ url: `/api/inventory/${id}`, method: "DELETE" });
 };
@@ -340,6 +463,9 @@ export type InventoryControllerRemoveMutationResult = NonNullable<
 
 export type InventoryControllerRemoveMutationError = ErrorType<unknown>;
 
+/**
+ * @summary Delete inventory entry
+ */
 export const useInventoryControllerRemove = <
 	TError = ErrorType<unknown>,
 	TContext = unknown,
@@ -357,6 +483,77 @@ export const useInventoryControllerRemove = <
 	TContext
 > => {
 	const mutationOptions = getInventoryControllerRemoveMutationOptions(options);
+
+	return useMutation(mutationOptions);
+};
+/**
+ * @summary Bulk update inventory entries
+ */
+export const inventoryControllerBulkUpdate = (bulkUpdateInventoryDto: BulkUpdateInventoryDto) => {
+	return authInstance<InventoryControllerBulkUpdate200 | void>({
+		url: `/api/inventory/bulk`,
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		data: bulkUpdateInventoryDto,
+	});
+};
+
+export const getInventoryControllerBulkUpdateMutationOptions = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof inventoryControllerBulkUpdate>>,
+		TError,
+		{ data: BulkUpdateInventoryDto },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof inventoryControllerBulkUpdate>>,
+	TError,
+	{ data: BulkUpdateInventoryDto },
+	TContext
+> => {
+	const { mutation: mutationOptions } = options ?? {};
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof inventoryControllerBulkUpdate>>,
+		{ data: BulkUpdateInventoryDto }
+	> = (props) => {
+		const { data } = props ?? {};
+
+		return inventoryControllerBulkUpdate(data);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type InventoryControllerBulkUpdateMutationResult = NonNullable<
+	Awaited<ReturnType<typeof inventoryControllerBulkUpdate>>
+>;
+export type InventoryControllerBulkUpdateMutationBody = BulkUpdateInventoryDto;
+export type InventoryControllerBulkUpdateMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Bulk update inventory entries
+ */
+export const useInventoryControllerBulkUpdate = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof inventoryControllerBulkUpdate>>,
+		TError,
+		{ data: BulkUpdateInventoryDto },
+		TContext
+	>;
+}): UseMutationResult<
+	Awaited<ReturnType<typeof inventoryControllerBulkUpdate>>,
+	TError,
+	{ data: BulkUpdateInventoryDto },
+	TContext
+> => {
+	const mutationOptions = getInventoryControllerBulkUpdateMutationOptions(options);
 
 	return useMutation(mutationOptions);
 };

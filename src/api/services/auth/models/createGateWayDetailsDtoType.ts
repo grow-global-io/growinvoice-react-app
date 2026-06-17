@@ -14,4 +14,5 @@ export const CreateGateWayDetailsDtoType = {
 	Stripe: "Stripe",
 	Razorpay: "Razorpay",
 	Growlimitless: "Growlimitless",
+	Shiprocket: "Shiprocket",
 } as const;

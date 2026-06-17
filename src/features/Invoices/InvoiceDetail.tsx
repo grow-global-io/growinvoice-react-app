@@ -102,7 +102,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 	const createInvoice = useInvoiceControllerCreate();
 	const queryClient = useQueryClient();
 
-	const getHtmlText = useInvoiceControllerTest(invoiceId ?? "", {
+	const getHtmlText = useInvoiceControllerTest(invoiceId ?? "", undefined, {
 		query: {
 			enabled: invoiceId !== undefined,
 			gcTime: 0,
@@ -207,7 +207,7 @@ const InvoiceDetail = ({ invoiceId, IsPublic }: { invoiceId: string; IsPublic?: 
 			LoaderService.instance.showLoader();
 			const payload = buildClonePayload(invoice);
 			const result = await createInvoice.mutateAsync({ data: payload });
-			const created = result?.result?.[0];
+			const created = (result?.result as any)?.[0];
 			const newInvoiceNumber = created?.invoice_number;
 			await queryClient.refetchQueries({ queryKey: getInvoiceControllerFindAllQueryKey() });
 			await queryClient.refetchQueries({

@@ -1269,6 +1269,7 @@
     "submitButton": "Läki Roll Up AI pood"
   },
   "store": {
+    "cartTitle": "Ostukorv",
     "link": "Poe link",
     "create": "Loo pood",
     "updateStoreName": "Uuenda poe nime",

@@ -21,6 +21,8 @@ export interface CreateInvoiceWithProducts {
 	invoice_number: string;
 	is_recurring: boolean;
 	/** @nullable */
+	lastReminderSentAt?: string | null;
+	/** @nullable */
 	notes?: string | null;
 	paid_amount: number;
 	/** @nullable */
