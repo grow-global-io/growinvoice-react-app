@@ -15,11 +15,12 @@ export interface ProductPriceBook {
 	id: string;
 	isExist: boolean;
 	price: number;
-	/** @nullable */
-	sellPrice?: number | null;
-	shippingCharges?: number;
 	product?: Product;
 	product_id: string;
+	/** @nullable */
+	sellPrice: number | null;
+	/** @nullable */
+	shippingCharges: number | null;
 	/** @nullable */
 	updatedAt: string | null;
 }

@@ -12,6 +12,8 @@ import type { Product } from "./product";
 export interface InvoiceProducts {
 	createdAt: string;
 	/** @nullable */
+	discount: number | null;
+	/** @nullable */
 	hsnCode?: InvoiceProductsHsnCode;
 	/** @nullable */
 	hsnCode_id: string | null;

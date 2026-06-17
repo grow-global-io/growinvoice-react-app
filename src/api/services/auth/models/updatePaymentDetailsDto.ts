@@ -11,6 +11,8 @@ export interface UpdatePaymentDetailsDto {
 	/** @nullable */
 	account_no?: string | null;
 	/** @nullable */
+	bankName?: string | null;
+	/** @nullable */
 	bicNumber?: string | null;
 	/** @nullable */
 	ibanNumber?: string | null;

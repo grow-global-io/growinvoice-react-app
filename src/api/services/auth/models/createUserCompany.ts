@@ -11,7 +11,11 @@ export interface CreateUserCompany {
 	/** @nullable */
 	currency_id?: string | null;
 	email: string;
+	/** Google OAuth token for Google sign-in */
+	googleToken?: string;
 	isActive?: boolean;
+	/** Flag to indicate this is a Google sign-in attempt */
+	isGoogleSignIn?: boolean;
 	/** @nullable */
 	name?: string | null;
 	password: string;

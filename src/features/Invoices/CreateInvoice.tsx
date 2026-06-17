@@ -239,7 +239,9 @@ const CreateInvoice = ({
 			? {
 					...baseInitialValues,
 					customer_ids:
-						aiPrefill.customer_ids?.length > 0 ? aiPrefill.customer_ids : baseInitialValues.customer_ids,
+						aiPrefill.customer_ids?.length > 0
+							? aiPrefill.customer_ids
+							: baseInitialValues.customer_ids,
 					paymentId: aiPrefill.paymentId || baseInitialValues.paymentId,
 					template_id: aiPrefill.template_id || baseInitialValues.template_id,
 					currency_id: aiPrefill.currency_id || baseInitialValues.currency_id,
@@ -441,7 +443,7 @@ const CreateInvoice = ({
 						})),
 					},
 				});
-				createdInvoice?.result?.forEach((inv) => invIds.push(inv.id));
+				(createdInvoice?.result as any)?.forEach((inv: any) => invIds.push(inv.id));
 			}
 
 			const paidPromises: any = [];

@@ -78,6 +78,7 @@ const schema = yup.object({
 		.default([]),
 
 	includeStore: yup.boolean().optional(),
+	includeQsr: yup.boolean().optional(),
 	// currency_id: yup.string().required("Currency is required"),
 	// price: yup
 	// 	.number()
@@ -185,15 +186,8 @@ const ProductForm = () => {
 	const isIndia = user?.company?.[0]?.country?.name === "India";
 
 	const handleSubmit = async (
-		values: CreateProductWithTaxDto & {
-			priceBook: Array<{
-				currency_id: string;
-				price: number;
-				sellPrice?: number | null;
-				shippingCharges?: number;
-			}>;
-		},
-		action: FormikHelpers<CreateProductWithTaxDto>,
+		values: any,
+		action: FormikHelpers<any>,
 	) => {
 		if (isGetStartedDialogOpen()) {
 			AlertService.instance.errorMessage(
@@ -311,6 +305,7 @@ const ProductForm = () => {
 				}) ?? [],
 			images: editValues?.images ?? [],
 			includeStore: editValues?.includeStore ?? false,
+			includeQsr: editValues?.includeQsr ?? false,
 			initialStock: undefined as number | undefined,
 		}),
 		[editValues, initialTaxValues, user?.id, taxCodes?.data],
@@ -419,6 +414,23 @@ const ProductForm = () => {
 											<Field
 												name="includeStore"
 												label={t("productForm.includeStore")}
+												component={CheckBoxFormField}
+											/>
+										</FieldWithTooltip>
+									</Grid>
+									<Grid item xs={12}>
+										<FieldWithTooltip
+											tooltipTitle={t("tooltips.productForm.includeQsr.title", {
+												defaultValue: "Include in QSR Menu",
+											})}
+											tooltipDescription={t("tooltips.productForm.includeQsr.description", {
+												defaultValue:
+													"Check this if you want the product to be visible in QSR mode.",
+											})}
+										>
+											<Field
+												name="includeQsr"
+												label={t("productForm.includeQsr", { defaultValue: "Include in QSR Menu" })}
 												component={CheckBoxFormField}
 											/>
 										</FieldWithTooltip>
@@ -909,21 +921,21 @@ const ProductForm = () => {
 																{t("productForm.noPriceBook")}
 															</Typography>
 														)}
-										<Button
-											variant="outlined"
-											startIcon={<AddIcon />}
-											onClick={() => {
-												// Calculate initial sellPrice based on current tax
-												arrayHelpers.push({
-													currency_id: "",
-													price: "",
-													sellPrice: "",
-												});
-											}}
-										>
-											{t("productForm.addPrice")}
-										</Button>
-									</>
+														<Button
+															variant="outlined"
+															startIcon={<AddIcon />}
+															onClick={() => {
+																// Calculate initial sellPrice based on current tax
+																arrayHelpers.push({
+																	currency_id: "",
+																	price: "",
+																	sellPrice: "",
+																});
+															}}
+														>
+															{t("productForm.addPrice")}
+														</Button>
+													</>
 												)}
 											/>
 										</Box>

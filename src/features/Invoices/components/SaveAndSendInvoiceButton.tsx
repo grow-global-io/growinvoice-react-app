@@ -117,7 +117,7 @@ const SaveAndSendInvoiceButton = ({
 				// Extract invoice ID from response
 				// Response structure: { message: string, result?: InvoiceDto }
 				// InvoiceDto has id: string
-				response.result?.forEach((inv) => invIds.push(inv.id));
+				(response.result as any)?.forEach((inv: any) => invIds.push(inv.id));
 			}
 
 			if (invIds.length === 0) {

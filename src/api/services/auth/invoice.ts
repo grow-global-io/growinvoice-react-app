@@ -30,6 +30,7 @@ import type {
 	InvoiceControllerFindDueMonthParams,
 	InvoiceControllerFindDueTodayParams,
 	InvoiceControllerFindPaidInvoicesParams,
+	InvoiceControllerInvoicePreviewFromBodyParams,
 	InvoiceControllerInvoiceSentToMail200,
 	InvoiceControllerInvoiceSentToMailParams,
 	InvoiceControllerMarkedAsMailed200,
@@ -44,6 +45,7 @@ import type {
 	InvoiceControllerSendInvoicePaymentReceiptManuallyParams,
 	InvoiceControllerTermsAcceptedByUser200,
 	InvoiceControllerTermsAcceptedByUserParams,
+	InvoiceControllerTestParams,
 	InvoiceControllerUpdate200,
 	InvoiceWithAllDataDto,
 	SendMailDto,
@@ -1230,12 +1232,19 @@ export const useInvoiceControllerRemove = <
 
 	return useMutation(mutationOptions);
 };
-export const invoiceControllerTest = (id: string, signal?: AbortSignal) => {
-	return authInstance<string>({ url: `/api/invoice/test/${id}`, method: "GET", signal });
+export const invoiceControllerTest = (
+	id: string,
+	params?: InvoiceControllerTestParams,
+	signal?: AbortSignal,
+) => {
+	return authInstance<string>({ url: `/api/invoice/test/${id}`, method: "GET", params, signal });
 };
 
-export const getInvoiceControllerTestQueryKey = (id: string) => {
-	return [`/api/invoice/test/${id}`] as const;
+export const getInvoiceControllerTestQueryKey = (
+	id: string,
+	params?: InvoiceControllerTestParams,
+) => {
+	return [`/api/invoice/test/${id}`, ...(params ? [params] : [])] as const;
 };
 
 export const getInvoiceControllerTestQueryOptions = <
@@ -1243,6 +1252,7 @@ export const getInvoiceControllerTestQueryOptions = <
 	TError = ErrorType<unknown>,
 >(
 	id: string,
+	params?: InvoiceControllerTestParams,
 	options?: {
 		query?: Partial<
 			UseQueryOptions<Awaited<ReturnType<typeof invoiceControllerTest>>, TError, TData>
@@ -1251,10 +1261,10 @@ export const getInvoiceControllerTestQueryOptions = <
 ) => {
 	const { query: queryOptions } = options ?? {};
 
-	const queryKey = queryOptions?.queryKey ?? getInvoiceControllerTestQueryKey(id);
+	const queryKey = queryOptions?.queryKey ?? getInvoiceControllerTestQueryKey(id, params);
 
 	const queryFn: QueryFunction<Awaited<ReturnType<typeof invoiceControllerTest>>> = ({ signal }) =>
-		invoiceControllerTest(id, signal);
+		invoiceControllerTest(id, params, signal);
 
 	return { queryKey, queryFn, enabled: !!id, ...queryOptions } as UseQueryOptions<
 		Awaited<ReturnType<typeof invoiceControllerTest>>,
@@ -1273,6 +1283,7 @@ export function useInvoiceControllerTest<
 	TError = ErrorType<unknown>,
 >(
 	id: string,
+	params: undefined | InvoiceControllerTestParams,
 	options: {
 		query: Partial<
 			UseQueryOptions<Awaited<ReturnType<typeof invoiceControllerTest>>, TError, TData>
@@ -1288,6 +1299,7 @@ export function useInvoiceControllerTest<
 	TError = ErrorType<unknown>,
 >(
 	id: string,
+	params?: InvoiceControllerTestParams,
 	options?: {
 		query?: Partial<
 			UseQueryOptions<Awaited<ReturnType<typeof invoiceControllerTest>>, TError, TData>
@@ -1307,6 +1319,7 @@ export function useInvoiceControllerTest<
 	TError = ErrorType<unknown>,
 >(
 	id: string,
+	params?: InvoiceControllerTestParams,
 	options?: {
 		query?: Partial<
 			UseQueryOptions<Awaited<ReturnType<typeof invoiceControllerTest>>, TError, TData>
@@ -1319,13 +1332,14 @@ export function useInvoiceControllerTest<
 	TError = ErrorType<unknown>,
 >(
 	id: string,
+	params?: InvoiceControllerTestParams,
 	options?: {
 		query?: Partial<
 			UseQueryOptions<Awaited<ReturnType<typeof invoiceControllerTest>>, TError, TData>
 		>;
 	},
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-	const queryOptions = getInvoiceControllerTestQueryOptions(id, options);
+	const queryOptions = getInvoiceControllerTestQueryOptions(id, params, options);
 
 	const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
@@ -2104,7 +2118,7 @@ export const useInvoiceControllerMarkedAsMailed = <
 };
 export const invoiceControllerInvoicePreviewFromBody = (
 	createDirectInvoiceWithProducts: CreateDirectInvoiceWithProducts,
-	params?: { lang?: string },
+	params?: InvoiceControllerInvoicePreviewFromBodyParams,
 ) => {
 	return authInstance<string | void>({
 		url: `/api/invoice/invoicePreviewFromBody`,
@@ -2122,20 +2136,26 @@ export const getInvoiceControllerInvoicePreviewFromBodyMutationOptions = <
 	mutation?: UseMutationOptions<
 		Awaited<ReturnType<typeof invoiceControllerInvoicePreviewFromBody>>,
 		TError,
-		{ data: CreateDirectInvoiceWithProducts },
+		{
+			data: CreateDirectInvoiceWithProducts;
+			params?: InvoiceControllerInvoicePreviewFromBodyParams;
+		},
 		TContext
 	>;
 }): UseMutationOptions<
 	Awaited<ReturnType<typeof invoiceControllerInvoicePreviewFromBody>>,
 	TError,
-	{ data: CreateDirectInvoiceWithProducts; params?: { lang?: string } },
+	{ data: CreateDirectInvoiceWithProducts; params?: InvoiceControllerInvoicePreviewFromBodyParams },
 	TContext
 > => {
 	const { mutation: mutationOptions } = options ?? {};
 
 	const mutationFn: MutationFunction<
 		Awaited<ReturnType<typeof invoiceControllerInvoicePreviewFromBody>>,
-		{ data: CreateDirectInvoiceWithProducts; params?: { lang?: string } }
+		{
+			data: CreateDirectInvoiceWithProducts;
+			params?: InvoiceControllerInvoicePreviewFromBodyParams;
+		}
 	> = (props) => {
 		const { data, params } = props ?? {};
 
@@ -2158,13 +2178,16 @@ export const useInvoiceControllerInvoicePreviewFromBody = <
 	mutation?: UseMutationOptions<
 		Awaited<ReturnType<typeof invoiceControllerInvoicePreviewFromBody>>,
 		TError,
-		{ data: CreateDirectInvoiceWithProducts; params?: { lang?: string } },
+		{
+			data: CreateDirectInvoiceWithProducts;
+			params?: InvoiceControllerInvoicePreviewFromBodyParams;
+		},
 		TContext
 	>;
 }): UseMutationResult<
 	Awaited<ReturnType<typeof invoiceControllerInvoicePreviewFromBody>>,
 	TError,
-	{ data: CreateDirectInvoiceWithProducts; params?: { lang?: string } },
+	{ data: CreateDirectInvoiceWithProducts; params?: InvoiceControllerInvoicePreviewFromBodyParams },
 	TContext
 > => {
 	const mutationOptions = getInvoiceControllerInvoicePreviewFromBodyMutationOptions(options);

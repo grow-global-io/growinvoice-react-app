@@ -11,5 +11,6 @@ export interface CreateProductPriceBookDto {
 	price: number;
 	/** @nullable */
 	sellPrice?: number | null;
-	shippingCharges?: number;
+	/** @nullable */
+	shippingCharges?: number | null;
 }

@@ -1291,6 +1291,7 @@
     }
   },
   "store": {
+    "cartTitle": "Ostoskori",
     "link": "Kauppalinkki",
     "create": "Luo kauppa",
     "updateStoreName": "Päivitä kaupan nimi",

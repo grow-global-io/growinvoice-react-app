@@ -8,11 +8,12 @@
 
 export interface OmitCreateInvoiceProductsDto {
 	/** @nullable */
+	discount?: number | null;
+	/** @nullable */
 	hsnCode_id?: string | null;
 	price: number;
 	product_id: string;
 	quantity: number;
 	taxes?: string[];
-	discount?: number;
 	total: number;
 }

@@ -48,6 +48,7 @@ import VendorsPage from "@pages/VendorsPage";
 import CustomerInvoicesPage from "@pages/CustomerInvoicesPage";
 import StorePage from "@pages/StorePage";
 import LedgerPage from "@pages/LedgerPage";
+import QsrBillingPage from "@pages/QsrBillingPage";
 import StoreSearchPage from "./features/Store/StoreSearchPage";
 import RollUpForm from "@features/AIStore/RollUpForm";
 import StoreUrlVerify from "@features/AIStore/StoreUrlVerify";
@@ -328,6 +329,10 @@ export const protectedRoutes: Route[] = [
 	{
 		path: "/ledger",
 		Component: LedgerPage,
+	},
+	{
+		path: "/qsr",
+		Component: QsrBillingPage,
 	},
 ];
 

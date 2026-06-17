@@ -46,7 +46,7 @@ export const userControllerCreateUser = (createUserCompany: CreateUserCompany) =
 };
 
 export const getUserControllerCreateUserMutationOptions = <
-	TError = ErrorType<unknown>,
+	TError = ErrorType<void>,
 	TContext = unknown,
 >(options?: {
 	mutation?: UseMutationOptions<
@@ -79,10 +79,10 @@ export type UserControllerCreateUserMutationResult = NonNullable<
 	Awaited<ReturnType<typeof userControllerCreateUser>>
 >;
 export type UserControllerCreateUserMutationBody = CreateUserCompany;
-export type UserControllerCreateUserMutationError = ErrorType<unknown>;
+export type UserControllerCreateUserMutationError = ErrorType<void>;
 
 export const useUserControllerCreateUser = <
-	TError = ErrorType<unknown>,
+	TError = ErrorType<void>,
 	TContext = unknown,
 >(options?: {
 	mutation?: UseMutationOptions<

@@ -13,9 +13,9 @@ import type { TaxForInvoiceProducts } from "./taxForInvoiceProducts";
 export interface InvoiceProductWithAllDataDto {
 	createdAt: string;
 	/** @nullable */
-	hsnCode?: InvoiceProductWithAllDataDtoHsnCode;
+	discount: number | null;
 	/** @nullable */
-	discount?: number | null;
+	hsnCode?: InvoiceProductWithAllDataDtoHsnCode;
 	/** @nullable */
 	hsnCode_id: string | null;
 	id: string;

@@ -24,7 +24,7 @@ interface PickupAddress {
 const PickupAddressList = ({ onEdit }: { onEdit: (id: string) => void }) => {
 	const { t } = useTranslation();
 	const { handleOpen, cleanUp } = useConfirmDialogStore();
-	
+
 	// TODO: Replace with actual API call
 	// const pickupAddressList = usePickupAddressControllerFindAll();
 	const [pickupAddresses] = useState<PickupAddress[]>([]);
@@ -133,4 +133,3 @@ const PickupAddressList = ({ onEdit }: { onEdit: (id: string) => void }) => {
 };
 
 export default PickupAddressList;
-

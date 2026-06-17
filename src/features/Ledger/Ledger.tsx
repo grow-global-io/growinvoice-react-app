@@ -34,7 +34,7 @@ import Loader from "@shared/components/Loader";
 import { useReportsControllerGetProductReports } from "@api/services/reports";
 import { useInventoryControllerFindAll } from "@api/services/inventory";
 import { useProductControllerFindAll } from "@api/services/product";
-import type { InventoryListResponse } from "@api/services/inventory";
+
 import moment from "moment";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -227,7 +227,7 @@ const Ledger = () => {
 		if (!invoiceProductsQuery?.data || !inventoryQuery?.data || !productsQuery?.data) return [];
 
 		const inventoryMap = new Map();
-		const inventoryResponse = inventoryQuery.data as InventoryListResponse | undefined;
+		const inventoryResponse = inventoryQuery.data as any;
 		const inventoryEntries = Array.isArray(inventoryResponse?.data)
 			? inventoryResponse.data
 			: Array.isArray(inventoryResponse)
@@ -237,7 +237,7 @@ const Ledger = () => {
 		// Create inventory map for quick lookup (productId -> cost price)
 		// TODO: When backend adds costPrice to inventory, use it here
 		// For now, we'll use product priceBook as fallback
-		inventoryEntries.forEach((entry) => {
+		inventoryEntries.forEach((entry: any) => {
 			inventoryMap.set(entry.productId, {
 				hasInventory: true,
 				// costPrice will be set from product priceBook below

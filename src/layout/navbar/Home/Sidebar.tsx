@@ -153,6 +153,12 @@ function Sidebar({ children }: { children: React.ReactNode }) {
 			menuItems: [],
 		},
 		{
+			path: "/qsr",
+			icon: <StoreIcon />,
+			menuName: t("nav.qsr", { defaultValue: "QSR Billing" }),
+			menuItems: [],
+		},
+		{
 			path: "/customer/customerlist",
 			icon: <PeopleIcon />,
 			menuName: t("customer.title"),

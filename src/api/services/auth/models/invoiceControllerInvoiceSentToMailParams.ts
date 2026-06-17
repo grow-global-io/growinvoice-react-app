@@ -8,5 +8,8 @@
 
 export type InvoiceControllerInvoiceSentToMailParams = {
 	id: string;
+	/**
+	 * selected language for email attachments
+	 */
 	lang?: string;
 };

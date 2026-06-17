@@ -35,10 +35,11 @@ import {
 	useInventoryControllerUpdate,
 	useInventoryControllerRemove,
 	getInventoryControllerFindAllQueryKey,
-	type InventoryDto,
-	type InventoryListResponse,
 } from "@api/services/inventory";
+import type { InventoryResponseDto as InventoryDto } from "@api/services/models";
 import { useQueryClient } from "@tanstack/react-query";
+
+type InventoryListResponse = { data: InventoryDto[] };
 
 // Use InventoryDto from API service
 type StockEntry = InventoryDto;

@@ -40,9 +40,10 @@ import {
 	useInventoryControllerCreate,
 	useInventoryControllerUpdate,
 	getInventoryControllerFindAllQueryKey,
-	type InventoryDto,
-	type InventoryListResponse,
 } from "@api/services/inventory";
+import type { InventoryResponseDto as InventoryDto } from "@api/services/models";
+
+type InventoryListResponse = { data: InventoryDto[] };
 
 const EXCLUDED_UNITS = ["monthly", "quadrimester", "month", "months", "quadrimesters"];
 
@@ -262,11 +263,7 @@ const ProductTableList = () => {
 						icon={
 							<Tooltip title={t("product.table.deleteProduct", { defaultValue: "Delete Product" })}>
 								<Box>
-									<CustomIconButton
-										src={DeleteIcon}
-										buttonType="delete"
-										iconColor="error"
-									/>
+									<CustomIconButton src={DeleteIcon} buttonType="delete" iconColor="error" />
 								</Box>
 							</Tooltip>
 						}

@@ -33,6 +33,8 @@ export interface Invoice {
 	is_recurring: boolean;
 	isExist: boolean;
 	/** @nullable */
+	lastReminderSentAt: string | null;
+	/** @nullable */
 	notes: string | null;
 	paid_amount: number;
 	paid_status: InvoicePaidStatus;

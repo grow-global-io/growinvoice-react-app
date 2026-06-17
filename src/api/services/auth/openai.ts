@@ -19,14 +19,146 @@ import type {
 	UseQueryResult,
 } from "@tanstack/react-query";
 import type {
+	ChatDto,
+	ExtractInvoiceDto,
+	OpenaiControllerChat200,
 	OpenaiControllerCreate200Item,
 	OpenaiControllerCreateGraph200Item,
 	OpenaiControllerDashboardDataGet200,
+	OpenaiControllerExtractInvoice200,
+	OpenaiControllerExtractInvoice201,
 	RequestBodyOpenaiDto,
 } from "./models";
 import { authInstance } from "../../instances/authInstance";
 import type { ErrorType } from "../../instances/authInstance";
 
+export const openaiControllerChat = (chatDto: ChatDto) => {
+	return authInstance<OpenaiControllerChat200 | void>({
+		url: `/api/openai/chat`,
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		data: chatDto,
+	});
+};
+
+export const getOpenaiControllerChatMutationOptions = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof openaiControllerChat>>,
+		TError,
+		{ data: ChatDto },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof openaiControllerChat>>,
+	TError,
+	{ data: ChatDto },
+	TContext
+> => {
+	const { mutation: mutationOptions } = options ?? {};
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof openaiControllerChat>>,
+		{ data: ChatDto }
+	> = (props) => {
+		const { data } = props ?? {};
+
+		return openaiControllerChat(data);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type OpenaiControllerChatMutationResult = NonNullable<
+	Awaited<ReturnType<typeof openaiControllerChat>>
+>;
+export type OpenaiControllerChatMutationBody = ChatDto;
+export type OpenaiControllerChatMutationError = ErrorType<unknown>;
+
+export const useOpenaiControllerChat = <TError = ErrorType<unknown>, TContext = unknown>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof openaiControllerChat>>,
+		TError,
+		{ data: ChatDto },
+		TContext
+	>;
+}): UseMutationResult<
+	Awaited<ReturnType<typeof openaiControllerChat>>,
+	TError,
+	{ data: ChatDto },
+	TContext
+> => {
+	const mutationOptions = getOpenaiControllerChatMutationOptions(options);
+
+	return useMutation(mutationOptions);
+};
+export const openaiControllerExtractInvoice = (extractInvoiceDto: ExtractInvoiceDto) => {
+	return authInstance<OpenaiControllerExtractInvoice200 | OpenaiControllerExtractInvoice201>({
+		url: `/api/openai/extract-invoice`,
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		data: extractInvoiceDto,
+	});
+};
+
+export const getOpenaiControllerExtractInvoiceMutationOptions = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof openaiControllerExtractInvoice>>,
+		TError,
+		{ data: ExtractInvoiceDto },
+		TContext
+	>;
+}): UseMutationOptions<
+	Awaited<ReturnType<typeof openaiControllerExtractInvoice>>,
+	TError,
+	{ data: ExtractInvoiceDto },
+	TContext
+> => {
+	const { mutation: mutationOptions } = options ?? {};
+
+	const mutationFn: MutationFunction<
+		Awaited<ReturnType<typeof openaiControllerExtractInvoice>>,
+		{ data: ExtractInvoiceDto }
+	> = (props) => {
+		const { data } = props ?? {};
+
+		return openaiControllerExtractInvoice(data);
+	};
+
+	return { mutationFn, ...mutationOptions };
+};
+
+export type OpenaiControllerExtractInvoiceMutationResult = NonNullable<
+	Awaited<ReturnType<typeof openaiControllerExtractInvoice>>
+>;
+export type OpenaiControllerExtractInvoiceMutationBody = ExtractInvoiceDto;
+export type OpenaiControllerExtractInvoiceMutationError = ErrorType<unknown>;
+
+export const useOpenaiControllerExtractInvoice = <
+	TError = ErrorType<unknown>,
+	TContext = unknown,
+>(options?: {
+	mutation?: UseMutationOptions<
+		Awaited<ReturnType<typeof openaiControllerExtractInvoice>>,
+		TError,
+		{ data: ExtractInvoiceDto },
+		TContext
+	>;
+}): UseMutationResult<
+	Awaited<ReturnType<typeof openaiControllerExtractInvoice>>,
+	TError,
+	{ data: ExtractInvoiceDto },
+	TContext
+> => {
+	const mutationOptions = getOpenaiControllerExtractInvoiceMutationOptions(options);
+
+	return useMutation(mutationOptions);
+};
 export const openaiControllerCreate = (requestBodyOpenaiDto: RequestBodyOpenaiDto) => {
 	return authInstance<OpenaiControllerCreate200Item[] | void>({
 		url: `/api/openai`,
