@@ -146,12 +146,8 @@ const Register = () => {
 								fontWeight="400"
 							>
 								{t("auth.createAccount", {
-									defaultValue: "Please create your account to continue with",
-								})}{" "}
-								&nbsp;
-								<Typography color="text.secondary" variant="caption" fontWeight="700">
-									GROWINVOICE
-								</Typography>
+									defaultValue: "Please create your account to continue with growinvoice",
+								})}
 							</Typography>
 						</Box>
 						<Box sx={{ mb: 2, mt: 2 }}>

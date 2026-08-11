@@ -91,9 +91,6 @@ const Login = () => {
 								{t("auth.pleaseLogin", {
 									defaultValue: "Please login to continue with growinvoice",
 								})}
-								<Typography color="text.secondary" variant="caption" fontWeight="700">
-									GROWINVOICE
-								</Typography>
 							</Typography>
 						</Box>
 						<Box sx={{ mb: 2, mt: 2 }}>
