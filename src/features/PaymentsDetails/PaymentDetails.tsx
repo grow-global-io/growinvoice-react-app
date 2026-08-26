@@ -38,7 +38,7 @@ const PaymentDetails = () => {
 			flex: 1,
 			minWidth: 400,
 			renderCell: (params) => {
-				if (params?.row?.paymentType === "IndianBank") {
+				if (params?.row?.paymentType === "IndianBanks") {
 					return (
 						<Box sx={{ py: 1 }}>
 							<Typography variant="body2" sx={{ wordBreak: "break-word" }}>
@@ -230,6 +230,7 @@ const PaymentDetails = () => {
 				<Grid item xs={12}>
 					<DataGrid
 						autoHeight
+						getRowHeight={() => "auto"}
 						rows={paymentDetails.data}
 						columns={columns}
 						sx={{
@@ -237,6 +238,7 @@ const PaymentDetails = () => {
 								py: 1,
 								overflow: "visible",
 								whiteSpace: "normal",
+								alignItems: "flex-start",
 							},
 							"& .MuiDataGrid-row": {
 								"&:hover": {
