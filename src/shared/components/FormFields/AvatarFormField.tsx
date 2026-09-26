@@ -1,3 +1,5 @@
+
+
 import { useUploadControllerUploadFile } from "@api/services/upload";
 import { Box, Button, FormControl, InputLabel, Typography } from "@mui/material";
 import { type FieldProps, getIn } from "formik";
@@ -33,12 +35,26 @@ const AvatarFormField: React.FC<
 			setFileSizeError(true);
 			return;
 		}
-		const uploadRes = await mutateAsync({
-			data: {
-				file,
-			},
-		});
-		form.setFieldValue(field.name, uploadRes.link, true);
+		try {
+			const uploadRes = await mutateAsync({
+				data: {
+					file,
+				},
+			});
+			if (uploadRes?.link) {
+				form.setFieldValue(field.name, uploadRes.link, true);
+			}
+		} catch (err) {
+			console.warn("Server upload failed, falling back to local base64:", err);
+			const reader = new FileReader();
+			reader.onload = (e) => {
+				const result = e.target?.result as string;
+				if (result) {
+					form.setFieldValue(field.name, result, true);
+				}
+			};
+			reader.readAsDataURL(file);
+		}
 	};
 
 	return (
