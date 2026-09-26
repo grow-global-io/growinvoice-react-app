@@ -39,6 +39,9 @@ import AddressExpressionsDialog from "@shared/components/AddressExpressionsDialo
 import { AutocompleteField } from "@shared/components/FormFields/AutoComplete";
 import { useTranslation } from "react-i18next";
 
+import SignatureUploadField from "@shared/components/FormFields/SignatureUploadField";
+import QrCodeConfigField from "@shared/components/FormFields/QrCodeConfigField";
+
 const CustomFormControlLabel = styled(FormControlLabel)(() => ({
 	alignItems: "flex-start",
 	margin: 0,
@@ -69,6 +72,17 @@ const Invoices = () => {
 		invoiceTemplateId: invoiceSettings?.data?.invoiceTemplateId ?? "",
 		enableReminder: invoiceSettings?.data?.enableReminder ?? false,
 		reminderInterval: invoiceSettings?.data?.reminderInterval ?? 0,
+		signature: invoiceSettings?.data?.signature ?? "",
+		signaturePosition: invoiceSettings?.data?.signaturePosition ?? "BOTTOM_RIGHT",
+		showSignature: invoiceSettings?.data?.showSignature ?? true,
+		signatoryName: invoiceSettings?.data?.signatoryName ?? user?.company?.[0]?.name ?? "",
+		signatoryTitle: invoiceSettings?.data?.signatoryTitle ?? "Authorized Signatory",
+		showQrCode: invoiceSettings?.data?.showQrCode ?? true,
+		qrCodeType: invoiceSettings?.data?.qrCodeType ?? "DYNAMIC_UPI",
+		qrCodeCustomImage: invoiceSettings?.data?.qrCodeCustomImage ?? "",
+		qrCodeValue: invoiceSettings?.data?.qrCodeValue ?? "",
+		qrCodePosition: invoiceSettings?.data?.qrCodePosition ?? "BOTTOM_RIGHT",
+		termsAndConditions: invoiceSettings?.data?.termsAndConditions ?? "",
 	};
 
 	const schema: yup.Schema<CreateInvoiceSettingsDto> = yup.object().shape({
@@ -91,6 +105,17 @@ const Invoices = () => {
 			.required(t("settings.invoice.validation.invoiceHeadingTypeRequired")),
 		enableReminder: yup.boolean(),
 		reminderInterval: yup.number().max(30),
+		signature: yup.string().nullable(),
+		signaturePosition: yup.string().nullable(),
+		showSignature: yup.boolean(),
+		signatoryName: yup.string().nullable(),
+		signatoryTitle: yup.string().nullable(),
+		showQrCode: yup.boolean(),
+		qrCodeType: yup.string().nullable(),
+		qrCodeCustomImage: yup.string().nullable(),
+		qrCodeValue: yup.string().nullable(),
+		qrCodePosition: yup.string().nullable(),
+		termsAndConditions: yup.string().nullable(),
 	});
 
 	const handleSubmit = async (values: CreateInvoiceSettingsDto) => {
@@ -326,6 +351,51 @@ const Invoices = () => {
 											))}
 										</RadioGroup>
 									</FormControl>
+								</Grid>
+								<Grid item xs={12}>
+									<Divider />
+								</Grid>
+								<Grid item xs={12}>
+									<SignatureUploadField
+										title={t("settings.invoice.digitalSignature", { defaultValue: "Digital Signature" })}
+										subtitle={t("settings.invoice.digitalSignatureSubtitle", {
+											defaultValue: "Upload your official signature to automatically place it on all generated invoice PDFs.",
+										})}
+									/>
+								</Grid>
+								<Grid item xs={12}>
+									<Divider />
+								</Grid>
+								<Grid item xs={12}>
+									<QrCodeConfigField
+										title={t("settings.invoice.qrCodeTitle", { defaultValue: "Payment QR Code" })}
+										subtitle={t("settings.invoice.qrCodeSubtitle", {
+											defaultValue: "Configure a UPI or custom QR code to automatically appear on printed & PDF invoices for quick customer payments.",
+										})}
+									/>
+								</Grid>
+								<Grid item xs={12}>
+									<Divider />
+								</Grid>
+								<Grid item xs={12}>
+									<SettingFormHeading
+										heading={t("settings.invoice.termsAndConditionsTitle", { defaultValue: "Terms & Conditions" })}
+										subHeading={t("settings.invoice.termsAndConditionsSubtitle", {
+											defaultValue:
+												"Set default Terms & Conditions that automatically appear at the bottom of every invoice PDF. You can override them per invoice when creating or editing.",
+										})}
+									/>
+									<Field
+										name="termsAndConditions"
+										label={t("settings.invoice.termsAndConditionsLabel", { defaultValue: "Terms & Conditions" })}
+										component={TextFormField}
+										multiline
+										rows={5}
+										placeholder={t("settings.invoice.termsAndConditionsPlaceholder", {
+											defaultValue:
+												"e.g. Payment is due within 30 days of invoice date. Late payments are subject to a 1.5% monthly interest charge...",
+										})}
+									/>
 								</Grid>
 								<Grid item xs={12}>
 									<Divider />

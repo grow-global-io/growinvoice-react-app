@@ -13,20 +13,23 @@ const GetStartedErrorComp = () => {
 			<GetStartedDialog />
 			{isGetStartedDialogOpen() && (
 				<Alert
-					severity="error"
+					severity="warning"
 					action={
 						<Button
-							color="error"
+							color="warning"
 							onClick={() => {
 								handleOpen();
 							}}
 							size="small"
 							variant="contained"
+							sx={{ fontWeight: 700, textTransform: "none", borderRadius: 2 }}
 						>
-							{t("getStarted.banner.cta", { defaultValue: "Get Started" })}
+							{t("getStarted.banner.cta", { defaultValue: "Quick Setup (30s)" })}
 						</Button>
 					}
 					sx={{
+						mb: 2,
+						borderRadius: 2,
 						"& .MuiAlert-icon": {
 							display: "flex",
 							alignItems: "center",
@@ -40,15 +43,15 @@ const GetStartedErrorComp = () => {
 					<AlertTitle
 						sx={{
 							fontWeight: "bold",
-							textTransform: "uppercase",
+							fontSize: "0.95rem",
 							padding: 0,
 							margin: 0,
 						}}
 					>
-						{t("getStarted.banner.title", { defaultValue: "Action Required" })}
+						{t("getStarted.banner.title", { defaultValue: "Complete Business Setup" })}
 					</AlertTitle>
 					{t("getStarted.banner.message", {
-						defaultValue: "You need to complete the get started process before using this feature.",
+						defaultValue: "Set up your business name and currency to create professional invoices in seconds.",
 					})}
 				</Alert>
 			)}

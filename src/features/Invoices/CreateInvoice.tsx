@@ -74,6 +74,8 @@ import { toast } from "react-toastify";
 import { setSuppressSuccessMessages } from "@shared/services/InterceptorService";
 import { useEuropeanCountryDetection } from "@shared/hooks/useEuropeanCountryDetection";
 import type { AiInvoicePrefill } from "./types/aiInvoicePrefill";
+import SignatureUploadField from "@shared/components/FormFields/SignatureUploadField";
+import QrCodeConfigField from "@shared/components/FormFields/QrCodeConfigField";
 
 export type OmitCreateInvoiceProductsExtended = Omit<
 	OmitCreateInvoiceProductsDto,
@@ -232,6 +234,38 @@ const CreateInvoice = ({
 			})) ?? [],
 		template_id:
 			invoiceFindOne?.data?.template_id ?? invoiceSettings?.data?.invoiceTemplateId ?? "",
+		signature: invoiceFindOne?.data?.signature ?? invoiceSettings?.data?.signature ?? "",
+		signaturePosition:
+			invoiceFindOne?.data?.signaturePosition ??
+			invoiceSettings?.data?.signaturePosition ??
+			"BOTTOM_RIGHT",
+		showSignature:
+			invoiceFindOne?.data?.showSignature ?? invoiceSettings?.data?.showSignature ?? true,
+		signatoryName:
+			invoiceFindOne?.data?.signatoryName ??
+			invoiceSettings?.data?.signatoryName ??
+			user?.company?.[0]?.name ??
+			"",
+		signatoryTitle:
+			invoiceFindOne?.data?.signatoryTitle ??
+			invoiceSettings?.data?.signatoryTitle ??
+			"Authorized Signatory",
+		showQrCode:
+			invoiceFindOne?.data?.showQrCode ?? invoiceSettings?.data?.showQrCode ?? true,
+		qrCodeType:
+			invoiceFindOne?.data?.qrCodeType ?? invoiceSettings?.data?.qrCodeType ?? "DYNAMIC_UPI",
+		qrCodeCustomImage:
+			invoiceFindOne?.data?.qrCodeCustomImage ?? invoiceSettings?.data?.qrCodeCustomImage ?? "",
+		qrCodeValue:
+			invoiceFindOne?.data?.qrCodeValue ?? invoiceSettings?.data?.qrCodeValue ?? "",
+		qrCodePosition:
+			invoiceFindOne?.data?.qrCodePosition ??
+			invoiceSettings?.data?.qrCodePosition ??
+			"BOTTOM_RIGHT",
+		termsAndConditions:
+			invoiceFindOne?.data?.termsAndConditions ??
+			invoiceSettings?.data?.termsAndConditions ??
+			"",
 	};
 
 	const initialValues =
@@ -375,6 +409,11 @@ const CreateInvoice = ({
 		),
 		user_id: yup.string().required(t("invoiceForm.validation.userRequired")),
 		template_id: yup.string().required(t("invoiceForm.validation.templateRequired")),
+		signature: yup.string().nullable().optional(),
+		signaturePosition: yup.string().nullable().optional(),
+		showSignature: yup.boolean().optional(),
+		signatoryName: yup.string().nullable().optional(),
+		signatoryTitle: yup.string().nullable().optional(),
 	});
 
 	const updateSchema = schema.shape({
@@ -1055,6 +1094,49 @@ const CreateInvoice = ({
 									</Grid>
 									<Grid item xs={12} sm={6}>
 										<SubtotalFooter formik={formik} />
+									</Grid>
+									<Grid item xs={12} mb={2}>
+										<SignatureUploadField
+											isInvoiceOverride={true}
+											defaultSignatureUrl={invoiceSettings?.data?.signature}
+											title={t("invoiceForm.digitalSignature", { defaultValue: "Digital Signature on Invoice" })}
+											subtitle={t("invoiceForm.digitalSignatureSubtitle", {
+												defaultValue:
+													"Customize or use the business signature for this invoice. It will be positioned on the generated PDF.",
+											})}
+										/>
+									</Grid>
+									<Grid item xs={12} mb={2}>
+										<QrCodeConfigField
+											isInvoiceOverride={true}
+											title={t("invoiceForm.qrCodeTitle", { defaultValue: "Payment / Billing QR Code" })}
+											subtitle={t("invoiceForm.qrCodeSubtitle", {
+												defaultValue:
+													"Configure a dynamic UPI or custom payment QR code for this invoice. It will appear on printed and PDF invoices for fast customer checkout.",
+											})}
+										/>
+									</Grid>
+									<Grid item xs={12} mb={2}>
+										<Typography variant="h6" fontWeight={600} mb={0.5}>
+											{t("invoiceForm.termsAndConditionsTitle", { defaultValue: "Terms & Conditions" })}
+										</Typography>
+										<Typography variant="body2" color="text.secondary" mb={1.5}>
+											{t("invoiceForm.termsAndConditionsSubtitle", {
+												defaultValue:
+													"Override the default Terms & Conditions for this invoice only. Leave blank to use the default T&C from Invoice Settings.",
+											})}
+										</Typography>
+										<Field
+											name="termsAndConditions"
+											label={t("invoiceForm.termsAndConditionsLabel", { defaultValue: "Terms & Conditions" })}
+											component={TextFormField}
+											multiline
+											rows={4}
+											placeholder={t("invoiceForm.termsAndConditionsPlaceholder", {
+												defaultValue:
+													"e.g. Payment is due within 30 days. Goods once sold are not returnable...",
+											})}
+										/>
 									</Grid>
 									<Grid item xs={12} sm={3}>
 										<FieldWithTooltip

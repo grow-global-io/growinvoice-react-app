@@ -4,34 +4,27 @@ import {
 	Dialog,
 	DialogActions,
 	DialogContent,
+	IconButton,
+	LinearProgress,
 	Step,
+	StepLabel,
 	Stepper,
-	StepConnector,
-	stepConnectorClasses,
-	styled,
+	Typography,
+	useTheme,
+	useMediaQuery,
 } from "@mui/material";
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import GetStartedInitialScreen from "./GetStarted/GetStartedInitialScreen";
-import CurrencyUpdateForm from "./GetStarted/CurrencyUpdateForm";
-import CompanyUpdateForm from "./GetStarted/CompanyUpdateForm";
-import ProductTypeForm from "./GetStarted/ProductTypeForm";
-import NicheSelectionForm from "./GetStarted/NicheSelectionForm";
-import CatalogMethodForm from "./GetStarted/CatalogMethodForm";
-import PaymentMethodsForm from "./GetStarted/PaymentMethodsForm";
-import DeliveryOptionsForm from "./GetStarted/DeliveryOptionsForm";
-// import InvoiceAutomationForm from "./GetStarted/InvoiceAutomationForm"; // Commented out - step disabled
-import GSTTaxSettingsForm from "./GetStarted/GSTTaxSettingsForm";
-import StoreBrandingForm from "./GetStarted/StoreBrandingForm";
-import ConnectSocialsForm from "./GetStarted/ConnectSocialsForm";
+import EssentialSetupForm from "./GetStarted/EssentialSetupForm";
+import InvoicingTaxForm from "./GetStarted/InvoicingTaxForm";
 import ThankYouForm from "./GetStarted/ThankYouForm";
 import * as Yup from "yup";
 import { Form, Formik, type FormikHelpers, type FormikProps } from "formik";
-import { type UpdateCurrencyCompanyDto } from "@api/services/models";
+import type { UpdateCurrencyCompanyDto } from "@api/services/models";
 import { useAuthStore } from "@store/auth";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { useUserControllerUpdateCurrencyCompany } from "@api/services/users";
 import { authControllerStatus } from "@api/services/auth";
-import { useStoreControllerCreateUpdateStore } from "@api/services/store";
 import { useGetStartedDialogStore } from "@store/useGetStartedDialog";
 import { useTranslation } from "react-i18next";
 import {
@@ -39,54 +32,37 @@ import {
 	useCurrencyControllerFindCountries,
 	useCurrencyControllerFindStatesByCountry,
 } from "@api/services/currency";
-import { useEffect, useState } from "react";
 import { useGeoPrefetchStore } from "@store/geoPrefetch";
-
-const CustomStepConnector = styled(StepConnector)(({ theme }) => ({
-	[`&.${stepConnectorClasses.alternativeLabel}`]: {
-		top: 0,
-	},
-	[`&.${stepConnectorClasses.active}`]: {
-		[`& .${stepConnectorClasses.line}`]: {
-			backgroundColor: theme.palette.primary.main,
-		},
-	},
-	[`&.${stepConnectorClasses.completed}`]: {
-		[`& .${stepConnectorClasses.line}`]: {
-			backgroundColor: theme.palette.primary.main,
-		},
-	},
-	[`& .${stepConnectorClasses.line}`]: {
-		height: 5,
-		border: 0,
-		width: "100%",
-		padding: 0,
-		backgroundColor: theme.palette.grey[100],
-		borderRadius: 1,
-	},
-}));
-const CustomStepperBox = styled(Box)(() => ({
-	width: "60%", // Adjust the width as needed to control the spacing
-	margin: "auto",
-}));
+import { useNavigate } from "react-router-dom";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import CloseIcon from "@mui/icons-material/Close";
+import CheckIcon from "@mui/icons-material/Check";
 
 const GetStartedDialog = () => {
 	const { t, i18n: i18nInstance } = useTranslation();
+	const navigate = useNavigate();
+	const theme = useTheme();
+	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 	const { open, handleClose, handleOpen } = useGetStartedDialogStore();
 	const formikRef = useRef<FormikProps<UpdateCurrencyCompanyDto>>(null);
 	const { user, setUser, isGetStartedDialogOpen } = useAuthStore();
 	const updateUserData = useUserControllerUpdateCurrencyCompany();
-	const createUpdateStore = useStoreControllerCreateUpdateStore();
-	const [activeStep, setActiveStep] = React.useState(0);
-	const [geoLoading, setGeoLoading] = React.useState(false);
-	const [justSubmitted, setJustSubmitted] = React.useState(false);
-	const [isSubmittingState, setIsSubmittingState] = React.useState(false);
-	const [userDismissed, setUserDismissed] = React.useState(false);
+
+	const [activeStep, setActiveStep] = useState(0); // 0 = Welcome/Choice, 1 = Essentials, 2 = Advanced (Optional), 3 = Complete
+	const [geoLoading, setGeoLoading] = useState(false);
+	const [justSubmitted, setJustSubmitted] = useState(false);
+	const [isSubmittingState, setIsSubmittingState] = useState(false);
+	const [userDismissed, setUserDismissed] = useState(false);
 
 	// Preload currency/country/state by IP
 	const currencyList = useCurrencyControllerFindAll();
 	const countryList = useCurrencyControllerFindCountries();
 	const [prefillCountryId, setPrefillCountryId] = useState<string>("");
+	const [detectedCountryName, setDetectedCountryName] = useState<string>("");
+	const [detectedCurrencyCode, setDetectedCurrencyCode] = useState<string>("");
+
 	const statesByPrefillCountry = useCurrencyControllerFindStatesByCountry({
 		countryId: prefillCountryId,
 	});
@@ -95,90 +71,105 @@ const GetStartedDialog = () => {
 	const [prefillCity, setPrefillCity] = useState<string>("");
 	const [prefillZip, setPrefillZip] = useState<string>("");
 	const [prefetchDone, setPrefetchDone] = useState(false);
+	const [geoData, setGeoData] = useState<{
+		currency?: string;
+		country_name?: string;
+		region?: string;
+		city?: string;
+		postal?: string;
+	}>({});
 
-	// Auto-open dialog if onboarding is incomplete (but don't reopen if just submitted or user dismissed)
+	// Auto-open dialog if onboarding is incomplete
 	useEffect(() => {
 		const shouldOpen = isGetStartedDialogOpen();
 		if (shouldOpen && !open && !justSubmitted && !userDismissed) {
 			handleOpen();
 		}
-		// Only check when user data changes or dialog state changes
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [user?.company, open, justSubmitted, userDismissed]);
+	}, [user?.company, user?.currency_id, open, justSubmitted, userDismissed, isGetStartedDialogOpen, handleOpen]);
 
-	// Kick off IP-based preload on mount (and when lists ready); use preloaded store if present
+	// Kick off IP-based preload on mount
 	useEffect(() => {
 		if (prefetchDone) return;
 		if (!currencyList?.data || currencyList.isLoading) return;
 		if (!countryList?.data || countryList.isLoading) return;
 		let cancelled = false;
+
 		(async () => {
 			try {
 				const geo = useGeoPrefetchStore.getState();
-				let json: {
-					currency?: string;
-					country_name?: string;
-					region?: string;
-					city?: string;
-					postal?: string;
-				} = geo.ipData ?? {};
+				let json = geo.ipData ?? {};
 				if (!geo.loaded) {
 					const res = await fetch("https://ipapi.co/json");
 					json = (await res.json()) as any;
 				}
 				if (cancelled) return;
-				// currency
+				setGeoData(json);
+
+				// Match currency
 				const code = json?.currency?.toUpperCase();
 				if (code) {
+					setDetectedCurrencyCode(code);
 					const matchCur = currencyList.data.find((c) => c.short_code?.toUpperCase() === code);
 					if (matchCur) setPrefillCurrencyId(matchCur.id);
 				}
-				// country
+
+				// Match country
 				const cname = (json?.country_name ?? "").toLowerCase();
+				if (json?.country_name) setDetectedCountryName(json.country_name);
 				const matchCountry = countryList.data.find((c) => c.name?.toLowerCase() === cname);
 				if (matchCountry) setPrefillCountryId(matchCountry.id);
-				setPrefillCity(json?.city ?? "");
-				setPrefillZip(json?.postal ?? "");
+
+				if (json?.city) setPrefillCity(json.city);
+				if (json?.postal) setPrefillZip(json.postal);
 			} catch {
 				// ignore
 			}
 		})();
+
 		return () => {
 			cancelled = true;
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currencyList?.data, currencyList.isLoading, countryList?.data, countryList.isLoading]);
+	}, [currencyList?.data, currencyList.isLoading, countryList?.data, countryList.isLoading, prefetchDone]);
 
-	// After states load, map region
+	// Map region after states load
 	useEffect(() => {
 		if (!prefillCountryId) return;
 		if (!statesByPrefillCountry?.data || statesByPrefillCountry.isLoading) return;
-		// fetch again from ip to read region (or reuse previous)
-		(async () => {
-			try {
-				const res = await fetch("https://ipapi.co/json");
-				const json = (await res.json()) as { region?: string };
-				const regionName = (json?.region ?? "").toLowerCase();
-				const matchState = statesByPrefillCountry.data.find(
-					(s) => s.name?.toLowerCase() === regionName,
-				);
-				if (matchState) setPrefillStateId(matchState.id);
-			} catch {
-				// ignore
-			} finally {
-				setPrefetchDone(true);
-			}
-		})();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [statesByPrefillCountry?.data, statesByPrefillCountry.isLoading, prefillCountryId]);
+		const regionName = (geoData?.region ?? "").toLowerCase();
+		if (regionName) {
+			const matchState = statesByPrefillCountry.data.find(
+				(s) => s.name?.toLowerCase() === regionName,
+			);
+			if (matchState) setPrefillStateId(matchState.id);
+		}
+		setPrefetchDone(true);
+	}, [statesByPrefillCountry?.data, statesByPrefillCountry.isLoading, prefillCountryId, geoData]);
 
+	// Smart suggested business name from company, user name, or email domain
+	const getSuggestedCompanyName = () => {
+		if (user?.company?.[0]?.name) return user.company[0].name;
+		if (user?.name && user.name.trim() !== "") return user.name;
+		if (user?.email) {
+			const parts = user.email.split("@");
+			const domain = parts[1]?.split(".")[0];
+			if (domain && !["gmail", "yahoo", "hotmail", "outlook", "icloud"].includes(domain.toLowerCase())) {
+				return domain.replace(/[._-]/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+			}
+			return parts[0].replace(/[._-]/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+		}
+		return "My Business";
+	};
+
+	const suggestedCompanyName = getSuggestedCompanyName();
+
+	// Simplified validation: Only companyName and currency_id required
 	const validationSchema: Yup.Schema<UpdateCurrencyCompanyDto> = Yup.object().shape({
 		currency_id: Yup.string().required(() =>
 			i18nInstance.t("getStarted.currency.required", { defaultValue: "Currency is required" }),
 		),
 		companyName: Yup.string().required(() =>
 			i18nInstance.t("getStarted.company.companyNameRequired", {
-				defaultValue: "Company Name is required",
+				defaultValue: "Business / Company Name is required",
 			}),
 		),
 		phoneNumber: Yup.string().test(
@@ -192,332 +183,165 @@ const GetStartedDialog = () => {
 				return isValidPhoneNumber(value);
 			},
 		),
-		country: Yup.string().required(() =>
-			i18nInstance.t("getStarted.company.countryRequired", { defaultValue: "Country is required" }),
-		),
-		state: Yup.string().required(() =>
-			i18nInstance.t("getStarted.company.stateRequired", { defaultValue: "State is required" }),
-		),
-		city: Yup.string().required(() =>
-			i18nInstance.t("getStarted.company.cityRequired", { defaultValue: "City is required" }),
-		),
-		address: Yup.string().required(() =>
-			i18nInstance.t("getStarted.company.addressRequired", { defaultValue: "Address is required" }),
-		),
-		zipCode: Yup.string().required(() =>
-			i18nInstance.t("getStarted.company.zipCodeRequired", {
-				defaultValue: "Zip Code is required",
-			}),
-		),
-		vat: Yup.string(),
-		logo: Yup.string(),
+		country: Yup.string().optional(),
+		state: Yup.string().optional(),
+		city: Yup.string().optional(),
+		address: Yup.string().optional(),
+		zipCode: Yup.string().optional(),
+		vat: Yup.string().optional(),
+		logo: Yup.string().optional(),
 	});
 
-	const steps = [
-		t("getStarted.steps.step1", { defaultValue: "Personal Inf." }),
-		t("getStarted.steps.step2", { defaultValue: "Verification" }),
-		t("getStarted.steps.step3", { defaultValue: "Insurance" }),
-		t("getStarted.steps.step4", { defaultValue: "Payment" }),
-		t("getStarted.steps.step5", { defaultValue: "Products" }),
-		t("getStarted.steps.step6", { defaultValue: "Niche" }),
-		t("getStarted.steps.step7", { defaultValue: "Catalog" }),
-		t("getStarted.steps.step8", { defaultValue: "Payment Methods" }),
-		t("getStarted.steps.step9", { defaultValue: "Delivery" }),
-		// t("getStarted.steps.step10", { defaultValue: "Invoice Automation" }), // Commented out - step disabled
-		t("getStarted.steps.step11", { defaultValue: "GST & Tax" }),
-		t("getStarted.steps.step12", { defaultValue: "Branding" }),
-		t("getStarted.steps.step13", { defaultValue: "Socials" }),
+	const initialValues: UpdateCurrencyCompanyDto = {
+		address: user?.company?.[0]?.address ?? "",
+		city: user?.company?.[0]?.city ?? prefillCity ?? "",
+		companyName: suggestedCompanyName,
+		country: user?.company?.[0]?.country_id ?? prefillCountryId ?? "",
+		currency_id: user?.currency_id ?? prefillCurrencyId ?? "",
+		logo: user?.company?.[0]?.logo ?? "",
+		phoneNumber: user?.company?.[0]?.phone ?? user?.phone ?? "",
+		state: user?.company?.[0]?.state_id ?? prefillStateId ?? "",
+		vat: user?.company?.[0]?.vat ?? "",
+		zipCode: user?.company?.[0]?.zip ?? prefillZip ?? "",
+	};
+
+	const stepLabels = [
+		t("getStarted.steps.essentials", { defaultValue: "1. Essential Profile" }),
+		t("getStarted.steps.invoicing", { defaultValue: "2. Advanced Details (Optional)" }),
+		t("getStarted.steps.ready", { defaultValue: "3. Ready" }),
 	];
 
-	const handleNext = (value?: string) => {
-		// Validate currency on step 1
-		if (!value && activeStep === 1) {
+	// Submit and persist
+	const handleSubmit = async (
+		values: UpdateCurrencyCompanyDto,
+		actions?: FormikHelpers<UpdateCurrencyCompanyDto>,
+		redirectToInvoice = false,
+	) => {
+		if (isSubmittingState) return;
+		setIsSubmittingState(true);
+		actions?.setSubmitting(true);
+
+		try {
+			// Ensure fallback currency if not provided
+			let finalCurrencyId = values.currency_id;
+			if (!finalCurrencyId && currencyList?.data?.length) {
+				const usdOrFirst =
+					currencyList.data.find((c) => c.short_code === "USD") || currencyList.data[0];
+				finalCurrencyId = usdOrFirst?.id || "";
+			}
+
+			const payload: UpdateCurrencyCompanyDto = {
+				...values,
+				currency_id: finalCurrencyId,
+				companyName: values.companyName || suggestedCompanyName || "My Business",
+			};
+
+			await updateUserData.mutateAsync({ data: payload });
+			const updatedUser = await authControllerStatus();
+			setUser(updatedUser);
+			setJustSubmitted(true);
+
+			if (redirectToInvoice) {
+				handleClose();
+				navigate("/invoice/createinvoice");
+			} else {
+				setActiveStep(3); // Move to Thank You / Launch screen
+			}
+		} catch (error) {
+			console.error("Error saving business profile:", error);
+		} finally {
+			actions?.setSubmitting(false);
+			setIsSubmittingState(false);
+		}
+	};
+
+	// 1-Click Quick Setup Handler from Welcome Screen
+	const handleQuickSetup = async () => {
+		const currentValues = formikRef.current?.values || initialValues;
+
+		let currencyToUse = currentValues.currency_id || prefillCurrencyId;
+		if (!currencyToUse && currencyList?.data?.length) {
+			const matched = currencyList.data.find(
+				(c) => c.short_code?.toUpperCase() === detectedCurrencyCode,
+			);
+			currencyToUse = matched?.id || currencyList.data[0].id;
+		}
+
+		const companyNameToUse =
+			currentValues.companyName || suggestedCompanyName || "My Business";
+
+		const quickPayload: UpdateCurrencyCompanyDto = {
+			...currentValues,
+			companyName: companyNameToUse,
+			currency_id: currencyToUse || "",
+			country: currentValues.country || prefillCountryId || undefined,
+			city: currentValues.city || prefillCity || undefined,
+			zipCode: currentValues.zipCode || prefillZip || undefined,
+		};
+
+		await handleSubmit(quickPayload, undefined, true);
+	};
+
+	// Quick Save & Start Invoicing from Step 1 (Bypass Step 2)
+	const handleSaveAndCreateInvoice = async () => {
+		const values = formikRef.current?.values || initialValues;
+		let hasError = false;
+
+		if (!values?.companyName || values.companyName.trim() === "") {
+			formikRef.current?.setFieldError(
+				"companyName",
+				t("getStarted.company.companyNameRequired", { defaultValue: "Business Name is required" }),
+			);
+			formikRef.current?.setFieldTouched("companyName", true);
+			hasError = true;
+		}
+
+		if (!values?.currency_id) {
 			formikRef.current?.setFieldError(
 				"currency_id",
 				t("getStarted.currency.required", { defaultValue: "Currency is required" }),
 			);
 			formikRef.current?.setFieldTouched("currency_id", true);
-			return;
+			hasError = true;
 		}
 
-		// Validate required fields on step 2 (Company form)
-		if (activeStep === 2) {
+		if (hasError) return;
+
+		await handleSubmit(values, undefined, true);
+	};
+
+	const handleNext = () => {
+		if (activeStep === 1) {
+			// Validate companyName and currency_id
 			const values = formikRef.current?.values;
 			let hasError = false;
 
-			// Validate country
-			if (!values?.country || values.country.trim() === "") {
+			if (!values?.companyName || values.companyName.trim() === "") {
 				formikRef.current?.setFieldError(
-					"country",
-					t("getStarted.company.countryRequired", { defaultValue: "Country is required" }),
+					"companyName",
+					t("getStarted.company.companyNameRequired", { defaultValue: "Business Name is required" }),
 				);
-				formikRef.current?.setFieldTouched("country", true);
+				formikRef.current?.setFieldTouched("companyName", true);
 				hasError = true;
 			}
 
-			// Validate state
-			if (!values?.state || values.state.trim() === "") {
+			if (!values?.currency_id) {
 				formikRef.current?.setFieldError(
-					"state",
-					t("getStarted.company.stateRequired", { defaultValue: "State is required" }),
+					"currency_id",
+					t("getStarted.currency.required", { defaultValue: "Currency is required" }),
 				);
-				formikRef.current?.setFieldTouched("state", true);
+				formikRef.current?.setFieldTouched("currency_id", true);
 				hasError = true;
 			}
 
-			// Validate zipCode
-			if (!values?.zipCode || values.zipCode.trim() === "") {
-				formikRef.current?.setFieldError(
-					"zipCode",
-					t("getStarted.company.zipCodeRequired", { defaultValue: "Zip Code is required" }),
-				);
-				formikRef.current?.setFieldTouched("zipCode", true);
-				hasError = true;
-			}
-
-			// Validate address
-			if (!values?.address || values.address.trim() === "") {
-				formikRef.current?.setFieldError(
-					"address",
-					t("getStarted.company.addressRequired", { defaultValue: "Address is required" }),
-				);
-				formikRef.current?.setFieldTouched("address", true);
-				hasError = true;
-			}
-
-			if (hasError) {
-				return;
-			}
+			if (hasError) return;
 		}
 
-		setActiveStep((prevActiveStep) => prevActiveStep + 1);
+		setActiveStep((prev) => prev + 1);
 	};
 
 	const handleBack = () => {
-		setActiveStep((prevActiveStep) => prevActiveStep - 1);
-	};
-
-	const handleSkip = () => {
-		if (activeStep < steps.length - 1) {
-			setActiveStep((prevActiveStep) => prevActiveStep + 1);
-		}
-	};
-
-	interface ExtendedFormValues extends UpdateCurrencyCompanyDto {
-		productType?: string;
-		businessName?: string;
-		niches?: string[];
-		catalogMethod?: string;
-		paymentMethods?: string[];
-		enablePartialPayments?: boolean;
-		selfDelivery?: boolean;
-		deliveryPartners?: string[];
-		deliveryRegions?: string[];
-		pickupAddress?: string;
-		autoGenerateInvoices?: boolean;
-		invoicePrefix?: string;
-		startingNumber?: string;
-		invoiceFooterText?: string;
-		sendInvoiceOnOrderConfirmation?: boolean;
-		sendInvoiceOnPaymentCompletion?: boolean;
-		sendCopyToStoreEmail?: boolean;
-		gstRegistered?: boolean;
-		enableHsnSac?: boolean;
-		defaultTaxRate?: string;
-		storeLogo?: string;
-		storeName?: string;
-		storeLinkSlug?: string;
-		tagline?: string;
-		primaryBrandColor?: string;
-		whatsappCommunityUrl?: string;
-		instagramHandle?: string;
-		facebookPageId?: string;
-		webhookUrl?: string;
-		storeOrPaymentGateway?: "store" | "paymentGateway" | "both" | "none";
-	}
-
-	const initialValues: ExtendedFormValues = {
-		address: "",
-		city: prefillCity || "",
-		companyName: user?.company?.[0]?.name ?? "",
-		country: prefillCountryId || "",
-		currency_id: prefillCurrencyId || "",
-		logo: "",
-		phoneNumber: "",
-		state: prefillStateId || "",
-		vat: "",
-		zipCode: prefillZip || "",
-		productType: "",
-		businessName: "",
-		niches: [],
-		catalogMethod: "",
-		paymentMethods: [],
-		enablePartialPayments: false,
-		selfDelivery: false,
-		deliveryPartners: [],
-		deliveryRegions: [],
-		pickupAddress: "",
-		autoGenerateInvoices: true,
-		invoicePrefix: "INV-",
-		startingNumber: "1",
-		invoiceFooterText: "",
-		sendInvoiceOnOrderConfirmation: true,
-		sendInvoiceOnPaymentCompletion: false,
-		sendCopyToStoreEmail: true,
-		gstRegistered: false,
-		enableHsnSac: false,
-		defaultTaxRate: "",
-		storeLogo: "",
-		storeName: "",
-		storeLinkSlug: "",
-		tagline: "",
-		primaryBrandColor: "#9333ea",
-		whatsappCommunityUrl: "",
-		instagramHandle: "",
-		facebookPageId: "",
-		webhookUrl: "",
-		storeOrPaymentGateway: "none",
-	};
-
-	// Ensure dialog closes after successful submission
-	useEffect(() => {
-		if (justSubmitted && open) {
-			const timer = setTimeout(() => {
-				handleClose();
-				setJustSubmitted(false);
-			}, 200);
-			return () => clearTimeout(timer);
-		}
-	}, [justSubmitted, open, handleClose]);
-
-	const handleSubmit = async (
-		values: ExtendedFormValues,
-		actions: FormikHelpers<ExtendedFormValues>,
-	) => {
-		if (isSubmittingState) {
-			return;
-		}
-		setIsSubmittingState(true);
-		actions.setSubmitting(true);
-		// Extract only UpdateCurrencyCompanyDto fields for the API call
-		const {
-			productType,
-			businessName,
-			niches,
-			catalogMethod,
-			paymentMethods,
-			enablePartialPayments,
-			selfDelivery,
-			deliveryPartners,
-			deliveryRegions,
-			pickupAddress,
-			autoGenerateInvoices,
-			invoicePrefix,
-			startingNumber,
-			invoiceFooterText,
-			sendInvoiceOnOrderConfirmation,
-			sendInvoiceOnPaymentCompletion,
-			sendCopyToStoreEmail,
-			gstRegistered,
-			enableHsnSac,
-			defaultTaxRate,
-			storeLogo,
-			storeName,
-			storeLinkSlug,
-			tagline,
-			primaryBrandColor,
-			whatsappCommunityUrl,
-			instagramHandle,
-			facebookPageId,
-			webhookUrl,
-			storeOrPaymentGateway,
-			...updateData
-		} = values;
-
-		// Log the additional fields (you can send these to a different endpoint if needed)
-		if (
-			productType ||
-			businessName ||
-			niches?.length ||
-			catalogMethod ||
-			paymentMethods?.length ||
-			enablePartialPayments ||
-			selfDelivery ||
-			deliveryPartners?.length ||
-			deliveryRegions?.length ||
-			pickupAddress ||
-			autoGenerateInvoices !== undefined ||
-			invoicePrefix ||
-			startingNumber ||
-			invoiceFooterText ||
-			sendInvoiceOnOrderConfirmation !== undefined ||
-			sendInvoiceOnPaymentCompletion !== undefined ||
-			sendCopyToStoreEmail !== undefined ||
-			gstRegistered !== undefined ||
-			enableHsnSac !== undefined ||
-			defaultTaxRate ||
-			storeLogo ||
-			storeName ||
-			storeLinkSlug ||
-			tagline ||
-			primaryBrandColor ||
-			whatsappCommunityUrl ||
-			instagramHandle ||
-			facebookPageId ||
-			webhookUrl ||
-			storeOrPaymentGateway
-		) {
-			// Additional onboarding data is available but not sent to API yet
-			// TODO: Send all additional fields to appropriate endpoint if needed
-		}
-
-		try {
-			// Map storeLogo to logo field if provided
-			const finalUpdateData = {
-				...updateData,
-				...(storeLogo && { logo: storeLogo }),
-			};
-
-			await updateUserData.mutateAsync({
-				data: finalUpdateData,
-			});
-
-			// Submit store link slug if provided
-			if (storeLinkSlug) {
-				try {
-					await createUpdateStore.mutateAsync({
-						data: {
-							storeName: storeLinkSlug,
-						},
-					});
-					// Refetch user data to get updated storeName
-					const updatedUser = await authControllerStatus();
-					setUser(updatedUser);
-				} catch (storeError) {
-					console.error("Error saving store name:", storeError);
-					// Don't fail the entire submission if store name fails
-				}
-			}
-
-			const user = await authControllerStatus();
-			setUser(user);
-			setJustSubmitted(true);
-			// Move to the thank you step (step 11) instead of using justSubmitted state
-			setActiveStep(11);
-			// Close dialog after showing thank you message for 2 seconds
-			setTimeout(() => {
-				actions.resetForm();
-				handleClose();
-				setActiveStep(0);
-				setJustSubmitted(false);
-			}, 2000);
-		} catch (error) {
-			console.error("Error submitting form:", error);
-			// Don't close the dialog on error, let user retry
-		} finally {
-			actions.setSubmitting(false);
-			setIsSubmittingState(false);
-		}
+		setActiveStep((prev) => Math.max(0, prev - 1));
 	};
 
 	const handleDialogClose = () => {
@@ -525,134 +349,226 @@ const GetStartedDialog = () => {
 		handleClose();
 	};
 
+	// Progress percentage
+	const progressPercentage =
+		activeStep === 0 ? 0 : activeStep === 1 ? 50 : activeStep === 2 ? 85 : 100;
+
 	return (
-		<Dialog open={open} onClose={handleDialogClose} fullWidth maxWidth={"sm"}>
+		<Dialog
+			open={open}
+			onClose={handleDialogClose}
+			fullWidth
+			maxWidth="sm"
+			PaperProps={{
+				sx: {
+					borderRadius: 3,
+					boxShadow: "0 16px 48px rgba(0, 0, 0, 0.14)",
+					overflow: "hidden",
+					position: "relative",
+				},
+			}}
+		>
+			{/* Top-Right Dismiss Button */}
+			<IconButton
+				aria-label="close"
+				onClick={handleDialogClose}
+				sx={{
+					position: "absolute",
+					right: 12,
+					top: 12,
+					color: "text.disabled",
+					zIndex: 10,
+					"&:hover": { color: "text.primary", bgcolor: "grey.100" },
+				}}
+				size="small"
+			>
+				<CloseIcon fontSize="small" />
+			</IconButton>
+
 			<Formik
 				innerRef={formikRef}
 				initialValues={initialValues}
 				validationSchema={validationSchema}
-				onSubmit={handleSubmit}
+				onSubmit={(values, actions) => handleSubmit(values, actions, false)}
+				enableReinitialize={!formikRef.current?.dirty}
 				autoComplete="off"
 			>
-				{({ submitForm, values, isSubmitting, errors }) => {
+				{({ values, isSubmitting }) => {
 					return (
 						<Form>
-							<DialogContent
-								dividers
-								style={{ maxHeight: "70vh", overflowY: "auto", minHeight: "400px" }}
-							>
-								{justSubmitted || activeStep > 10 ? (
-									<ThankYouForm />
-								) : (
-									<>
-										<CustomStepperBox>
-											<Stepper
-												activeStep={activeStep}
-												alternativeLabel
-												connector={<CustomStepConnector />}
-											>
-												{steps.map((label) => (
-													<Step key={label}></Step>
-												))}
-											</Stepper>
-										</CustomStepperBox>
-										<Box textAlign={"left"} pt={3}>
-											{activeStep === 0 && <GetStartedInitialScreen />}
-											{activeStep === 1 && (
-												<CurrencyUpdateForm onGeoLoadingChange={setGeoLoading} />
-											)}
-											{activeStep === 2 && <CompanyUpdateForm onGeoLoadingChange={setGeoLoading} />}
-											{activeStep === 3 && <ProductTypeForm />}
-											{activeStep === 4 && <NicheSelectionForm />}
-											{activeStep === 5 && <CatalogMethodForm />}
-											{activeStep === 6 && <PaymentMethodsForm />}
-											{activeStep === 7 && <DeliveryOptionsForm />}
-											{/* {activeStep === 8 && <InvoiceAutomationForm />} */}{" "}
-											{/* Commented out - step disabled */}
-											{activeStep === 8 && <GSTTaxSettingsForm />}
-											{activeStep === 9 && <StoreBrandingForm />}
-											{activeStep === 10 && <ConnectSocialsForm />}
-										</Box>
-									</>
-								)}
-							</DialogContent>
+							{/* Progress Bar & Stepper (Visible on steps 1, 2, 3) */}
+							{activeStep > 0 && activeStep <= 3 && (
+								<Box sx={{ pt: 2.5, px: 3, bgcolor: "background.paper" }}>
+									<Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
+										<Typography variant="caption" fontWeight={700} color="primary.main" textTransform="uppercase">
+											{activeStep === 1
+												? t("getStarted.stepCount1", { defaultValue: "Step 1 of 2 • Essential Business Profile" })
+												: activeStep === 2
+												? t("getStarted.stepCount2", { defaultValue: "Step 2 of 2 • Advanced Settings (Optional)" })
+												: t("getStarted.stepCount3", { defaultValue: "Completed • Ready to Invoice" })}
+										</Typography>
+										<Typography variant="caption" fontWeight={700} color="text.secondary">
+											{progressPercentage}%
+										</Typography>
+									</Box>
+									<LinearProgress
+										variant="determinate"
+										value={progressPercentage}
+										sx={{
+											height: 6,
+											borderRadius: 3,
+											bgcolor: "grey.100",
+											"& .MuiLinearProgress-bar": {
+												borderRadius: 3,
+												background: "linear-gradient(90deg, #1976d2, #4caf50)",
+											},
+										}}
+									/>
 
-							<DialogActions
+									{!isMobile && (
+										<Stepper activeStep={activeStep - 1} sx={{ mt: 2, mb: 1 }}>
+											{stepLabels.map((label, idx) => (
+												<Step key={label} completed={activeStep - 1 > idx}>
+													<StepLabel sx={{ "& .MuiStepLabel-label": { fontSize: "0.78rem", fontWeight: 600 } }}>
+														{label}
+													</StepLabel>
+												</Step>
+											))}
+										</Stepper>
+									)}
+								</Box>
+							)}
+
+							<DialogContent
 								sx={{
-									justifyContent: "space-between",
+									py: 2.5,
+									px: { xs: 2.5, sm: 3.5 },
+									maxHeight: "82vh",
+									overflowY: "auto",
+									minHeight: activeStep === 0 ? "auto" : "380px",
 								}}
 							>
-								<Button
-									variant="outlined"
-									onClick={handleBack}
-									disabled={activeStep === 0 || geoLoading}
-								>
-									{t("app.back", { defaultValue: "Back" })}
-								</Button>
-								<Button
-									variant="outlined"
-									color="warning"
-									onClick={handleSkip}
-									disabled={geoLoading || activeStep >= steps.length - 1}
-								>
-									{t("app.skip", { defaultValue: "Skip" })}
-								</Button>
-
-								{activeStep < steps.length - 1 && (
-									<Button
-										variant="contained"
-										disabled={geoLoading}
-										onClick={() => {
-											handleNext(values?.currency_id);
+								{activeStep === 0 && (
+									<GetStartedInitialScreen
+										onQuickSetup={handleQuickSetup}
+										onGuidedSetup={() => setActiveStep(1)}
+										onDismiss={handleDialogClose}
+										detectedInfo={{
+											countryName: detectedCountryName,
+											currency: detectedCurrencyCode,
+											companyName: suggestedCompanyName,
 										}}
-									>
-										{t("app.next", { defaultValue: "Next" })}
-									</Button>
+										isSubmitting={isSubmitting || isSubmittingState}
+									/>
 								)}
-								{activeStep === 10 && !justSubmitted && activeStep <= 10 && (
-									<Button
-										type="button"
-										variant="contained"
-										onClick={(e) => {
-											e.preventDefault();
-											e.stopPropagation();
-											if (isSubmittingState || isSubmitting) {
-												return;
-											}
 
-											// On the last step, submit even if there are validation errors
-											// This allows users to finish the onboarding even if they skipped some fields
-											if (Object.keys(errors).length > 0) {
-												// Manually call handleSubmit to bypass validation
-												handleSubmit(values, {
-													setSubmitting: (isSubmitting: boolean) => {
-														formikRef.current?.setSubmitting(isSubmitting);
-													},
-													resetForm: () => {
-														formikRef.current?.resetForm();
-													},
-												} as FormikHelpers<ExtendedFormValues>).catch((err) => {
-													console.error("Submit form error:", err);
-												});
-											} else {
-												submitForm().catch((err) => {
-													console.error("Submit form error:", err);
-												});
-											}
-										}}
+								{activeStep === 1 && (
+									<EssentialSetupForm
+										onGeoLoadingChange={setGeoLoading}
+										geoData={geoData}
+									/>
+								)}
+
+								{activeStep === 2 && <InvoicingTaxForm />}
+
+								{activeStep === 3 && <ThankYouForm onActionSelect={handleClose} />}
+							</DialogContent>
+
+							{/* Actions Footer */}
+							{activeStep > 0 && activeStep < 3 && (
+								<DialogActions
+									sx={{
+										px: 3,
+										py: 2,
+										borderTop: "1px solid",
+										borderColor: "divider",
+										justifyContent: "space-between",
+										bgcolor: "grey.50",
+										flexWrap: "wrap",
+										gap: 1,
+									}}
+								>
+									{/* Back */}
+									<Button
+										variant="outlined"
+										startIcon={<ArrowBackIcon />}
+										onClick={handleBack}
 										disabled={geoLoading || isSubmitting || isSubmittingState}
+										size="medium"
+										sx={{ borderRadius: 2 }}
 									>
-										{isSubmitting || isSubmittingState
-											? t("app.loading", { defaultValue: "Loading..." })
-											: t("app.finish", { defaultValue: "Finish" })}
+										{t("app.back", { defaultValue: "Back" })}
 									</Button>
-								)}
-								{justSubmitted && (
-									<Button variant="contained" onClick={handleClose}>
-										{t("app.close", { defaultValue: "Close" })}
-									</Button>
-								)}
-							</DialogActions>
+
+									<Box display="flex" gap={1.25} alignItems="center" flexWrap="wrap">
+										{/* Instant Start Invoicing Shortcut on Step 1 (Save essentials & skip advanced) */}
+										{activeStep === 1 && (
+											<Button
+												variant="outlined"
+												color="primary"
+												startIcon={<ReceiptLongIcon />}
+												onClick={handleSaveAndCreateInvoice}
+												disabled={geoLoading || isSubmitting || isSubmittingState}
+												size="medium"
+												sx={{ borderRadius: 2, fontWeight: 600 }}
+											>
+												{t("getStarted.startInvoicingNow", { defaultValue: "Save & Start Invoicing" })}
+											</Button>
+										)}
+
+										{/* Next Step */}
+										{activeStep === 1 && (
+											<Button
+												variant="contained"
+												endIcon={<NavigateNextIcon />}
+												onClick={handleNext}
+												disabled={geoLoading || isSubmitting || isSubmittingState}
+												size="medium"
+												sx={{ borderRadius: 2, fontWeight: 600, px: 2.5 }}
+											>
+												{t("getStarted.nextAdvanced", { defaultValue: "Advanced Details" })}
+											</Button>
+										)}
+
+										{/* Skip & Create Invoice on Step 2 */}
+										{activeStep === 2 && (
+											<Button
+												variant="outlined"
+												color="primary"
+												startIcon={<ReceiptLongIcon />}
+												onClick={() => handleSubmit(values, undefined, true)}
+												disabled={geoLoading || isSubmitting || isSubmittingState}
+												size="medium"
+												sx={{ borderRadius: 2, fontWeight: 600 }}
+											>
+												{t("getStarted.skipAndInvoice", { defaultValue: "Skip & Create Invoice" })}
+											</Button>
+										)}
+
+										{/* Complete Setup on Step 2 */}
+										{activeStep === 2 && (
+											<Button
+												type="button"
+												variant="contained"
+												endIcon={<CheckIcon />}
+												onClick={() => handleSubmit(values, undefined, false)}
+												disabled={geoLoading || isSubmitting || isSubmittingState}
+												size="medium"
+												sx={{
+													borderRadius: 2,
+													fontWeight: 700,
+													px: 3,
+													boxShadow: "0 4px 14px rgba(25, 118, 210, 0.3)",
+												}}
+											>
+												{isSubmitting || isSubmittingState
+													? t("app.loading", { defaultValue: "Saving..." })
+													: t("getStarted.finishSetup", { defaultValue: "Complete Setup" })}
+											</Button>
+										)}
+									</Box>
+								</DialogActions>
+							)}
 						</Form>
 					);
 				}}

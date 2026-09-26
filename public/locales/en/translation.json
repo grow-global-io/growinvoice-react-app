@@ -601,6 +601,8 @@
     "addProductsSubtitle": "for each product, click save once changes are made",
     "addRecord": "Add record",
     "title": "New Invoices",
+    "digitalSignature": "Digital Signature on Invoice",
+    "digitalSignatureSubtitle": "Customize or use the business signature for this invoice. It will be positioned on the generated PDF.",
     "invoiceIconAlt": "Invoice Icon",
     "customerName": "Customer Name",
     "addCustomer": "Add Customer",
@@ -1231,6 +1233,8 @@
       "customerBillingAddressFormat": "Customer Billing Address Format",
       "customerShippingAddressFormat": "Customer Shipping Address Format",
       "invoiceTemplates": "Invoice Templates",
+      "digitalSignature": "Digital Signature",
+      "digitalSignatureSubtitle": "Upload your official signature to automatically place it on all generated invoice PDFs.",
       "saveSettings": "Save Settings",
       "resetSettings": "Reset Settings",
       "validation": {
@@ -1244,6 +1248,28 @@
         "invoiceHeadingTypeRequired": "Invoice Heading Type is required"
       }
     }
+  },
+  "signature": {
+    "title": "Digital Signature",
+    "subtitle": "Upload your digital signature to appear on generated PDF invoices.",
+    "enableOnInvoice": "Show on Invoices",
+    "signatureImage": "Signature Image",
+    "uploadPrompt": "Click to upload your digital signature",
+    "uploadHint": "PNG with transparent background recommended (Max 5MB)",
+    "uploadButton": "Upload Signature",
+    "change": "Change",
+    "signatoryName": "Signatory Name / Person",
+    "signatoryNamePlaceholder": "e.g. John Doe",
+    "signatoryTitle": "Designation / Title",
+    "signatoryTitlePlaceholder": "e.g. Authorized Signatory / Director",
+    "position": "Signature Position on Invoice",
+    "positionBottomRight": "Bottom Right (Standard)",
+    "positionBottomLeft": "Bottom Left",
+    "positionBottomCenter": "Bottom Center",
+    "autoPlacementInfo": "The digital signature is automatically positioned above the invoice footer on all generated PDF invoices.",
+    "invalidFileType": "Only PNG, JPG, JPEG, and SVG images are supported.",
+    "maxFileSize": "File size must be under 5MB.",
+    "uploadFailed": "Failed to upload signature. Please try again."
   },
   "apiCredentials": {
     "token": "API Token",
@@ -1491,19 +1517,69 @@
     "subscribe": "Subscribe"
   },
   "getStarted": {
+    "autoFilled": "Auto-detected from your location",
+    "detected": "Auto-detected",
+    "recommended": "Fastest (30s)",
+    "optional": "Optional",
+    "optionalAll": "All Fields Optional",
+    "stepCount1": "Step 1 of 2 • Essential Business Profile",
+    "stepCount2": "Step 2 of 2 • Advanced Settings (Optional)",
+    "stepCount3": "Completed • Ready to Invoice",
+    "startInvoicingNow": "Save & Start Invoicing",
+    "nextAdvanced": "Advanced Details",
+    "skipAndInvoice": "Skip & Create Invoice",
+    "finishSetup": "Complete Setup",
+    "invoicePrefix": "Invoice Number Prefix",
+    "quickSetup": {
+      "title": "Express Setup & Start Invoicing",
+      "desc": "Auto-apply detected currency & business defaults to start creating your first invoice immediately.",
+      "perk": "You can configure advanced settings later anytime",
+      "button": "Quick Start & Create Invoice"
+    },
+    "guidedSetup": {
+      "title": "Custom Guided Setup",
+      "desc": "Step-by-step: verify company name, currency, tax ID, and address in 2 quick steps."
+    },
+    "essential": {
+      "title": "Business Profile",
+      "subtitle": "Essential information that will appear on your invoices."
+    },
+    "tax": {
+      "title": "Invoicing & Address Details",
+      "subtitle": "Optional details for invoice headers & tax compliance. You can edit these anytime.",
+      "hint": "Payment gateways, bank accounts, company logo, and custom branding can be configured anytime in Settings."
+    },
+    "actions": {
+      "createInvoice": "Create First Invoice",
+      "createInvoiceDesc": "Jump right into the invoice creator",
+      "addCustomer": "Add Client / Customer",
+      "addCustomerDesc": "Save client contact & tax details",
+      "goToDashboard": "Go to Dashboard"
+    },
+    "thankYou": {
+      "title": "Setup Complete!",
+      "message": "Your business profile is ready. What would you like to do first?"
+    },
     "company": {
       "title": "Tell us about your company",
       "subtitle": "Provide some basic company details to get started.",
-      "companyName": "Company Name",
+      "companyName": "Business / Company Name",
+      "companyNamePlaceholder": "e.g. Acme Studio or John Doe Freelancing",
       "phoneNumber": "Phone Number",
       "country": "Country",
-      "state": "State",
+      "countryPlaceholder": "Select Country",
+      "state": "State / Province",
+      "statePlaceholder": "Select State / Province",
       "city": "City",
-      "zipCode": "Zip Code",
-      "address": "Address",
-      "vat": "VAT/GSTIN",
+      "cityPlaceholder": "City",
+      "zipCode": "Postal / Zip Code",
+      "zipCodePlaceholder": "Postal Code",
+      "address": "Street Address",
+      "addressPlaceholder": "123 Business Way, Suite 100",
+      "vat": "Tax ID / VAT / GSTIN",
+      "vatPlaceholder": "e.g. US123456789 or GSTIN",
       "logo": "Logo",
-      "companyNameRequired": "Company Name is required",
+      "companyNameRequired": "Business / Company Name is required",
       "phoneInvalid": "Phone number is not valid",
       "countryRequired": "Country is required",
       "stateRequired": "State is required",
@@ -1512,21 +1588,26 @@
       "zipCodeRequired": "Zip Code is required"
     },
     "initial": {
+      "welcomeTitle": "Welcome to GrowInvoice",
+      "welcomeSubtitle": "Let's set up your business so you can start issuing professional invoices in seconds.",
       "title": "Almost There! Just a Few Details",
       "subtitle": "Just enter a few details like currency and company information to start creating your invoices in no time!"
     },
     "currency": {
       "title": "Choose Your Currency",
-      "help": "We need to verify your email address to ensure you have access to the application.",
-      "label": "Currency",
+      "help": "Select the primary currency for issuing your invoices.",
+      "label": "Default Currency",
       "required": "Currency is required"
     },
     "banner": {
-      "title": "Action Required",
-      "message": "You need to complete the get started process before using this feature.",
-      "cta": "Get Started"
+      "title": "Complete Business Setup",
+      "message": "Set up your business name and currency to create professional invoices in seconds.",
+      "cta": "Quick Setup (30s)"
     },
     "steps": {
+      "essentials": "Business Profile",
+      "invoicing": "Invoicing & Tax",
+      "ready": "Launch",
       "step1": "Personal Inf.",
       "step2": "Verification",
       "step3": "Insurance",
